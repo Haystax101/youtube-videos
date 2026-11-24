@@ -10,6 +10,7 @@ Usage:
   python3 pipeline/youtube.py upload EP --title T --description D --tags a,b,c [--publish-at ISO] [--privacy public|private|unlisted]
   python3 pipeline/youtube.py stats            # refresh episodes/analytics.json for every uploaded episode
                                                # (also links hand uploads to episodes by slug words in the title)
+  python3 pipeline/youtube.py link EP VIDEO_ID   # link a hand upload whose title/length didn't auto-match
   python3 pipeline/youtube.py comments [N]     # top comments on the latest N videos -> episodes/comments.json
 
 Each uploaded episode gets EP/youtube.json with its videoId, so stats can be joined
@@ -91,29 +92,57 @@ def uploaded_episodes():
         yield yj.parent, json.loads(yj.read_text())
 
 
+def iso_seconds(d):
+    import re
+    m = re.match(r"PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?", d)
+    return sum(int(x or 0) * k for x, k in zip(m.groups(), (3600, 60, 1)))
+
+
+def write_link(ep, vid, title, published, how):
+    (ep / "youtube.json").write_text(json.dumps({
+        "videoId": vid, "url": f"https://youtu.be/{vid}", "uploadedAt": published,
+        "title": title, "linkedBy": how}, indent=1))
+    print(f"linked {ep.relative_to(EPISODES)} -> https://youtu.be/{vid} ({title}) [{how}]")
+
+
 def link_manual_uploads(tok, ch):
-    """george uploads some videos by hand, so those episodes have no youtube.json yet.
-    Link each one to the channel upload whose title contains every word of the episode slug."""
+    """george uploads by hand with his own titles, so those episodes have no youtube.json yet.
+    Link each unlinked episode to a channel upload: first by every slug word appearing in the
+    title, else by video length (YouTube rounds to whole seconds; must be the only match)."""
     uploads = []
     pl = ch["contentDetails"]["relatedPlaylists"]["uploads"]
     for it in get(f"{API}/playlistItems", tok, part="snippet,contentDetails", playlistId=pl, maxResults=50)["items"]:
         published = it["contentDetails"].get("videoPublishedAt", "")
         if published >= "2026-11-24":  # Gary Tries It started then; older uploads are other formats
-            uploads.append((it["contentDetails"]["videoId"], it["snippet"]["title"], published))
+            uploads.append({"id": it["contentDetails"]["videoId"], "title": it["snippet"]["title"], "published": published})
+    if uploads:
+        det = {v["id"]: v for v in get(f"{API}/videos", tok, part="contentDetails", id=",".join(u["id"] for u in uploads))["items"]}
+        for u in uploads:
+            u["secs"] = iso_seconds(det[u["id"]]["contentDetails"]["duration"]) if u["id"] in det else -99
     taken = {yt["videoId"] for _, yt in uploaded_episodes()}
-    for script in sorted(EPISODES.glob("**/script.json")):
-        ep = script.parent
+    pending = []
+    for tl in sorted(EPISODES.glob("*/timeline.json")):
+        ep = tl.parent
         if (ep / "youtube.json").exists():
             continue
         words = [w for w in ep.name.split("-")[1:] if len(w) > 2]
-        for vid, title, published in uploads:
-            if vid not in taken and words and all(w in title.lower() for w in words):
-                (ep / "youtube.json").write_text(json.dumps({
-                    "videoId": vid, "url": f"https://youtu.be/{vid}", "uploadedAt": published,
-                    "title": title, "linkedBy": "title-match (uploaded by hand)"}, indent=1))
-                taken.add(vid)
-                print(f"linked {ep.relative_to(EPISODES)} -> https://youtu.be/{vid} ({title})")
-                break
+        hit = next((u for u in uploads if u["id"] not in taken and words and all(w in u["title"].lower() for w in words)), None)
+        if hit:
+            write_link(ep, hit["id"], hit["title"], hit["published"], "title-match (uploaded by hand)"); taken.add(hit["id"])
+        else:
+            pending.append((ep, json.loads(tl.read_text())["duration"]))
+    for ep, dur in pending:
+        cands = [u for u in uploads if u["id"] not in taken and abs(u["secs"] - dur) <= 1.0]
+        others = [e for e, d in pending if e != ep and abs(d - dur) <= 1.0 and not (e / "youtube.json").exists()]
+        if len(cands) == 1 and not others:
+            u = cands[0]; write_link(ep, u["id"], u["title"], u["published"], "length-match (uploaded by hand)"); taken.add(u["id"])
+
+
+def cmd_link(a):
+    """manually link an episode to a video: youtube.py link episodes/NNN-slug VIDEO_ID"""
+    tok = token(); ep = Path(a.ep).resolve()
+    v = get(f"{API}/videos", tok, part="snippet", id=a.video)["items"][0]
+    write_link(ep, a.video, v["snippet"]["title"], v["snippet"]["publishedAt"], "manual")
 
 
 def cmd_stats(_):
@@ -171,5 +200,6 @@ if __name__ == "__main__":
     u.add_argument("--publish-at"); u.add_argument("--privacy", default="public", choices=["public", "private", "unlisted"])
     u.set_defaults(f=cmd_upload)
     sub.add_parser("stats").set_defaults(f=cmd_stats)
+    lk = sub.add_parser("link"); lk.add_argument("ep"); lk.add_argument("video"); lk.set_defaults(f=cmd_link)
     c = sub.add_parser("comments"); c.add_argument("n", nargs="?", type=int, default=5); c.set_defaults(f=cmd_comments)
     a = p.parse_args(); a.f(a)

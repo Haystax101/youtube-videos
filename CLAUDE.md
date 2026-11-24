@@ -16,8 +16,9 @@ YouTube step and just deliver the file. Never print or commit these values.
 - After rendering: only if `YT_UPLOAD_ENABLED=1`, upload. Shorts: `--publish-at` the same
   day at 17:00 Europe/London (as UTC ISO). Long-form: Saturday 16:00 Europe/London. Commit the
   episode's `youtube.json`. Otherwise george uploads the file by hand; `stats` then links
-  his upload to the episode (and writes its `youtube.json`) when the YouTube title contains
-  every word of the episode slug, so suggest titles that do (e.g. `face-mask` -> "...face mask...").
+  his upload to the episode (and writes its `youtube.json`) by slug words in the title or,
+  failing that, by video length. If two episodes are ambiguous, link by hand:
+  `python3 pipeline/youtube.py link EP VIDEO_ID`.
 
 ## Daily episode procedure
 

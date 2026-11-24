@@ -1,17 +1,17 @@
 {
- "fetchedAt": "2026-11-24T17:44:51Z",
+ "fetchedAt": "2026-11-24T23:29:48Z",
  "channel": {
   "viewCount": "26348",
-  "subscriberCount": "26",
+  "subscriberCount": "33",
   "hiddenSubscriberCount": false,
-  "videoCount": "11"
+  "videoCount": "16"
  },
  "videos": {
   "8kcCSMVfMvI": {
    "episode": "001-face-mask",
    "public": {
-    "viewCount": "184",
-    "likeCount": "5",
+    "viewCount": "431",
+    "likeCount": "6",
     "dislikeCount": "0",
     "favoriteCount": "0",
     "commentCount": "0"
@@ -25,6 +25,102 @@
     "hook": "how long until you die"
    },
    "title": "If you wore a face mask every day, how long until you die?"
+  },
+  "TJv37NpCV8I": {
+   "episode": "002-never-sleeping",
+   "public": {
+    "viewCount": "152",
+    "likeCount": "4",
+    "dislikeCount": "0",
+    "favoriteCount": "0",
+    "commentCount": "0"
+   },
+   "privacy": "public",
+   "retention": [],
+   "experiment": {
+    "style": "noir: black and white film, grain, blinds shadows, red accent text",
+    "captions": "typewriter, 5-word boxes, left aligned",
+    "narrator": "am_onyx (deep)",
+    "speed": 1.06,
+    "music": "slow minor 70 bpm, typewriter clacks instead of pops",
+    "hook": "how long until you die (unchanged, to isolate style)"
+   },
+   "title": "If you never slept again, how long until you die?"
+  },
+  "K4vsHNDnBVU": {
+   "episode": "004-sitting-all-day",
+   "public": {
+    "viewCount": "763",
+    "likeCount": "17",
+    "dislikeCount": "0",
+    "favoriteCount": "0",
+    "commentCount": "3"
+   },
+   "privacy": "public",
+   "retention": [],
+   "experiment": {
+    "style": "lowpoly: faceted 3D low-poly humans (Gary rebuilt as a jointed 3D person, plus a doctor), floating diorama rooms, real 3D poses and a death collapse",
+    "captions": "Poppins ExtraBold with an extruded 3D shadow; time labels in a pill chip",
+    "hud": "no deaths counter (george: clutter)",
+    "narrator": "am_michael (unchanged), doctor bf_emma (first second character with a voice)",
+    "speed": 1.16,
+    "music": "F Am Dm G plucks at 96 bpm",
+    "hook": "how long until you die (unchanged, to isolate style)"
+   },
+   "title": "If you sat down all day, every day, how long until you die?"
+  },
+  "xAi8c9w5K4Y": {
+   "episode": "005-sun-goes-out",
+   "public": {
+    "viewCount": "215",
+    "likeCount": "2",
+    "dislikeCount": "0",
+    "favoriteCount": "0",
+    "commentCount": "0"
+   },
+   "privacy": "public",
+   "retention": []
+  },
+  "nTrRvSX_3bg": {
+   "episode": "006-bee-stings",
+   "public": {
+    "viewCount": "370",
+    "likeCount": "10",
+    "dislikeCount": "0",
+    "favoriteCount": "0",
+    "commentCount": "0"
+   },
+   "privacy": "public",
+   "retention": [],
+   "experiment": {
+    "premise": "single absurd event (Veo-style), not a slow life change",
+    "length": "target 25-30 s (was 43-48 s)",
+    "hook": "cold open on the swarm + premise-specific label instead of HOW LONG UNTIL YOU DIE",
+    "title": "names the premise plainly",
+    "style": "lowpoly (new default)",
+    "speed": 1.18
+   },
+   "title": "What happens if you get stung by 1,000 bees?"
+  },
+  "IrHK5kOda14": {
+   "episode": "007-groom-of-the-stool",
+   "public": {
+    "viewCount": "0",
+    "likeCount": "0",
+    "dislikeCount": "0",
+    "favoriteCount": "0",
+    "commentCount": "0"
+   },
+   "privacy": "public",
+   "retention": [],
+   "experiment": {
+    "style": "storybook: AI-generated painted backgrounds (Cloudflare FLUX.2 klein) + 2D costumed characters with dialogue",
+    "format": "funny true history story (eccentric job) instead of a health what-if",
+    "cast": "4 speaking/acting characters, named speaker captions",
+    "hook": "premise question + THE WORST JOB IN HISTORY? label, cold open on the King and the stool",
+    "speed": 1.16
+   },
+   "title": "You get the worst job in history: wiping the King's bottom"
   }
  }
 }
