@@ -173,5 +173,11 @@
         }
       ]
     }
-  ]
+  ],
+  "experiment": {
+    "baseline": true,
+    "speed": 1.12,
+    "narrator": "am_michael",
+    "hook": "how long until you die"
+  }
 }
