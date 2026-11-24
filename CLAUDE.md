@@ -43,6 +43,7 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    - Facts must be real and plausible; one myth-bust beat is good.
    - The last beat is always the `void` scene with Gary as a ghost and exactly:
      "You died. Comment what stupid shenanigans Gary should try tomorrow."
+   - No "times died" counter (george, 2026-11-24: clutter): set `"hud": {"counter": false}`.
    - Target 30-45 s of audio. `deathsBefore` = previous episode's total deaths.
    - Add an `"experiment"` object recording what is deliberately different this time
      (e.g. tempo/speed, voice, hook wording, setting, camera style, length). Change one

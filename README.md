@@ -30,6 +30,12 @@ Preview stills: `node pipeline/render.mjs episodes/<slug> --stills 2,10,20`.
   captions, slow minor music, typewriter clacks); news (BREAKING lower third shows the label, `ticker`
   text scrolls under it, LIVE bug, karaoke word captions, urgent music). `voices` overrides the
   narrator/gary voices, `music: {"bpm": N}` overrides the tempo.
+- style `paper` uses its own page (web/paper.html + web/paper.js; render.mjs loads web/STYLE.html when it exists):
+  craft-paper sets in parallax layers, a jointed paper-puppet human as "you", 12 fps stop-motion, ransom-note labels,
+  torn-paper captions. Scenes: garden, space (dead sun, orbiting Earth), livingroom (beat `mood`: cold, frozen adds frost),
+  street (snowy shops, SOLD OUT), void. gary.expr adds cold, sleep; gary.pose: point, shrug, hug, ghost; gary.acc: jumpers,
+  hat, scarf, blanket, icicles. props: candle (`"out": true` = snuffed). fx: sunout (sun pulled away on its string,
+  lights go out; later beats stay dark), snow. Draw new scenes into SCENES in paper.js as needed rather than reusing.
 - death: true on the beat where Gary dies; increments the counter after the last word
 
 New ideas usually need one or two new props, accessories or scenes added to scene.js.

@@ -32,6 +32,7 @@ STYLES = {
     "cartoon": dict(bpm=104, chords=[[60, 64, 67], [55, 59, 62], [57, 60, 64], [53, 57, 60]]),  # C G Am F
     "noir": dict(bpm=70, chords=[[57, 60, 64], [50, 53, 57], [52, 56, 59], [57, 60, 64]]),      # Am Dm E Am, slow minor
     "news": dict(bpm=126, chords=[[50, 53, 57], [46, 50, 53], [48, 52, 55], [45, 49, 52]]),     # Dm Bb C A, urgent
+    "paper": dict(bpm=92, chords=[[65, 69, 72], [60, 64, 67], [62, 65, 69], [58, 62, 65]]),     # F C Dm Bb, light and high
 }
 
 
@@ -88,6 +89,20 @@ def sting():
     return (np.sin(2 * np.pi * 587 * t) + 0.7 * np.sin(2 * np.pi * 880 * t)) * np.exp(-t * 5) * 0.5
 
 
+def rustle():
+    """paper being slid/swapped: crackly band-limited noise with a soft swell"""
+    n = int(0.32 * SR); t = np.arange(n) / SR
+    noise = rng.normal(0, 1, n); noise = noise - np.convolve(noise, np.ones(6) / 6, 'same')
+    crackle = (rng.uniform(0, 1, n) > 0.985) * rng.normal(0, 2.5, n)
+    return (noise * 0.5 + crackle) * np.sin(np.pi * t / t[-1]) ** 2 * 0.5
+
+
+def click():
+    """light switch"""
+    n = int(0.06 * SR); t = np.arange(n) / SR
+    return (rng.normal(0, 1, n) * np.exp(-t * 200) + np.sin(2 * np.pi * 1800 * t) * np.exp(-t * 150)) * 0.8
+
+
 def place(buf, clip, at, gain):
     s = int(at * SR); e = min(len(buf), s + len(clip))
     if s < len(buf): buf[s:e] += clip[: e - s] * gain
@@ -113,6 +128,10 @@ def main(ep_dir):
         if style == "noir":
             for k, w in enumerate(b["words"]):  # a key clack as each caption group types out
                 if k % 2 == 0: place(sfx, clack(), w["s"], 0.12)
+        elif style == "paper":
+            place(sfx, rustle(), max(0, b["start"] - 0.12), 0.35)
+            if script["beats"][i].get("fx") == "sunout":
+                place(sfx, click(), b["start"] + 0.8, 0.7)
         elif style == "news":
             if i: place(sfx, whoosh(), b["start"] - 0.08, 0.25)
             place(sfx, sting() if i in (0, 1) else pop(), b["start"] + 0.05, 0.35)

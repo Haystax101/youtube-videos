@@ -1,0 +1,188 @@
+{
+ "title": "If the sun went out, how long until you die?",
+ "style": "paper",
+ "hud": {
+  "counter": false
+ },
+ "deathsBefore": 3,
+ "speed": 1.17,
+ "voices": {
+  "narrator": "bm_george"
+ },
+ "beats": [
+  {
+   "label": "HOW LONG UNTIL YOU *DIE?*",
+   "hook": true,
+   "scene": "garden",
+   "gary": {
+    "expr": "happy",
+    "pose": "point"
+   },
+   "camera": "face",
+   "lines": [
+    {
+     "text": "If the sun went out right now, how long would it take for you to die?"
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 1",
+   "scene": "garden",
+   "gary": {
+    "expr": "neutral"
+   },
+   "camera": "pan",
+   "lines": [
+    {
+     "text": "For eight minutes, nothing. Sunlight takes that long to reach you."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 8",
+   "scene": "garden",
+   "fx": "sunout",
+   "gary": {
+    "expr": "shocked",
+    "pose": "shrug"
+   },
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Then the sky goes black. Even the moon vanishes."
+    }
+   ]
+  },
+  {
+   "label": "*MYTH*",
+   "scene": "space",
+   "gary": {
+    "expr": "worried"
+   },
+   "camera": "orbit",
+   "lines": [
+    {
+     "text": "Does Earth fly off into space? Nope. Gravity's still there. You orbit a dead star."
+    }
+   ]
+  },
+  {
+   "label": "DAY 1",
+   "scene": "livingroom",
+   "gary": {
+    "expr": "worried",
+    "acc": [
+     "jumpers"
+    ]
+   },
+   "props": [
+    {
+     "type": "candle"
+    }
+   ],
+   "camera": "push",
+   "lines": [
+    {
+     "text": "Day one. Plants stop growing. You put on three jumpers."
+    },
+    {
+     "text": "It's fine!",
+     "speaker": "gary"
+    }
+   ]
+  },
+  {
+   "label": "WEEK 1",
+   "scene": "street",
+   "fx": "snow",
+   "gary": {
+    "expr": "cold",
+    "acc": [
+     "jumpers",
+     "hat",
+     "scarf"
+    ],
+    "pose": "hug"
+   },
+   "camera": "pan",
+   "lines": [
+    {
+     "text": "Minus eighteen outside. The crops are dead. The shops are empty."
+    }
+   ]
+  },
+  {
+   "label": "MONTH 1",
+   "scene": "livingroom",
+   "mood": "cold",
+   "gary": {
+    "expr": "cold",
+    "acc": [
+     "jumpers",
+     "hat",
+     "scarf",
+     "blanket"
+    ],
+    "pose": "hug"
+   },
+   "props": [
+    {
+     "type": "candle",
+     "out": true
+    }
+   ],
+   "camera": "table",
+   "lines": [
+    {
+     "text": "The oceans freeze over. The power grid fails. Your heating cuts out."
+    }
+   ]
+  },
+  {
+   "label": "MONTH 2",
+   "scene": "livingroom",
+   "mood": "frozen",
+   "gary": {
+    "expr": "cold",
+    "acc": [
+     "jumpers",
+     "hat",
+     "scarf",
+     "blanket",
+     "icicles"
+    ],
+    "pose": "hug"
+   },
+   "camera": "low",
+   "death": true,
+   "lines": [
+    {
+     "text": "Minus forty. Your body can't keep up. You lie down for a nap, and never wake up."
+    }
+   ]
+  },
+  {
+   "label": "",
+   "scene": "void",
+   "gary": {
+    "expr": "dead",
+    "pose": "ghost"
+   },
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "You died. Comment what stupid shenanigans Gary should try tomorrow."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "style": "paper cut-out: new renderer (web/paper.js), textured craft-paper sets in parallax layers, jointed paper-puppet human 'you', stop-motion at 12 fps, ransom-note labels, torn-paper captions",
+  "character": "human paper puppet instead of flat cartoon Gary",
+  "narrator": "bm_george (British male)",
+  "speed": 1.17,
+  "music": "plucked F major 92 bpm, paper-rustle transitions",
+  "hud": "no deaths counter (george: clutter)",
+  "hook": "how long until you die (unchanged, to isolate style)"
+ }
+}
