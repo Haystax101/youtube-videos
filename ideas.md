@@ -10,7 +10,6 @@ Small life changes with escalating consequences. Remove an idea once it's used.
 - Staring at your phone 20 hours a day
 - Only eating raw food
 - Never going outside again
-- Sitting down all day, every day
 - Only eating sugar
 - Living with the heating at 35 degrees
 - Wearing headphones at max volume all day

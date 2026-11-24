@@ -1,0 +1,171 @@
+{
+ "title": "If you sat down all day, every day, how long until you die?",
+ "style": "lowpoly",
+ "hud": {
+  "counter": false
+ },
+ "deathsBefore": 3,
+ "speed": 1.16,
+ "voices": {
+  "doctor": "bf_emma"
+ },
+ "beats": [
+  {
+   "label": "HOW LONG UNTIL YOU *DIE?*",
+   "hook": true,
+   "scene": "livingroom",
+   "gary": {
+    "pose": "sofa",
+    "expr": "happy"
+   },
+   "camera": "push",
+   "lines": [
+    {
+     "text": "If you sat down all day, every single day, how long would it take for you to die?"
+    }
+   ]
+  },
+  {
+   "label": "DAY 1",
+   "scene": "office",
+   "gary": {
+    "pose": "type",
+    "expr": "neutral"
+   },
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Day one. Thirty minutes in your chair, and your leg muscles go almost silent."
+    }
+   ]
+  },
+  {
+   "label": "DAY 3",
+   "scene": "car",
+   "gary": {
+    "pose": "drive",
+    "expr": "neutral"
+   },
+   "camera": "front",
+   "lines": [
+    {
+     "text": "Day three. Desk, car, sofa, bed. Your blood sugar now spikes after every meal."
+    }
+   ]
+  },
+  {
+   "label": "MONTH 1",
+   "scene": "office",
+   "gary": {
+    "pose": "hunch",
+    "expr": "worried",
+    "build": 0.25
+   },
+   "camera": "side",
+   "lines": [
+    {
+     "text": "Month one. Tight hips, sleepy glutes, and an aching back."
+    }
+   ]
+  },
+  {
+   "label": "*MYTH?*",
+   "scene": "livingroom",
+   "gary": {
+    "pose": "slouch",
+    "expr": "neutral",
+    "build": 0.35
+   },
+   "props": [
+    "pizza"
+   ],
+   "camera": "low",
+   "lines": [
+    {
+     "text": "Sitting is the new smoking? Not quite. An hour of brisk walking a day cancels most of the risk. You walk zero."
+    }
+   ]
+  },
+  {
+   "label": "YEAR 1",
+   "scene": "hospital",
+   "gary": {
+    "pose": "bedsit",
+    "expr": "worried",
+    "build": 0.55
+   },
+   "cast": [
+    {
+     "who": "doctor",
+     "pose": "clipboard"
+    }
+   ],
+   "camera": "two",
+   "lines": [
+    {
+     "text": "Your blood pressure is way too high. Walk every thirty minutes.",
+     "speaker": "doctor"
+    },
+    {
+     "text": "You don't."
+    }
+   ]
+  },
+  {
+   "label": "YEAR 2",
+   "scene": "gaming",
+   "gary": {
+    "pose": "game",
+    "expr": "tired",
+    "build": 0.75
+   },
+   "fx": "clot",
+   "camera": "legs",
+   "lines": [
+    {
+     "text": "Year two. A twelve-hour gaming session. Blood pools in your calf, and clots."
+    }
+   ]
+  },
+  {
+   "label": "",
+   "scene": "gaming",
+   "gary": {
+    "pose": "game",
+    "expr": "shocked",
+    "build": 0.75
+   },
+   "fx": "clot_move",
+   "camera": "push",
+   "death": true,
+   "lines": [
+    {
+     "text": "Then it breaks loose, shoots to your lungs, and blocks them."
+    }
+   ]
+  },
+  {
+   "label": "",
+   "scene": "void",
+   "gary": {
+    "pose": "ghost",
+    "expr": "dead"
+   },
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "You died. Comment what stupid shenanigans Gary should try tomorrow."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "style": "lowpoly: faceted 3D low-poly humans (Gary rebuilt as a jointed 3D person, plus a doctor), floating diorama rooms, real 3D poses and a death collapse",
+  "captions": "Poppins ExtraBold with an extruded 3D shadow; time labels in a pill chip",
+  "hud": "no deaths counter (george: clutter)",
+  "narrator": "am_michael (unchanged), doctor bf_emma (first second character with a voice)",
+  "speed": 1.16,
+  "music": "F Am Dm G plucks at 96 bpm",
+  "hook": "how long until you die (unchanged, to isolate style)"
+ }
+}
