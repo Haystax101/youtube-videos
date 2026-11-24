@@ -24,7 +24,7 @@ YouTube step and just deliver the file. Never print or commit these values.
 **Shorts per day: 3** (george, 2026-11-24; may go to 5 if retention holds). Each run repeats
 steps 2-7 once per Short: every one a different concept with its own episode number, its
 own experiment knobs (vary them across the day's Shorts so each run tests several ideas),
-and `deathsBefore` chained from the previous one. Then deliver them all in one post (step 8),
+then deliver them all in one post (step 8),
 in the order george should upload them, with a suggested upload time for each, spread
 across the day (e.g. 12:00, 17:00, 20:00 London).
 
@@ -43,11 +43,11 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    - Facts must be real and plausible; one myth-bust beat is good.
    - The last beat is always the `void` scene with Gary as a ghost and exactly:
      "You died. Comment what stupid shenanigans Gary should try tomorrow."
-   - Target 30-45 s of audio. `deathsBefore` = previous episode's total deaths.
+   - Target 30-45 s of audio. No "times died" counter on screen (george: clutter); it is off
+     by default, so don't set `hud.counter`.
    - Add an `"experiment"` object recording what is deliberately different this time
      (e.g. tempo/speed, voice, hook wording, setting, camera style, length). Change one
-     or two knobs per episode; keep what the log says worked. Visual `style` (cartoon, noir,
-     news, or a new one) is a knob too: follow the "Style test plan" in `episodes/LOG.md`, so
+     or two knobs per episode; keep what the log says worked. Visual `style` is a knob too: follow the "Style test plan" in `episodes/LOG.md`, so
      each style gets several episodes before it is judged.
 5. If the idea needs new props, rooms, accessories or fx, add them to `web/scene.js`
    (and list them in README's vocabulary). Keep Gary's design unchanged.
@@ -68,7 +68,7 @@ landscape 16:9, more educational. Alternate weekly between:
 - "What would happen if...": a big scenario told to "you" (e.g. we discover life on another
   planet) in time-jump chapters (DAY 1 ... YEAR 100), real science, Gary as you.
 - Ranked countdown, "How fast would you die...": 8-12 entries ranked slowest to fastest,
-  each a mini-scenario with its own label (`#10`, ... `#1`); `hud.counter: true` counts deaths.
+  each a mini-scenario with its own label (`#10`, ... `#1`). No death counter on screen.
 Length is flexible, roughly 6-12 minutes; stop when the idea runs out, don't pad.
 
 1. Same setup and YouTube stats as the daily run. Read `episodes/long/LOG.md` and `ideas-long.md`.

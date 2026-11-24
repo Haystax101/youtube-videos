@@ -2,7 +2,7 @@
 
 Daily 25-45 s vertical Shorts. Gary changes one small thing about his life and the
 consequences escalate over days, months and years, usually until he dies (the
-"times died" counter carries across episodes).
+no on-screen death counter: george removed it as clutter).
 
 ## Pipeline
 
@@ -30,7 +30,7 @@ Preview stills: `node pipeline/render.mjs episodes/<slug> --stills 2,10,20`.
   captions, slow minor music, typewriter clacks); news (BREAKING lower third shows the label, `ticker`
   text scrolls under it, LIVE bug, karaoke word captions, urgent music). `voices` overrides the
   narrator/gary voices, `music: {"bpm": N}` overrides the tempo.
-- death: true on the beat where Gary dies; increments the counter after the last word
+- death: true on the beat where Gary dies; triggers the death animation after the last word
 
 New ideas usually need one or two new props, accessories or scenes added to scene.js.
 
@@ -45,7 +45,7 @@ New ideas usually need one or two new props, accessories or scenes added to scen
 ## Landscape / long-form
 
 `"format": "landscape"` in script.json renders 1920x1080. Extra script fields:
-`"hud": {"counter": false}` hides the death counter; `"card": {"title", "subtitle"}` shows a
+The death counter is off by default (`"hud": {"counter": true}` shows it, but george doesn't want it); `"card": {"title", "subtitle"}` shows a
 chapter title card over the scene. Extra scenes: outdoor (park), space (alien planet).
 Extra cameras: orbit, low. Long renders: `--workers N` splits frames across N browsers;
 `.github/workflows/render.yml` renders an episode on GitHub Actions

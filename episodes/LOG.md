@@ -12,5 +12,9 @@ george wants to try different visual styles, formats and caption treatments and 
 One video can't separate idea, hook and style, so run each style on several episodes (aim for 3+
 each) before judging, keep the hook template fixed while styles are being compared, and compare
 average % viewed and the retention curve's first 3 seconds per style. Styles so far: `cartoon`
-(001), `noir` (002), `news` (003). Rotate them in the daily runs and add new ones (e.g. horror VHS,
-documentary, comic panels) once these have 3 episodes each.
+(001), `noir` (002), `news` (003). Rotate them in the daily runs.
+
+2026-11-24 update: george felt noir/news were "just a filter" on the same character. Don't add more
+filter-only styles. Real style changes (new character/art direction: low-poly humans, paper
+cut-out) are being built on separate branches; add them to the rotation once merged. Also: no
+on-screen "times died" counter from now on.

@@ -15,7 +15,8 @@ if (LANDSCAPE) {
   const st = document.getElementById('stage'); st.style.width = W + 'px'; st.style.height = H + 'px';
   const cv = document.getElementById('gl'); cv.width = W; cv.height = H;
 }
-const HUD = { counter: true, ...(script.hud || {}) };
+// The "times died" counter is off by default (george, 2026-11-24: clutter); hud.counter: true brings it back.
+const HUD = { counter: false, ...(script.hud || {}) };
 // Visual style: "cartoon" (default), "noir" (b&w film, grain, blinds, typewriter captions),
 // "news" (breaking-news lower third, ticker, karaoke word captions).
 const STYLE = script.style || 'cartoon';
