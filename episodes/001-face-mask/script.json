@@ -1,0 +1,177 @@
+{
+  "title": "If you wore a face mask every day, how long until you die?",
+  "deathsBefore": 0,
+  "speed": 1.12,
+  "beats": [
+    {
+      "label": "HOW LONG UNTIL YOU *DIE?*",
+      "hook": true,
+      "scene": "bedroom",
+      "gary": {
+        "expr": "happy",
+        "acc": [
+          "mask"
+        ]
+      },
+      "camera": "face",
+      "lines": [
+        {
+          "text": "If you wore a face mask every single day, how long would it take for you to die?"
+        }
+      ]
+    },
+    {
+      "label": "DAY 1",
+      "scene": "bedroom",
+      "gary": {
+        "expr": "happy",
+        "acc": [
+          "mask"
+        ]
+      },
+      "camera": "push",
+      "lines": [
+        {
+          "text": "Day one. No germs, no colds. You feel unstoppable."
+        }
+      ]
+    },
+    {
+      "label": "WEEK 1",
+      "scene": "bathroom",
+      "gary": {
+        "expr": "worried",
+        "acc": [
+          "mask",
+          "spots"
+        ]
+      },
+      "camera": "face",
+      "lines": [
+        {
+          "text": "Week one. Trapped sweat gives you maskne. Red bumps, everywhere."
+        }
+      ]
+    },
+    {
+      "label": "MONTH 1",
+      "scene": "kitchen",
+      "gary": {
+        "expr": "neutral",
+        "acc": [
+          "mask",
+          "spots"
+        ]
+      },
+      "props": [
+        {
+          "type": "soup"
+        }
+      ],
+      "camera": "table",
+      "lines": [
+        {
+          "text": "You won't take it off to eat. So every meal goes through a straw."
+        },
+        {
+          "text": "It's fine.",
+          "speaker": "gary"
+        }
+      ]
+    },
+    {
+      "label": "MONTH 3",
+      "scene": "bedroom",
+      "gary": {
+        "expr": "neutral",
+        "acc": [
+          "mask",
+          "spots"
+        ]
+      },
+      "fx": "co2",
+      "camera": "push",
+      "lines": [
+        {
+          "text": "You'd think you'd suffocate. You don't. Air moves straight through the fabric."
+        }
+      ]
+    },
+    {
+      "label": "MONTH 6",
+      "scene": "dentist",
+      "gary": {
+        "expr": "shocked",
+        "acc": [
+          "mask",
+          "spots"
+        ]
+      },
+      "camera": "face",
+      "lines": [
+        {
+          "text": "But you only breathe through your mouth now. Hello bad breath, and cavities."
+        }
+      ]
+    },
+    {
+      "label": "YEAR 1",
+      "scene": "bedroom",
+      "gary": {
+        "expr": "sick",
+        "acc": [
+          "mask_dirty",
+          "spots",
+          "flies"
+        ]
+      },
+      "camera": "push",
+      "lines": [
+        {
+          "text": "You haven't washed the mask in a year. It's now a bacteria colony."
+        }
+      ]
+    },
+    {
+      "label": "YEAR 2",
+      "scene": "kitchen",
+      "gary": {
+        "expr": "happy",
+        "acc": [
+          "mask_dirty",
+          "spots"
+        ]
+      },
+      "props": [
+        {
+          "type": "sandwich"
+        }
+      ],
+      "death": true,
+      "camera": "table",
+      "hold": 0.6,
+      "lines": [
+        {
+          "text": "Then you try to eat a sandwich. Through the mask."
+        }
+      ]
+    },
+    {
+      "label": "",
+      "scene": "void",
+      "gary": {
+        "expr": "dead",
+        "acc": [
+          "mask_dirty"
+        ],
+        "pose": "ghost"
+      },
+      "camera": "wide",
+      "lines": [
+        {
+          "text": "You died. Comment what stupid shenanigans Gary should try tomorrow."
+        }
+      ]
+    }
+  ]
+}

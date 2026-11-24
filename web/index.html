@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  @font-face { font-family: "Fredoka"; font-weight: 700; src: url("/node_modules/@fontsource/fredoka/files/fredoka-latin-700-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Fredoka"; font-weight: 600; src: url("/node_modules/@fontsource/fredoka/files/fredoka-latin-600-normal.woff2") format("woff2"); }
+  html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Fredoka", sans-serif; }
+  #gl { position: absolute; inset: 0; }
+  #vignette { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.35) 100%); }
+  .outlined { color: #fff; -webkit-text-stroke: 18px #111; paint-order: stroke fill; }
+  #caption { position: absolute; left: 60px; right: 60px; top: 1180px; text-align: center;
+    font-size: 118px; font-weight: 700; line-height: 1.05; letter-spacing: 1px; transform-origin: 50% 60%; }
+  #caption.gary { color: #ffd23f; }
+  #label { position: absolute; left: 0; right: 0; top: 250px; text-align: center; font-size: 150px; font-weight: 700;
+    transform-origin: 50% 50%; }
+  #label.hook { top: 230px; padding: 0 50px; font-size: 112px; line-height: 1.04; color: #ffd23f; }
+  #label .hot { color: #ff4a4a; }
+  #counter { position: absolute; left: 50%; top: 110px; transform: translateX(-50%); background: #fff; border: 8px solid #111;
+    border-radius: 60px; padding: 8px 40px 12px; font-size: 64px; font-weight: 700; color: #111; white-space: nowrap;
+    box-shadow: 0 10px 0 #111; transform-origin: 50% 50%; }
+  #counter b { color: #e23b3b; }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+  #redflash { position: absolute; inset: 0; background: #e23b3b; opacity: 0; pointer-events: none; mix-blend-mode: multiply; }
+</style>
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js" } }</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div id="vignette"></div>
+  <div id="redflash"></div>
+  <div id="flash"></div>
+  <div id="counter" class="">TIMES DIED: <b id="deaths">0</b></div>
+  <div id="label" class="outlined"></div>
+  <div id="caption" class="outlined"></div>
+</div>
+<script type="module" src="/web/scene.js"></script>
+</body>
+</html>
