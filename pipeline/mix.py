@@ -39,10 +39,9 @@ def music(total, bpm=104):
         for k, idx in enumerate(pattern):
             m = ch[idx] + (12 if k in (2, 6) else 0)
             if m not in cache: cache[m] = pluck(note(m), beat * 1.5)
-            s = int((t + k * beat / 2) * SR); w = cache[m]
-            out[s:s + len(w)] += w[: len(out) - s] * (0.9 if k % 2 == 0 else 0.6)
+            place(out, cache[m], t + k * beat / 2, 0.9 if k % 2 == 0 else 0.6)
         if (bar % 4) not in cache: cache[bar % 4] = pluck(note(ch[0] - 24), beat * 4, 0.998)
-        s = int(t * SR); w = cache[bar % 4]; out[s:s + len(w)] += w[: len(out) - s] * 1.2
+        place(out, cache[bar % 4], t, 1.2)
         t += beat * 4; bar += 1
     return out[: int(total * SR)]
 
