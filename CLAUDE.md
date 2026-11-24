@@ -43,7 +43,14 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    - Facts must be real and plausible; one myth-bust beat is good.
    - The last beat is always the `void` scene with Gary as a ghost and exactly:
      "You died. Comment what stupid shenanigans Gary should try tomorrow."
-   - Target 30-45 s of audio. No "times died" counter on screen (george: clutter); it is off
+   - Target 25-30 s of audio (george's best Veo Shorts were 24-31 s at 70-95% viewed; ours at
+     43-48 s did worse). Cut slow early beats; every beat must escalate.
+   - Cold open: beat 1 shows the most extreme/absurd moment (the death or the craziest image)
+     while the hook question is asked, then the story rewinds to DAY 1.
+   - Mix in single absurd-event premises ("What happens if you're bitten by 10,000 snakes",
+     "you swallow a magnet") alongside life-change ones; at least one of each per day.
+   - Suggested YouTube titles must name the premise in plain words ("What happens if you sit
+     down all day?"), never vague ones like "would you actually survive this long?". No "times died" counter on screen (george: clutter); it is off
      by default, so don't set `hud.counter`.
    - Add an `"experiment"` object recording what is deliberately different this time
      (e.g. tempo/speed, voice, hook wording, setting, camera style, length). Change one
