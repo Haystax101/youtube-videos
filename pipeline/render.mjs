@@ -51,7 +51,7 @@ function ffmpeg(argv) {
 
 async function renderRange(w, from, n, out, label) {
   const ff = ffmpeg(['-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-',
-    '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', '-pix_fmt', 'yuv420p', '-r', String(FPS), out]);
+    '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', '-maxrate', '12M', '-bufsize', '24M', '-pix_fmt', 'yuv420p', '-r', String(FPS), out]);
   const t0 = Date.now();
   for (let i = 0; i < n; i++) {
     await w.page.evaluate(t => window.renderFrame(t), (from + i) / FPS);
