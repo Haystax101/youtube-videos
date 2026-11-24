@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- "lowpoly" style: its own renderer (web/lowpoly.js). Faceted 3D people in floating diorama rooms. -->
+<style>
+  @font-face { font-family: "Poppins"; font-weight: 800; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Poppins"; font-weight: 900; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-900-normal.woff2") format("woff2"); }
+  html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Poppins", sans-serif; }
+  #gl { position: absolute; inset: 0; }
+  #vignette { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 60%, rgba(10,10,30,0.38) 100%); }
+  #redflash { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(220,30,40,0) 30%, rgba(200,10,30,0.85) 100%); }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+  /* captions: white Poppins with an extruded "3D" shadow that matches the low-poly look */
+  .ext { color: #fff; text-shadow: 0 3px 0 #2b2350, 0 6px 0 #2b2350, 0 9px 0 #2b2350, 0 12px 0 #2b2350, 0 14px 22px rgba(0,0,0,0.45);
+    -webkit-text-stroke: 3px #2b2350; paint-order: stroke fill; }
+  #caption { position: absolute; left: 70px; right: 70px; top: 1210px; text-align: center; font-size: 104px; font-weight: 900;
+    line-height: 1.08; letter-spacing: -1px; transform-origin: 50% 70%; }
+  #caption .k { color: #ffd166; }
+  #caption.doctor { color: #b8f2e6; }
+  #label { position: absolute; left: 0; right: 0; top: 220px; text-align: center; transform-origin: 50% 50%; }
+  #label .chip { display: inline-block; background: #fff; color: #2b2350; font-size: 92px; font-weight: 900; padding: 6px 54px 10px;
+    border-radius: 80px; box-shadow: 0 12px 0 #2b2350, 0 22px 40px rgba(0,0,0,0.3); letter-spacing: 1px; }
+  #label .hot { color: #ef3e5c; }
+  #label.hook .chip { background: none; box-shadow: none; padding: 0 50px; font-size: 118px; line-height: 1.02; color: #fff;
+    text-shadow: 0 4px 0 #2b2350, 0 8px 0 #2b2350, 0 12px 0 #2b2350, 0 16px 0 #2b2350, 0 20px 30px rgba(0,0,0,0.45);
+    -webkit-text-stroke: 4px #2b2350; paint-order: stroke fill; }
+  #label.hook .hot { color: #ff4d6d; }
+</style>
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js" } }</script>
+</head>
+<body>
+<div id="stage">
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div id="vignette"></div>
+  <div id="redflash"></div>
+  <div id="flash"></div>
+  <div id="label"></div>
+  <div id="caption" class="ext"></div>
+</div>
+<script type="module" src="/web/lowpoly.js"></script>
+</body>
+</html>

@@ -23,6 +23,8 @@ const stills = opt('stills', null);
 const WORKERS = Math.max(1, +opt('workers', Math.min(4, os.cpus().length)));
 const script = JSON.parse(fs.readFileSync(path.join(epDir, 'script.json'), 'utf8'));
 const [VW, VH] = script.format === 'landscape' ? [1920, 1080] : [1080, 1920];
+// a style with its own renderer page (web/STYLE.html) uses it instead of index.html
+const PAGE = script.style && fs.existsSync(path.join(ROOT, 'web', `${script.style}.html`)) ? `${script.style}.html` : 'index.html';
 
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.woff2': 'font/woff2' };
 const server = http.createServer((req, res) => {
@@ -38,7 +40,7 @@ async function openPage() {
   const page = await browser.newPage({ viewport: { width: VW, height: VH }, deviceScaleFactor: 1 });
   page.on('console', m => { if (m.type() === 'error') console.error('[page]', m.text()); });
   page.on('pageerror', e => console.error('[page error]', e.message));
-  await page.goto(`http://localhost:${port}/web/index.html?ep=${encodeURIComponent(epRel)}`);
+  await page.goto(`http://localhost:${port}/web/${PAGE}?ep=${encodeURIComponent(epRel)}`);
   await page.waitForFunction(() => window.READY === true, null, { timeout: 120000 });
   return { browser, page, stage: await page.$('#stage'), duration: await page.evaluate(() => window.DURATION) };
 }
