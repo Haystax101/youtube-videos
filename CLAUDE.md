@@ -75,8 +75,10 @@ Length is flexible, roughly 6-12 minutes; stop when the idea runs out, don't pad
 4. Render on GitHub Actions: write `episodes/long/NNN-slug` into `render-request.txt`,
    commit with the script and push; that push starts `.github/workflows/render.yml`.
    Find the run with `gh api repos/Haystax101/youtube-videos/actions/runs --jq '.workflow_runs[0]'`,
-   wait for it in a background command (it takes 30-120 min), then download the artifact
-   (`gh api .../actions/runs/RUN_ID/artifacts`, then its `archive_download_url`).
+   wait for it in a background command (a 10-minute video takes roughly 2-3 hours), then
+   download the video from the pre-release it creates (tag `render-NNN-slug-RUN_ID`):
+   `gh release download TAG -R Haystax101/youtube-videos -D /tmp/longrender`.
+   Delete that pre-release once the video is delivered (`gh api -X DELETE` on it and its tag).
    (`gh workflow run` and GraphQL are not available from Claude sessions.)
    If Actions fails, render locally with `--workers 4` instead.
 5. Log a row in `episodes/long/LOG.md`, deliver to `/mnt/project-files/gary-tries-it/long/`

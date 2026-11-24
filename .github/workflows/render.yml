@@ -15,6 +15,9 @@ on:
         description: "Episode folder, e.g. episodes/long/001-life-on-another-planet"
         required: true
 
+permissions:
+  contents: write
+
 concurrency:
   group: render-${{ github.ref }}
   cancel-in-progress: false
@@ -75,3 +78,13 @@ jobs:
             ${{ env.EP }}/video.mp4
             ${{ env.EP }}/timeline.json
           retention-days: 14
+
+      # Claude sessions can't reach the artifact storage host, so also attach the
+      # video to a pre-release they can download from.
+      - name: Publish to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="render-${{ steps.name.outputs.name }}-${{ github.run_id }}"
+          gh release create "$TAG" "$EP/video.mp4" "$EP/timeline.json" --prerelease \
+            --title "Render: ${{ steps.name.outputs.name }}" --notes "Rendered by run ${{ github.run_id }}" --target "${{ github.sha }}"
