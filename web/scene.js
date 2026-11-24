@@ -2,12 +2,21 @@
 // The page exposes window.renderFrame(t) which draws the frame at time t (seconds).
 import * as THREE from 'three';
 
-const W = 1080, H = 1920;
+let W = 1080, H = 1920;
 const ep = new URLSearchParams(location.search).get('ep');
 const script = await (await fetch(`/episodes/${ep}/script.json`)).json();
 const timeline = await (await fetch(`/episodes/${ep}/timeline.json`)).json();
 await document.fonts.load('700 100px Fredoka');
 await document.fonts.load('600 100px Fredoka');
+const LANDSCAPE = script.format === 'landscape';
+if (LANDSCAPE) {
+  W = 1920; H = 1080;
+  document.body.classList.add('landscape');
+  const st = document.getElementById('stage'); st.style.width = W + 'px'; st.style.height = H + 'px';
+  const cv = document.getElementById('gl'); cv.width = W; cv.height = H;
+}
+const HUD = { counter: true, ...(script.hud || {}) };
+if (!HUD.counter) document.getElementById('counter').style.display = 'none';
 
 // ---------- utilities ----------
 const INK = '#1a1a1a';
@@ -64,7 +73,7 @@ renderer.setPixelRatio(1); renderer.setSize(W, H, false);
 renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(58, W / H, 0.05, 100);
+const camera = new THREE.PerspectiveCamera(LANDSCAPE ? 42 : 58, W / H, 0.05, 100);
 scene.add(new THREE.HemisphereLight(0xffffff, 0xd9c7a8, 2.1));
 const sun = new THREE.DirectionalLight(0xfff3e0, 1.9);
 sun.position.set(2.5, 6, 6); sun.target.position.set(0, 0.5, -1.5);
@@ -206,6 +215,40 @@ const rooms = {
     g.add(at(cyl(0.03, 0.03, 1.05, '#b9c2c7'), 1.5, 0.52, -1.6));
     return g;
   },
+  outdoor() {
+    const g = new THREE.Group();
+    const grass = canvasTex(256, 256, (c, w, h) => { c.fillStyle = '#7cc35c'; c.fillRect(0, 0, w, h); const r = rng(11); for (let i = 0; i < 500; i++) { c.fillStyle = r() < 0.5 ? 'rgba(0,60,0,0.08)' : 'rgba(255,255,200,0.08)'; c.fillRect(r() * w, r() * h, 3, 7); } }, [10, 10]);
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(240, 240), mat(0, grass)); grass.repeat.set(40, 40); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; g.add(ground);
+    const path = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 60), mat('#e6d2a8')); path.rotation.x = -Math.PI / 2; path.position.set(0, 0.005, 0); path.receiveShadow = true; g.add(path);
+    const r = rng(12);
+    for (let i = 0; i < 18; i++) {
+      const side = i % 2 ? 1 : -1, x = side * (2.5 + r() * 6), z = -2 - r() * 18;
+      const tree = new THREE.Group();
+      tree.add(at(cyl(0.12, 0.16, 1.4, '#8a5a35', 12), 0, 0.7, 0));
+      tree.add(at(ball(0.8 + r() * 0.4, r() < 0.5 ? '#4e9e48' : '#5fb354'), 0, 1.9, 0));
+      g.add(at(tree, x, 0, z));
+    }
+    const bench = new THREE.Group();
+    bench.add(at(box(1.6, 0.08, 0.5, '#b0773f'), 0, 0.5, 0)); bench.add(at(box(1.6, 0.4, 0.08, '#b0773f'), 0, 0.8, -0.24));
+    for (const x of [-0.7, 0.7]) bench.add(at(box(0.08, 0.5, 0.45, '#444'), x, 0.25, 0));
+    g.add(at(bench, -1.9, 0, -1.6, 0.3));
+    const house = new THREE.Group();
+    house.add(at(box(3.4, 2.6, 2.4, '#f0d9b5'), 0, 1.3, 0));
+    const roof = cyl(0.01, 2.5, 1.4, '#c4573f', 4); roof.rotation.y = Math.PI / 4; house.add(at(roof, 0, 3.3, 0));
+    house.add(at(box(0.8, 1.4, 0.05, '#7a4b2a'), 0, 0.7, 1.22));
+    g.add(at(house, 3.2, 0, -6));
+    return g;
+  },
+  space() {
+    const g = new THREE.Group();
+    const rock = canvasTex(256, 256, (c, w, h) => { c.fillStyle = '#b57ad6'; c.fillRect(0, 0, w, h); const r = rng(21); for (let i = 0; i < 14; i++) { const x = r() * w, y = r() * h, s = 6 + r() * 20; c.fillStyle = 'rgba(60,20,90,0.25)'; c.beginPath(); c.ellipse(x, y, s, s * 0.6, 0, 0, 7); c.fill(); c.strokeStyle = 'rgba(30,10,50,0.5)'; c.lineWidth = 3; c.stroke(); } }, [8, 8]);
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(240, 240), mat(0, rock)); rock.repeat.set(30, 30); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; g.add(ground);
+    const r = rng(22);
+    for (let i = 0; i < 10; i++) { const k = ball(0.3 + r() * 0.7, '#9a62bd'); k.scale.y = 0.5; g.add(at(k, (r() - 0.5) * 14, 0, -3 - r() * 12)); }
+    const planet = ball(2.2, '#5aa9e6'); g.add(at(planet, -6, 4.2, -20));
+    const moon = ball(0.8, '#f2e6c9'); g.add(at(moon, 5, 3.6, -16));
+    return g;
+  },
   void() {
     const g = new THREE.Group();
     const r = rng(9);
@@ -217,11 +260,13 @@ const rooms = {
   },
 };
 const skyTex = canvasTex(64, 512, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#7ec8f5'); gr.addColorStop(1, '#fde7c4'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
+const starTex = canvasTex(1024, 1024, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#0b0b2a'); gr.addColorStop(1, '#3a1f5c'); g.fillStyle = gr; g.fillRect(0, 0, w, h); const r = rng(31); for (let i = 0; i < 400; i++) { g.fillStyle = `rgba(255,255,255,${0.4 + r() * 0.6})`; g.beginPath(); g.arc(r() * w, r() * h * 0.8, r() * 2.2, 0, 7); g.fill(); } });
+const outdoorSky = canvasTex(64, 512, (g, w, h) => { const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, '#6fbdf0'); gr.addColorStop(1, '#d8f1fd'); g.fillStyle = gr; g.fillRect(0, 0, w, h); });
 const builtRooms = {};
 function room(name) {
   if (!builtRooms[name]) { builtRooms[name] = (rooms[name] || rooms.bedroom)(); scene.add(builtRooms[name]); }
   for (const k in builtRooms) builtRooms[k].visible = k === name;
-  scene.background = name === 'void' ? skyTex : new THREE.Color('#222');
+  scene.background = name === 'void' ? skyTex : name === 'space' ? starTex : name === 'outdoor' ? outdoorSky : new THREE.Color('#222');
 }
 
 // ---------- Gary ----------
@@ -356,6 +401,7 @@ const stinks = []; for (let i = 0; i < 3; i++) { const m = flat(0.18, 0.36, stin
 
 // ---------- captions ----------
 const $ = id => document.getElementById(id);
+const cardEl = $('card'), cardTitle = $('cardTitle'), cardSub = $('cardSub');
 const capEl = $('caption'), labelEl = $('label'), deathsEl = $('deaths'), counterEl = $('counter'), flashEl = $('flash'), redEl = $('redflash');
 const groups = [];
 timeline.beats.forEach(b => {
@@ -382,6 +428,8 @@ const CAMS = {
   table: [[0.5, 1.95, 3.3], [0.1, 1.8, 2.6], [0, 1.3, GARY_Z]],
   pan: [[-1.3, 1.85, 4.6], [1.0, 1.75, 4.1], [0, 1.2, GARY_Z]],
   wide: [[0, 1.6, 6.4], [0, 1.6, 5.6], [0, 1.4, -1]],
+  orbit: [[-3.5, 2.2, 4.5], [3.5, 2.0, 4.5], [0, 1.2, GARY_Z]],
+  low: [[0.6, 0.6, 3.6], [0.2, 0.7, 2.8], [0, 1.5, GARY_Z]],
 };
 
 // ---------- main ----------
@@ -449,7 +497,7 @@ window.renderFrame = (t) => {
   const since = lastDeath != null ? t - lastDeath : 99;
   const cs = since < 0.5 ? 1 + 0.45 * Math.sin(clamp(since / 0.5) * Math.PI) : 1;
   const finalBoost = b.scene === 'void' ? 1.25 : 1;
-  counterEl.style.transform = `translateX(-50%) scale(${cs * finalBoost})`;
+  counterEl.style.transform = LANDSCAPE ? `scale(${cs})` : `translateX(-50%) scale(${cs * finalBoost})`;
   redEl.style.opacity = since < 0.6 ? 0.45 * (1 - since / 0.6) : 0;
   flashEl.style.opacity = bi > 0 && lt < 0.12 ? 0.55 * (1 - lt / 0.12) : 0;
 
@@ -461,6 +509,13 @@ window.renderFrame = (t) => {
     labelEl.style.opacity = clamp(lt / 0.08);
     labelEl.style.transform = `translateY(${lerp(0, -40, shrink)}px) scale(${lerp(1.5, 1, pop) * lerp(1, 0.55, shrink) * (b.hook ? 1 + 0.03 * Math.sin(t * 7) : 1)})`;
   } else labelEl.style.opacity = 0;
+
+  if (b.card) {
+    cardTitle.textContent = b.card.title || ''; cardSub.textContent = b.card.subtitle || '';
+    const fadeIn = clamp(lt / 0.25), fadeOut = clamp((dur - lt) / 0.25);
+    cardEl.style.opacity = Math.min(fadeIn, fadeOut);
+    cardTitle.style.transform = `scale(${lerp(1.3, 1, backOut(lt / 0.4))})`;
+  } else cardEl.style.opacity = 0;
 
   const g = captionAt(t);
   if (g) {

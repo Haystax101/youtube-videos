@@ -37,3 +37,21 @@ New ideas usually need one or two new props, accessories or scenes added to scen
   that asks a clickbait question in the first 2 seconds, e.g. "If you wore a face mask every single day,
   how long would it take for you to die?"
 - Every video ends with: "You died. Comment what stupid shenanigans Gary should try tomorrow."
+
+## Landscape / long-form
+
+`"format": "landscape"` in script.json renders 1920x1080. Extra script fields:
+`"hud": {"counter": false}` hides the death counter; `"card": {"title", "subtitle"}` shows a
+chapter title card over the scene. Extra scenes: outdoor (park), space (alien planet).
+Extra cameras: orbit, low. Long renders: `--workers N` splits frames across N browsers;
+`.github/workflows/render.yml` renders an episode on GitHub Actions
+(`gh workflow run render.yml -f episode=episodes/long/NNN-slug`).
+
+## YouTube setup (one-time, done by george)
+
+`pipeline/youtube.py` uploads, reads analytics (views, average % viewed, retention curve)
+and reads comments. It needs three environment variables in the Claude cloud environment:
+`YT_CLIENT_ID`, `YT_CLIENT_SECRET`, `YT_REFRESH_TOKEN` (scopes: youtube.upload,
+youtube.readonly, yt-analytics.readonly, youtube.force-ssl). Set `YT_UPLOAD_ENABLED=1` only
+after the Google Cloud project passes YouTube's API audit; until then API uploads are
+locked to private.

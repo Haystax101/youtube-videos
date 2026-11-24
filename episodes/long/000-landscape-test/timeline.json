@@ -1,0 +1,191 @@
+{
+ "duration": 12.041,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 4.698,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "What",
+     "s": 0.15,
+     "e": 0.37,
+     "speaker": "narrator"
+    },
+    {
+     "w": "would",
+     "s": 0.37,
+     "e": 0.597,
+     "speaker": "narrator"
+    },
+    {
+     "w": "actually",
+     "s": 0.597,
+     "e": 1.229,
+     "speaker": "narrator"
+    },
+    {
+     "w": "happen",
+     "s": 1.229,
+     "e": 1.655,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 1.655,
+     "e": 1.861,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 1.861,
+     "e": 2.074,
+     "speaker": "narrator"
+    },
+    {
+     "w": "if",
+     "s": 2.074,
+     "e": 2.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "scientists",
+     "s": 2.28,
+     "e": 2.734,
+     "speaker": "narrator"
+    },
+    {
+     "w": "found",
+     "s": 2.734,
+     "e": 2.962,
+     "speaker": "narrator"
+    },
+    {
+     "w": "life",
+     "s": 2.962,
+     "e": 3.182,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 3.182,
+     "e": 3.388,
+     "speaker": "narrator"
+    },
+    {
+     "w": "another",
+     "s": 3.388,
+     "e": 4.012,
+     "speaker": "narrator"
+    },
+    {
+     "w": "planet?",
+     "s": 4.012,
+     "e": 4.438,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 4.698,
+   "end": 7.338,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Chapter",
+     "s": 4.698,
+     "e": 5.413,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one.",
+     "s": 5.413,
+     "e": 5.765,
+     "speaker": "narrator"
+    },
+    {
+     "w": "The",
+     "s": 5.905,
+     "e": 6.139,
+     "speaker": "narrator"
+    },
+    {
+     "w": "announcement.",
+     "s": 6.139,
+     "e": 7.078,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 7.338,
+   "end": 10.841,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "The",
+     "s": 7.338,
+     "e": 7.555,
+     "speaker": "narrator"
+    },
+    {
+     "w": "signal",
+     "s": 7.555,
+     "e": 7.988,
+     "speaker": "narrator"
+    },
+    {
+     "w": "comes",
+     "s": 7.988,
+     "e": 8.414,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 8.414,
+     "e": 8.638,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 8.638,
+     "e": 8.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "planet",
+     "s": 8.84,
+     "e": 9.273,
+     "speaker": "narrator"
+    },
+    {
+     "w": "forty",
+     "s": 9.273,
+     "e": 9.699,
+     "speaker": "narrator"
+    },
+    {
+     "w": "light",
+     "s": 9.699,
+     "e": 9.931,
+     "speaker": "narrator"
+    },
+    {
+     "w": "years",
+     "s": 9.931,
+     "e": 10.162,
+     "speaker": "narrator"
+    },
+    {
+     "w": "away.",
+     "s": 10.162,
+     "e": 10.581,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}

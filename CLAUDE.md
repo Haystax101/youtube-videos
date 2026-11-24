@@ -1,7 +1,21 @@
 # Gary Tries It: daily episode run
 
-This repo makes one vertical YouTube Short per day. See README.md for the pipeline.
-The scheduled daily run follows these steps exactly.
+This repo makes one vertical YouTube Short per day and one landscape long-form video per
+week. See README.md for the pipeline. The scheduled runs follow these steps exactly.
+
+## YouTube (both runs)
+
+`pipeline/youtube.py` needs YT_CLIENT_ID, YT_CLIENT_SECRET and YT_REFRESH_TOKEN in the
+environment. If `python3 pipeline/youtube.py check` says they are missing, skip every
+YouTube step and just deliver the file. Never print or commit these values.
+- Before writing: `python3 pipeline/youtube.py stats` and `python3 pipeline/youtube.py comments 5`.
+  Read `episodes/analytics.json` (views, averageViewPercentage, retention curve per video,
+  joined to each script's `experiment`) and say in the LOG which knobs correlate with
+  better retention. Add good viewer suggestions from `episodes/comments.json` to `ideas.md`.
+  Commit analytics.json and comments.json.
+- After rendering: only if `YT_UPLOAD_ENABLED=1`, upload. Shorts: `--publish-at` the same
+  day at 17:00 Europe/London (as UTC ISO). Long-form: Saturday 16:00 Europe/London. Commit the
+  episode's `youtube.json`. Otherwise george uploads the file by hand.
 
 ## Daily episode procedure
 
@@ -33,4 +47,36 @@ The scheduled daily run follows these steps exactly.
 7. Append a row to `episodes/LOG.md`, commit the script and any code changes to `main`
    (never commit .mp4/.wav), push.
 8. Deliver: copy the video to `/mnt/project-files/gary-tries-it/NNN-slug.mp4` and post it
-   to george with a suggested YouTube title, description and 3-5 hashtags.
+   to george with a suggested YouTube title, description and 3-5 hashtags (and the
+   YouTube link plus publish time if it was uploaded).
+
+## Weekly long-form procedure
+
+Format (from the long-form research doc https://claude.ai/artifact/JfZqN3nrHeE5yjaG4FtqZX):
+landscape 16:9, more educational. Alternate weekly between:
+- "What would happen if...": a big scenario told to "you" (e.g. we discover life on another
+  planet) in time-jump chapters (DAY 1 ... YEAR 100), real science, Gary as you.
+- Ranked countdown, "How fast would you die...": 8-12 entries ranked slowest to fastest,
+  each a mini-scenario with its own label (`#10`, ... `#1`); `hud.counter: true` counts deaths.
+Length is flexible, roughly 6-12 minutes; stop when the idea runs out, don't pad.
+
+1. Same setup and YouTube stats as the daily run. Read `episodes/long/LOG.md` and `ideas-long.md`.
+2. Create `episodes/long/NNN-slug/script.json` with `"format": "landscape"`. Rules:
+   - First 15 seconds: hook beat (`"hook": true`) asking the viewer the big question and
+     promising the payoff; then a quick preview of the craziest moment.
+   - Chapter beats use `"card": {"title": "CHAPTER 2", "subtitle": "..."}` (a short beat that
+     just reads the chapter name), then several beats with time labels.
+   - Second person throughout; facts real; vary scenes and cameras every 2-3 beats
+     (push, face, table, pan, wide, orbit, low).
+   - End with a payoff, then "Subscribe, and comment what Gary should try next."
+   - Add new rooms/props in `web/scene.js` as needed (expect 2-4 per video).
+   - `experiment` object as for Shorts.
+3. Voice locally (`tts.py`), render stills across the whole video and check them.
+4. Commit and push, then render on GitHub Actions:
+   `gh workflow run render.yml -R Haystax101/youtube-videos -f episode=episodes/long/NNN-slug`,
+   wait with `gh run watch` (run it in the background; it takes 30-120 min), then
+   `gh run download RUN_ID -R Haystax101/youtube-videos -D /tmp/longrender`.
+   If Actions fails, render locally with `--workers 4` instead.
+5. Log a row in `episodes/long/LOG.md`, deliver to `/mnt/project-files/gary-tries-it/long/`
+   and post to george with title, description (with chapter timestamps from
+   `timeline.json` card beats) and tags; upload if enabled.

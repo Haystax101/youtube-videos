@@ -1,0 +1,14 @@
+{
+  "title": "Landscape renderer test",
+  "format": "landscape",
+  "hud": {"counter": false},
+  "speed": 1.05,
+  "beats": [
+    {"label": "WHAT IF WE FOUND *LIFE?*", "hook": true, "scene": "outdoor", "gary": {"expr": "shocked"}, "camera": "push",
+     "lines": [{"text": "What would actually happen to you if scientists found life on another planet?"}]},
+    {"card": {"title": "CHAPTER 1", "subtitle": "The Announcement"}, "scene": "bedroom", "gary": {"expr": "neutral"}, "camera": "wide",
+     "lines": [{"text": "Chapter one. The announcement."}]},
+    {"label": "DAY 1", "scene": "space", "gary": {"expr": "happy"}, "camera": "orbit",
+     "lines": [{"text": "The signal comes from a planet forty light years away."}]}
+  ]
+}

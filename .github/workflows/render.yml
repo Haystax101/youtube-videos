@@ -1,0 +1,66 @@
+name: Render episode
+
+# Renders one episode (voice, mix, frames, MP4) on a GitHub runner and uploads the
+# video as an artifact. Used for long-form videos, which take too long to render
+# inside the daily Claude session. Started by the weekly run with:
+#   gh workflow run render.yml -f episode=episodes/long/NNN-slug
+on:
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Episode folder, e.g. episodes/long/001-life-on-another-planet"
+        required: true
+
+concurrency:
+  group: render-${{ inputs.episode }}
+  cancel-in-progress: false
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    env:
+      EP: ${{ inputs.episode }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Cache Kokoro model
+        uses: actions/cache@v4
+        with:
+          path: models
+          key: kokoro-v1.0
+
+      - name: Install
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          ./setup.sh
+          npm install --no-save playwright@1.63.0
+          npx playwright install --with-deps chromium
+
+      - name: Voice and mix
+        run: |
+          python3 pipeline/tts.py "$EP"
+          python3 pipeline/mix.py "$EP"
+
+      - name: Render
+        run: node pipeline/render.mjs "$EP" --workers 4
+
+      - name: Name artifact
+        id: name
+        run: echo "name=$(basename "$EP")" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.name.outputs.name }}
+          path: |
+            ${{ inputs.episode }}/video.mp4
+            ${{ inputs.episode }}/timeline.json
+          retention-days: 14
