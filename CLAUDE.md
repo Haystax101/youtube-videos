@@ -72,10 +72,12 @@ Length is flexible, roughly 6-12 minutes; stop when the idea runs out, don't pad
    - Add new rooms/props in `web/scene.js` as needed (expect 2-4 per video).
    - `experiment` object as for Shorts.
 3. Voice locally (`tts.py`), render stills across the whole video and check them.
-4. Commit and push, then render on GitHub Actions:
-   `gh workflow run render.yml -R Haystax101/youtube-videos -f episode=episodes/long/NNN-slug`,
-   wait with `gh run watch` (run it in the background; it takes 30-120 min), then
-   `gh run download RUN_ID -R Haystax101/youtube-videos -D /tmp/longrender`.
+4. Render on GitHub Actions: write `episodes/long/NNN-slug` into `render-request.txt`,
+   commit with the script and push; that push starts `.github/workflows/render.yml`.
+   Find the run with `gh api repos/Haystax101/youtube-videos/actions/runs --jq '.workflow_runs[0]'`,
+   wait for it in a background command (it takes 30-120 min), then download the artifact
+   (`gh api .../actions/runs/RUN_ID/artifacts`, then its `archive_download_url`).
+   (`gh workflow run` and GraphQL are not available from Claude sessions.)
    If Actions fails, render locally with `--workers 4` instead.
 5. Log a row in `episodes/long/LOG.md`, deliver to `/mnt/project-files/gary-tries-it/long/`
    and post to george with title, description (with chapter timestamps from

@@ -2,9 +2,13 @@ name: Render episode
 
 # Renders one episode (voice, mix, frames, MP4) on a GitHub runner and uploads the
 # video as an artifact. Used for long-form videos, which take too long to render
-# inside the daily Claude session. Started by the weekly run with:
-#   gh workflow run render.yml -f episode=episodes/long/NNN-slug
+# inside the daily Claude session. The weekly run starts it by writing the episode
+# folder into render-request.txt and pushing (george can also start it from the
+# Actions tab).
 on:
+  push:
+    branches: [main]
+    paths: [render-request.txt]
   workflow_dispatch:
     inputs:
       episode:
@@ -12,7 +16,7 @@ on:
         required: true
 
 concurrency:
-  group: render-${{ inputs.episode }}
+  group: render-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -20,9 +24,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 340
     env:
-      EP: ${{ inputs.episode }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Pick episode
+        env:
+          INPUT_EP: ${{ inputs.episode }}
+        run: |
+          EP="${INPUT_EP:-$(head -n1 render-request.txt | tr -d '[:space:]')}"
+          case "$EP" in episodes/*) ;; *) echo "bad episode path: $EP"; exit 1 ;; esac
+          test -f "$EP/script.json"
+          echo "EP=$EP" >> "$GITHUB_ENV"
 
       - uses: actions/setup-node@v4
         with:
@@ -61,6 +73,6 @@ jobs:
         with:
           name: ${{ steps.name.outputs.name }}
           path: |
-            ${{ inputs.episode }}/video.mp4
-            ${{ inputs.episode }}/timeline.json
+            ${{ env.EP }}/video.mp4
+            ${{ env.EP }}/timeline.json
           retention-days: 14
