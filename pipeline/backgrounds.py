@@ -12,6 +12,8 @@ Cost: free daily Workers AI allowance covers ~60 images a day at this size (~156
 import base64, json, os, sys, time
 from pathlib import Path
 import requests
+from io import BytesIO
+from PIL import Image
 
 MODEL = "@cf/black-forest-labs/flux-2-klein-4b"
 DEFAULT_STYLE = ("stylized 3D animated film background, soft cinematic lighting, rich detail, "
@@ -28,7 +30,8 @@ def generate(prompt, w, h, out):
             r = requests.post(url, headers={"Authorization": f"Bearer {tok}"},
                               files={"prompt": (None, prompt), "width": (None, str(w)), "height": (None, str(h))}, timeout=180)
             if r.ok:
-                out.write_bytes(base64.b64decode(r.json()["result"]["image"]))
+                # re-encode smaller: these are committed with the episode
+                Image.open(BytesIO(base64.b64decode(r.json()["result"]["image"]))).convert("RGB").save(out, quality=80, optimize=True)
                 return
             print(f"  {out.name}: HTTP {r.status_code} {r.text[:200]}")
         except requests.RequestException as e:
