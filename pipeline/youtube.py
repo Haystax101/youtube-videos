@@ -9,6 +9,7 @@ Usage:
   python3 pipeline/youtube.py check
   python3 pipeline/youtube.py upload EP --title T --description D --tags a,b,c [--publish-at ISO] [--privacy public|private|unlisted]
   python3 pipeline/youtube.py stats            # refresh episodes/analytics.json for every uploaded episode
+                                               # (also links hand uploads to episodes by slug words in the title)
   python3 pipeline/youtube.py comments [N]     # top comments on the latest N videos -> episodes/comments.json
 
 Each uploaded episode gets EP/youtube.json with its videoId, so stats can be joined
@@ -80,7 +81,7 @@ def cmd_upload(a):
     up.raise_for_status()
     vid = up.json()["id"]
     (ep / "youtube.json").write_text(json.dumps({
-        "videoId": vid, "url": f"https://youtu.be/{vid}", "uploadedAt": dt.datetime.utcnow().isoformat() + "Z",
+        "videoId": vid, "url": f"https://youtu.be/{vid}", "uploadedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "title": body["snippet"]["title"], "privacy": status["privacyStatus"], "publishAt": a.publish_at}, indent=1))
     print(f"uploaded https://youtu.be/{vid}")
 
@@ -90,10 +91,36 @@ def uploaded_episodes():
         yield yj.parent, json.loads(yj.read_text())
 
 
+def link_manual_uploads(tok, ch):
+    """george uploads some videos by hand, so those episodes have no youtube.json yet.
+    Link each one to the channel upload whose title contains every word of the episode slug."""
+    uploads = []
+    pl = ch["contentDetails"]["relatedPlaylists"]["uploads"]
+    for it in get(f"{API}/playlistItems", tok, part="snippet,contentDetails", playlistId=pl, maxResults=50)["items"]:
+        published = it["contentDetails"].get("videoPublishedAt", "")
+        if published >= "2026-11-24":  # Gary Tries It started then; older uploads are other formats
+            uploads.append((it["contentDetails"]["videoId"], it["snippet"]["title"], published))
+    taken = {yt["videoId"] for _, yt in uploaded_episodes()}
+    for script in sorted(EPISODES.glob("**/script.json")):
+        ep = script.parent
+        if (ep / "youtube.json").exists():
+            continue
+        words = [w for w in ep.name.split("-")[1:] if len(w) > 2]
+        for vid, title, published in uploads:
+            if vid not in taken and words and all(w in title.lower() for w in words):
+                (ep / "youtube.json").write_text(json.dumps({
+                    "videoId": vid, "url": f"https://youtu.be/{vid}", "uploadedAt": published,
+                    "title": title, "linkedBy": "title-match (uploaded by hand)"}, indent=1))
+                taken.add(vid)
+                print(f"linked {ep.relative_to(EPISODES)} -> https://youtu.be/{vid} ({title})")
+                break
+
+
 def cmd_stats(_):
     tok = token(); ch = my_channel(tok)
+    link_manual_uploads(tok, ch)
     today = dt.date.today().isoformat()
-    out = {"fetchedAt": dt.datetime.utcnow().isoformat() + "Z", "channel": ch["statistics"], "videos": {}}
+    out = {"fetchedAt": dt.datetime.now(dt.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "channel": ch["statistics"], "videos": {}}
     for ep, yt in uploaded_episodes():
         vid = yt["videoId"]
         start = (yt.get("uploadedAt") or "2026-01-01")[:10]

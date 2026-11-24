@@ -1,0 +1,30 @@
+{
+ "fetchedAt": "2026-11-24T17:44:51Z",
+ "channel": {
+  "viewCount": "26348",
+  "subscriberCount": "26",
+  "hiddenSubscriberCount": false,
+  "videoCount": "11"
+ },
+ "videos": {
+  "8kcCSMVfMvI": {
+   "episode": "001-face-mask",
+   "public": {
+    "viewCount": "184",
+    "likeCount": "5",
+    "dislikeCount": "0",
+    "favoriteCount": "0",
+    "commentCount": "0"
+   },
+   "privacy": "public",
+   "retention": [],
+   "experiment": {
+    "baseline": true,
+    "speed": 1.12,
+    "narrator": "am_michael",
+    "hook": "how long until you die"
+   },
+   "title": "If you wore a face mask every day, how long until you die?"
+  }
+ }
+}
