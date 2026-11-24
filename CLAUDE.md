@@ -21,6 +21,13 @@ YouTube step and just deliver the file. Never print or commit these values.
 
 ## Daily episode procedure
 
+**Shorts per day: 3** (george, 2026-11-24; may go to 5 if retention holds). Each run repeats
+steps 2-7 once per Short: every one a different concept with its own episode number, its
+own experiment knobs (vary them across the day's Shorts so each run tests several ideas),
+and `deathsBefore` chained from the previous one. Then deliver them all in one post (step 8),
+in the order george should upload them, with a suggested upload time for each, spread
+across the day (e.g. 12:00, 17:00, 20:00 London).
+
 1. `./setup.sh` (idempotent; downloads the free Kokoro TTS model if missing).
 2. Read `episodes/LOG.md` (what has been made, experiment knobs, results) and `ideas.md`.
    If YouTube analytics are available (not yet set up), read them first and note what
