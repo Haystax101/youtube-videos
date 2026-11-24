@@ -1,0 +1,625 @@
+{
+ "duration": 35.093,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 3.525,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "What",
+     "s": 0.15,
+     "e": 0.378,
+     "speaker": "narrator"
+    },
+    {
+     "w": "if",
+     "s": 0.378,
+     "e": 0.592,
+     "speaker": "narrator"
+    },
+    {
+     "w": "your",
+     "s": 0.592,
+     "e": 0.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "job",
+     "s": 0.82,
+     "e": 1.041,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 1.041,
+     "e": 1.262,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wiping",
+     "s": 1.262,
+     "e": 1.704,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 1.704,
+     "e": 1.924,
+     "speaker": "narrator"
+    },
+    {
+     "w": "King",
+     "s": 1.924,
+     "e": 2.153,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 2.153,
+     "e": 2.366,
+     "speaker": "narrator"
+    },
+    {
+     "w": "England's",
+     "s": 2.366,
+     "e": 2.823,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bottom?",
+     "s": 2.823,
+     "e": 3.265,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 3.525,
+   "end": 8.417,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You're",
+     "s": 3.525,
+     "e": 3.778,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Henry",
+     "s": 3.778,
+     "e": 4.244,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 4.244,
+     "e": 4.481,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Eighth's",
+     "s": 4.481,
+     "e": 4.75,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Groom",
+     "s": 4.75,
+     "e": 5.003,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 5.003,
+     "e": 5.232,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 5.232,
+     "e": 5.469,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Stool.",
+     "s": 5.469,
+     "e": 5.722,
+     "speaker": "narrator"
+    },
+    {
+     "w": "A",
+     "s": 5.862,
+     "e": 6.251,
+     "speaker": "narrator"
+    },
+    {
+     "w": "real",
+     "s": 6.251,
+     "e": 6.682,
+     "speaker": "narrator"
+    },
+    {
+     "w": "job.",
+     "s": 6.682,
+     "e": 7.099,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Chop",
+     "s": 7.239,
+     "e": 7.698,
+     "speaker": "king"
+    },
+    {
+     "w": "chop.",
+     "s": 7.698,
+     "e": 8.157,
+     "speaker": "king"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 8.417,
+   "end": 13.726,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Gross?",
+     "s": 8.417,
+     "e": 9.121,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Yes.",
+     "s": 9.261,
+     "e": 9.901,
+     "speaker": "narrator"
+    },
+    {
+     "w": "But",
+     "s": 10.041,
+     "e": 10.235,
+     "speaker": "narrator"
+    },
+    {
+     "w": "nobody",
+     "s": 10.235,
+     "e": 10.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "else",
+     "s": 10.8,
+     "e": 11.001,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gets",
+     "s": 11.001,
+     "e": 11.203,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 11.203,
+     "e": 11.398,
+     "speaker": "narrator"
+    },
+    {
+     "w": "King",
+     "s": 11.398,
+     "e": 11.599,
+     "speaker": "narrator"
+    },
+    {
+     "w": "alone.",
+     "s": 11.599,
+     "e": 11.982,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Every",
+     "s": 12.122,
+     "e": 12.897,
+     "speaker": "narrator"
+    },
+    {
+     "w": "single",
+     "s": 12.897,
+     "e": 13.195,
+     "speaker": "narrator"
+    },
+    {
+     "w": "day.",
+     "s": 13.195,
+     "e": 13.466,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 13.726,
+   "end": 20.422,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Put",
+     "s": 13.726,
+     "e": 13.957,
+     "speaker": "lord"
+    },
+    {
+     "w": "in",
+     "s": 13.957,
+     "e": 14.18,
+     "speaker": "lord"
+    },
+    {
+     "w": "a",
+     "s": 14.18,
+     "e": 14.395,
+     "speaker": "lord"
+    },
+    {
+     "w": "good",
+     "s": 14.395,
+     "e": 14.634,
+     "speaker": "lord"
+    },
+    {
+     "w": "word",
+     "s": 14.634,
+     "e": 14.872,
+     "speaker": "lord"
+    },
+    {
+     "w": "for",
+     "s": 14.872,
+     "e": 15.103,
+     "speaker": "lord"
+    },
+    {
+     "w": "me?",
+     "s": 15.103,
+     "e": 15.326,
+     "speaker": "lord"
+    },
+    {
+     "w": "So",
+     "s": 15.466,
+     "e": 15.694,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lords",
+     "s": 15.694,
+     "e": 15.946,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bribe",
+     "s": 15.946,
+     "e": 16.198,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 16.198,
+     "e": 16.434,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 16.434,
+     "e": 16.67,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 16.67,
+     "e": 16.89,
+     "speaker": "narrator"
+    },
+    {
+     "w": "word",
+     "s": 16.89,
+     "e": 17.134,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 17.134,
+     "e": 17.362,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 17.362,
+     "e": 17.598,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ear.",
+     "s": 17.598,
+     "e": 17.834,
+     "speaker": "narrator"
+    },
+    {
+     "w": "You",
+     "s": 17.974,
+     "e": 18.297,
+     "speaker": "narrator"
+    },
+    {
+     "w": "get",
+     "s": 18.297,
+     "e": 18.621,
+     "speaker": "narrator"
+    },
+    {
+     "w": "rich.",
+     "s": 18.621,
+     "e": 18.955,
+     "speaker": "narrator"
+    },
+    {
+     "w": "You",
+     "s": 19.095,
+     "e": 19.358,
+     "speaker": "narrator"
+    },
+    {
+     "w": "get",
+     "s": 19.358,
+     "e": 19.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "knighted.",
+     "s": 19.62,
+     "e": 20.162,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 20.422,
+   "end": 24.918,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Then",
+     "s": 20.422,
+     "e": 20.661,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 20.661,
+     "e": 20.892,
+     "speaker": "narrator"
+    },
+    {
+     "w": "King",
+     "s": 20.892,
+     "e": 21.131,
+     "speaker": "narrator"
+    },
+    {
+     "w": "turns",
+     "s": 21.131,
+     "e": 21.378,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 21.378,
+     "e": 21.601,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 21.601,
+     "e": 21.832,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wife,",
+     "s": 21.832,
+     "e": 22.196,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Anne",
+     "s": 22.196,
+     "e": 22.434,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Boleyn.",
+     "s": 22.434,
+     "e": 22.897,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 23.037,
+     "e": 23.304,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 23.304,
+     "e": 23.562,
+     "speaker": "narrator"
+    },
+    {
+     "w": "needs",
+     "s": 23.562,
+     "e": 23.847,
+     "speaker": "narrator"
+    },
+    {
+     "w": "men",
+     "s": 23.847,
+     "e": 24.115,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 24.115,
+     "e": 24.373,
+     "speaker": "narrator"
+    },
+    {
+     "w": "blame.",
+     "s": 24.373,
+     "e": 24.658,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 24.918,
+   "end": 29.375,
+   "deathAt": 27.585,
+   "words": [
+    {
+     "w": "Your",
+     "s": 24.918,
+     "e": 25.148,
+     "speaker": "narrator"
+    },
+    {
+     "w": "best",
+     "s": 25.148,
+     "e": 25.378,
+     "speaker": "narrator"
+    },
+    {
+     "w": "friend,",
+     "s": 25.378,
+     "e": 25.743,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 25.743,
+     "e": 25.965,
+     "speaker": "narrator"
+    },
+    {
+     "w": "King,",
+     "s": 25.965,
+     "e": 26.315,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sends",
+     "s": 26.315,
+     "e": 26.553,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 26.553,
+     "e": 26.775,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 26.775,
+     "e": 26.99,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 26.99,
+     "e": 27.213,
+     "speaker": "narrator"
+    },
+    {
+     "w": "axe.",
+     "s": 27.213,
+     "e": 27.435,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 29.375,
+   "end": 33.893,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You",
+     "s": 29.375,
+     "e": 29.784,
+     "speaker": "narrator"
+    },
+    {
+     "w": "died.",
+     "s": 29.784,
+     "e": 30.207,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Comment",
+     "s": 30.347,
+     "e": 30.764,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 30.764,
+     "e": 30.976,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stupid",
+     "s": 30.976,
+     "e": 31.386,
+     "speaker": "narrator"
+    },
+    {
+     "w": "shenanigans",
+     "s": 31.386,
+     "e": 32.198,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Gary",
+     "s": 32.198,
+     "e": 32.594,
+     "speaker": "narrator"
+    },
+    {
+     "w": "should",
+     "s": 32.594,
+     "e": 32.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "try",
+     "s": 32.82,
+     "e": 33.025,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tomorrow.",
+     "s": 33.025,
+     "e": 33.633,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}

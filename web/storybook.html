@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- "storybook" style: its own renderer (web/storybook.js). Generated painted backgrounds
+     (pipeline/backgrounds.py) with hand-drawn 2D costumed characters acting in front of them. -->
+<style>
+  @font-face { font-family: "Poppins"; font-weight: 800; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Poppins"; font-weight: 900; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-900-normal.woff2") format("woff2"); }
+  html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+  #stage { position: relative; width: 1080px; height: 1920px; overflow: hidden; font-family: "Poppins", sans-serif; }
+  #cv { position: absolute; inset: 0; }
+  #vignette { position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 48%, rgba(0,0,0,0) 58%, rgba(30,15,5,0.45) 100%); }
+  #redflash { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(220,30,40,0.2) 20%, rgba(170,10,20,0.9) 100%); }
+  #flash { position: absolute; inset: 0; background: #fff; opacity: 0; pointer-events: none; }
+  .ext { color: #fff; text-shadow: 0 3px 0 #2b1d12, 0 6px 0 #2b1d12, 0 9px 0 #2b1d12, 0 12px 20px rgba(0,0,0,0.5);
+    -webkit-text-stroke: 5px #2b1d12; paint-order: stroke fill; }
+  #caption { position: absolute; left: 60px; right: 60px; top: 470px; text-align: center; font-size: 96px; font-weight: 900;
+    line-height: 1.08; letter-spacing: -1px; transform-origin: 50% 70%; }
+  #caption .k { color: #ffcf4a; }
+  #caption .who { display: block; font-size: 46px; letter-spacing: 3px; color: #ffe9c2; margin-bottom: 4px; }
+  #label { position: absolute; left: 0; right: 0; top: 200px; text-align: center; transform-origin: 50% 50%; }
+  #label .chip { display: inline-block; background: #fff4dc; color: #2b1d12; font-size: 84px; font-weight: 900; padding: 4px 46px 8px;
+    border: 7px solid #2b1d12; border-radius: 18px; box-shadow: 0 10px 0 #2b1d12, 0 22px 40px rgba(0,0,0,0.35); letter-spacing: 1px; }
+  #label .hot { color: #d7263d; }
+  #label.hook .chip { background: none; border: 0; box-shadow: none; padding: 0 50px; font-size: 112px; line-height: 1.02; color: #fff;
+    text-shadow: 0 4px 0 #2b1d12, 0 8px 0 #2b1d12, 0 12px 0 #2b1d12, 0 16px 26px rgba(0,0,0,0.5);
+    -webkit-text-stroke: 6px #2b1d12; paint-order: stroke fill; }
+  #label.hook .hot { color: #ff3b4e; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="cv" width="1080" height="1920"></canvas>
+  <div id="vignette"></div>
+  <div id="redflash"></div>
+  <div id="flash"></div>
+  <div id="label"></div>
+  <div id="caption" class="ext"></div>
+</div>
+<script type="module" src="/web/storybook.js"></script>
+</body>
+</html>

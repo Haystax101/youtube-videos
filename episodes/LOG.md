@@ -7,6 +7,7 @@
 | 003 | 2026-11-24 | Drinking 10 litres of water a day | 3 | STYLE TEST news: BREAKING lower third + fact ticker, karaoke captions (Anton), af_heart, speed 1.15, urgent music. Hook unchanged | |
 | 004 | 2026-11-24 | Sitting down all day, every day | 4 | STYLE TEST lowpoly: faceted 3D low-poly people (Gary rebuilt as a jointed 3D human, plus a voiced doctor bf_emma), floating diorama rooms, real poses + death collapse, Poppins extruded captions, NO deaths counter, speed 1.16, F-Am-Dm-G 96 bpm. Hook unchanged | |
 | 006 | 2026-11-24 | Stung by 1,000 bees (absurd single event) | - | NEW RULES DEMO: 29 s, cold open on the swarm, premise label "1,000 BEE STINGS. THEN WHAT?", SECOND/MINUTE/HOUR labels, plain premise title, lowpoly, speed 1.18 | |
+| 007 | 2026-11-24 | Groom of the Stool: you wipe Henry VIII's bottom (true history story) | - | STYLE TEST storybook: AI painted backgrounds (free Cloudflare FLUX) + 2D costumed cast with dialogue (MiloQ-inspired, our own look); funny true-history format; 34 s | |
 
 ## Style test plan (george, 2026-11-24)
 

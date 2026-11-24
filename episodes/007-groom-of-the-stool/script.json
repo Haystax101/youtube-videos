@@ -1,0 +1,271 @@
+{
+ "title": "You get the worst job in history: wiping the King's bottom",
+ "style": "storybook",
+ "speed": 1.16,
+ "voices": {
+  "narrator": "am_michael",
+  "gary": "am_puck",
+  "king": "bm_george",
+  "lord": "bm_lewis"
+ },
+ "names": {
+  "king": "KING HENRY VIII",
+  "lord": "LORD",
+  "gary": "YOU"
+ },
+ "keywords": [
+  "bottom",
+  "stool",
+  "bribe",
+  "knighted",
+  "Anne",
+  "Boleyn",
+  "1526",
+  "1536"
+ ],
+ "backgrounds": {
+  "chamber": "Tudor royal bedchamber interior inside Hampton Court palace, rich red and gold tapestries, oak panelling, candles, four-poster bed in the background, floor in the foreground",
+  "hall": "grand Tudor palace great hall interior, hammerbeam wooden roof, long tables, banners, stone fireplace, open floor in the foreground",
+  "corridor": "dim Tudor palace stone corridor with torches on the walls and arched doorways, shadowy, open floor in the foreground",
+  "scaffold": "wooden execution scaffold platform on Tower Hill outside the Tower of London, grey cloudy sky, castle walls behind, platform floor in the foreground",
+  "heaven": "heaven made of fluffy pastel clouds, golden light rays, soft pink and blue sky, cloud floor in the foreground"
+ },
+ "beats": [
+  {
+   "label": "THE WORST JOB IN *HISTORY?*",
+   "hook": true,
+   "bg": "chamber",
+   "camera": "push",
+   "props": [
+    {
+     "type": "stool",
+     "x": 0.86,
+     "s": 0.95
+    }
+   ],
+   "cast": [
+    {
+     "id": "king",
+     "who": "king_henry",
+     "x": 0.6,
+     "pose": "hips",
+     "expr": "smug"
+    },
+    {
+     "id": "gary",
+     "who": "gary_tudor",
+     "x": 0.24,
+     "pose": "hold",
+     "hold": "cloth",
+     "expr": "shocked"
+    }
+   ],
+   "lines": [
+    {
+     "text": "What if your job was wiping the King of England's bottom?"
+    }
+   ]
+  },
+  {
+   "label": "1526",
+   "bg": "chamber",
+   "camera": "close",
+   "focus": "king",
+   "props": [
+    {
+     "type": "stool",
+     "x": 0.86,
+     "s": 0.95
+    }
+   ],
+   "cast": [
+    {
+     "id": "king",
+     "who": "king_henry",
+     "x": 0.6,
+     "pose": "point",
+     "expr": "neutral",
+     "flip": true
+    },
+    {
+     "id": "gary",
+     "who": "gary_tudor",
+     "x": 0.24,
+     "pose": "hold",
+     "hold": "cloth",
+     "expr": "worried"
+    }
+   ],
+   "lines": [
+    {
+     "text": "You're Henry the Eighth's Groom of the Stool. A real job."
+    },
+    {
+     "text": "Chop chop.",
+     "speaker": "king"
+    }
+   ]
+  },
+  {
+   "label": "MONTH 1",
+   "bg": "hall",
+   "camera": "pan",
+   "cast": [
+    {
+     "id": "gary",
+     "who": "gary_tudor",
+     "x": 0.4,
+     "pose": "shrug",
+     "expr": "smug"
+    },
+    {
+     "id": "king",
+     "who": "king_henry",
+     "x": 0.74,
+     "pose": "idle",
+     "expr": "happy",
+     "hold": "goblet",
+     "flip": true
+    }
+   ],
+   "lines": [
+    {
+     "text": "Gross? Yes. But nobody else gets the King alone. Every single day."
+    }
+   ]
+  },
+  {
+   "label": "YEAR 2",
+   "bg": "corridor",
+   "camera": "push",
+   "fx": "coins",
+   "cast": [
+    {
+     "id": "lord",
+     "who": "lord",
+     "x": 0.7,
+     "pose": "hold",
+     "hold": "purse",
+     "expr": "smug",
+     "flip": true,
+     "enter": "right"
+    },
+    {
+     "id": "gary",
+     "who": "gary_tudor",
+     "x": 0.3,
+     "pose": "shrug",
+     "expr": "happy"
+    }
+   ],
+   "lines": [
+    {
+     "text": "Put in a good word for me?",
+     "speaker": "lord"
+    },
+    {
+     "text": "So lords bribe you for a word in his ear. You get rich. You get knighted."
+    }
+   ]
+  },
+  {
+   "label": "1536",
+   "bg": "hall",
+   "camera": "push",
+   "focus": "king",
+   "cast": [
+    {
+     "id": "anne",
+     "who": "anne",
+     "x": 0.2,
+     "pose": "idle",
+     "expr": "worried"
+    },
+    {
+     "id": "gary",
+     "who": "gary_tudor",
+     "x": 0.47,
+     "pose": "idle",
+     "expr": "worried"
+    },
+    {
+     "id": "king",
+     "who": "king_henry",
+     "x": 0.77,
+     "pose": "point",
+     "expr": "angry",
+     "flip": true
+    }
+   ],
+   "lines": [
+    {
+     "text": "Then the King turns on his wife, Anne Boleyn. And he needs men to blame."
+    }
+   ]
+  },
+  {
+   "label": "MAY 17, 1536",
+   "bg": "scaffold",
+   "camera": "push",
+   "death": true,
+   "deathOf": "gary",
+   "props": [
+    {
+     "type": "block",
+     "x": 0.38,
+     "s": 0.9
+    }
+   ],
+   "cast": [
+    {
+     "id": "gary",
+     "who": "gary_tudor",
+     "x": 0.36,
+     "pose": "panic",
+     "expr": "shocked"
+    },
+    {
+     "id": "exe",
+     "who": "executioner",
+     "x": 0.7,
+     "pose": "axe",
+     "hold": "axe",
+     "expr": "neutral",
+     "flip": true
+    }
+   ],
+   "lines": [
+    {
+     "text": "Your best friend, the King, sends you to the axe."
+    }
+   ]
+  },
+  {
+   "label": "",
+   "bg": "heaven",
+   "camera": "wide",
+   "cast": [
+    {
+     "id": "gary",
+     "who": "gary_tudor",
+     "x": 0.5,
+     "pose": "shrug",
+     "expr": "dead",
+     "ghost": true
+    }
+   ],
+   "lines": [
+    {
+     "text": "You died. Comment what stupid shenanigans Gary should try tomorrow."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "style": "storybook: AI-generated painted backgrounds (Cloudflare FLUX.2 klein) + 2D costumed characters with dialogue",
+  "format": "funny true history story (eccentric job) instead of a health what-if",
+  "cast": "4 speaking/acting characters, named speaker captions",
+  "hook": "premise question + THE WORST JOB IN HISTORY? label, cold open on the King and the stool",
+  "speed": 1.16
+ }
+}

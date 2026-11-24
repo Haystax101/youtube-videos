@@ -32,6 +32,7 @@ STYLES = {
     "cartoon": dict(bpm=104, chords=[[60, 64, 67], [55, 59, 62], [57, 60, 64], [53, 57, 60]]),  # C G Am F
     "noir": dict(bpm=70, chords=[[57, 60, 64], [50, 53, 57], [52, 56, 59], [57, 60, 64]]),      # Am Dm E Am, slow minor
     "news": dict(bpm=126, chords=[[50, 53, 57], [46, 50, 53], [48, 52, 55], [45, 49, 52]]),     # Dm Bb C A, urgent
+    "storybook": dict(bpm=92, chords=[[50, 53, 57], [48, 52, 55], [50, 53, 57], [45, 49, 52]]),  # Dm C Dm A, folky/medieval
     "lowpoly": dict(bpm=96, chords=[[53, 57, 60], [57, 60, 64], [50, 53, 57], [55, 59, 62]]),  # F Am Dm G, light and bouncy
 }
 
