@@ -27,9 +27,17 @@ def note(m):
     return 440 * 2 ** ((m - 69) / 12)
 
 
-def music(total, bpm=104):
+# per-style music presets (script.json "style"); script "music": {"bpm": N} overrides bpm
+STYLES = {
+    "cartoon": dict(bpm=104, chords=[[60, 64, 67], [55, 59, 62], [57, 60, 64], [53, 57, 60]]),  # C G Am F
+    "noir": dict(bpm=70, chords=[[57, 60, 64], [50, 53, 57], [52, 56, 59], [57, 60, 64]]),      # Am Dm E Am, slow minor
+    "news": dict(bpm=126, chords=[[50, 53, 57], [46, 50, 53], [48, 52, 55], [45, 49, 52]]),     # Dm Bb C A, urgent
+}
+
+
+def music(total, bpm=104, chords=None):
     beat = 60 / bpm
-    chords = [[60, 64, 67], [55, 59, 62], [57, 60, 64], [53, 57, 60]]  # C G Am F
+    chords = chords or STYLES["cartoon"]["chords"]
     pattern = [0, 1, 2, 1, 0, 1, 2, 1]
     cache = {}
     out = np.zeros(int(total * SR) + SR)
@@ -68,6 +76,18 @@ def bell():
     return sum(np.sin(2 * np.pi * f * t) * a for f, a in [(880, 1), (1760, .4), (2640, .2)]) * np.exp(-t * 3.5) * 0.5
 
 
+def clack():
+    """typewriter key: a short filtered noise click"""
+    n = int(0.05 * SR); t = np.arange(n) / SR
+    return rng.normal(0, 1, n) * np.exp(-t * 120) * 0.8 + np.sin(2 * np.pi * 2400 * t) * np.exp(-t * 90) * 0.4
+
+
+def sting():
+    """news 'bong': two stacked tones"""
+    n = int(0.7 * SR); t = np.arange(n) / SR
+    return (np.sin(2 * np.pi * 587 * t) + 0.7 * np.sin(2 * np.pi * 880 * t)) * np.exp(-t * 5) * 0.5
+
+
 def place(buf, clip, at, gain):
     s = int(at * SR); e = min(len(buf), s + len(clip))
     if s < len(buf): buf[s:e] += clip[: e - s] * gain
@@ -77,8 +97,11 @@ def main(ep_dir):
     ep = Path(ep_dir)
     voice, sr = sf.read(ep / "voice.wav"); assert sr == SR
     tl = json.loads((ep / "timeline.json").read_text())
+    script = json.loads((ep / "script.json").read_text())
+    style = script.get("style", "cartoon")
+    preset = {**STYLES.get(style, STYLES["cartoon"]), **script.get("music", {})}
     n = len(voice)
-    bed = music(n / SR)
+    bed = music(n / SR, preset["bpm"], preset["chords"])
     bed /= np.abs(bed).max() + 1e-9
     # duck the music under speech
     env = np.convolve(np.abs(voice), np.ones(2400) / 2400, 'same')
@@ -87,8 +110,15 @@ def main(ep_dir):
     fade = np.clip(idx / (0.5 * SR), 0, 1) * np.clip((n - idx) / (1.5 * SR), 0, 1)
     sfx = np.zeros(n)
     for i, b in enumerate(tl["beats"]):
-        if i: place(sfx, whoosh(), b["start"] - 0.08, 0.25)
-        place(sfx, pop(), b["start"] + 0.05, 0.35)
+        if style == "noir":
+            for k, w in enumerate(b["words"]):  # a key clack as each caption group types out
+                if k % 2 == 0: place(sfx, clack(), w["s"], 0.12)
+        elif style == "news":
+            if i: place(sfx, whoosh(), b["start"] - 0.08, 0.25)
+            place(sfx, sting() if i in (0, 1) else pop(), b["start"] + 0.05, 0.35)
+        else:
+            if i: place(sfx, whoosh(), b["start"] - 0.08, 0.25)
+            place(sfx, pop(), b["start"] + 0.05, 0.35)
         if b.get("deathAt"):
             place(sfx, thud(), b["deathAt"], 0.8)
             place(sfx, bell(), b["deathAt"] + 0.05, 0.45)

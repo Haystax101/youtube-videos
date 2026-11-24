@@ -1,0 +1,130 @@
+{
+ "title": "If you never slept again, how long until you die?",
+ "style": "noir",
+ "deathsBefore": 1,
+ "speed": 1.06,
+ "voices": {
+  "narrator": "am_onyx"
+ },
+ "beats": [
+  {
+   "label": "HOW LONG UNTIL YOU *DIE?*",
+   "hook": true,
+   "scene": "bedroom",
+   "gary": {
+    "expr": "neutral"
+   },
+   "camera": "face",
+   "lines": [
+    {
+     "text": "If you never slept again, how long would it take for you to die?"
+    }
+   ]
+  },
+  {
+   "label": "NIGHT 1",
+   "scene": "bedroom",
+   "gary": {
+    "expr": "neutral"
+   },
+   "camera": "pan",
+   "lines": [
+    {
+     "text": "Night one. The city sleeps. You don't."
+    }
+   ]
+  },
+  {
+   "label": "DAY 2",
+   "scene": "kitchen",
+   "gary": {
+    "expr": "worried"
+   },
+   "camera": "table",
+   "lines": [
+    {
+     "text": "Day two. Your reactions are as bad as a drunk driver's."
+    }
+   ]
+  },
+  {
+   "label": "DAY 4",
+   "scene": "bathroom",
+   "gary": {
+    "expr": "shocked"
+   },
+   "camera": "face",
+   "lines": [
+    {
+     "text": "Day four. The walls breathe. Your brain steals tiny naps without asking."
+    }
+   ]
+  },
+  {
+   "label": "DAY 11",
+   "scene": "bedroom",
+   "gary": {
+    "expr": "sick"
+   },
+   "camera": "push",
+   "lines": [
+    {
+     "text": "You'd think you'd drop dead by now. You don't. In 1964, Randy Gardner stayed awake for eleven days, and lived."
+    }
+   ]
+  },
+  {
+   "label": "WEEK 3",
+   "scene": "nightstreet",
+   "gary": {
+    "expr": "sick"
+   },
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "But lab rats kept awake die within weeks."
+    },
+    {
+     "text": "I'm fine.",
+     "speaker": "gary"
+    }
+   ]
+  },
+  {
+   "label": "DAY 23",
+   "scene": "nightstreet",
+   "gary": {
+    "expr": "sick"
+   },
+   "camera": "low",
+   "death": true,
+   "lines": [
+    {
+     "text": "Day twenty three. You step off the kerb, and close your eyes. Just for a second."
+    }
+   ]
+  },
+  {
+   "label": "",
+   "scene": "void",
+   "gary": {
+    "expr": "dead",
+    "pose": "ghost"
+   },
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "You died. Comment what stupid shenanigans Gary should try tomorrow."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "style": "noir: black and white film, grain, blinds shadows, red accent text",
+  "captions": "typewriter, 5-word boxes, left aligned",
+  "narrator": "am_onyx (deep)",
+  "speed": 1.06,
+  "music": "slow minor 70 bpm, typewriter clacks instead of pops",
+  "hook": "how long until you die (unchanged, to isolate style)"
+ }
+}

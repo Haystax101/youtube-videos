@@ -16,6 +16,12 @@ if (LANDSCAPE) {
   const cv = document.getElementById('gl'); cv.width = W; cv.height = H;
 }
 const HUD = { counter: true, ...(script.hud || {}) };
+// Visual style: "cartoon" (default), "noir" (b&w film, grain, blinds, typewriter captions),
+// "news" (breaking-news lower third, ticker, karaoke word captions).
+const STYLE = script.style || 'cartoon';
+document.body.classList.add('style-' + STYLE);
+if (STYLE === 'noir') await document.fonts.load('400 100px "Special Elite"');
+if (STYLE === 'news') await document.fonts.load('400 100px Anton');
 if (!HUD.counter) document.getElementById('counter').style.display = 'none';
 
 // ---------- utilities ----------
@@ -74,9 +80,9 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(LANDSCAPE ? 42 : 58, W / H, 0.05, 100);
-scene.add(new THREE.HemisphereLight(0xffffff, 0xd9c7a8, 2.1));
-const sun = new THREE.DirectionalLight(0xfff3e0, 1.9);
-sun.position.set(2.5, 6, 6); sun.target.position.set(0, 0.5, -1.5);
+const hemi = new THREE.HemisphereLight(0xffffff, 0xd9c7a8, STYLE === 'noir' ? 0.75 : 2.1); scene.add(hemi);
+const sun = new THREE.DirectionalLight(0xfff3e0, STYLE === 'noir' ? 3.4 : 1.9);
+if (STYLE === 'noir') sun.position.set(6, 5, 3); else sun.position.set(2.5, 6, 6); sun.target.position.set(0, 0.5, -1.5);
 sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.radius = 6; sun.shadow.bias = -0.0005;
 Object.assign(sun.shadow.camera, { left: -5, right: 5, top: 5, bottom: -3, near: 1, far: 20 });
 scene.add(sun, sun.target);
@@ -249,6 +255,24 @@ const rooms = {
     const moon = ball(0.8, '#f2e6c9'); g.add(at(moon, 5, 3.6, -16));
     return g;
   },
+  nightstreet() {
+    const g = new THREE.Group();
+    const tarmac = canvasTex(256, 256, (c, w, h) => { c.fillStyle = '#3b3d42'; c.fillRect(0, 0, w, h); const r = rng(41); for (let i = 0; i < 700; i++) { c.fillStyle = r() < 0.5 ? 'rgba(0,0,0,0.18)' : 'rgba(255,255,255,0.06)'; c.fillRect(r() * w, r() * h, 2, 2); } }, [12, 12]);
+    const road = new THREE.Mesh(new THREE.PlaneGeometry(60, 60), mat(0, tarmac)); road.rotation.x = -Math.PI / 2; road.receiveShadow = true; g.add(road);
+    for (let z = -20; z < 8; z += 2.2) { const d = new THREE.Mesh(new THREE.PlaneGeometry(0.16, 1.1), mat('#f2f2f2')); d.rotation.x = -Math.PI / 2; d.position.set(0.9, 0.01, z); g.add(d); }
+    const kerb = box(0.3, 0.18, 40, '#9a9a9a'); g.add(at(kerb, -2.6, 0.09, -6));
+    const pave = new THREE.Mesh(new THREE.PlaneGeometry(4, 40), mat('#77787c')); pave.rotation.x = -Math.PI / 2; pave.position.set(-4.7, 0.18, -6); g.add(pave);
+    const brick = canvasTex(512, 512, (c, w, h) => { c.fillStyle = '#5a2e26'; c.fillRect(0, 0, w, h); const r = rng(43); const bh = 32, bw = 96; for (let y = 0; y < h; y += bh) for (let x = -((y / bh) % 2) * bw / 2; x < w; x += bw) { c.fillStyle = shade('#8a4a3a', (r() - 0.5) * 0.12); c.fillRect(x + 3, y + 3, bw - 6, bh - 6); } }, [6, 3]);
+    const wall = new THREE.Mesh(new THREE.PlaneGeometry(40, 9), mat(0, brick)); wall.position.set(0, 4.5, -9); wall.receiveShadow = true; g.add(wall);
+    const lamp = new THREE.Group();
+    lamp.add(at(cyl(0.07, 0.1, 4.2, '#2a2a2a', 16), 0, 2.1, 0));
+    lamp.add(at(box(0.9, 0.08, 0.08, '#2a2a2a'), 0.42, 4.15, 0));
+    const bulb = new THREE.Mesh(new THREE.SphereGeometry(0.2, 20, 12), new THREE.MeshBasicMaterial({ color: '#fff6d0' })); bulb.position.set(0.8, 3.98, 0); lamp.add(bulb);
+    g.add(at(lamp, -2.9, 0, -2.2));
+    const pool = new THREE.Mesh(new THREE.CircleGeometry(2.2, 40), new THREE.MeshBasicMaterial({ color: '#fff3c4', transparent: true, opacity: 0.22, depthWrite: false })); pool.rotation.x = -Math.PI / 2; pool.position.set(-2.1, 0.02, -2.2); g.add(pool);
+    const puddle = new THREE.Mesh(new THREE.CircleGeometry(0.9, 32), new THREE.MeshBasicMaterial({ color: '#9fb0c0', transparent: true, opacity: 0.35, depthWrite: false })); puddle.scale.y = 0.45; puddle.rotation.x = -Math.PI / 2; puddle.position.set(1.4, 0.015, 0.8); g.add(puddle);
+    return g;
+  },
   void() {
     const g = new THREE.Group();
     const r = rng(9);
@@ -266,7 +290,7 @@ const builtRooms = {};
 function room(name) {
   if (!builtRooms[name]) { builtRooms[name] = (rooms[name] || rooms.bedroom)(); scene.add(builtRooms[name]); }
   for (const k in builtRooms) builtRooms[k].visible = k === name;
-  scene.background = name === 'void' ? skyTex : name === 'space' ? starTex : name === 'outdoor' ? outdoorSky : new THREE.Color('#222');
+  scene.background = name === 'void' ? skyTex : name === 'space' || name === 'nightstreet' ? starTex : name === 'outdoor' ? outdoorSky : new THREE.Color('#222');
 }
 
 // ---------- Gary ----------
@@ -387,6 +411,14 @@ const sandwichTex = canvasTex(256, 200, (c) => {
   layer(120, '#e8b96a', 50); c.fillStyle = '#6cc04a'; c.beginPath(); for (let x = 20; x <= 236; x += 24) c.lineTo(x, 112 + (x / 24 % 2) * 14); c.lineTo(236, 125); c.lineTo(20, 125); c.fill(); c.stroke();
   layer(92, '#e85a4a', 24); layer(78, '#f6d34a', 18); layer(26, '#e8b96a', 54);
 });
+const waterTex = canvasTex(160, 240, (c, w, h) => {
+  c.lineWidth = 8; c.strokeStyle = INK; c.lineJoin = 'round';
+  c.fillStyle = 'rgba(210,240,255,0.55)'; c.beginPath(); c.moveTo(20, 20); c.lineTo(140, 20); c.lineTo(122, 225); c.lineTo(38, 225); c.closePath(); c.fill();
+  c.fillStyle = '#5cc0f2'; c.beginPath(); c.moveTo(29, 80); c.lineTo(131, 80); c.lineTo(122, 225); c.lineTo(38, 225); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(20, 20); c.lineTo(140, 20); c.lineTo(122, 225); c.lineTo(38, 225); c.closePath(); c.stroke();
+  c.strokeStyle = 'rgba(255,255,255,0.85)'; c.lineWidth = 10; c.beginPath(); c.moveTo(48, 100); c.lineTo(54, 190); c.stroke();
+});
+function water() { const m = flat(0.32, 0.48, waterTex); m.position.set(0.62, 1.05, GARY_Z + 0.3); return m; }
 function sandwich() { const m = flat(0.75, 0.59, sandwichTex); m.position.set(0.15, 1.24, 0.35); return m; }
 function textSprite(txt, color, size = 0.32) {
   const t = canvasTex(256, 128, (c, w, h) => { c.font = '700 84px Fredoka'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.lineWidth = 16; c.strokeStyle = INK; c.lineJoin = 'round'; c.strokeText(txt, w / 2, h / 2); c.fillStyle = color; c.fillText(txt, w / 2, h / 2); });
@@ -407,8 +439,9 @@ const groups = [];
 timeline.beats.forEach(b => {
   let cur = null;
   b.words.forEach((w, i) => {
-    if (!cur || cur.words.length >= 3 || cur.speaker !== w.speaker || cur.chars + w.w.length > 13) { cur = { words: [], speaker: w.speaker, chars: 0, s: w.s }; groups.push(cur); }
-    cur.words.push(w.w); cur.chars += w.w.length + 1; cur.e = w.e;
+    const [maxW, maxC] = STYLE === 'noir' ? [5, 24] : [3, 13];
+    if (!cur || cur.words.length >= maxW || cur.speaker !== w.speaker || cur.chars + w.w.length > maxC) { cur = { words: [], times: [], speaker: w.speaker, chars: 0, s: w.s }; groups.push(cur); }
+    cur.words.push(w.w); cur.times.push([w.s, w.e]); cur.chars += w.w.length + 1; cur.e = w.e;
     if (/[.,!?;:]$/.test(w.w)) cur = null;
   });
 });
@@ -464,6 +497,7 @@ window.renderFrame = (t) => {
   props.clear();
   for (const pr of b.props || []) {
     if (pr.type === 'soup') props.add(soup());
+    if (pr.type === 'water') { const m = water(); m.position.y += 0.03 * Math.sin(t * 3); props.add(m); }
     if (pr.type === 'sandwich') {
       const m = sandwich(); const lastE = b.words[b.words.length - 1].e; const k = ease((t - (b.start + (lastE - b.start) * 0.55)) / ((lastE - b.start) * 0.45));
       m.position.lerp(new THREE.Vector3(0.02, MOUTH.y - 0.05, GARY_Z + 0.25), k); m.rotation.z = -0.25 * k; props.add(m);
@@ -501,6 +535,23 @@ window.renderFrame = (t) => {
   redEl.style.opacity = since < 0.6 ? 0.45 * (1 - since / 0.6) : 0;
   flashEl.style.opacity = bi > 0 && lt < 0.12 ? 0.55 * (1 - lt / 0.12) : 0;
 
+  const lowerTxt = document.querySelector('#lower .txt');
+  if (STYLE === 'news') {
+    const lab = b.hook ? '' : (b.label || '');
+    const lowerEl = $('lower');
+    lowerEl.style.opacity = lab ? 1 : 0;
+    lowerTxt.innerHTML = lab.replace(/\*([^*]+)\*/g, '<span class="hot">$1</span>');
+    lowerEl.style.transform = `scaleX(${lerp(0.2, 1, backOut(lt / 0.3))})`;
+    const tk = $('ticker').firstChild; tk.textContent = (script.ticker || '') + '     ' + (script.ticker || '');
+    const tw = tk.scrollWidth / 2 || 1; tk.style.transform = `translateX(${-((t * 230) % tw)}px)`;
+    $('live').style.opacity = (t % 1.2) < 0.85 ? 1 : 0.55;
+  }
+  if (STYLE === 'noir') {
+    const gc = $('grain'), gx = gc.getContext('2d'); const id = gx.createImageData(gc.width, gc.height); const r = rng(Math.floor(t * 30) + 1);
+    for (let i = 0; i < id.data.length; i += 4) { const v = r() * 255; id.data[i] = id.data[i + 1] = id.data[i + 2] = v; id.data[i + 3] = 255; }
+    gx.putImageData(id, 0, 0);
+    const fr = rng(Math.floor(t * 12) + 7)(); $('gl').style.opacity = 0.93 + 0.07 * fr;
+  }
   if (b.label) {
     labelEl.innerHTML = b.label.replace(/\*([^*]+)\*/g, '<span class="hot">$1</span>');
     labelEl.className = 'outlined' + (b.hook ? ' hook' : '');
@@ -519,9 +570,19 @@ window.renderFrame = (t) => {
 
   const g = captionAt(t);
   if (g) {
-    capEl.textContent = g.words.join(' ');
     capEl.className = 'outlined' + (g.speaker === 'gary' ? ' gary' : '');
-    capEl.style.transform = `scale(${lerp(1.22, 1, easeOut((t - g.s) / 0.12))})`;
+    if (STYLE === 'noir') {
+      // typewriter: letters appear across the first 60% of the group's spoken time
+      const full = g.words.join(' '); const n = Math.ceil(full.length * clamp((t - g.s) / Math.max(0.2, (g.e - g.s) * 0.6)));
+      capEl.innerHTML = '<span class="box">' + full.slice(0, Math.max(1, n)).replace(/&/g, '&amp;').replace(/</g, '&lt;') + '</span>';
+      capEl.style.transform = 'none';
+    } else if (STYLE === 'news') {
+      capEl.innerHTML = g.words.map((w, i) => `<span class="w${t >= g.times[i][0] - 0.03 && (i === g.words.length - 1 || t < g.times[i + 1][0] - 0.03) ? ' on' : ''}">${w.replace(/</g, '&lt;')}</span>`).join(' ');
+      capEl.style.transform = `scale(${lerp(1.12, 1, easeOut((t - g.s) / 0.1))})`;
+    } else {
+      capEl.textContent = g.words.join(' ');
+      capEl.style.transform = `scale(${lerp(1.22, 1, easeOut((t - g.s) / 0.12))})`;
+    }
     capEl.style.opacity = 1;
   } else capEl.style.opacity = 0;
 

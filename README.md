@@ -19,13 +19,17 @@ Preview stills: `node pipeline/render.mjs episodes/<slug> --stills 2,10,20`.
 
 ## Script vocabulary (see web/scene.js)
 
-- scene: bedroom, bathroom, kitchen (round table), dentist, void (heaven, for the ending)
+- scene: bedroom, bathroom, kitchen (round table), dentist, nightstreet (road, brick wall, street lamp), void (heaven, for the ending)
 - gary.expr: happy, neutral, worried, shocked, sick, dead
 - gary.acc: mask, mask_dirty, spots, flies; gary.pose: ghost
-- props: soup, sandwich (needs a scene with a table: kitchen)
+- props: soup, sandwich (needs a scene with a table: kitchen), water (a glass by Gary's hand)
 - fx: co2
 - camera: push, face, table, pan, wide
 - lines[].speaker: narrator (am_michael) or gary (am_puck)
+- style (top level): cartoon (default); noir (b&w film, grain, window-blind shadows, typewriter
+  captions, slow minor music, typewriter clacks); news (BREAKING lower third shows the label, `ticker`
+  text scrolls under it, LIVE bug, karaoke word captions, urgent music). `voices` overrides the
+  narrator/gary voices, `music: {"bpm": N}` overrides the tempo.
 - death: true on the beat where Gary dies; increments the counter after the last word
 
 New ideas usually need one or two new props, accessories or scenes added to scene.js.

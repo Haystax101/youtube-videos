@@ -46,7 +46,9 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    - Target 30-45 s of audio. `deathsBefore` = previous episode's total deaths.
    - Add an `"experiment"` object recording what is deliberately different this time
      (e.g. tempo/speed, voice, hook wording, setting, camera style, length). Change one
-     or two knobs per episode; keep what the log says worked.
+     or two knobs per episode; keep what the log says worked. Visual `style` (cartoon, noir,
+     news, or a new one) is a knob too: follow the "Style test plan" in `episodes/LOG.md`, so
+     each style gets several episodes before it is judged.
 5. If the idea needs new props, rooms, accessories or fx, add them to `web/scene.js`
    (and list them in README's vocabulary). Keep Gary's design unchanged.
 6. `python3 pipeline/tts.py EP && python3 pipeline/mix.py EP`, then render stills

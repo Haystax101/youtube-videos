@@ -1,0 +1,35 @@
+{
+  "title": "If you drank ten litres of water a day, how long until you die?",
+  "style": "news",
+  "deathsBefore": 2,
+  "speed": 1.15,
+  "voices": {"narrator": "af_heart"},
+  "ticker": "KIDNEYS CAN ONLY CLEAR ABOUT 1 LITRE OF WATER AN HOUR  •  LOW BLOOD SODIUM IS CALLED HYPONATRAEMIA  •  DOCTORS SAY: DRINK WHEN YOU'RE THIRSTY  •  2007: WOMAN DIES AFTER RADIO WATER-DRINKING CONTEST  •",
+  "beats": [
+    {"label": "HOW LONG UNTIL YOU *DIE?*", "hook": true, "scene": "kitchen", "gary": {"expr": "happy"}, "props": [{"type": "water"}], "camera": "face",
+     "lines": [{"text": "If you drank ten litres of water every single day, how long would it take for you to die?"}]},
+    {"label": "DAY 1", "scene": "kitchen", "gary": {"expr": "happy"}, "props": [{"type": "water"}], "camera": "table",
+     "lines": [{"text": "Day one. Forty glasses of water. Your skin is glowing."},
+               {"text": "Hydration!", "speaker": "gary"}]},
+    {"label": "DAY 2", "scene": "bathroom", "gary": {"expr": "worried"}, "camera": "face",
+     "lines": [{"text": "You pee every forty minutes. Your kidneys are working flat out."}]},
+    {"label": "WEEK 1", "scene": "bedroom", "gary": {"expr": "neutral"}, "props": [{"type": "water"}], "camera": "push",
+     "lines": [{"text": "Good news. Spread over the day, healthy kidneys can just about keep up. You can't overdose on water, right?"}]},
+    {"label": "*MYTH*", "scene": "outdoor", "gary": {"expr": "shocked"}, "camera": "pan",
+     "lines": [{"text": "Wrong. Drink faster than about a litre an hour, and the extra water dilutes the salt in your blood."}]},
+    {"label": "MONTH 1", "scene": "dentist", "gary": {"expr": "sick"}, "camera": "face",
+     "lines": [{"text": "Headaches. Nausea. Your cells swell up like water balloons. Including the ones in your brain."}]},
+    {"label": "MONTH 2", "scene": "outdoor", "gary": {"expr": "sick"}, "props": [{"type": "water"}], "camera": "low", "death": true,
+     "lines": [{"text": "Then on a hot day, you chug four litres in an hour. Your brain swells against your skull."}]},
+    {"label": "", "scene": "void", "gary": {"expr": "dead", "pose": "ghost"}, "camera": "wide",
+     "lines": [{"text": "You died. Comment what stupid shenanigans Gary should try tomorrow."}]}
+  ],
+  "experiment": {
+    "style": "breaking news: red BREAKING lower third, fact ticker, LIVE bug",
+    "captions": "Anton uppercase, karaoke highlight on the spoken word",
+    "narrator": "af_heart (female anchor)",
+    "speed": 1.15,
+    "music": "urgent minor 126 bpm with news stings",
+    "hook": "how long until you die (unchanged, to isolate style)"
+  }
+}
