@@ -48,16 +48,20 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    - Cold open: beat 1 shows the most extreme/absurd moment (the death or the craziest image)
      while the hook question is asked, then the story rewinds to DAY 1.
    - Mix in single absurd-event premises ("What happens if you're bitten by 10,000 snakes",
-     "you swallow a magnet") alongside life-change ones; at least one of each per day.
+     "you swallow a magnet") alongside life-change ones; at least one of each per day. For
+     an absurd event, time labels run SECOND 1, MINUTE 1, HOUR 1, DAY 2. Hook label can name
+     the premise (e.g. `1,000 BEE STINGS. *THEN WHAT?*`) instead of HOW LONG UNTIL YOU DIE.
+     Episode 006-bee-stings is the template.
    - Suggested YouTube titles must name the premise in plain words ("What happens if you sit
      down all day?"), never vague ones like "would you actually survive this long?". No "times died" counter on screen (george: clutter); it is off
      by default, so don't set `hud.counter`.
    - Add an `"experiment"` object recording what is deliberately different this time
      (e.g. tempo/speed, voice, hook wording, setting, camera style, length). Change one
-     or two knobs per episode; keep what the log says worked. Visual `style` is a knob too: follow the "Style test plan" in `episodes/LOG.md`, so
+     or two knobs per episode; keep what the log says worked. Default `"style": "lowpoly"` (web/lowpoly.js; best early views). Visual `style` is a knob too: follow the "Style test plan" in `episodes/LOG.md`, so
      each style gets several episodes before it is judged.
-5. If the idea needs new props, rooms, accessories or fx, add them to `web/scene.js`
-   (and list them in README's vocabulary). Keep Gary's design unchanged.
+5. If the idea needs new props, rooms, accessories or fx, add them to the style's renderer
+   (`web/lowpoly.js` for lowpoly, `web/scene.js` for cartoon) and list them in README's
+   vocabulary. Build what the idea needs; don't force reuse of the same rooms every video.
 6. `python3 pipeline/tts.py EP && python3 pipeline/mix.py EP`, then render stills
    (`NODE_PATH=$(npm root -g) node pipeline/render.mjs EP --stills 1,8,15,...`) and look
    at them. Fix anything broken (overlaps, missing props, text off screen) before the

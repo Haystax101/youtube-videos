@@ -64,11 +64,12 @@ locked to private.
 
 A separate renderer: faceted, flat-shaded 3D people with real joints in floating diorama rooms.
 `pipeline/render.mjs` loads `web/<style>.html` when it exists, else `web/index.html`. No deaths counter.
-- scene: livingroom, office, car (convertible on a moving road), hospital, gaming, void
+- scene: livingroom, office, car (convertible on a moving road), hospital, gaming, garden (lawn, fence, beehive), void
 - gary: `pose` (stand, sit, type, hunch, sofa, slouch, drive, bedsit, game, clipboard, ghost),
   `expr` (happy, neutral, worried, tired, shocked, sick, dead), `build` 0..1 (weight gain)
 - cast: `[{"who": "doctor", "pose": "clipboard"}]`; a line with `"speaker": "doctor"` moves the doctor's mouth
   (give the voice in `voices`, e.g. `"doctor": "bf_emma"`)
-- props: pizza; fx: clot, clot_move; camera: push, face, wide, side, low, front, two, legs
+- gary.welts: true (red sting bumps on the face); script `keywords`: extra caption words to highlight
+- props: pizza; fx: clot, clot_move, bees (full swarm), bees_few; camera: push, face, wide, side, low, front, two, legs
 - death: clutches chest, then slumps; red pulse
 New rooms, people (PEOPLE) and poses (POSES) are plain data in web/lowpoly.js.

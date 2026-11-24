@@ -15,3 +15,14 @@ Small life changes with escalating consequences. Remove an idea once it's used.
 - Wearing headphones at max volume all day
 - Never brushing your teeth
 - Living on a diet of only carrots
+
+## Absurd single events (Veo-style; one per day alongside life changes)
+
+- Swallowing a magnet (then a second one)
+- Falling into a vat of honey
+- Being bitten by 10,000 ants
+- Drinking a whole bottle of soy sauce
+- Getting struck by lightning
+- Eating a spoonful of the hottest chilli in the world
+- Falling into a pit of 1 million marbles
+- Sneezing with your eyes open

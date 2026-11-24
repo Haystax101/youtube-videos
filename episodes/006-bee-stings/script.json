@@ -1,0 +1,138 @@
+{
+ "title": "What happens if you get stung by 1,000 bees?",
+ "style": "lowpoly",
+ "speed": 1.18,
+ "keywords": [
+  "bees",
+  "stings",
+  "venom",
+  "kidneys",
+  "muscles",
+  "water"
+ ],
+ "beats": [
+  {
+   "label": "1,000 BEE STINGS. *THEN WHAT?*",
+   "hook": true,
+   "scene": "garden",
+   "gary": {
+    "pose": "stand",
+    "expr": "shocked",
+    "welts": true
+   },
+   "fx": "bees",
+   "camera": "push",
+   "lines": [
+    {
+     "text": "What happens if you get stung by a thousand bees?"
+    }
+   ]
+  },
+  {
+   "label": "SECOND 1",
+   "scene": "garden",
+   "gary": {
+    "pose": "stand",
+    "expr": "happy"
+   },
+   "fx": "bees_few",
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "You kick a beehive. Fifty thousand bees come out."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 1",
+   "scene": "garden",
+   "gary": {
+    "pose": "stand",
+    "expr": "shocked",
+    "welts": true
+   },
+   "fx": "bees",
+   "camera": "push",
+   "lines": [
+    {
+     "text": "Every sting pumps venom into you. And smells like a target for the next bee."
+    }
+   ]
+  },
+  {
+   "label": "*MYTH*",
+   "scene": "garden",
+   "gary": {
+    "pose": "stand",
+    "expr": "worried",
+    "welts": true
+   },
+   "fx": "bees",
+   "camera": "front",
+   "lines": [
+    {
+     "text": "Jump in water? The bees just wait for you to come up."
+    }
+   ]
+  },
+  {
+   "label": "HOUR 1",
+   "scene": "hospital",
+   "gary": {
+    "pose": "bedsit",
+    "expr": "sick",
+    "welts": true
+   },
+   "cast": [
+    {
+     "who": "doctor",
+     "pose": "clipboard"
+    }
+   ],
+   "camera": "two",
+   "lines": [
+    {
+     "text": "A thousand stings. The venom shreds your muscles, and the wreckage floods your kidneys."
+    }
+   ]
+  },
+  {
+   "label": "DAY 2",
+   "scene": "hospital",
+   "gary": {
+    "pose": "bedsit",
+    "expr": "sick",
+    "welts": true
+   },
+   "camera": "push",
+   "death": true,
+   "lines": [
+    {
+     "text": "Day two. Your kidneys give up."
+    }
+   ]
+  },
+  {
+   "label": "",
+   "scene": "void",
+   "gary": {
+    "pose": "ghost",
+    "expr": "dead"
+   },
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "You died. Comment what stupid shenanigans Gary should try tomorrow."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "premise": "single absurd event (Veo-style), not a slow life change",
+  "length": "target 25-30 s (was 43-48 s)",
+  "hook": "cold open on the swarm + premise-specific label instead of HOW LONG UNTIL YOU DIE",
+  "title": "names the premise plainly",
+  "style": "lowpoly (new default)",
+  "speed": 1.18
+ }
+}

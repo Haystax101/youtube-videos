@@ -6,6 +6,7 @@
 | 002 | 2026-11-24 | Never sleeping again | 2 | STYLE TEST noir: b&w film + grain + blinds, typewriter captions, am_onyx, speed 1.06, slow minor music. Hook unchanged | |
 | 003 | 2026-11-24 | Drinking 10 litres of water a day | 3 | STYLE TEST news: BREAKING lower third + fact ticker, karaoke captions (Anton), af_heart, speed 1.15, urgent music. Hook unchanged | |
 | 004 | 2026-11-24 | Sitting down all day, every day | 4 | STYLE TEST lowpoly: faceted 3D low-poly people (Gary rebuilt as a jointed 3D human, plus a voiced doctor bf_emma), floating diorama rooms, real poses + death collapse, Poppins extruded captions, NO deaths counter, speed 1.16, F-Am-Dm-G 96 bpm. Hook unchanged | |
+| 006 | 2026-11-24 | Stung by 1,000 bees (absurd single event) | - | NEW RULES DEMO: 29 s, cold open on the swarm, premise label "1,000 BEE STINGS. THEN WHAT?", SECOND/MINUTE/HOUR labels, plain premise title, lowpoly, speed 1.18 | |
 
 ## Style test plan (george, 2026-11-24)
 

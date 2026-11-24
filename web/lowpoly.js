@@ -4,13 +4,14 @@
 // script.json has "style": "lowpoly".
 //
 // Script vocabulary for this style:
-//   scene: livingroom, office, car, hospital, gaming, void
-//   gary: { pose, expr, build }   pose: stand, sit, type, hunch, sofa, slouch, drive, bedsit, game, clipboard, ghost
+//   scene: livingroom, office, car, hospital, gaming, garden (lawn, fence, beehive), void
+//   gary: { pose, expr, build, welts }  welts: true -> red sting bumps on the face   pose: stand, sit, type, hunch, sofa, slouch, drive, bedsit, game, clipboard, ghost
 //                                 expr: happy, neutral, worried, tired, shocked, sick, dead
 //                                 build: 0 (default) .. 1 (much heavier), for weight-gain arcs
 //   cast: [{ who: "doctor", pose }]  extra people placed at the scene's cast spot; a line with
 //                                 "speaker": "doctor" animates that person's mouth
-//   props: ["pizza"]   fx: "clot" (glowing clot in the calf), "clot_move" (clot travels to the lungs)
+//   props: ["pizza"]   fx: "clot" (glowing clot in the calf), "clot_move" (clot travels to the lungs),
+//                      "bees" (a full swarm around Gary), "bees_few" (a handful)
 //   camera: push, face, wide, side, low, front, two, legs
 //   death: true -> clutch chest, then slump; red pulse. No deaths counter in this style.
 import * as THREE from 'three';
@@ -453,6 +454,23 @@ const ROOMS = {
     g.add(at(fridge, 2.2, 0, -1.9));
     return { g, bg: ['#3a0ca3', '#f72585'], spot: [0, 0, 0], sun: [3, 6, 4], hemi: ['#b9a8ff', '#3b2a5f', 1.0], sunI: 1.4, screen: 1.6 };
   },
+  garden() {
+    const g = diorama({ floor: '#7cc36a', edge: '#6b4a2e', back: '#9fd88a', left: '#8fcf7a', wallH: 0.01 });
+    g.children.slice(2).forEach(c => c.visible = false); // lawn only: hide the walls/trim
+    const r = rng(61);
+    for (let i = 0; i < 9; i++) { const x = -2.6 + i * 0.65; g.add(at(box(0.1, 0.75, 0.06, '#f2e6cf', 0.004), x, 0.38, -2.3)); }
+    g.add(at(box(5.4, 0.07, 0.05, '#e6d6b8'), 0, 0.55, -2.27)); g.add(at(box(5.4, 0.07, 0.05, '#e6d6b8'), 0, 0.25, -2.27));
+    g.add(at(lowTree(62, 1.3), -2.1, 0, -1.7)); g.add(at(lowTree(63, 1.0), 2.3, 0, -1.9));
+    for (let i = 0; i < 14; i++) { const f = ico(0.06, ['#ff6b9a', '#ffd166', '#ffffff', '#c77dff'][i % 4], 0, 0.01, i); f.position.set((r() - 0.5) * 5, 0.06, 1.2 + r() * 1.1); g.add(f); }
+    const hive = new THREE.Group();
+    hive.add(at(box(0.55, 0.5, 0.05, '#8a5a3c'), 0, 0.25, 0));
+    for (const [x, z] of [[-0.22, -0.18], [0.22, -0.18], [-0.22, 0.18], [0.22, 0.18]]) hive.add(at(box(0.05, 0.5, 0.05, '#6d452c'), x, 0.25, z));
+    for (let i = 0; i < 3; i++) hive.add(at(box(0.62, 0.26, 0.52, i % 2 ? '#ffd166' : '#f4b942', 0.004), 0, 0.64 + i * 0.27, 0));
+    hive.add(at(box(0.72, 0.06, 0.62, '#ef476f'), 0, 1.45, 0));
+    hive.add(at(box(0.2, 0.04, 0.02, '#2b2350'), 0, 0.56, 0.27));
+    g.add(at(hive, 1.35, 0, -0.9, 0, -0.4, 0));
+    return { g, bg: ['#bde0fe', '#fff1c1'], spot: [0, 0, 0.2], sun: [3, 6, 4], hemi: ['#fffbe8', '#6b8f5a', 1.6] };
+  },
   void() {
     const g = new THREE.Group(); const r = rng(9);
     for (let i = 0; i < 22; i++) {
@@ -485,6 +503,23 @@ clot.renderOrder = 10; scene.add(clot);
 const ringTex = canvasTex(128, 128, (g) => { g.strokeStyle = 'rgba(255,80,100,0.9)'; g.lineWidth = 6; g.beginPath(); g.arc(64, 64, 56, 0, 7); g.stroke(); });
 const ring = new THREE.Sprite(new THREE.SpriteMaterial({ map: ringTex, depthTest: false, transparent: true })); ring.renderOrder = 11; scene.add(ring);
 const trail = []; for (let i = 0; i < 6; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, depthTest: false, transparent: true, blending: THREE.AdditiveBlending })); s.renderOrder = 9; trail.push(s); scene.add(s); }
+// welts: red sting bumps on the face/skull (gary.welts: true)
+const welts = new THREE.Group();
+{ const r = rng(77); for (let i = 0; i < 16; i++) {
+  let d; do { d = new THREE.Vector3(r() - 0.5, r() - 0.35, r() * 0.9 + 0.1).normalize(); } while (Math.abs(d.y - 0.12) < 0.14 && Math.abs(d.x) < 0.5 && d.z > 0.75);
+  const w = new THREE.Mesh(new THREE.IcosahedronGeometry(0.011 + r() * 0.008, 0), M('#e0505a')); w.position.set(d.x * 0.115, 0.11 + d.y * 0.13, d.z * 0.12); welts.add(w);
+} }
+// bees: low-poly bodies with stripes and wings, orbiting Gary's head and torso
+const bees = [];
+for (let i = 0; i < 70; i++) {
+  const b = new THREE.Group();
+  const body = ico(0.035, '#ffc93c', 0, 0, i); body.scale.set(1, 0.85, 1.45); b.add(body);
+  const band = cyl(0.033, 0.033, 0.016, '#1d1713', 6); band.rotation.x = Math.PI / 2; band.position.z = -0.012; b.add(band);
+  const tail = cone(0.018, 0.03, '#1d1713', 5); tail.rotation.x = -Math.PI / 2; tail.position.z = -0.055; b.add(tail);
+  const wm = new THREE.MeshBasicMaterial({ color: '#eaf6ff', transparent: true, opacity: 0.75, side: THREE.DoubleSide });
+  for (const sgn of [-1, 1]) { const w = new THREE.Mesh(new THREE.CircleGeometry(0.03, 5), wm); w.position.set(sgn * 0.03, 0.03, 0); w.rotation.set(-1.2, 0, sgn * 0.5); b.add(w); b.userData['w' + sgn] = w; }
+  b.visible = false; scene.add(b); bees.push(b);
+}
 function drawEcg(t, bpm = 96) {
   const c = ecg.userData.canvas, g = c.getContext('2d'); const w = c.width, h = c.height;
   g.fillStyle = '#0d1b1e'; g.fillRect(0, 0, w, h);
@@ -503,7 +538,7 @@ function drawEcg(t, bpm = 96) {
 // ---------- captions ----------
 const $ = id => document.getElementById(id);
 const capEl = $('caption'), labelEl = $('label'), flashEl = $('flash'), redEl = $('redflash');
-const KEY = /^(thirty|twelve|twelve-hour|zero|sugar|risk|smoking|lungs|clots|die|died|blood|calf|walk|hour|day|week|month|year)\b/i;
+const KEY = new RegExp('^(' + ['thirty', 'twelve', 'twelve-hour', 'zero', 'sugar', 'risk', 'smoking', 'lungs', 'clots', 'die', 'died', 'blood', 'calf', 'walk', 'second', 'minute', 'hour', 'day', 'week', 'month', 'year', ...(script.keywords || [])].join('|') + ')', 'i'); // highlighted caption words; script.keywords adds more
 const groups = [];
 timeline.beats.forEach(b => {
   let cur = null;
@@ -620,6 +655,19 @@ window.renderFrame = (t) => {
     } else { ring.visible = true; const ph = (lt * 0.9) % 1; ring.position.copy(calf); ring.scale.setScalar(0.18 + ph * 0.35); ring.material.opacity = 1 - ph; }
     clot.position.copy(pos); clot.scale.setScalar(size);
   }
+
+  if (gs.welts) { if (welts.parent !== H.j.head) H.j.head.add(welts); welts.visible = true; } else welts.visible = false;
+  // fx: bees
+  const nBees = b.fx === 'bees' ? bees.length : b.fx === 'bees_few' ? 10 : 0;
+  const beeC = H.j.chest.localToWorld(V(0, 0.12, 0.05));
+  bees.forEach((bee, i) => {
+    bee.visible = i < nBees; if (!bee.visible) return;
+    const r = rng(i * 7 + 3); const a0 = r() * 6.28, sp = (0.9 + r() * 1.6) * (r() < 0.5 ? -1 : 1), rad = 0.28 + r() * 0.45, yo = (r() - 0.4) * 0.9, tilt = (r() - 0.5) * 1.2;
+    const a = a0 + t * sp; const prev = a - 0.05 * Math.sign(sp);
+    const pos = (ang) => beeC.clone().add(V(Math.cos(ang) * rad, yo + Math.sin(ang * 2.3 + i) * 0.08 + Math.sin(ang) * tilt * 0.2, Math.sin(ang) * rad * 0.8));
+    bee.position.copy(pos(a)); bee.lookAt(bee.position.clone().multiplyScalar(2).sub(pos(prev)));
+    const flap = Math.sin(t * 90 + i) * 0.7; bee.userData['w-1'].rotation.z = -0.5 - flap; bee.userData.w1.rotation.z = 0.5 + flap;
+  });
 
   // camera
   const P = H.root.position.clone(); P.y = R.spot[1];
