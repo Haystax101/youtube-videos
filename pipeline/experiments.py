@@ -25,6 +25,8 @@ def script_vars(s):
     v.setdefault("narrator", (s.get("voices") or {}).get("narrator", "am_michael"))
     v.setdefault("ending_cta", e.get("ending_cta", "shenanigans"))
     v.setdefault("ending", e.get("ending", "dies"))
+    v.setdefault("look", s.get("look", "flat"))  # episodes before 2026-11-26 were rendered flat
+    v.setdefault("character_poly", (s.get("character") or {}).get("poly", "low"))
     return v
 
 

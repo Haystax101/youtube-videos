@@ -1,4 +1,4 @@
-# Experiment report (2026-11-25 13:11 UTC, 6 videos with analytics)
+# Experiment report (2026-11-25 17:22 UTC, 6 videos with analytics)
 
 Rules: judge an arm after 6 videos at least 72 h old; winner needs 15% better median on the primary metric without losing on views.
 
@@ -37,6 +37,12 @@ Rules: judge an arm after 6 videos at least 72 h old; winner needs 15% better me
 |---|---|---|---|---|---|---|
 | ? | 6 | 1068.0 | - | 0.0 | 0.0 | - |
 
+## character_poly (active test)
+
+| arm | n | median views | median avg % viewed | median subs/1k | median comments/1k | median kept at 10% |
+|---|---|---|---|---|---|---|
+| low | 6 | 1068.0 | - | 0.0 | 0.0 | - |
+
 ## ending
 
 | arm | n | median views | median avg % viewed | median subs/1k | median comments/1k | median kept at 10% |
@@ -57,3 +63,10 @@ Rules: judge an arm after 6 videos at least 72 h old; winner needs 15% better me
 | cartoon | 1 | 1068.0 | - | 0.0 | 0.0 | - |
 | noir | 1 | 270.0 | - | 0.0 | 0.0 | - |
 | storybook | 1 | - | - | - | - | - |
+
+## look
+
+| arm | n | median views | median avg % viewed | median subs/1k | median comments/1k | median kept at 10% |
+|---|---|---|---|---|---|---|
+| cel | 3 | 669.0 | - | 0.0 | 0.0 | - |
+| flat | 3 | 1119.0 | - | 0.0 | 0.0 | - |
