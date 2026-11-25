@@ -5,3 +5,4 @@ models
 episodes/*/still_*.jpg
 episodes/*/*/still_*.jpg
 .render_tmp/
+__pycache__/
