@@ -92,3 +92,13 @@ Generated painted backgrounds with hand-drawn 2D costumed characters acting in f
   expr: happy, neutral, worried, shocked, smug, angry, sick, dead. hold: cloth, purse, axe, scroll, goblet, camera.
 - `names`: {"speakerId": "ON-SCREEN NAME"} shows who is talking above the caption; give every speaker a voice in `voices`.
 
+
+## Style: cel (PROTOTYPE, web/cel.html + web/cel.js) — not used by the daily run
+
+Full 3D sets the camera can move through (kitchen, street, plus a clean blue cyclorama "studio"),
+toon shading with ink outlines from a depth/normal edge pass, and Gary's low-poly rig.
+- set: studio (clay look, no ink) | kitchen | street (cel look); `look` per beat overrides
+- gary.pose adds hold, eat, shrug, walk (moves along the pavement), wave
+- props: banana, pile, peels; fx: glow, glow_small, atoms; `big`: giant number text
+- camera: crane, crane_up, dolly, orbit, truck, low, face
+Test clip: `prototypes/cel-bananas` (31.8 s, rendered in ~7.5 min on 4 CPUs).
