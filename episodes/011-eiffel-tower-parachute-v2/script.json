@@ -1,0 +1,223 @@
+{
+ "title": "What if you tested your own parachute off the Eiffel Tower?",
+ "style": "storybook",
+ "speed": 1.18,
+ "voices": {
+  "narrator": "am_michael",
+  "gary": "am_puck",
+  "cop": "bm_lewis"
+ },
+ "names": {
+  "gary": "YOU",
+  "cop": "POLICEMAN"
+ },
+ "keywords": [
+  "parachute",
+  "Eiffel",
+  "prize",
+  "dummy",
+  "forty",
+  "Russian",
+  "backpack",
+  "car"
+ ],
+ "backgrounds": {
+  "tower": "view from the first platform of the Eiffel Tower in 1912, riveted iron railing and wooden deck in the foreground, Paris rooftops and the Seine far below, misty winter morning",
+  "airfield": "1911 French airfield, a crashed wooden biplane nose-down in the grass, smoke, a crowd of spectators in hats behind a rope, open grass in the foreground",
+  "courtyard": "narrow Paris courtyard in 1911 seen from the ground, five storey apartment building with open windows, a broken tailor's dummy lying on the cobbles in the foreground",
+  "street": "Paris street in 1912 at the foot of the Eiffel Tower, cobblestones, gas lamps, Belle Epoque buildings, cold morning, open pavement in the foreground",
+  "russia": "1912 dirt road outside Saint Petersburg, an early open-top automobile with a huge white silk parachute billowing out behind it, birch trees, summer, open road in the foreground",
+  "heaven": "heaven made of fluffy pastel clouds, golden light rays, soft pink and blue sky, cloud floor in the foreground"
+ },
+ "beats": [
+  {
+   "label": "WOULD YOU *JUMP?*",
+   "hook": true,
+   "bg": "tower",
+   "camera": "push",
+   "cast": [
+    {
+     "id": "gary",
+     "who": "gary_chute",
+     "x": 0.5,
+     "pose": "panic",
+     "expr": "worried"
+    }
+   ],
+   "lines": [
+    {
+     "text": "What if you tested your parachute by jumping off the Eiffel Tower?"
+    }
+   ]
+  },
+  {
+   "label": "PARIS, 1911",
+   "bg": "airfield",
+   "camera": "pan",
+   "cast": [
+    {
+     "id": "gary",
+     "who": "gary_tailor",
+     "x": 0.35,
+     "pose": "hold",
+     "hold": "scroll",
+     "expr": "smug"
+    }
+   ],
+   "fx": "coins",
+   "lines": [
+    {
+     "text": "Pilots keep dying. There's a prize for a parachute that saves them. You sew one."
+    }
+   ]
+  },
+  {
+   "label": "TEST 1",
+   "bg": "courtyard",
+   "camera": "close",
+   "focus": "gary",
+   "cast": [
+    {
+     "id": "gary",
+     "who": "gary_tailor",
+     "x": 0.4,
+     "pose": "shrug",
+     "expr": "worried"
+    }
+   ],
+   "lines": [
+    {
+     "text": "Every dummy you throw drops like a rock."
+    },
+    {
+     "text": "Not high enough!",
+     "speaker": "gary"
+    }
+   ]
+  },
+  {
+   "label": "FEB 4, 1912",
+   "bg": "street",
+   "camera": "push",
+   "cast": [
+    {
+     "id": "cop",
+     "who": "gendarme",
+     "x": 0.72,
+     "pose": "point",
+     "expr": "angry",
+     "flip": true
+    },
+    {
+     "id": "gary",
+     "who": "gary_chute",
+     "x": 0.3,
+     "pose": "hips",
+     "expr": "smug"
+    }
+   ],
+   "lines": [
+    {
+     "text": "You said you'd use a dummy!",
+     "speaker": "cop"
+    },
+    {
+     "text": "I am the dummy.",
+     "speaker": "gary"
+    }
+   ]
+  },
+  {
+   "label": "8:22 AM",
+   "bg": "tower",
+   "camera": "push",
+   "death": true,
+   "deathOf": "gary",
+   "cast": [
+    {
+     "id": "rep",
+     "who": "reporter",
+     "x": 0.8,
+     "pose": "hold",
+     "hold": "camera",
+     "expr": "shocked",
+     "flip": true
+    },
+    {
+     "id": "gary",
+     "who": "gary_chute",
+     "x": 0.38,
+     "pose": "panic",
+     "expr": "worried",
+     "jump": true
+    }
+   ],
+   "lines": [
+    {
+     "text": "Cameras roll. You wait forty seconds, jump, and it never opens."
+    }
+   ]
+  },
+  {
+   "label": "*JUNE 1912*",
+   "bg": "russia",
+   "camera": "pan",
+   "cast": [
+    {
+     "id": "kot",
+     "who": "russian_actor",
+     "x": 0.2,
+     "pose": "point",
+     "expr": "happy"
+    }
+   ],
+   "lines": [
+    {
+     "text": "Months later, a Russian actor's backpack parachute stops a speeding car dead."
+    }
+   ]
+  },
+  {
+   "label": "",
+   "bg": "heaven",
+   "camera": "wide",
+   "cast": [
+    {
+     "id": "gary",
+     "who": "gary_chute",
+     "x": 0.5,
+     "pose": "shrug",
+     "expr": "dead",
+     "ghost": true
+    }
+   ],
+   "lines": [
+    {
+     "text": "You died. Follow for more interesting cartoons."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "style": "storybook #3 (rewrite of 010 with a real arc, to separate script quality from style)",
+  "arc": "goal (prize) -> failed tests -> joke (I am the dummy) -> death -> turn (Kotelnikov's backpack parachute works)",
+  "length": "~29 s (78 words)",
+  "facts": [
+   "Franz Reichelt, Austrian-born Paris tailor, jumped from the Eiffel Tower's first platform (57 m) on 4 Feb 1912 at about 8:22 and died; he hesitated about 40 s; filmed by Pathe/Gaumont (Wikipedia: Franz Reichelt, contemporary Le Petit Journal / Le Temps reports)",
+   "Prizes were offered for an aviator's safety parachute (Colonel Lalance's 10,000 francs via the Aero-Club de France), after a run of fatal flying accidents",
+   "Dummy tests from his building's fifth floor failed; he blamed the low height",
+   "He got police permission for a dummy test, then jumped himself",
+   "Gleb Kotelnikov, a Russian actor, invented the knapsack parachute after seeing a pilot killed in 1910; in June 1912 he proved it by opening it behind a speeding car, which it pulled to a stop (Wikipedia: Gleb Kotelnikov)"
+  ],
+  "scores": {
+   "fact": 5,
+   "arc": 5,
+   "hook": 4,
+   "pace": 4,
+   "craft": 4
+  },
+  "ending_cta": "follow",
+  "ending": "dies",
+  "compare": "rewrite of 010 (unposted): george posts whichever is better"
+ }
+}

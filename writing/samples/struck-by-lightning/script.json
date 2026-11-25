@@ -1,0 +1,174 @@
+{
+ "title": "What happens if you get struck by lightning?",
+ "style": "lowpoly",
+ "speed": 1.2,
+ "keywords": [
+  "lightning",
+  "sun",
+  "shoes",
+  "heart",
+  "electric",
+  "CPR",
+  "fern",
+  "seven"
+ ],
+ "beats": [
+  {
+   "label": "STRUCK BY *LIGHTNING*. THEN WHAT?",
+   "hook": true,
+   "scene": "field",
+   "gary": {
+    "pose": "stand",
+    "expr": "shocked",
+    "fern": true
+   },
+   "fx": "lightning",
+   "camera": "low",
+   "lines": [
+    {
+     "text": "What happens if you get struck by lightning?"
+    }
+   ]
+  },
+  {
+   "label": "SECOND 1",
+   "scene": "field",
+   "gary": {
+    "pose": "stand",
+    "expr": "shocked",
+    "barefoot": true
+   },
+   "fx": "lightning",
+   "camera": "legs",
+   "lines": [
+    {
+     "text": "A bolt hotter than the sun's surface blows your shoes off."
+    }
+   ]
+  },
+  {
+   "label": "SECOND 2",
+   "scene": "field",
+   "gary": {
+    "pose": "collapse",
+    "expr": "dead"
+   },
+   "fx": "rain",
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Most of it skims your skin. Enough goes in to stop your heart."
+    }
+   ]
+  },
+  {
+   "label": "*MYTH*",
+   "scene": "field",
+   "gary": {
+    "pose": "collapse",
+    "expr": "dead"
+   },
+   "cast": [
+    {
+     "who": "stranger",
+     "pose": "stand"
+    }
+   ],
+   "fx": "rain",
+   "camera": "two",
+   "lines": [
+    {
+     "text": "Nobody touches you. They think you're electric. You're not."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 2",
+   "scene": "field",
+   "gary": {
+    "pose": "collapse",
+    "expr": "sick"
+   },
+   "cast": [
+    {
+     "who": "stranger",
+     "pose": "cpr"
+    }
+   ],
+   "fx": "rain",
+   "camera": "push",
+   "lines": [
+    {
+     "text": "One stranger starts CPR. That's what saves you."
+    }
+   ]
+  },
+  {
+   "label": "DAY 1",
+   "scene": "hospital",
+   "gary": {
+    "pose": "bedsit",
+    "expr": "happy",
+    "fern": true
+   },
+   "camera": "face",
+   "lines": [
+    {
+     "text": "You live, with a red fern scar. Nine in ten people do."
+    }
+   ]
+  },
+  {
+   "label": "*7 TIMES*",
+   "scene": "field",
+   "gary": {
+    "pose": "stand",
+    "expr": "worried",
+    "hat": "ranger"
+   },
+   "fx": "lightning",
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Ranger Roy Sullivan got struck seven times. He survived all seven."
+    }
+   ]
+  },
+  {
+   "label": "",
+   "scene": "field",
+   "gary": {
+    "pose": "stand",
+    "expr": "happy",
+    "fern": true
+   },
+   "camera": "push",
+   "lines": [
+    {
+     "text": "You survived. Comment what stupid shenanigans Gary should try tomorrow."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "ending": "survives (absurd event usually played as death)",
+  "turn": "myth-bust (not electric) -> CPR saves you -> Roy Sullivan 7 strikes",
+  "payoff": "useful: lightning victims are safe to touch, start CPR",
+  "length": "~30 s (82 words; old scripts ran ~2.6 words/s)",
+  "facts": [
+   "About 90% of people struck by lightning survive: US CDC / NOAA lightning safety",
+   "A lightning channel reaches ~30,000 K, about five times the sun's surface: NOAA National Weather Service",
+   "Flashover: most current passes over the skin surface; strikes can blow off shoes and clothing: Cooper, lightning injury reviews (Wilderness & Environmental Medicine)",
+   "Cardiac arrest from lightning: the heart often restarts but breathing does not; prompt CPR is life-saving; victims carry no charge: NWS lightning safety / American Heart Association",
+   "Lichtenberg (fern) figures fade within hours to days",
+   "Roy Sullivan, Shenandoah park ranger, struck 7 times 1942-1977: Guinness World Records"
+  ],
+  "scores": {
+   "fact": 5,
+   "arc": 5,
+   "hook": 4,
+   "pace": 5,
+   "craft": 4
+  }
+ }
+}

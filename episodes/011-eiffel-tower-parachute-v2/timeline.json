@@ -1,0 +1,529 @@
+{
+ "duration": 30.586,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 3.845,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "What",
+     "s": 0.15,
+     "e": 0.347,
+     "speaker": "narrator"
+    },
+    {
+     "w": "if",
+     "s": 0.347,
+     "e": 0.532,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 0.532,
+     "e": 0.722,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tested",
+     "s": 0.722,
+     "e": 1.104,
+     "speaker": "narrator"
+    },
+    {
+     "w": "your",
+     "s": 1.104,
+     "e": 1.301,
+     "speaker": "narrator"
+    },
+    {
+     "w": "parachute",
+     "s": 1.301,
+     "e": 1.874,
+     "speaker": "narrator"
+    },
+    {
+     "w": "by",
+     "s": 1.874,
+     "e": 2.058,
+     "speaker": "narrator"
+    },
+    {
+     "w": "jumping",
+     "s": 2.058,
+     "e": 2.446,
+     "speaker": "narrator"
+    },
+    {
+     "w": "off",
+     "s": 2.446,
+     "e": 2.637,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 2.637,
+     "e": 2.828,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Eiffel",
+     "s": 2.828,
+     "e": 3.209,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Tower?",
+     "s": 3.209,
+     "e": 3.585,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 3.845,
+   "end": 9.142,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Pilots",
+     "s": 3.845,
+     "e": 4.531,
+     "speaker": "narrator"
+    },
+    {
+     "w": "keep",
+     "s": 4.531,
+     "e": 4.886,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dying.",
+     "s": 4.886,
+     "e": 5.253,
+     "speaker": "narrator"
+    },
+    {
+     "w": "There's",
+     "s": 5.393,
+     "e": 5.761,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 5.761,
+     "e": 5.933,
+     "speaker": "narrator"
+    },
+    {
+     "w": "prize",
+     "s": 5.933,
+     "e": 6.13,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 6.13,
+     "e": 6.314,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 6.314,
+     "e": 6.486,
+     "speaker": "narrator"
+    },
+    {
+     "w": "parachute",
+     "s": 6.486,
+     "e": 7.039,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 7.039,
+     "e": 7.229,
+     "speaker": "narrator"
+    },
+    {
+     "w": "saves",
+     "s": 7.229,
+     "e": 7.592,
+     "speaker": "narrator"
+    },
+    {
+     "w": "them.",
+     "s": 7.592,
+     "e": 7.782,
+     "speaker": "narrator"
+    },
+    {
+     "w": "You",
+     "s": 7.922,
+     "e": 8.242,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sew",
+     "s": 8.242,
+     "e": 8.562,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one.",
+     "s": 8.562,
+     "e": 8.882,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 9.142,
+   "end": 12.678,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Every",
+     "s": 9.142,
+     "e": 9.75,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dummy",
+     "s": 9.75,
+     "e": 10.166,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 10.166,
+     "e": 10.379,
+     "speaker": "narrator"
+    },
+    {
+     "w": "throw",
+     "s": 10.379,
+     "e": 10.605,
+     "speaker": "narrator"
+    },
+    {
+     "w": "drops",
+     "s": 10.605,
+     "e": 10.831,
+     "speaker": "narrator"
+    },
+    {
+     "w": "like",
+     "s": 10.831,
+     "e": 11.05,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 11.05,
+     "e": 11.248,
+     "speaker": "narrator"
+    },
+    {
+     "w": "rock.",
+     "s": 11.248,
+     "e": 11.467,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Not",
+     "s": 11.607,
+     "e": 11.808,
+     "speaker": "gary"
+    },
+    {
+     "w": "high",
+     "s": 11.808,
+     "e": 12.016,
+     "speaker": "gary"
+    },
+    {
+     "w": "enough!",
+     "s": 12.016,
+     "e": 12.418,
+     "speaker": "gary"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 12.678,
+   "end": 15.531,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You",
+     "s": 12.678,
+     "e": 12.914,
+     "speaker": "cop"
+    },
+    {
+     "w": "said",
+     "s": 12.914,
+     "e": 13.158,
+     "speaker": "cop"
+    },
+    {
+     "w": "you'd",
+     "s": 13.158,
+     "e": 13.401,
+     "speaker": "cop"
+    },
+    {
+     "w": "use",
+     "s": 13.401,
+     "e": 13.637,
+     "speaker": "cop"
+    },
+    {
+     "w": "a",
+     "s": 13.637,
+     "e": 13.857,
+     "speaker": "cop"
+    },
+    {
+     "w": "dummy!",
+     "s": 13.857,
+     "e": 14.321,
+     "speaker": "cop"
+    },
+    {
+     "w": "I",
+     "s": 14.461,
+     "e": 14.616,
+     "speaker": "gary"
+    },
+    {
+     "w": "am",
+     "s": 14.616,
+     "e": 14.777,
+     "speaker": "gary"
+    },
+    {
+     "w": "the",
+     "s": 14.777,
+     "e": 14.944,
+     "speaker": "gary"
+    },
+    {
+     "w": "dummy.",
+     "s": 14.944,
+     "e": 15.271,
+     "speaker": "gary"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 15.531,
+   "end": 21.537,
+   "deathAt": 19.747,
+   "words": [
+    {
+     "w": "Cameras",
+     "s": 15.531,
+     "e": 16.257,
+     "speaker": "narrator"
+    },
+    {
+     "w": "roll.",
+     "s": 16.257,
+     "e": 16.513,
+     "speaker": "narrator"
+    },
+    {
+     "w": "You",
+     "s": 16.653,
+     "e": 16.862,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wait",
+     "s": 16.862,
+     "e": 17.079,
+     "speaker": "narrator"
+    },
+    {
+     "w": "forty",
+     "s": 17.079,
+     "e": 17.491,
+     "speaker": "narrator"
+    },
+    {
+     "w": "seconds,",
+     "s": 17.491,
+     "e": 18.03,
+     "speaker": "narrator"
+    },
+    {
+     "w": "jump,",
+     "s": 18.03,
+     "e": 18.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 18.36,
+     "e": 18.57,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 18.57,
+     "e": 18.772,
+     "speaker": "narrator"
+    },
+    {
+     "w": "never",
+     "s": 18.772,
+     "e": 19.185,
+     "speaker": "narrator"
+    },
+    {
+     "w": "opens.",
+     "s": 19.185,
+     "e": 19.597,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 21.537,
+   "end": 26.085,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Months",
+     "s": 21.537,
+     "e": 21.776,
+     "speaker": "narrator"
+    },
+    {
+     "w": "later,",
+     "s": 21.776,
+     "e": 22.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 22.32,
+     "e": 22.523,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Russian",
+     "s": 22.523,
+     "e": 22.964,
+     "speaker": "narrator"
+    },
+    {
+     "w": "actor's",
+     "s": 22.964,
+     "e": 23.399,
+     "speaker": "narrator"
+    },
+    {
+     "w": "backpack",
+     "s": 23.399,
+     "e": 23.848,
+     "speaker": "narrator"
+    },
+    {
+     "w": "parachute",
+     "s": 23.848,
+     "e": 24.499,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stops",
+     "s": 24.499,
+     "e": 24.731,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 24.731,
+     "e": 24.934,
+     "speaker": "narrator"
+    },
+    {
+     "w": "speeding",
+     "s": 24.934,
+     "e": 25.383,
+     "speaker": "narrator"
+    },
+    {
+     "w": "car",
+     "s": 25.383,
+     "e": 25.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dead.",
+     "s": 25.6,
+     "e": 25.825,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 26.085,
+   "end": 29.386,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You",
+     "s": 26.085,
+     "e": 26.494,
+     "speaker": "narrator"
+    },
+    {
+     "w": "died.",
+     "s": 26.494,
+     "e": 26.917,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Follow",
+     "s": 27.057,
+     "e": 27.468,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 27.468,
+     "e": 27.673,
+     "speaker": "narrator"
+    },
+    {
+     "w": "more",
+     "s": 27.673,
+     "e": 27.886,
+     "speaker": "narrator"
+    },
+    {
+     "w": "interesting",
+     "s": 27.886,
+     "e": 28.701,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cartoons.",
+     "s": 28.701,
+     "e": 29.126,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}
