@@ -1,0 +1,116 @@
+name: Render set video (split across machines)
+
+# Renders a one-camera "set" video (see .claude/skills/make-set-video) on several free
+# GitHub runners at once. Each machine renders every Nth 2-second chunk with
+# pipeline/render_set.cjs; a final job joins the chunks, builds the audio with EP/audio.sh
+# and publishes video.mp4 to a pre-release (tag render-<slug>-<run id>).
+# Start it by writing the episode folder into render-set-request.txt and pushing
+# (any branch), or from the Actions tab.
+on:
+  push:
+    paths: [render-set-request.txt]
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Episode folder, e.g. prototypes/archimedes-claw"
+        required: true
+
+permissions:
+  contents: write
+
+env:
+  PARTS: 8
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      ep: ${{ steps.ep.outputs.ep }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: ep
+        env:
+          INPUT_EP: ${{ inputs.episode }}
+        run: |
+          EP="${INPUT_EP:-$(head -n1 render-set-request.txt | tr -d '[:space:]')}"
+          case "$EP" in episodes/*|prototypes/*) ;; *) echo "bad episode path: $EP"; exit 1 ;; esac
+          case "$EP" in *..*) echo "bad episode path: $EP"; exit 1 ;; esac
+          test -f "$EP/timeline.json" && test -f "$EP/audio.sh"
+          echo "ep=$EP" >> "$GITHUB_OUTPUT"
+
+  render:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    strategy:
+      fail-fast: true
+      matrix:
+        part: [0, 1, 2, 3, 4, 5, 6, 7]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          npm ci
+          npm install --no-save playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - name: Render my chunks
+        env:
+          EP: ${{ needs.plan.outputs.ep }}
+        run: node pipeline/render_set.cjs "$EP" --part ${{ matrix.part }}/$PARTS --workers 4
+      - uses: actions/upload-artifact@v4
+        with:
+          name: chunks-${{ matrix.part }}
+          path: ${{ needs.plan.outputs.ep }}/chunks/c*.mp4
+          retention-days: 3
+
+  join:
+    needs: [plan, render]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      EP: ${{ needs.plan.outputs.ep }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Cache models
+        uses: actions/cache@v4
+        with:
+          path: models
+          key: models-kokoro-v1.0-generaluser-gs
+      - name: Install
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          ./setup.sh
+          npm install --no-save playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: chunks-*
+          merge-multiple: true
+          path: ${{ needs.plan.outputs.ep }}/chunks
+      - name: Join video
+        run: node pipeline/render_set.cjs "$EP" --join-only && test -f "$EP/silent.mp4"
+      - name: Audio
+        run: bash "$EP/audio.sh" "$EP"
+      - name: Mux
+        run: ffmpeg -y -loglevel error -i "$EP/silent.mp4" -i "$EP/audio.norm.wav" -c:v copy -c:a aac -b:a 192k -shortest "$EP/video.mp4"
+      # Claude sessions can't reach the artifact storage host, so publish to a pre-release.
+      - name: Publish to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NAME="$(basename "$EP")"; TAG="render-$NAME-${{ github.run_id }}"
+          gh release create "$TAG" "$EP/video.mp4" --prerelease \
+            --title "Render: $NAME" --notes "Rendered by run ${{ github.run_id }} on $PARTS machines" --target "${{ github.sha }}"
+          gh release list --limit 100 --json tagName,isPrerelease,createdAt \
+            --jq '[.[] | select(.isPrerelease and (.tagName|startswith("render-")))] | sort_by(.createdAt) | reverse | .[3:][] | .tagName' |
+            while read -r old; do gh release delete "$old" --cleanup-tag --yes; done
