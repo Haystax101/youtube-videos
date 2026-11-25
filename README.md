@@ -1,7 +1,7 @@
 # Gary Tries It: video pipeline
 
 Daily 25-45 s vertical Shorts. Gary changes one small thing about his life and the
-consequences escalate over days, months and years, usually until he dies (the
+consequences escalate over days, months and years, sometimes until he dies, sometimes he survives or ends up better off (the
 no on-screen death counter: george removed it as clutter).
 
 ## Pipeline
@@ -40,7 +40,8 @@ New ideas usually need one or two new props, accessories or scenes added to scen
 - Beat 1 is always a hook beat (`"hook": true`, label like `HOW LONG UNTIL YOU *DIE?*`, `*word*` turns red)
   that asks a clickbait question in the first 2 seconds, e.g. "If you wore a face mask every single day,
   how long would it take for you to die?"
-- Every video ends with: "You died. Comment what stupid shenanigans Gary should try tomorrow."
+- Every video ends with "You died." or "You survived." plus the ending CTA under test (see CLAUDE.md).
+- Script method: `.claude/skills/write-short-script/SKILL.md`; ideas in `writing/idea-bank.md`; competitor notes in `writing/competitors.md`.
 
 ## Landscape / long-form
 

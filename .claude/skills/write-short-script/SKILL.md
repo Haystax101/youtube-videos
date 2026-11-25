@@ -31,10 +31,9 @@ Gary does **not** have to die. Pick the ending that the true facts support:
   weird consequence is often the better surprise.
 - **Better off**: beneficial habits (ice baths, sauna, walking 10k steps, quitting sugar).
   Show the cost AND the pay-off honestly, including a myth or a catch.
-Endings (proposed, see writing/samples/COMPARE.md): death keeps the void ghost and
-"You died. Comment what stupid shenanigans Gary should try tomorrow."; otherwise end on Gary
-alive in the last scene with "You survived. Comment what..." or "You're stronger than ever.
-Comment what...".
+Endings: death keeps the void ghost and "You died. <CTA>"; otherwise end on Gary alive in
+the last scene with "You survived. <CTA>" or "You're stronger than ever. <CTA>". The CTA is the
+one CLAUDE.md's ending A/B test assigns to this Short; record it in `experiment.ending_cta`.
 
 ## 3. Arc: five moves in ~78 words
 

@@ -33,18 +33,33 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
 2. Read `episodes/LOG.md` (what has been made, experiment knobs, results) and `ideas.md`.
    If YouTube analytics are available (not yet set up), read them first and note what
    retained viewers best.
-3. Pick the next idea: a small life change with escalating consequences over time that
-   usually ends in death. Never repeat a concept. Move it from `ideas.md` into the log.
-4. Create `episodes/NNN-slug/script.json` (next number). Rules from george:
+3. Pick the next idea from `writing/idea-bank.md` (then `ideas.md`): a small life change, a
+   beneficial habit, a single absurd event or a true-history story. Gary does NOT have to die:
+   at least one Short per day ends with him surviving or better off. Never repeat a concept.
+   No poo/toilet topics. Move the idea into the log.
+4. Write `episodes/NNN-slug/script.json` (next number) with the `write-short-script` skill
+   (`.claude/skills/write-short-script/SKILL.md`; read `writing/competitors.md` once per run):
+   research sourced facts first, choose the ending, five-move arc, 72-82 words, self-score.
+   Rules from george:
    - Beat 1 is a hook beat (`"hook": true`): a clickbait question to the VIEWER in the first
      2 seconds, e.g. "If you wore a face mask every single day, how long would it take for
      you to die?" On-screen label like `HOW LONG UNTIL YOU *DIE?*` (`*word*` turns red).
    - Narrate in second person ("you") throughout. Gary is the on-screen avatar of "you".
    - Time labels escalate: DAY 1, WEEK 1, MONTH 1, YEAR 1...
-   - Facts must be real and plausible; one myth-bust beat is good.
-   - The last beat is always the `void` scene with Gary as a ghost and exactly:
-     "You died. Comment what stupid shenanigans Gary should try tomorrow."
-   - Target 25-30 s of audio (george's best Veo Shorts were 24-31 s at 70-95% viewed; ours at
+   - Facts must be real, with sources in `experiment.facts`; one myth-bust beat is good.
+   - Every Short needs a real "wait, what?" fact and a real arc with a turn (see the skill).
+   - Last beat: if Gary dies, the `void`/heaven scene with Gary as a ghost and "You died. <CTA>";
+     if he survives, Gary alive in the last scene and "You survived. <CTA>" (or "You're
+     stronger than ever. <CTA>" for a beneficial habit).
+   - **Ending CTA A/B test** (george, 2026-11-25). <CTA> is one of, exactly:
+     `shenanigans` "Comment what stupid shenanigans Gary should try tomorrow." /
+     `follow` "Follow for more interesting cartoons." /
+     `comment_next` "Comment what you want to know next."
+     Give each of the day's 3 Shorts a different one, rotating which slot gets which by day
+     (day of year mod 3 picks the first Short's CTA, in the order above), so upload time
+     doesn't decide the result. Record it as `experiment.ending_cta` and `experiment.ending`
+     (dies / survives / better), and fill the LOG's Ending column.
+   - Target 25-31 s of audio (72-82 words) (george's best Veo Shorts were 24-31 s at 70-95% viewed; ours at
      43-48 s did worse). Cut slow early beats; every beat must escalate.
    - Cold open: beat 1 shows the most extreme/absurd moment (the death or the craziest image)
      while the hook question is asked, then the story rewinds to DAY 1.

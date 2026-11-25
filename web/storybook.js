@@ -49,6 +49,7 @@ const WARDROBE = {
   gary_chute:  { skin: '#ffe3cc', hair: 'tuft', hairColor: '#6b4226', mustache: '#6b4226', body: 'doublet', color: '#5b4d3f', trim: '#d9c6a5', legs: '#3b3430', cape: '#8c7a63', hat: 'leather_cap', hatColor: '#5a3b22' },
   gendarme:    { skin: '#ffdcc2', hair: 'short', hairColor: '#2a1d14', mustache: '#2a1d14', body: 'doublet', color: '#22356b', trim: '#d9b44a', legs: '#b8282e', hat: 'kepi', hatColor: '#22356b' },
   reporter:    { skin: '#f3c9a6', hair: 'short', hairColor: '#3a2a1c', body: 'doublet', color: '#7b6f5e', trim: '#2b2b2b', legs: '#3d3d46', hat: 'flat_cap', hatColor: '#5b5248' },
+  russian_actor: { skin: '#ffe0c4', hair: 'short', hairColor: '#1f1712', mustache: '#1f1712', body: 'doublet', color: '#2f4a3a', trim: '#e8dcc0', legs: '#2b2b33', hat: 'flat_cap', hatColor: '#3a3a42' },
   executioner: { skin: '#ffd9bd', body: 'tunic', color: '#2a2a2e', trim: '#4a4a52', legs: '#2a2a2e', hat: 'hood', size: 1.1, belly: 0.5 },
 };
 

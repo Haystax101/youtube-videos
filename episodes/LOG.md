@@ -1,16 +1,17 @@
 # Episode log
 
-| # | Date | Concept | Deaths after | Experiment | Result (views / avg % viewed) |
-|---|------|---------|--------------|------------|-------------------------------|
-| 001 | 2026-11-24 | Wearing a face mask 24/7 | 1 | Baseline: cartoon style, speed 1.12, narrator am_michael, "how long until you die" hook | 184 views (24 Nov, analytics pending) |
-| 002 | 2026-11-24 | Never sleeping again | 2 | STYLE TEST noir: b&w film + grain + blinds, typewriter captions, am_onyx, speed 1.06, slow minor music. Hook unchanged | |
-| 003 | 2026-11-24 | Drinking 10 litres of water a day | 3 | STYLE TEST news: BREAKING lower third + fact ticker, karaoke captions (Anton), af_heart, speed 1.15, urgent music. Hook unchanged | |
-| 004 | 2026-11-24 | Sitting down all day, every day | 4 | STYLE TEST lowpoly: faceted 3D low-poly people (Gary rebuilt as a jointed 3D human, plus a voiced doctor bf_emma), floating diorama rooms, real poses + death collapse, Poppins extruded captions, NO deaths counter, speed 1.16, F-Am-Dm-G 96 bpm. Hook unchanged | |
-| 006 | 2026-11-24 | Stung by 1,000 bees (absurd single event) | - | NEW RULES DEMO: 29 s, cold open on the swarm, premise label "1,000 BEE STINGS. THEN WHAT?", SECOND/MINUTE/HOUR labels, plain premise title, lowpoly, speed 1.18 | |
-| 007 | 2026-11-24 | Groom of the Stool: you wipe Henry VIII's bottom (true history story) | - | STYLE TEST storybook: AI painted backgrounds (free Cloudflare FLUX) + 2D costumed cast with dialogue (MiloQ-inspired, our own look); funny true-history format; 34 s | |
-| 008 | 2026-11-25 | Swallowing two magnets (absurd single event) | - | lowpoly, cold open on the X-ray in hospital, premise label "SWALLOW 2 MAGNETS. THEN WHAT?", SECOND/HOUR/DAY labels, myth-bust beat, 29.6 s, speed 1.18 | |
-| 009 | 2026-11-25 | Drinking only energy drinks | - | lowpoly life change, cold open slumped in a sea of cans, hook label "ONLY ENERGY DRINKS? HOW LONG?", 29.5 s, speed 1.2 | |
-| 010 | 2026-11-25 | Testing your own parachute off the Eiffel Tower (true story, Franz Reichelt 1912) | - | STYLE TEST storybook #2: true-history story, hook "WOULD YOU JUMP?", policeman dialogue, 28.2 s (fixed length vs 007's 34 s) | |
+| # | Date | Concept | Deaths after | Experiment | Result (views / avg % viewed) | Ending / CTA |
+|---|------|---------|--------------|------------|-------------------------------|---|
+| 001 | 2026-11-24 | Wearing a face mask 24/7 | 1 | Baseline: cartoon style, speed 1.12, narrator am_michael, "how long until you die" hook | 184 views (24 Nov, analytics pending) | dies / shenanigans |
+| 002 | 2026-11-24 | Never sleeping again | 2 | STYLE TEST noir: b&w film + grain + blinds, typewriter captions, am_onyx, speed 1.06, slow minor music. Hook unchanged | | dies / shenanigans |
+| 003 | 2026-11-24 | Drinking 10 litres of water a day | 3 | STYLE TEST news: BREAKING lower third + fact ticker, karaoke captions (Anton), af_heart, speed 1.15, urgent music. Hook unchanged | | dies / shenanigans |
+| 004 | 2026-11-24 | Sitting down all day, every day | 4 | STYLE TEST lowpoly: faceted 3D low-poly people (Gary rebuilt as a jointed 3D human, plus a voiced doctor bf_emma), floating diorama rooms, real poses + death collapse, Poppins extruded captions, NO deaths counter, speed 1.16, F-Am-Dm-G 96 bpm. Hook unchanged | | dies / shenanigans |
+| 006 | 2026-11-24 | Stung by 1,000 bees (absurd single event) | - | NEW RULES DEMO: 29 s, cold open on the swarm, premise label "1,000 BEE STINGS. THEN WHAT?", SECOND/MINUTE/HOUR labels, plain premise title, lowpoly, speed 1.18 | | dies / shenanigans |
+| 007 | 2026-11-24 | Groom of the Stool: you wipe Henry VIII's bottom (true history story) | - | STYLE TEST storybook: AI painted backgrounds (free Cloudflare FLUX) + 2D costumed cast with dialogue (MiloQ-inspired, our own look); funny true-history format; 34 s | | dies / shenanigans |
+| 008 | 2026-11-25 | Swallowing two magnets (absurd single event) | - | lowpoly, cold open on the X-ray in hospital, premise label "SWALLOW 2 MAGNETS. THEN WHAT?", SECOND/HOUR/DAY labels, myth-bust beat, 29.6 s, speed 1.18 | | dies / shenanigans |
+| 009 | 2026-11-25 | Drinking only energy drinks | - | lowpoly life change, cold open slumped in a sea of cans, hook label "ONLY ENERGY DRINKS? HOW LONG?", 29.5 s, speed 1.2 | | dies / shenanigans |
+| 010 | 2026-11-25 | Testing your own parachute off the Eiffel Tower (true story, Franz Reichelt 1912) | - | STYLE TEST storybook #2: true-history story, hook "WOULD YOU JUMP?", policeman dialogue, 28.2 s (fixed length vs 007's 34 s) | | dies / shenanigans |
+| 011 | 2026-11-25 | Eiffel Tower parachute v2 (rewrite of 010 with the new script skill) | - | STYLE TEST storybook #3 + SCRIPT TEST: goal (prize), joke, death, turn (Kotelnikov's backpack parachute stops a car); sourced facts; 30.6 s. Post instead of 010 | | dies / follow |
 
 ## Style test plan (george, 2026-11-24)
 

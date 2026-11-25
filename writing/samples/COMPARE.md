@@ -69,13 +69,13 @@ pose `collapse`; cast `stranger` with pose `cpr`.
 
 All facts are listed with sources in each script's `experiment.facts`.
 
-## Proposed changes to the daily run (not applied yet)
+## Changes to the daily run (approved by george 2026-11-25, now in CLAUDE.md)
 
 1. CLAUDE.md step 4: write every Short with the `write-short-script` skill; pick from
    `writing/idea-bank.md` first.
-2. Endings: Gary may survive or end better off. Survival ends on Gary alive in the last scene with
-   "You survived. Comment what stupid shenanigans Gary should try tomorrow."; death keeps the void
-   ghost line. Daily mix: at least one non-death ending per day.
+2. Endings: Gary may survive or end better off ("You survived." with Gary alive); at least one
+   non-death ending per day. The closing CTA is A/B tested across the day's 3 Shorts:
+   shenanigans / "Follow for more interesting cartoons." / "Comment what you want to know next."
 3. Every script logs `experiment.facts` (with sources), `experiment.ending` and `experiment.scores`,
    and the LOG gets an "ending" column so analytics can compare death vs survival vs beneficial.
 4. Ban poo/toilet topics.
