@@ -1,0 +1,136 @@
+{
+ "title": "What happens if you take an ice bath every day?",
+ "style": "lowpoly",
+ "speed": 1.18,
+ "keywords": [
+  "gasp",
+  "drowns",
+  "half",
+  "noradrenaline",
+  "muscle",
+  "float"
+ ],
+ "beats": [
+  {
+   "label": "ICE BATH EVERY DAY. *WHAT HAPPENS?*",
+   "hook": true,
+   "scene": "icebath",
+   "gary": {
+    "pose": "bath",
+    "expr": "shocked"
+   },
+   "fx": "frost",
+   "camera": "push",
+   "lines": [
+    {
+     "text": "What happens if you take an ice bath every single day?"
+    }
+   ]
+  },
+  {
+   "label": "DAY 1",
+   "scene": "icebath",
+   "gary": {
+    "pose": "bath",
+    "expr": "shocked"
+   },
+   "fx": "gasp",
+   "camera": "face",
+   "lines": [
+    {
+     "text": "Day one. You gasp uncontrollably. That gasp drowns more people than the cold does."
+    }
+   ]
+  },
+  {
+   "label": "DAY 5",
+   "scene": "icebath",
+   "gary": {
+    "pose": "bath",
+    "expr": "worried"
+   },
+   "camera": "side",
+   "lines": [
+    {
+     "text": "Day five. The gasp is half as strong. Your body is learning."
+    }
+   ]
+  },
+  {
+   "label": "MONTH 1",
+   "scene": "icebath",
+   "gary": {
+    "pose": "bath",
+    "expr": "happy"
+   },
+   "camera": "low",
+   "lines": [
+    {
+     "text": "Month one. Each dip spikes your noradrenaline fivefold. You feel unstoppable."
+    }
+   ]
+  },
+  {
+   "label": "*MYTH*",
+   "scene": "gym",
+   "gary": {
+    "pose": "stand",
+    "expr": "worried"
+   },
+   "camera": "front",
+   "lines": [
+    {
+     "text": "After the gym? It blunts your muscle growth."
+    }
+   ]
+  },
+  {
+   "label": "YEAR 1",
+   "scene": "frozenlake",
+   "gary": {
+    "pose": "float",
+    "expr": "neutral"
+   },
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Then you fall through ice. You don't panic. You float until the gasp passes."
+    }
+   ]
+  },
+  {
+   "label": "",
+   "scene": "frozenlake",
+   "gary": {
+    "pose": "stand",
+    "expr": "happy"
+   },
+   "camera": "push",
+   "lines": [
+    {
+     "text": "You survived. Comment what stupid shenanigans Gary should try tomorrow."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "ending": "survives / better off (first non-death ending)",
+  "premise": "beneficial habit (george 2026-11-25)",
+  "payoff": "useful takeaway: 1-10-1 rule for falling through ice",
+  "length": "~30 s (80 words; old scripts ran ~2.6 words/s)",
+  "facts": [
+   "Cold shock (gasp + hyperventilation) causes many cold-water drownings in the first minutes, before hypothermia: Tipton, 'Cold water immersion: sudden death and prolonged survival', The Lancet 2003",
+   "Repeated immersions (~5) roughly halve the cold shock response: Tipton et al., habituation studies (Exp Physiol / J Physiol)",
+   "Immersion in 14 C water raised plasma noradrenaline ~5x: Sramek et al., Eur J Appl Physiol 2000",
+   "Cold water immersion after strength training attenuated muscle gains: Roberts et al., J Physiol 2015",
+   "1-10-1 rule (1 min cold shock, 10 min useful movement, 1 h to hypothermia): Giesbrecht, Cold Water Boot Camp"
+  ],
+  "scores": {
+   "fact": 5,
+   "arc": 4,
+   "hook": 3,
+   "pace": 4,
+   "craft": 4
+  }
+ }
+}
