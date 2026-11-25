@@ -40,11 +40,14 @@
         "am_michael",
         "am_fenrir",
         "bm_george",
-        "af_heart"
+        "af_heart",
+        "af_bella",
+        "af_nicole",
+        "bf_emma"
       ],
       "set_by": "script.voices.narrator",
       "since": "2026-11-25",
-      "why": "only am_michael has been used on lowpoly; voice is a big part of retention in faceless Shorts"
+      "why": "only am_michael has been used on lowpoly; voice is a big part of retention in faceless Shorts | 2026-11-25: george wants women's and softer voices A/B tested: added af_bella (warm US female), af_nicole (soft, breathy US female) and bf_emma (British female)."
     },
     "speed": {
       "arms": [
