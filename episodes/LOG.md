@@ -8,6 +8,9 @@
 | 004 | 2026-11-24 | Sitting down all day, every day | 4 | STYLE TEST lowpoly: faceted 3D low-poly people (Gary rebuilt as a jointed 3D human, plus a voiced doctor bf_emma), floating diorama rooms, real poses + death collapse, Poppins extruded captions, NO deaths counter, speed 1.16, F-Am-Dm-G 96 bpm. Hook unchanged | |
 | 006 | 2026-11-24 | Stung by 1,000 bees (absurd single event) | - | NEW RULES DEMO: 29 s, cold open on the swarm, premise label "1,000 BEE STINGS. THEN WHAT?", SECOND/MINUTE/HOUR labels, plain premise title, lowpoly, speed 1.18 | |
 | 007 | 2026-11-24 | Groom of the Stool: you wipe Henry VIII's bottom (true history story) | - | STYLE TEST storybook: AI painted backgrounds (free Cloudflare FLUX) + 2D costumed cast with dialogue (MiloQ-inspired, our own look); funny true-history format; 34 s | |
+| 008 | 2026-11-25 | Swallowing two magnets (absurd single event) | - | lowpoly, cold open on the X-ray in hospital, premise label "SWALLOW 2 MAGNETS. THEN WHAT?", SECOND/HOUR/DAY labels, myth-bust beat, 29.6 s, speed 1.18 | |
+| 009 | 2026-11-25 | Drinking only energy drinks | - | lowpoly life change, cold open slumped in a sea of cans, hook label "ONLY ENERGY DRINKS? HOW LONG?", 29.5 s, speed 1.2 | |
+| 010 | 2026-11-25 | Testing your own parachute off the Eiffel Tower (true story, Franz Reichelt 1912) | - | STYLE TEST storybook #2: true-history story, hook "WOULD YOU JUMP?", policeman dialogue, 28.2 s (fixed length vs 007's 34 s) | |
 
 ## Style test plan (george, 2026-11-24)
 
@@ -29,3 +32,9 @@ Early views/hour: sat down (low-poly) ~175/h, "would you actually survive this l
 mask ~70/h, never sleeping (noir) ~50/h. Old Veo Shorts: 10,000 grass snakes 18k views 95% viewed
 24 s; sneeze 2.8k 82%; sweat 2.5k 70%; lava 1.4k 72%. Take: length (24-31 s vs 45 s), a single vivid
 absurd premise, and titles that name it matter more than style. Rules updated in CLAUDE.md step 4.
+
+## 2026-11-25 analytics take
+
+Retention still null from the API (lag). Public views: 006 bees 1177 and 004 sitting 1095 (both
+lowpoly, short, vivid premise) lead; 001 643; 005 paper 237; 002 noir 195. Keep lowpoly + absurd
+premise as the base; storybook gets a second test (010) at the 25-30 s length before judging it.

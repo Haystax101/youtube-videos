@@ -1,0 +1,24 @@
+{
+ "title": "What happens if you swallow two magnets?",
+ "style": "lowpoly",
+ "speed": 1.18,
+ "voices": {"doctor": "bf_emma"},
+ "keywords": ["magnets", "magnet", "gut", "holes", "infection", "surgery"],
+ "beats": [
+  {"label": "SWALLOW 2 MAGNETS. *THEN WHAT?*", "hook": true, "scene": "hospital", "gary": {"pose": "bedsit", "expr": "sick"}, "fx": "xray", "camera": "wide",
+   "lines": [{"text": "What happens if you swallow two tiny magnets?"}]},
+  {"label": "SECOND 1", "scene": "livingroom", "gary": {"pose": "stand", "expr": "happy"}, "props": ["magnets"], "camera": "face",
+   "lines": [{"text": "They look like sweets. You swallow one. Then the other."}]},
+  {"label": "*MYTH*", "scene": "livingroom", "gary": {"pose": "sofa", "expr": "neutral"}, "camera": "push",
+   "lines": [{"text": "One magnet usually just passes through. Two is a disaster."}]},
+  {"label": "HOUR 12", "scene": "livingroom", "gary": {"pose": "slouch", "expr": "worried"}, "camera": "side",
+   "lines": [{"text": "They snap together through two loops of your gut, and pinch the wall between them."}]},
+  {"label": "DAY 2", "scene": "hospital", "gary": {"pose": "bedsit", "expr": "sick"}, "cast": [{"who": "doctor", "pose": "clipboard", "expr": "worried"}], "fx": "xray", "camera": "two",
+   "lines": [{"text": "The pinched gut dies, and leaks into your belly."}, {"text": "You ate magnets?", "speaker": "doctor"}]},
+  {"label": "DAY 3", "scene": "hospital", "gary": {"pose": "bedsit", "expr": "sick"}, "camera": "push", "death": true,
+   "lines": [{"text": "Without surgery, the infection floods your blood."}]},
+  {"label": "", "scene": "void", "gary": {"pose": "ghost", "expr": "dead"}, "camera": "wide",
+   "lines": [{"text": "You died. Comment what stupid shenanigans Gary should try tomorrow."}]}
+ ],
+ "experiment": {"premise": "absurd single event (2nd after bees)", "hook": "cold open on the X-ray in hospital", "length": "~28 s", "style": "lowpoly", "speed": 1.18}
+}

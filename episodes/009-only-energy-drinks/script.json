@@ -1,0 +1,23 @@
+{
+ "title": "If you only drank energy drinks, how long until you die?",
+ "style": "lowpoly",
+ "speed": 1.2,
+ "keywords": ["cans", "caffeine", "heart", "teeth", "enamel", "sleep"],
+ "beats": [
+  {"label": "ONLY ENERGY DRINKS? *HOW LONG?*", "hook": true, "scene": "gaming", "gary": {"pose": "slouch", "expr": "sick"}, "props": ["cans"], "camera": "wide",
+   "lines": [{"text": "If you drank nothing but energy drinks, how long until you die?"}]},
+  {"label": "DAY 1", "scene": "gaming", "gary": {"pose": "game", "expr": "happy"}, "camera": "face",
+   "lines": [{"text": "Day one. Eight cans. Your heart is doing a drum solo."}]},
+  {"label": "WEEK 1", "scene": "livingroom", "gary": {"pose": "sofa", "expr": "tired"}, "props": ["can"], "camera": "push",
+   "lines": [{"text": "You can't sleep, so you drink more to stay awake."}]},
+  {"label": "MONTH 1", "scene": "office", "gary": {"pose": "type", "expr": "worried"}, "camera": "side",
+   "lines": [{"text": "The acid starts dissolving your tooth enamel."}]},
+  {"label": "*MYTH*", "scene": "office", "gary": {"pose": "stand", "expr": "shocked"}, "props": ["can"], "camera": "face",
+   "lines": [{"text": "Sugar free won't save you. It's still packed with caffeine and acid."}]},
+  {"label": "MONTH 8", "scene": "gaming", "gary": {"pose": "game", "expr": "tired"}, "props": ["cans"], "camera": "push", "death": true,
+   "lines": [{"text": "Then one night, all that caffeine scrambles your heartbeat. Mid game."}]},
+  {"label": "", "scene": "void", "gary": {"pose": "ghost", "expr": "dead"}, "camera": "wide",
+   "lines": [{"text": "You died. Comment what stupid shenanigans Gary should try tomorrow."}]}
+ ],
+ "experiment": {"premise": "life change (paired with today's absurd events)", "hook": "cold open: slumped in a sea of cans; label ONLY ENERGY DRINKS? HOW LONG?", "length": "~28 s", "style": "lowpoly", "speed": 1.2}
+}

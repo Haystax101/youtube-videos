@@ -1,17 +1,17 @@
 {
- "fetchedAt": "2026-11-24T23:29:48Z",
+ "fetchedAt": "2026-11-25T05:47:47Z",
  "channel": {
   "viewCount": "26348",
-  "subscriberCount": "33",
+  "subscriberCount": "32",
   "hiddenSubscriberCount": false,
-  "videoCount": "16"
+  "videoCount": "15"
  },
  "videos": {
   "8kcCSMVfMvI": {
    "episode": "001-face-mask",
    "public": {
-    "viewCount": "431",
-    "likeCount": "6",
+    "viewCount": "643",
+    "likeCount": "7",
     "dislikeCount": "0",
     "favoriteCount": "0",
     "commentCount": "0"
@@ -29,8 +29,8 @@
   "TJv37NpCV8I": {
    "episode": "002-never-sleeping",
    "public": {
-    "viewCount": "152",
-    "likeCount": "4",
+    "viewCount": "195",
+    "likeCount": "5",
     "dislikeCount": "0",
     "favoriteCount": "0",
     "commentCount": "0"
@@ -50,8 +50,8 @@
   "K4vsHNDnBVU": {
    "episode": "004-sitting-all-day",
    "public": {
-    "viewCount": "763",
-    "likeCount": "17",
+    "viewCount": "1095",
+    "likeCount": "15",
     "dislikeCount": "0",
     "favoriteCount": "0",
     "commentCount": "3"
@@ -72,8 +72,8 @@
   "xAi8c9w5K4Y": {
    "episode": "005-sun-goes-out",
    "public": {
-    "viewCount": "215",
-    "likeCount": "2",
+    "viewCount": "237",
+    "likeCount": "1",
     "dislikeCount": "0",
     "favoriteCount": "0",
     "commentCount": "0"
@@ -84,8 +84,8 @@
   "nTrRvSX_3bg": {
    "episode": "006-bee-stings",
    "public": {
-    "viewCount": "370",
-    "likeCount": "10",
+    "viewCount": "1177",
+    "likeCount": "14",
     "dislikeCount": "0",
     "favoriteCount": "0",
     "commentCount": "0"
@@ -104,14 +104,6 @@
   },
   "IrHK5kOda14": {
    "episode": "007-groom-of-the-stool",
-   "public": {
-    "viewCount": "0",
-    "likeCount": "0",
-    "dislikeCount": "0",
-    "favoriteCount": "0",
-    "commentCount": "0"
-   },
-   "privacy": "public",
    "retention": [],
    "experiment": {
     "style": "storybook: AI-generated painted backgrounds (Cloudflare FLUX.2 klein) + 2D costumed characters with dialogue",

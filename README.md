@@ -70,7 +70,8 @@ A separate renderer: faceted, flat-shaded 3D people with real joints in floating
 - cast: `[{"who": "doctor", "pose": "clipboard"}]`; a line with `"speaker": "doctor"` moves the doctor's mouth
   (give the voice in `voices`, e.g. `"doctor": "bf_emma"`)
 - gary.welts: true (red sting bumps on the face); script `keywords`: extra caption words to highlight
-- props: pizza; fx: clot, clot_move, bees (full swarm), bees_few; camera: push, face, wide, side, low, front, two, legs
+- props: pizza, can (energy drink in hand), cans (pile of empties at Gary's feet), magnets (pair in hand);
+  fx: clot, clot_move, bees (full swarm), bees_few, xray (lightbox X-ray beside Gary); camera: push, face, wide, side, low, front, two, legs
 - death: clutches chest, then slumps; red pulse
 New rooms, people (PEOPLE) and poses (POSES) are plain data in web/lowpoly.js.
 
@@ -80,10 +81,11 @@ Generated painted backgrounds with hand-drawn 2D costumed characters acting in f
 - `backgrounds`: {"key": "prompt"} in script.json; `python3 pipeline/backgrounds.py EP` writes `EP/bg/key.jpg`
   with Cloudflare Workers AI (FLUX.2 klein 4B, free daily allowance ~60 images; needs CF_ACCOUNT_ID and
   CF_API_TOKEN). `bgStyle` overrides the shared style suffix. Commit the bg images (small) with the script.
-- beat: `bg`, `cast` [{id, who, x, s, pose, expr, flip, hold, enter, ghost}], `props` [{type: stool|block|throne, x, s}],
+- beat: `bg`, `cast` [{id, who, x, s, pose, expr, flip, hold, enter, ghost, jump}] (jump: true drops that character off-screen with a spin just before `deathAt`), `props` [{type: stool|block|throne, x, s}],
   `fx`: coins|shake, `camera`: wide|push|close (on `focus`)|pan, `death` + `deathOf`: cast id
-- who: WARDROBE entries in web/storybook.js (gary, gary_tudor, king_henry, lord, anne, executioner); add
+- who: WARDROBE entries in web/storybook.js (gary, gary_tudor, king_henry, lord, anne, executioner, gary_tailor,
+  gary_chute (parachute-suit cape), gendarme, reporter; hats incl. flat_cap, leather_cap, kepi); add
   new costumes per idea. pose: idle, hold, point, shrug, panic, hips, whisper, wave, bow, axe.
-  expr: happy, neutral, worried, shocked, smug, angry, sick, dead. hold: cloth, purse, axe, scroll, goblet.
+  expr: happy, neutral, worried, shocked, smug, angry, sick, dead. hold: cloth, purse, axe, scroll, goblet, camera.
 - `names`: {"speakerId": "ON-SCREEN NAME"} shows who is talking above the caption; give every speaker a voice in `voices`.
 

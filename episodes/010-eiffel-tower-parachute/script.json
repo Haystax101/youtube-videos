@@ -1,0 +1,35 @@
+{
+ "title": "You test your own parachute by jumping off the Eiffel Tower",
+ "style": "storybook",
+ "speed": 1.16,
+ "voices": {"narrator": "am_michael", "gary": "am_puck", "cop": "bm_lewis"},
+ "names": {"gary": "YOU", "cop": "POLICEMAN"},
+ "keywords": ["parachute", "Eiffel", "dummy", "dummies", "1912", "jump"],
+ "backgrounds": {
+  "tower": "view from the first platform of the Eiffel Tower in 1912, riveted iron railing and wooden deck in the foreground, Paris rooftops and the Seine far below, misty winter morning",
+  "workshop": "cluttered 1910s Paris tailor's workshop, sewing machine, rolls of fabric, mannequins, hanging coats, wooden floor in the foreground",
+  "street": "Paris street in 1912 at the foot of the Eiffel Tower, cobblestones, gas lamps, Belle Epoque buildings, cold morning, open pavement in the foreground",
+  "heaven": "heaven made of fluffy pastel clouds, golden light rays, soft pink and blue sky, cloud floor in the foreground"
+ },
+ "beats": [
+  {"label": "WOULD YOU *JUMP?*", "hook": true, "bg": "tower", "camera": "push",
+   "cast": [{"id": "gary", "who": "gary_chute", "x": 0.5, "pose": "panic", "expr": "worried"}],
+   "lines": [{"text": "What if you tested your own parachute by jumping off the Eiffel Tower?"}]},
+  {"label": "PARIS, 1911", "bg": "workshop", "camera": "close", "focus": "gary",
+   "cast": [{"id": "gary", "who": "gary_tailor", "x": 0.45, "pose": "hold", "hold": "scroll", "expr": "smug"}],
+   "lines": [{"text": "You're a tailor, and you've invented a parachute you can wear."}]},
+  {"label": "TEST 1", "bg": "street", "camera": "pan",
+   "cast": [{"id": "gary", "who": "gary_tailor", "x": 0.35, "pose": "shrug", "expr": "worried"}],
+   "lines": [{"text": "Every dummy you throw drops straight down. Splat."}, {"text": "Not high enough.", "speaker": "gary"}]},
+  {"label": "FEB 4, 1912", "bg": "street", "camera": "push",
+   "cast": [{"id": "cop", "who": "gendarme", "x": 0.72, "pose": "point", "expr": "angry", "flip": true}, {"id": "gary", "who": "gary_chute", "x": 0.3, "pose": "hips", "expr": "smug"}],
+   "lines": [{"text": "You told us you'd use a dummy!", "speaker": "cop"}, {"text": "I am the dummy.", "speaker": "gary"}]},
+  {"label": "8:22 AM", "bg": "tower", "camera": "push", "death": true, "deathOf": "gary",
+   "cast": [{"id": "rep", "who": "reporter", "x": 0.8, "pose": "hold", "hold": "camera", "expr": "shocked", "flip": true}, {"id": "gary", "who": "gary_chute", "x": 0.38, "pose": "panic", "expr": "worried", "jump": true}],
+   "lines": [{"text": "Cameras roll. You hesitate for forty seconds. Then you jump. It never opens."}]},
+  {"label": "", "bg": "heaven", "camera": "wide",
+   "cast": [{"id": "gary", "who": "gary_chute", "x": 0.5, "pose": "shrug", "expr": "dead", "ghost": true}],
+   "lines": [{"text": "You died. Comment what stupid shenanigans Gary should try tomorrow."}]}
+ ],
+ "experiment": {"style": "storybook #2 (repeat to judge the style)", "format": "funny true-history story: Franz Reichelt, 1912", "hook": "WOULD YOU JUMP? cold open on the tower in the parachute suit", "length": "~30 s", "speed": 1.16}
+}

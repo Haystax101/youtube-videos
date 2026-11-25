@@ -1,0 +1,467 @@
+{
+ "duration": 28.247,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 4.186,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "What",
+     "s": 0.15,
+     "e": 0.355,
+     "speaker": "narrator"
+    },
+    {
+     "w": "if",
+     "s": 0.355,
+     "e": 0.547,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 0.547,
+     "e": 0.746,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tested",
+     "s": 0.746,
+     "e": 1.144,
+     "speaker": "narrator"
+    },
+    {
+     "w": "your",
+     "s": 1.144,
+     "e": 1.349,
+     "speaker": "narrator"
+    },
+    {
+     "w": "own",
+     "s": 1.349,
+     "e": 1.548,
+     "speaker": "narrator"
+    },
+    {
+     "w": "parachute",
+     "s": 1.548,
+     "e": 2.144,
+     "speaker": "narrator"
+    },
+    {
+     "w": "by",
+     "s": 2.144,
+     "e": 2.336,
+     "speaker": "narrator"
+    },
+    {
+     "w": "jumping",
+     "s": 2.336,
+     "e": 2.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "off",
+     "s": 2.74,
+     "e": 2.939,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 2.939,
+     "e": 3.138,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Eiffel",
+     "s": 3.138,
+     "e": 3.535,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Tower?",
+     "s": 3.535,
+     "e": 3.926,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 4.186,
+   "end": 7.518,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You're",
+     "s": 4.186,
+     "e": 4.384,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 4.384,
+     "e": 4.557,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tailor,",
+     "s": 4.557,
+     "e": 5.029,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 5.029,
+     "e": 5.215,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you've",
+     "s": 5.215,
+     "e": 5.413,
+     "speaker": "narrator"
+    },
+    {
+     "w": "invented",
+     "s": 5.413,
+     "e": 5.964,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 5.964,
+     "e": 6.137,
+     "speaker": "narrator"
+    },
+    {
+     "w": "parachute",
+     "s": 6.137,
+     "e": 6.695,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 6.695,
+     "e": 6.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "can",
+     "s": 6.88,
+     "e": 7.066,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wear.",
+     "s": 7.066,
+     "e": 7.258,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 7.518,
+   "end": 11.855,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Every",
+     "s": 7.518,
+     "e": 8.149,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dummy",
+     "s": 8.149,
+     "e": 8.582,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 8.582,
+     "e": 8.803,
+     "speaker": "narrator"
+    },
+    {
+     "w": "throw",
+     "s": 8.803,
+     "e": 9.038,
+     "speaker": "narrator"
+    },
+    {
+     "w": "drops",
+     "s": 9.038,
+     "e": 9.273,
+     "speaker": "narrator"
+    },
+    {
+     "w": "straight",
+     "s": 9.273,
+     "e": 9.53,
+     "speaker": "narrator"
+    },
+    {
+     "w": "down.",
+     "s": 9.53,
+     "e": 9.758,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Splat.",
+     "s": 9.898,
+     "e": 10.623,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Not",
+     "s": 10.763,
+     "e": 10.97,
+     "speaker": "gary"
+    },
+    {
+     "w": "high",
+     "s": 10.97,
+     "e": 11.183,
+     "speaker": "gary"
+    },
+    {
+     "w": "enough.",
+     "s": 11.183,
+     "e": 11.595,
+     "speaker": "gary"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 11.855,
+   "end": 14.986,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You",
+     "s": 11.855,
+     "e": 12.097,
+     "speaker": "cop"
+    },
+    {
+     "w": "told",
+     "s": 12.097,
+     "e": 12.348,
+     "speaker": "cop"
+    },
+    {
+     "w": "us",
+     "s": 12.348,
+     "e": 12.581,
+     "speaker": "cop"
+    },
+    {
+     "w": "you'd",
+     "s": 12.581,
+     "e": 12.832,
+     "speaker": "cop"
+    },
+    {
+     "w": "use",
+     "s": 12.832,
+     "e": 13.074,
+     "speaker": "cop"
+    },
+    {
+     "w": "a",
+     "s": 13.074,
+     "e": 13.299,
+     "speaker": "cop"
+    },
+    {
+     "w": "dummy!",
+     "s": 13.299,
+     "e": 13.775,
+     "speaker": "cop"
+    },
+    {
+     "w": "I",
+     "s": 13.915,
+     "e": 14.071,
+     "speaker": "gary"
+    },
+    {
+     "w": "am",
+     "s": 14.071,
+     "e": 14.232,
+     "speaker": "gary"
+    },
+    {
+     "w": "the",
+     "s": 14.232,
+     "e": 14.398,
+     "speaker": "gary"
+    },
+    {
+     "w": "dummy.",
+     "s": 14.398,
+     "e": 14.726,
+     "speaker": "gary"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 14.986,
+   "end": 22.53,
+   "deathAt": 20.74,
+   "words": [
+    {
+     "w": "Cameras",
+     "s": 14.986,
+     "e": 15.743,
+     "speaker": "narrator"
+    },
+    {
+     "w": "roll.",
+     "s": 15.743,
+     "e": 16.01,
+     "speaker": "narrator"
+    },
+    {
+     "w": "You",
+     "s": 16.15,
+     "e": 16.357,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hesitate",
+     "s": 16.357,
+     "e": 16.971,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 16.971,
+     "e": 17.178,
+     "speaker": "narrator"
+    },
+    {
+     "w": "forty",
+     "s": 17.178,
+     "e": 17.585,
+     "speaker": "narrator"
+    },
+    {
+     "w": "seconds.",
+     "s": 17.585,
+     "e": 18.006,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Then",
+     "s": 18.146,
+     "e": 18.505,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 18.505,
+     "e": 18.853,
+     "speaker": "narrator"
+    },
+    {
+     "w": "jump.",
+     "s": 18.853,
+     "e": 19.213,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 19.353,
+     "e": 19.597,
+     "speaker": "narrator"
+    },
+    {
+     "w": "never",
+     "s": 19.597,
+     "e": 20.093,
+     "speaker": "narrator"
+    },
+    {
+     "w": "opens.",
+     "s": 20.093,
+     "e": 20.59,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 22.53,
+   "end": 27.047,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You",
+     "s": 22.53,
+     "e": 22.939,
+     "speaker": "narrator"
+    },
+    {
+     "w": "died.",
+     "s": 22.939,
+     "e": 23.362,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Comment",
+     "s": 23.502,
+     "e": 23.919,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 23.919,
+     "e": 24.131,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stupid",
+     "s": 24.131,
+     "e": 24.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "shenanigans",
+     "s": 24.54,
+     "e": 25.353,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Gary",
+     "s": 25.353,
+     "e": 25.749,
+     "speaker": "narrator"
+    },
+    {
+     "w": "should",
+     "s": 25.749,
+     "e": 25.975,
+     "speaker": "narrator"
+    },
+    {
+     "w": "try",
+     "s": 25.975,
+     "e": 26.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tomorrow.",
+     "s": 26.18,
+     "e": 26.787,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}

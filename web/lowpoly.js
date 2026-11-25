@@ -10,7 +10,9 @@
 //                                 build: 0 (default) .. 1 (much heavier), for weight-gain arcs
 //   cast: [{ who: "doctor", pose }]  extra people placed at the scene's cast spot; a line with
 //                                 "speaker": "doctor" animates that person's mouth
-//   props: ["pizza"]   fx: "clot" (glowing clot in the calf), "clot_move" (clot travels to the lungs),
+//   props: ["pizza", "can" (energy drink in hand), "cans" (empty cans piled around), "magnets" (two magnet balls in hand)]
+//   fx also: "xray" (lightbox X-ray of your gut with two stuck-together magnets)
+//   fx: "clot" (glowing clot in the calf), "clot_move" (clot travels to the lungs),
 //                      "bees" (a full swarm around Gary), "bees_few" (a handful)
 //   camera: push, face, wide, side, low, front, two, legs
 //   death: true -> clutch chest, then slump; red pulse. No deaths counter in this style.
@@ -254,6 +256,24 @@ const clipboard = new THREE.Group();
 clipboard.add(at(box(0.24, 0.32, 0.015, '#a0703f'), 0, 0, 0));
 clipboard.add(at(box(0.21, 0.27, 0.005, '#ffffff'), 0, -0.01, 0.01));
 for (let i = 0; i < 5; i++) clipboard.add(at(box(0.15, 0.008, 0.002, '#9aa3b5'), 0, 0.07 - i * 0.04, 0.014));
+const drinkCan = new THREE.Group();
+{ drinkCan.add(at(cyl(0.035, 0.035, 0.12, '#1fd65f', 8), 0, 0, 0)); drinkCan.add(at(cyl(0.036, 0.036, 0.03, '#111118', 8), 0, 0.01, 0)); drinkCan.add(at(cyl(0.03, 0.035, 0.012, '#c9ced8', 8), 0, 0.066, 0)); }
+const magnetPair = new THREE.Group();
+{ for (const x of [-0.02, 0.02]) magnetPair.add(at(ico(0.022, '#d9dde3', 1), x, 0, 0)); }
+const canPile = new THREE.Group();
+{ const r = rng(91); for (let i = 0; i < 22; i++) { const c = cyl(0.035, 0.035, 0.12, ['#1fd65f', '#ff3cac', '#2bd2ff', '#ffd166'][i % 4], 8); const a = r() * 6.28, d = 0.35 + r() * 0.75; c.position.set(Math.cos(a) * d, r() < 0.5 ? 0.035 : 0.06, Math.sin(a) * d * 0.7 + 0.25); if (c.position.y < 0.05) c.rotation.set(Math.PI / 2, 0, r() * 6.28); canPile.add(c); } }
+const xrayTex = canvasTex(256, 320, (g, w, h) => {
+  g.fillStyle = '#0b1830'; g.fillRect(0, 0, w, h);
+  g.strokeStyle = 'rgba(200,230,255,0.85)'; g.lineWidth = 6; g.fillStyle = 'rgba(150,200,255,0.18)';
+  g.beginPath(); g.arc(128, 48, 30, 0, 7); g.fill(); g.stroke();
+  g.beginPath(); g.moveTo(80, 90); g.lineTo(176, 90); g.lineTo(168, 300); g.lineTo(88, 300); g.closePath(); g.fill(); g.stroke();
+  g.lineWidth = 3; for (let i = 0; i < 6; i++) { g.beginPath(); g.moveTo(92, 104 + i * 14); g.quadraticCurveTo(128, 96 + i * 14, 164, 104 + i * 14); g.stroke(); }
+  g.strokeStyle = 'rgba(200,230,255,0.6)'; g.lineWidth = 5; g.beginPath(); for (let i = 0; i < 5; i++) { const y = 200 + i * 18; g.moveTo(100, y); g.bezierCurveTo(120, y - 12, 136, y + 12, 156, y); } g.stroke();
+  const gr = g.createRadialGradient(130, 236, 0, 130, 236, 30); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.4, 'rgba(255,70,90,0.9)'); gr.addColorStop(1, 'rgba(255,0,40,0)');
+  g.fillStyle = gr; g.fillRect(90, 196, 80, 80); g.fillStyle = '#ffffff'; g.beginPath(); g.arc(122, 236, 8, 0, 7); g.arc(138, 236, 8, 0, 7); g.fill();
+});
+const xray = new THREE.Group();
+{ xray.add(at(box(0.84, 1.04, 0.05, '#e9ecef'), 0, 0, 0)); const pn = new THREE.Mesh(new THREE.PlaneGeometry(0.76, 0.95), new THREE.MeshBasicMaterial({ map: xrayTex })); pn.position.z = 0.03; xray.add(pn); }
 const slice = new THREE.Group();
 { const g = new THREE.CylinderGeometry(0.13, 0.13, 0.02, 3, 1, false, 0, Math.PI / 3.2); slice.add(mesh(g, '#f4b942')); slice.add(at(cyl(0.012, 0.012, 0.13, '#c97b32', 5), 0.06, 0.012, 0.11, 0, 0, Math.PI / 2)); }
 
@@ -617,11 +637,15 @@ window.renderFrame = (t) => {
     setFace(h, c.expr || 'neutral', { blink: ((t + 1.3) % 2.9) < 0.11, mouth: talking ? 0.35 + 0.35 * Math.abs(Math.sin(t * 16)) : 0, t });
   }
   // held items
-  controller.removeFromParent(); clipboard.removeFromParent(); slice.removeFromParent();
+  controller.removeFromParent(); clipboard.removeFromParent(); slice.removeFromParent(); drinkCan.removeFromParent(); magnetPair.removeFromParent(); canPile.removeFromParent(); xray.removeFromParent();
   if (gs.pose === 'game') { H.j.haR.add(controller); controller.position.set(0.075, -0.07, 0.03); controller.rotation.set(0.2, 0, 0); if (b.deathAt != null && t > b.deathAt) { scene.add(controller); controller.position.set(0.12, 0.05, 0.45); controller.rotation.set(0, 0.6, 0); } }
   if ((b.cast || []).some(c => c.pose === 'clipboard')) { doctor.j.haR.add(clipboard); clipboard.position.set(-0.06, -0.08, 0.05); clipboard.rotation.set(-1.2, 0, 0.3); }
   const props = b.props || [];
   if (R.g.userData.pizza) R.g.userData.pizza.visible = props.includes('pizza');
+  if (props.includes('can') && !(b.deathAt != null && t > b.deathAt)) { H.j.haR.add(drinkCan); drinkCan.position.set(0, -0.09, 0.04); drinkCan.rotation.set(0.2, 0, 0); }
+  if (props.includes('magnets')) { H.j.haR.add(magnetPair); magnetPair.position.set(0, -0.08, 0.06); }
+  if (props.includes('cans')) { scene.add(canPile); canPile.position.set(H.root.position.x, R.spot[1], H.root.position.z); }
+  if (b.fx === 'xray') { scene.add(xray); xray.position.set(H.root.position.x - 1.15, R.spot[1] + 1.75, H.root.position.z - 1.0); xray.rotation.set(0, 0.35, 0); }
   if (props.includes('pizza')) { H.j.haR.add(slice); slice.position.set(0, -0.1, 0.05); slice.rotation.set(0.3, 0.5, 1.4); }
 
   // room animation

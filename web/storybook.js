@@ -10,7 +10,8 @@
 //     who:   a WARDROBE entry below (add new ones freely; Gary is always the "you" character)
 //     pose:  idle, hold, point, shrug, panic, hips, whisper, wave, bow, axe (raised; swings at the death)
 //     expr:  happy, neutral, worried, shocked, smug, angry, sick, dead
-//     hold:  cloth, purse, axe, scroll, goblet
+//     hold:  cloth, purse, axe, scroll, goblet, camera
+//   cast.jump: true -> the character leaps and drops out of frame during the beat
 //   props: [{ type: "stool"|"block"|"throne", x, s }]   fx: "coins" (gold rain), "shake"
 //   camera: wide, push, close (on `focus` cast id), pan
 //   death: true + deathOf: cast id -> that character falls; red flash
@@ -44,6 +45,10 @@ const WARDROBE = {
   king_henry:  { skin: '#ffd9bd', hair: 'short', hairColor: '#c7662b', beard: '#c7662b', body: 'robe', color: '#b3202c', trim: '#f4c542', fur: true, legs: '#f2ead8', hat: 'crown', size: 1.12, belly: 1 },
   lord:        { skin: '#ffe0c4', hair: 'short', hairColor: '#2a1d14', mustache: '#2a1d14', body: 'doublet', color: '#2e7d4f', trim: '#e8c35a', legs: '#2e2e3a', hat: 'feather_hat', hatColor: '#2e7d4f' },
   anne:        { skin: '#ffe6d3', hair: 'long', hairColor: '#2a1a12', body: 'dress', color: '#7a1f3d', trim: '#f2d27a', hat: 'french_hood', hatColor: '#151318', necklace: true },
+  gary_tailor: { skin: '#ffe3cc', hair: 'tuft', hairColor: '#6b4226', mustache: '#6b4226', body: 'doublet', color: '#6d5a48', trim: '#d9c6a5', legs: '#3b3430', hat: 'flat_cap', hatColor: '#4a3e34' },
+  gary_chute:  { skin: '#ffe3cc', hair: 'tuft', hairColor: '#6b4226', mustache: '#6b4226', body: 'doublet', color: '#5b4d3f', trim: '#d9c6a5', legs: '#3b3430', cape: '#8c7a63', hat: 'leather_cap', hatColor: '#5a3b22' },
+  gendarme:    { skin: '#ffdcc2', hair: 'short', hairColor: '#2a1d14', mustache: '#2a1d14', body: 'doublet', color: '#22356b', trim: '#d9b44a', legs: '#b8282e', hat: 'kepi', hatColor: '#22356b' },
+  reporter:    { skin: '#f3c9a6', hair: 'short', hairColor: '#3a2a1c', body: 'doublet', color: '#7b6f5e', trim: '#2b2b2b', legs: '#3d3d46', hat: 'flat_cap', hatColor: '#5b5248' },
   executioner: { skin: '#ffd9bd', body: 'tunic', color: '#2a2a2e', trim: '#4a4a52', legs: '#2a2a2e', hat: 'hood', size: 1.1, belly: 0.5 },
 };
 
@@ -83,6 +88,7 @@ function drawHeld(kind, hx, hy, ang, swing) {
   if (kind === 'cloth') { g.rotate(0.2); path([[-10, 0], [40, -8], [48, 40], [6, 52], [-6, 30]]); fillStroke('#fbfbf5', 6); g.strokeStyle = 'rgba(0,0,0,0.15)'; g.lineWidth = 3; g.beginPath(); g.moveTo(8, 12); g.lineTo(36, 8); g.moveTo(10, 30); g.lineTo(38, 26); g.stroke(); }
   if (kind === 'purse') { ell(0, 34, 34, 30); fillStroke('#8a5a2c', 6); path([[-14, 6], [14, 6]], false); fillStroke(null, 6); g.fillStyle = '#ffd34d'; g.font = '900 34px Poppins'; g.textAlign = 'center'; g.fillText('£', 0, 48); }
   if (kind === 'scroll') { g.rotate(-0.3); g.fillStyle = '#f3e2b8'; g.fillRect(-8, -50, 60, 100); g.lineWidth = 6; g.strokeStyle = INK; g.strokeRect(-8, -50, 60, 100); ell(22, -52, 34, 10); fillStroke('#e6cf98', 6); ell(22, 52, 34, 10); fillStroke('#e6cf98', 6); }
+  if (kind === 'camera') { g.fillStyle = INK; g.fillRect(-50, -70, 90, 70); g.fillStyle = '#4a4a52'; g.fillRect(-44, -64, 78, 58); ell(40, -36, 20, 20); fillStroke('#9fb7c9', 6); g.strokeStyle = INK; g.lineWidth = 8; g.beginPath(); g.moveTo(-30, -70); g.lineTo(-30, -96); g.stroke(); }
   if (kind === 'goblet') { path([[-22, -40], [22, -40], [10, 0], [-10, 0]]); fillStroke('#f4c542', 6); g.fillStyle = INK; g.fillRect(-4, 0, 8, 26); ell(0, 28, 20, 6); fillStroke('#f4c542', 5); }
   if (kind === 'axe') {
     g.rotate(ang + Math.PI + (swing || 0));
@@ -148,6 +154,9 @@ function drawHead(o, st, t, idSeed) {
   if (o.hair === 'short') { g.beginPath(); g.moveTo(-r + 2, hy - 10); g.quadraticCurveTo(-r, hy - r - 10, 0, hy - r - 6); g.quadraticCurveTo(r, hy - r - 10, r - 2, hy - 10); g.quadraticCurveTo(r - 30, hy - 60, 0, hy - 70); g.quadraticCurveTo(-r + 30, hy - 60, -r + 2, hy - 10); g.closePath(); fillStroke(o.hairColor, 7); }
   // hats
   if (o.hat === 'tudor_cap') { ell(-8, hy - r + 6, r + 18, 30, -0.12); fillStroke(o.hatColor, 7); ell(-10, hy - r - 10, 62, 24, -0.12); fillStroke(o.hatColor, 7); g.beginPath(); g.moveTo(40, hy - r - 14); g.quadraticCurveTo(120, hy - r - 70, 150, hy - r - 20); g.quadraticCurveTo(110, hy - r - 30, 46, hy - r - 2); fillStroke('#fbfbf5', 5); }
+  if (o.hat === 'flat_cap') { g.beginPath(); g.moveTo(-r + 4, hy - 40); g.quadraticCurveTo(-r + 10, hy - r - 30, 10, hy - r - 24); g.quadraticCurveTo(r + 10, hy - r - 20, r + 40, hy - 50); g.quadraticCurveTo(r - 20, hy - 30, -r + 4, hy - 40); g.closePath(); fillStroke(o.hatColor, 7); }
+  if (o.hat === 'leather_cap') { g.beginPath(); g.arc(0, hy - 6, r + 6, Math.PI + 0.25, -0.25); g.closePath(); fillStroke(o.hatColor, 7); for (const s of [-1, 1]) { ell(s * (r - 4), hy + 10, 22, 40); fillStroke(o.hatColor, 6); } ell(0, hy - r + 30, 74, 22); fillStroke('#7fb3c9', 6); }
+  if (o.hat === 'kepi') { path([[-70, hy - r + 30], [70, hy - r + 30], [60, hy - r - 60], [-60, hy - r - 60]]); fillStroke(o.hatColor, 7); ell(0, hy - r - 60, 60, 14); fillStroke('#b8282e', 6); g.fillStyle = o.trim; g.fillRect(-70, hy - r + 4, 140, 12); path([[-74, hy - r + 30], [74, hy - r + 30], [60, hy - r + 52], [-60, hy - r + 52]]); fillStroke(INK, 4); }
   if (o.hat === 'crown') { const y0 = hy - r + 22; path([[-74, y0], [-82, y0 - 70], [-42, y0 - 34], [0, y0 - 86], [42, y0 - 34], [82, y0 - 70], [74, y0]]); fillStroke('#f4c542', 7); for (const [x, c] of [[-44, '#d7263d'], [0, '#2a6fdb'], [44, '#d7263d']]) { ell(x, y0 - 16, 9, 9); fillStroke(c, 4); } }
   if (o.hat === 'feather_hat') { ell(0, hy - r + 10, r + 44, 26); fillStroke(o.hatColor, 7); g.beginPath(); g.moveTo(-60, hy - r + 4); g.quadraticCurveTo(-56, hy - r - 66, 0, hy - r - 70); g.quadraticCurveTo(56, hy - r - 66, 60, hy - r + 4); g.closePath(); fillStroke(o.hatColor, 7); g.beginPath(); g.moveTo(40, hy - r - 50); g.bezierCurveTo(120, hy - r - 150, 170, hy - r - 60, 150, hy - r - 20); g.bezierCurveTo(120, hy - r - 70, 90, hy - r - 60, 48, hy - r - 36); fillStroke('#f2ead8', 5); }
   if (o.hat === 'french_hood') { g.beginPath(); g.arc(0, hy + 6, r + 10, Math.PI + 0.15, -0.15); g.lineWidth = 22; g.strokeStyle = INK; g.stroke(); g.lineWidth = 12; g.strokeStyle = o.trim || '#f2d27a'; g.stroke(); }
@@ -158,6 +167,9 @@ function drawBody(o, st, t) {
   const top = -440, waist = -250;
   const sw = o.body === 'robe' ? 112 : o.body === 'dress' ? 78 : 84;
   const lp = o.legs || '#333';
+  // cape / parachute canopy (behind everything)
+  if (o.cape) { g.beginPath(); g.moveTo(-sw + 6, top + 10); g.quadraticCurveTo(-sw - 150, -260, -sw - 90, -40); for (let i = 0; i <= 8; i++) g.lineTo(lerp(-sw - 90, sw + 90, i / 8), -40 + (i % 2 ? 22 : 0)); g.quadraticCurveTo(sw + 150, -260, sw - 6, top + 10); g.closePath(); fillStroke(o.cape, 8);
+    g.strokeStyle = 'rgba(0,0,0,0.18)'; g.lineWidth = 5; for (let i = 1; i < 8; i++) { g.beginPath(); g.moveTo(lerp(-sw, sw, i / 8), top + 30); g.lineTo(lerp(-sw - 90, sw + 90, i / 8), -40); g.stroke(); } }
   // legs
   if (o.body !== 'dress') {
     const ly = o.body === 'robe' ? -110 : waist + 20;
@@ -194,7 +206,7 @@ function drawPerson(c, st, t, idSeed) {
   g.save();
   g.globalAlpha = st.ghost ? 0.82 : 1;
   const wob = Math.sin(t * 2.2 + idSeed) * 2.5;
-  const { sw, top } = drawBody(st.ghost ? { ...o, color: '#e6eeff', trim: '#cfdcff', legs: '#dfe8ff', fur: false } : o, st, t);
+  const { sw, top } = drawBody(st.ghost ? { ...o, color: '#e6eeff', trim: '#cfdcff', legs: '#dfe8ff', fur: false, cape: o.cape && '#dfe8ff' } : o, st, t);
   // arms (behind the head)
   let L = pose.L, R = pose.R; let swing = 0;
   if (st.pose === 'axe' && st.swing != null) { const k = st.swing; L = [lerp(165, 70, k), 0]; R = [lerp(165, 70, k), 0]; swing = 0; }
@@ -281,6 +293,8 @@ window.renderFrame = (t) => {
     const st = { pose: c.pose || 'idle', expr: c.expr || 'neutral', hold: c.hold, ghost: c.ghost, talk: talking ? Math.abs(Math.sin(t * 26)) : 0, walk: !!c.enter && lt < 0.45 };
     let fall = 0, y = GROUND;
     if (c.ghost) y -= 60 + 25 * Math.sin(t * 2.1);
+    let jumpRot = 0;
+    if (c.jump) { const j0 = b.deathAt != null ? b.deathAt - 1.2 : b.start + dur * 0.55; const k = clamp((t - j0) / 1.1); if (k > 0) { y += -260 * Math.sin(Math.min(k, 0.25) / 0.25 * Math.PI / 2) * (1 - k) + 2600 * k * k; jumpRot = 40 * k; } }
     if (st.pose === 'axe' && b.deathAt != null) st.swing = ease(clamp((t - (b.deathAt - 0.35)) / 0.3));
     if (b.death && b.deathOf === c.id && b.deathAt != null) {
       if (t >= b.deathAt - 0.5 && t < b.deathAt) st.expr = 'shocked';
@@ -289,7 +303,7 @@ window.renderFrame = (t) => {
     // ground shadow
     g.fillStyle = 'rgba(20,10,5,0.28)'; ell(x, y + 4, 130 * s, 22 * s); g.fill();
     g.save(); g.translate(x, y); g.scale(c.flip ? -s : s, s);
-    g.rotate(rad(-88 * fall * (c.flip ? -1 : 1)) + (POSES[st.pose]?.lean ? rad(POSES[st.pose].lean) : 0) + Math.sin(t * 1.7 + i) * 0.012);
+    g.rotate(rad(jumpRot) + rad(-88 * fall * (c.flip ? -1 : 1) * (c.jump ? 0 : 1)) + (POSES[st.pose]?.lean ? rad(POSES[st.pose].lean) : 0) + Math.sin(t * 1.7 + i) * 0.012);
     const bob = Math.abs(Math.sin(t * 2.4 + i)) * 6 + st.talk * 4;
     g.translate(0, -bob);
     drawPerson(c, st, t, i + 1);
