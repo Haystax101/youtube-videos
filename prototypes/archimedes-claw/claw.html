@@ -255,9 +255,10 @@ function person(kind, where, script, opts = {}) { const c = document.createEleme
 const onShip = (S, lx, lz) => w => { S.g.updateWorldMatrix(true, false); return V(lx, S.Hh - 0.3, lz).applyMatrix4(S.g.matrixWorld); };
 const fixed = (x, y, z) => () => V(x, y, z);
 // you and your crewmates on your ship; they go overboard when it tips
-function overboard(S, lx, lz, tFall, push) { const deck = onShip(S, lx, lz); return w => { if (w < tFall) return deck(w); const p0 = deck(tFall); const u = w - tFall; const y = p0.y + 4 * u - 4.9 * u * u; return y > -0.9 ? V(p0.x + push.x * u, y, p0.z + push.z * u) : V(p0.x + push.x * Math.min(u, 2), -1.05 + Math.sin(w * 3) * 0.08, p0.z + push.z * Math.min(u, 2)); }; }
+function overboard(S, lx, lz, tFall, push) { const deck = onShip(S, lx, lz); return w => { if (w > CLEAR1) return V(0, -100, 0); if (w < tFall) return deck(w); const p0 = deck(tFall); const u = w - tFall; const y = p0.y + 4 * u - 4.9 * u * u; return y > -0.9 ? V(p0.x + push.x * u, y, p0.z + push.z * u) : V(p0.x + push.x * Math.min(u, 2), -1.05 + Math.sin(w * 3) * 0.08, p0.z + push.z * Math.min(u, 2)); }; }
 const YOU_FALL = 34.55;
-const youP = person('sailor', w => w < 40 ? overboard(you, -0.5, -4.6, YOU_FALL, V(-2.2, 0, 1.2))(w) : V(24, 0.32 + Math.sin(w * 1.6) * 0.1, 22),
+const CLEAR0 = 54.6, CLEAR1 = 56.2, SINK = w => ease(CLEAR0, CLEAR1, w) * 6;  // MONTHS LATER: wrecks sink away
+const youP = person('sailor', w => w < 40 ? overboard(you, -0.5, -4.6, YOU_FALL, V(-2.2, 0, 1.2))(w) : (w > CLEAR1 ? V(0, -100, 0) : V(24, 0.32 + Math.sin(w * 1.6) * 0.1 - SINK(w), 22)),
   w => w < 27.8 ? ['row', 'watch', w] : w < 31.6 ? ['lookup', 'shocked', w] : w < YOU_FALL ? ['flail', 'shocked', w] : w < 40 ? ['flail', 'worried', w] : w < 66.2 ? ['idle', 'glum', w] : ['thumb', 'joy', w]);
 for (const [lx, lz, kind, tf, px] of [[1.1, -2.5, 'roman', 34.25, 2.5], [-1, 0.5, 'sailor', 34.8, -2], [1.0, 2.6, 'roman2', 35.0, 2.2], [-1.1, 4.8, 'sailor', 35.2, -2.6], [1.0, 7.0, 'roman', 35.35, 2]])
   person(kind, overboard(you, lx, lz, tf, V(px, 0, 1)), w => w < 24.8 ? ['row', 'watch', w] : w < 27.5 ? ['cower', 'worried', w] : w < 31 ? ['lookup', 'shocked', w] : ['flail', 'shocked', w], { flip: px < 0 });
@@ -324,7 +325,7 @@ function placeCamera(w, tVideo) {
 const WORDS = TL.beats.flatMap(b => b.words); const KEY = /^(roman|sailor|warship|sixty|ladders|archimedes|catapults|claw|chain|lifts|end|legend|rope|run|cups|sea|maths|spared|survived|didn't)$/i;
 const labelEl = document.getElementById('label'), capEl = document.querySelector('#cap span'), rwEl = document.getElementById('rw');
 const script = await (await fetch('./script.json')).json();
-function overlay(t) { const v = voiceT(t); rwEl.style.opacity = v === null ? 1 : 0;
+function overlay(t) { const v = voiceT(t); rwEl.style.opacity = (t >= HOOK_END && t < HOOK_END + RW) ? 1 : 0;
   if (v === null) { capEl.textContent = ''; if (t > HOOK_END + RW) labelEl.style.opacity = 1; return; }
   const bi = Math.max(0, TL.beats.findIndex((b, i) => v < (TL.beats[i + 1]?.start ?? 1e9))); const lab = script.beats[bi].label || '';
   labelEl.innerHTML = lab.replace(/\*([^*]+)\*/g, '<span class="hot">$1</span>'); labelEl.style.opacity = 1;
@@ -347,7 +348,7 @@ window.renderFrame = (t) => {
       a.setY(i, y); } a.needsUpdate = true; sea.geometry.computeVertexNormals(); }
   foam.material.opacity = 0.75 + 0.25 * Math.sin(w * 2);
   // ships
-  for (const S of ships) { const p = S.path(w); const bob = waveH(p.x, p.z, w) * 0.6; S.outer.position.set(p.x, bob, p.z); S.g.rotation.set(0, 0, 0); S.g.position.set(0, 0, 0);
+  for (const S of ships) { const p = S.path(w); const bob = waveH(p.x, p.z, w) * 0.6; S.outer.position.set(p.x, bob - ((S === you || S === ship2) ? SINK(w) : 0), p.z); S.outer.visible = !((S === you || S === ship2) && w > CLEAR1); S.g.rotation.set(0, 0, 0); S.g.position.set(0, 0, 0);
     S.outer.rotation.z = Math.sin(w * 0.9 + S.ph) * 0.03; S.outer.rotation.x = Math.sin(w * 0.7 + S.ph) * 0.015;
     const row = S.rowing(w); S.oars.forEach((o, i) => { const ph = w * 4.2 + S.ph; o.rotation.y = row ? Math.sin(ph) * 0.35 * o.userData.side : 0.05 * o.userData.side; o.rotation.z = (row ? (0.18 + 0.12 * Math.cos(ph)) : 0.3) * -o.userData.side; });
     if (S.sail) { const a = S.sail.geometry.attributes.position, b = S.sail.userData.base; for (let i = 0; i < a.count; i++) { const x = b[i * 3], y = b[i * 3 + 1]; a.setZ(i, (1 - (x / 4) ** 2) * (0.9 + 0.15 * Math.sin(w * 2 + y + S.ph)) * -1); } a.needsUpdate = true; S.sail.geometry.computeVertexNormals(); } }
@@ -361,10 +362,10 @@ window.renderFrame = (t) => {
   bolts.forEach(b => { const u = w - b.t0; const on = u > 0 && w < 45; b.m.visible = on; if (!on) return; const tgt = V(YOU_X - 2.5, you.Hh - 0.2 + (b.k % 3) * 0.25, you.path(b.t0 + 0.45).z - 7 + b.k * 1.6); const k = clamp(u / 0.45); const p = b.from.clone().lerp(tgt, k); p.y += 1.2 * 4 * k * (1 - k); b.m.position.copy(p); const d = tgt.clone().sub(b.from).normalize(); b.m.quaternion.setFromUnitVectors(V(0, 1, 0), d); if (k >= 1 && w > YOU_FALL - 0.5) b.m.visible = false; });
   // claw
   runBurst(bigSplash, T_SPLASH, w, V(YOU_X, 0, BOW_Z + 3)); runBurst(bigSplash2, clawB.splash, w, V(30, 0, BOW_Z + 3));
-  planks.forEach(p => { const on = w > T_SPLASH + 0.2; p.m.visible = on; if (!on) return; const u = w - T_SPLASH; const c = V(YOU_X, 0, BOW_Z + 8); p.m.position.set(c.x + p.off.x * ease(0, 2.5, u), waveH(c.x + p.off.x, c.z + p.off.z, w) * 0.6 + 0.05, c.z + p.off.z * ease(0, 2.5, u)); p.m.rotation.set(0, p.rot + u * 0.1, Math.sin(w + p.rot) * 0.1); });
+  planks.forEach(p => { const on = w > T_SPLASH + 0.2 && w < CLEAR1; p.m.visible = on; if (!on) return; const u = w - T_SPLASH; const c = V(YOU_X, 0, BOW_Z + 8); p.m.position.set(c.x + p.off.x * ease(0, 2.5, u), waveH(c.x + p.off.x, c.z + p.off.z, w) * 0.6 + 0.05 - SINK(w), c.z + p.off.z * ease(0, 2.5, u)); p.m.rotation.set(0, p.rot + u * 0.1, Math.sin(w + p.rot) * 0.1); });
   // the rope + boat
   { const L = lerp(0.01, 9.5, ease(46.5, 47.2, w)); rope.scale.y = L; rope.position.set(ROPE_X + Math.sin(w * 2) * 0.15 * ease(46.5, 47.2, w), WALL_TOP + 0.4 - L / 2, 0.45); const bp = boatPos(w); boat.position.set(bp.x, waveH(bp.x, bp.z, w) * 0.6 - 0.2, bp.z); boat.rotation.set(0, w > 48.8 ? Math.sin(w * 8) * 0.08 : 0, Math.sin(w * 1.3) * 0.05); boat.visible = w > 39; }
-  raft.visible = w > 40; raft.position.y = 0.12 + Math.sin(w * 1.6) * 0.1; raft.rotation.z = Math.sin(w * 1.3) * 0.04;
+  raft.visible = w > 40 && w < CLEAR1; raft.position.y = 0.12 + Math.sin(w * 1.6) * 0.1 - SINK(w); raft.rotation.z = Math.sin(w * 1.3) * 0.04;
   // sky life
   clouds.forEach((c, i) => { c.g.position.x = ((c.x0 + w * 1.4 + 600) % 500) - 250; c.m.emissive.set('#9fb6c8').lerp(new THREE.Color('#202848'), n); c.m.color.set('#ffffff').lerp(new THREE.Color('#5a6a98'), n); });
   gulls.forEach(g => { const a = w * 0.35 + g.ph; g.g.position.set(g.c.x + Math.cos(a) * g.r, g.c.y + Math.sin(w * 0.8 + g.ph) * 1.5, g.c.z + Math.sin(a) * g.r); g.g.rotation.y = -a; const f = Math.sin(w * 9 + g.ph) * 0.45; g.g.children[0].rotation.z = f; g.g.children[1].rotation.z = -f; g.g.visible = n < 0.5; });

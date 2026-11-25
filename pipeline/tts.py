@@ -37,6 +37,9 @@ def split_sentences(text: str):
     return [p for p in parts if p]
 
 
+PRONOUNCE = {}  # global fixes for words Kokoro gets wrong, e.g. "bow" (of a ship) -> "bough"
+
+
 def silence(sec):
     return np.zeros(int(sec * SR), dtype=np.float32)
 
@@ -46,6 +49,8 @@ def main(ep_dir: str):
     script = json.loads((ep / "script.json").read_text())
     voices = {**VOICES, **script.get("voices", {})}
     speed = script.get("speed", 1.08)
+    # pronunciation fixes: {"bow": "bough"} speaks a sound-alike but keeps the caption word
+    say = {**PRONOUNCE, **{w.lower(): v for w, v in script.get("pronounce", {}).items()}}
     k = Kokoro(str(ROOT / "models/kokoro-v1.0.onnx"), str(ROOT / "models/voices-v1.0.bin"))
 
     audio = [silence(0.15)]
@@ -57,7 +62,8 @@ def main(ep_dir: str):
         for line in beat["lines"]:
             speaker = line.get("speaker", "narrator")
             for sent in split_sentences(line["text"]):
-                samples, sr = k.create(sent, voice=voices[speaker], speed=speed * line.get("speed", 1.0), lang="en-us")
+                spoken = " ".join(say.get(w.lower().strip(".,?!;:"), w.lower().strip(".,?!;:")) + w[len(w.rstrip(".,?!;:")):] if w.lower().strip(".,?!;:") in say else w for w in sent.split())
+                samples, sr = k.create(spoken, voice=voices[speaker], speed=speed * line.get("speed", 1.0), lang="en-us")
                 assert sr == SR
                 dur = len(samples) / SR
                 words = sent.split()
