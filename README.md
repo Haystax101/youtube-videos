@@ -63,6 +63,15 @@ youtube.readonly, yt-analytics.readonly, youtube.force-ssl). Set `YT_UPLOAD_ENAB
 after the Google Cloud project passes YouTube's API audit; until then API uploads are
 locked to private.
 
+## Style: toon2d (long-form, web/toon2d.html + web/toon2d.js, inserts from web/diorama-inserts.js)
+
+Outlined 2D TV-cartoon look drawn with Canvas2D in parallax layers (george picked it over the diorama on
+2026-11-25). Fast to render (Canvas2D, no WebGL). Uses the same script vocabulary as diorama, so a script can
+switch between them by changing `style`: scenes tanis / burrow / today; tanis phases calm, shake, surge,
+glassrain, glow, fires, dark, cold, recovery; Gary poses stand, point, lookup, shelter, wobble, run, cold, wave,
+critter; expressions happy, neutral, worried, shocked, sick; cameras wide, push, face, low, orbit, crane,
+crane_up, dolly, truck (2D pans and zooms with parallax); `dinos`, `insert`, `card`, `sfx` as for diorama.
+
 ## Style: diorama (long-form, web/diorama.html + web/diorama.js + web/diorama-inserts.js)
 
 Chosen by george on 2026-11-25 for long-form: soft, warmly lit miniature island sets (physical

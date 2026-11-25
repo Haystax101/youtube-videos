@@ -230,7 +230,7 @@ def main(ep_dir):
         if style == "noir":
             for k, w in enumerate(b["words"]):  # a key clack as each caption group types out
                 if k % 2 == 0: place(sfx, clack(), w["s"], 0.12)
-        elif style == "diorama":  # long-form: no per-beat pops; whooshes on chapter cards and inserts only
+        elif style in ("diorama", "toon2d"):  # long-form: no per-beat pops; whooshes on chapter cards and inserts only
             sb = script["beats"][i]
             if i and (sb.get("card") or sb.get("insert")): place(sfx, whoosh(), b["start"] - 0.08, 0.2)
             if sb.get("sfx") == "rumble": place(sfx, rumble(min(6.0, b["end"] - b["start"])), b["start"], 0.35)
