@@ -1,0 +1,28 @@
+{
+  "title": "What happens if you live in space for a year?",
+  "style": "lowpoly",
+  "keywords": ["space", "taller", "telomeres", "DNA", "spine", "shrink"],
+  "beats": [
+    {"label": "1 YEAR IN SPACE. *THEN WHAT?*", "hook": true, "set": "space", "gary": {"pose": "float", "expr": "shocked"}, "camera": "crane",
+     "lines": [{"text": "If you lived in space for a whole year, what would happen to your body?"}]},
+    {"label": "DAY 1", "set": "station", "gary": {"pose": "float", "expr": "worried", "puffy": true}, "camera": "dolly",
+     "lines": [{"text": "Day one, your face puffs up. Fluid floats out of your legs and into your head."}]},
+    {"label": "WEEK 1", "set": "station", "gary": {"pose": "float", "expr": "happy"}, "camera": "low",
+     "lines": [{"text": "With no gravity squashing your spine, you grow. Up to three percent taller."}]},
+    {"label": "MONTH 6", "set": "station", "gary": {"pose": "float", "expr": "shocked"}, "fx": "dna", "camera": "orbit",
+     "lines": [{"text": "Then the caps on your DNA, your telomeres, get longer. Scientists expected the opposite."}]},
+    {"label": "YEAR 1", "set": "street", "gary": {"pose": "stand", "expr": "neutral"}, "camera": "truck",
+     "lines": [{"text": "Then you land. Within days, you shrink back, and most of those telomeres shorten again."}]},
+    {"label": "YOU *SURVIVED*", "set": "street", "gary": {"pose": "wave", "expr": "happy"}, "camera": "crane_up",
+     "lines": [{"text": "You survived. Comment what you want to know next."}]}
+  ],
+  "experiment": {
+    "note": "Sample script for the fact-led format (2026-11-25). Needs a space-station set and a float pose; written for the cel prototype's vocabulary.",
+    "vars": {"ending": "survives", "premise": "beneficial", "style": "lowpoly"},
+    "facts": [
+      {"claim": "Fluid shifts headward in microgravity ('puffy face, bird legs')", "source": "https://www.nasa.gov/hrp/bodyinspace (fluid shifts) "},
+      {"claim": "Astronauts can grow up to 3% taller as spinal discs expand; Scott Kelly came back ~2 in taller and lost it within ~2 days", "source": "https://www.scientificamerican.com/article/astronauts-get-taller-in-space/ ; https://www.popsci.com/why-scott-kelly-grew-two-inches-during-his-year-in-space"},
+      {"claim": "Kelly's telomeres lengthened in flight, then most shortened within ~48 h of landing; some ended shorter than before", "source": "Garrett-Bakelman et al., Science 364(6436), 2019, https://pubmed.ncbi.nlm.nih.gov/30975860/ ; https://www.nasa.gov/humans-in-space/nasas-twins-study-results-published-in-science-journal/"}
+    ]
+  }
+}

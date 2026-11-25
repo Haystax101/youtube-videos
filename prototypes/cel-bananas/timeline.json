@@ -1,0 +1,555 @@
+{
+ "duration": 31.79,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 3.439,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "How",
+     "s": 0.15,
+     "e": 0.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "many",
+     "s": 0.34,
+     "e": 0.706,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bananas",
+     "s": 0.706,
+     "e": 1.263,
+     "speaker": "narrator"
+    },
+    {
+     "w": "would",
+     "s": 1.263,
+     "e": 1.465,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 1.465,
+     "e": 1.649,
+     "speaker": "narrator"
+    },
+    {
+     "w": "take",
+     "s": 1.649,
+     "e": 1.845,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 1.845,
+     "e": 2.028,
+     "speaker": "narrator"
+    },
+    {
+     "w": "kill",
+     "s": 2.028,
+     "e": 2.224,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 2.224,
+     "e": 2.414,
+     "speaker": "narrator"
+    },
+    {
+     "w": "with",
+     "s": 2.414,
+     "e": 2.61,
+     "speaker": "narrator"
+    },
+    {
+     "w": "radiation?",
+     "s": 2.61,
+     "e": 3.179,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 3.439,
+   "end": 8.575,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Bananas",
+     "s": 3.439,
+     "e": 4.079,
+     "speaker": "narrator"
+    },
+    {
+     "w": "really",
+     "s": 4.079,
+     "e": 4.515,
+     "speaker": "narrator"
+    },
+    {
+     "w": "are",
+     "s": 4.515,
+     "e": 4.733,
+     "speaker": "narrator"
+    },
+    {
+     "w": "radioactive.",
+     "s": 4.733,
+     "e": 5.402,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Each",
+     "s": 5.542,
+     "e": 5.856,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 5.856,
+     "e": 6.159,
+     "speaker": "narrator"
+    },
+    {
+     "w": "holds",
+     "s": 6.159,
+     "e": 6.484,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 6.484,
+     "e": 6.767,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pinch",
+     "s": 6.767,
+     "e": 7.091,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 7.091,
+     "e": 7.384,
+     "speaker": "narrator"
+    },
+    {
+     "w": "potassium-40.",
+     "s": 7.384,
+     "e": 8.315,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 8.575,
+   "end": 12.377,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "One",
+     "s": 8.575,
+     "e": 8.787,
+     "speaker": "narrator"
+    },
+    {
+     "w": "banana",
+     "s": 8.787,
+     "e": 9.399,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gives",
+     "s": 9.399,
+     "e": 9.814,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 9.814,
+     "e": 10.026,
+     "speaker": "narrator"
+    },
+    {
+     "w": "about",
+     "s": 10.026,
+     "e": 10.441,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 10.441,
+     "e": 10.638,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fiftieth",
+     "s": 10.638,
+     "e": 11.075,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 11.075,
+     "e": 11.279,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 11.279,
+     "e": 11.476,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dental",
+     "s": 11.476,
+     "e": 11.898,
+     "speaker": "narrator"
+    },
+    {
+     "w": "X-ray.",
+     "s": 11.898,
+     "e": 12.117,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 12.377,
+   "end": 15.657,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "A",
+     "s": 12.377,
+     "e": 12.638,
+     "speaker": "narrator"
+    },
+    {
+     "w": "deadly",
+     "s": 12.638,
+     "e": 13.197,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dose?",
+     "s": 13.197,
+     "e": 13.486,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Roughly",
+     "s": 13.626,
+     "e": 14.028,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fifty",
+     "s": 14.028,
+     "e": 14.416,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 14.416,
+     "e": 14.818,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bananas.",
+     "s": 14.818,
+     "e": 15.397,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 15.657,
+   "end": 18.617,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 15.657,
+     "e": 15.919,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 15.919,
+     "e": 16.19,
+     "speaker": "narrator"
+    },
+    {
+     "w": "start",
+     "s": 16.19,
+     "e": 16.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eating.",
+     "s": 16.48,
+     "e": 17.022,
+     "speaker": "narrator"
+    },
+    {
+     "w": "A",
+     "s": 17.162,
+     "e": 17.389,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hundred",
+     "s": 17.389,
+     "e": 17.885,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 17.885,
+     "e": 18.113,
+     "speaker": "narrator"
+    },
+    {
+     "w": "day.",
+     "s": 18.113,
+     "e": 18.357,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 18.617,
+   "end": 24.051,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "But",
+     "s": 18.617,
+     "e": 18.808,
+     "speaker": "narrator"
+    },
+    {
+     "w": "your",
+     "s": 18.808,
+     "e": 19.005,
+     "speaker": "narrator"
+    },
+    {
+     "w": "body",
+     "s": 19.005,
+     "e": 19.374,
+     "speaker": "narrator"
+    },
+    {
+     "w": "keeps",
+     "s": 19.374,
+     "e": 19.578,
+     "speaker": "narrator"
+    },
+    {
+     "w": "potassium",
+     "s": 19.578,
+     "e": 20.151,
+     "speaker": "narrator"
+    },
+    {
+     "w": "at",
+     "s": 20.151,
+     "e": 20.335,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 20.335,
+     "e": 20.526,
+     "speaker": "narrator"
+    },
+    {
+     "w": "steady",
+     "s": 20.526,
+     "e": 20.908,
+     "speaker": "narrator"
+    },
+    {
+     "w": "level.",
+     "s": 20.908,
+     "e": 21.283,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Your",
+     "s": 21.423,
+     "e": 21.665,
+     "speaker": "narrator"
+    },
+    {
+     "w": "kidneys",
+     "s": 21.665,
+     "e": 22.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dump",
+     "s": 22.14,
+     "e": 22.382,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 22.382,
+     "e": 22.615,
+     "speaker": "narrator"
+    },
+    {
+     "w": "extra",
+     "s": 22.615,
+     "e": 23.075,
+     "speaker": "narrator"
+    },
+    {
+     "w": "within",
+     "s": 23.075,
+     "e": 23.542,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hours.",
+     "s": 23.542,
+     "e": 23.791,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 24.051,
+   "end": 27.374,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 24.051,
+     "e": 24.274,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 24.274,
+     "e": 24.503,
+     "speaker": "narrator"
+    },
+    {
+     "w": "radiation",
+     "s": 24.503,
+     "e": 25.193,
+     "speaker": "narrator"
+    },
+    {
+     "w": "never",
+     "s": 25.193,
+     "e": 25.645,
+     "speaker": "narrator"
+    },
+    {
+     "w": "builds",
+     "s": 25.645,
+     "e": 25.898,
+     "speaker": "narrator"
+    },
+    {
+     "w": "up.",
+     "s": 25.898,
+     "e": 26.121,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Not",
+     "s": 26.261,
+     "e": 26.552,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ever.",
+     "s": 26.552,
+     "e": 27.114,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 7,
+   "start": 27.374,
+   "end": 30.59,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You",
+     "s": 27.374,
+     "e": 27.638,
+     "speaker": "narrator"
+    },
+    {
+     "w": "survived.",
+     "s": 27.638,
+     "e": 28.419,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Comment",
+     "s": 28.559,
+     "e": 29.002,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 29.002,
+     "e": 29.227,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 29.227,
+     "e": 29.445,
+     "speaker": "narrator"
+    },
+    {
+     "w": "want",
+     "s": 29.445,
+     "e": 29.67,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 29.67,
+     "e": 29.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "know",
+     "s": 29.88,
+     "e": 30.105,
+     "speaker": "narrator"
+    },
+    {
+     "w": "next.",
+     "s": 30.105,
+     "e": 30.33,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}

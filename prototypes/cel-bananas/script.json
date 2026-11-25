@@ -1,0 +1,34 @@
+{
+  "title": "How many bananas would it take to kill you with radiation?",
+  "style": "cel",
+  "speed": 1.15,
+  "music": {"mood": "lofi"},
+  "keywords": ["bananas", "banana", "radioactive", "radiation", "potassium-40", "kidneys", "fifty", "million"],
+  "beats": [
+    {"label": "HOW MANY BANANAS *KILL YOU?*", "hook": true, "set": "studio", "gary": {"pose": "shrug", "expr": "shocked"}, "props": ["pile"], "fx": "glow", "camera": "crane",
+     "lines": [{"text": "How many bananas would it take to kill you with radiation?"}]},
+    {"label": "DAY 1", "set": "kitchen", "gary": {"pose": "hold", "expr": "neutral"}, "props": ["banana"], "fx": "glow_small", "camera": "dolly",
+     "lines": [{"text": "Bananas really are radioactive. Each one holds a pinch of potassium-40."}]},
+    {"label": "BANANA 1", "set": "kitchen", "gary": {"pose": "eat", "expr": "happy"}, "props": ["banana"], "camera": "orbit",
+     "lines": [{"text": "One banana gives you about a fiftieth of a dental X-ray."}]},
+    {"label": "LETHAL DOSE", "set": "studio", "gary": {"pose": "stand", "expr": "worried"}, "props": ["pile"], "fx": "glow", "camera": "low", "big": "50,000,000",
+     "lines": [{"text": "A deadly dose? Roughly fifty million bananas."}]},
+    {"label": "WEEK 1", "set": "kitchen", "gary": {"pose": "eat", "expr": "happy", "build": 0.3}, "props": ["banana", "peels"], "camera": "truck",
+     "lines": [{"text": "So you start eating. A hundred a day."}]},
+    {"label": "THE TWIST", "set": "studio", "gary": {"pose": "stand", "expr": "shocked", "build": 0.3}, "fx": "atoms", "camera": "orbit",
+     "lines": [{"text": "But your body keeps potassium at one steady level. Your kidneys dump the extra within hours."}]},
+    {"label": "YEAR 1", "set": "street", "gary": {"pose": "walk", "expr": "happy"}, "props": ["banana"], "camera": "truck",
+     "lines": [{"text": "So the radiation never builds up. Not ever."}]},
+    {"label": "YOU *SURVIVED*", "set": "street", "gary": {"pose": "wave", "expr": "happy"}, "props": ["banana"], "camera": "crane_up",
+     "lines": [{"text": "You survived. Comment what you want to know next."}]}
+  ],
+  "experiment": {
+    "note": "Prototype for george (2026-11-25), not a daily episode: cel-shaded full 3D sets (kitchen, street) plus a clean blue studio, real camera moves, ink outlines.",
+    "facts": [
+      {"claim": "One banana ~0.1 microsievert (banana equivalent dose), from potassium-40", "source": "https://en.wikipedia.org/wiki/Banana_equivalent_dose ; University of Groningen radiation protection A-Z: https://www.rug.nl/education/courses/other-education/radiation-protection/a-z/a-z-data/banana-equivalent-dose"},
+      {"claim": "Dental X-ray ~5 microsieverts, so a banana is ~1/50", "source": "https://www.radiologyinfo.org/en/info/safety-xray (dental bitewing ~0.005 mSv)"},
+      {"claim": "~5 Sv acute dose is roughly lethal (LD50/60 ~4-5 Gy) -> 5 Sv / 0.1 uSv = 50 million bananas", "source": "https://www.cdc.gov/radiation-emergencies/hcp/clinical-guidance/ars.html"},
+      {"claim": "The dose does not accumulate: potassium is held at a constant level and excess is excreted by the kidneys", "source": "https://en.wikipedia.org/wiki/Banana_equivalent_dose (homeostasis section)"}
+    ]
+  }
+}
