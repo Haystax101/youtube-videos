@@ -562,7 +562,7 @@
  "experiment": {
   "vars": {
    "format": "what_if_chapters",
-   "style": "diorama",
+   "style": "toon2d",
    "inserts": "flat",
    "voice": "kokoro_am_michael",
    "music": "suspense",
@@ -572,7 +572,7 @@
    "chapters": 8
   },
   "fish": "#520 (the impact's heat burst 'would have cooked some dinosaurs')",
-  "hypothesis": "First long-form in a more polished look (soft-lit diorama sets plus flat explainer inserts). A minute-by-minute clock with a myth-bust in the middle and a payoff about the viewer's ancestry should hold average view % above 40%.",
+  "hypothesis": "First long-form, in an outlined 2D cartoon look (george rejected the diorama Gary) with flat explainer inserts. A minute-by-minute clock with a myth-bust in the middle and a payoff about the viewer's ancestry should hold average view % above 40%.",
   "facts": [
    {
     "claim": "Tanis (North Dakota) records the impact day: a river surge (seiche) and impact spherules in the gills of fossil fish, tens of minutes after impact, ~3,000 km from Chicxulub",
