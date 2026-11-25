@@ -78,7 +78,7 @@ A separate renderer: faceted, flat-shaded 3D people with real joints in floating
 - death: clutches chest, then slumps; red pulse
 New rooms, people (PEOPLE) and poses (POSES) are plain data in web/lowpoly.js.
 
-## Style: storybook (web/storybook.html + web/storybook.js)
+## Style: storybook (web/storybook.html + web/storybook.js) — PAUSED for Shorts (george, 2026-11-25)
 
 Generated painted backgrounds with hand-drawn 2D costumed characters acting in front of them.
 - `backgrounds`: {"key": "prompt"} in script.json; `python3 pipeline/backgrounds.py EP` writes `EP/bg/key.jpg`

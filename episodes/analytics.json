@@ -1,17 +1,17 @@
 {
- "fetchedAt": "2026-11-25T05:47:47Z",
+ "fetchedAt": "2026-11-25T13:11:47Z",
  "channel": {
-  "viewCount": "26348",
+  "viewCount": "27761",
   "subscriberCount": "32",
   "hiddenSubscriberCount": false,
-  "videoCount": "15"
+  "videoCount": "16"
  },
  "videos": {
   "8kcCSMVfMvI": {
    "episode": "001-face-mask",
    "public": {
-    "viewCount": "643",
-    "likeCount": "7",
+    "viewCount": "1068",
+    "likeCount": "10",
     "dislikeCount": "0",
     "favoriteCount": "0",
     "commentCount": "0"
@@ -29,8 +29,8 @@
   "TJv37NpCV8I": {
    "episode": "002-never-sleeping",
    "public": {
-    "viewCount": "195",
-    "likeCount": "5",
+    "viewCount": "270",
+    "likeCount": "6",
     "dislikeCount": "0",
     "favoriteCount": "0",
     "commentCount": "0"
@@ -50,7 +50,7 @@
   "K4vsHNDnBVU": {
    "episode": "004-sitting-all-day",
    "public": {
-    "viewCount": "1095",
+    "viewCount": "1119",
     "likeCount": "15",
     "dislikeCount": "0",
     "favoriteCount": "0",
@@ -72,7 +72,7 @@
   "xAi8c9w5K4Y": {
    "episode": "005-sun-goes-out",
    "public": {
-    "viewCount": "237",
+    "viewCount": "281",
     "likeCount": "1",
     "dislikeCount": "0",
     "favoriteCount": "0",
@@ -84,7 +84,7 @@
   "nTrRvSX_3bg": {
    "episode": "006-bee-stings",
    "public": {
-    "viewCount": "1177",
+    "viewCount": "1200",
     "likeCount": "14",
     "dislikeCount": "0",
     "favoriteCount": "0",
@@ -113,6 +113,26 @@
     "speed": 1.16
    },
    "title": "You get the worst job in history: wiping the King's bottom"
+  },
+  "FDYRS7UzGMo": {
+   "episode": "009-only-energy-drinks",
+   "public": {
+    "viewCount": "12",
+    "likeCount": "0",
+    "dislikeCount": "0",
+    "favoriteCount": "0",
+    "commentCount": "0"
+   },
+   "privacy": "public",
+   "retention": [],
+   "experiment": {
+    "premise": "life change (paired with today's absurd events)",
+    "hook": "cold open: slumped in a sea of cans; label ONLY ENERGY DRINKS? HOW LONG?",
+    "length": "~28 s",
+    "style": "lowpoly",
+    "speed": 1.2
+   },
+   "title": "If you only drank energy drinks, how long until you die?"
   }
  }
 }

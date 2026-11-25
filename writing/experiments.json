@@ -4,39 +4,178 @@
   "min_per_arm": 6,
   "min_age_hours": 72,
   "primary_metric": "averageViewPercentage",
-  "secondary_metrics": ["views", "subs_per_1k", "comments_per_1k"],
+  "secondary_metrics": [
+   "views",
+   "subs_per_1k",
+   "comments_per_1k"
+  ],
   "win_margin": 0.15,
   "explore_share": 0.2
  },
  "active": {
-  "music": {"arms": ["pluck", "suspense", "epic", "lofi", "chiptune", "musicbox", "none"], "set_by": "script.music.mood", "since": "2026-11-25",
-            "why": "george 2026-11-25: every Short so far used the same procedural pluck loop for its style"},
-  "ending_cta": {"arms": ["shenanigans", "follow", "comment_next"], "set_by": "closing line (exact wording in CLAUDE.md)", "since": "2026-11-25",
-                 "why": "george 2026-11-25: which call to action earns follows/comments without losing the end of the video", "metric": "subs_per_1k"},
-  "narrator": {"arms": ["am_michael", "am_fenrir", "bm_george", "af_heart"], "set_by": "script.voices.narrator", "since": "2026-11-25",
-               "why": "only am_michael has been used on lowpoly; voice is a big part of retention in faceless Shorts"},
-  "speed": {"arms": [1.12, 1.2, 1.28], "set_by": "script.speed", "since": "2026-11-25",
-            "why": "pacing: competitors cut every 2.5-3.5 s and talk fast; we've only tried 1.16-1.2"},
-  "hook_form": {"arms": ["question", "statement", "number_first", "dare"], "set_by": "beat 1 wording", "since": "2026-11-25",
-                "why": "question 'What happens if you...?' / statement 'You just got struck by lightning.' / number first '1,000 bees. 30 seconds.' / dare 'Would you...?'",
-                "metric": "retention_3s"}
+  "music": {
+   "arms": [
+    "pluck",
+    "suspense",
+    "epic",
+    "lofi",
+    "chiptune",
+    "musicbox",
+    "none"
+   ],
+   "set_by": "script.music.mood",
+   "since": "2026-11-25",
+   "why": "george 2026-11-25: every Short so far used the same procedural pluck loop for its style"
+  },
+  "ending_cta": {
+   "arms": [
+    "shenanigans",
+    "follow",
+    "comment_next"
+   ],
+   "set_by": "closing line (exact wording in CLAUDE.md)",
+   "since": "2026-11-25",
+   "why": "george 2026-11-25: which call to action earns follows/comments without losing the end of the video",
+   "metric": "subs_per_1k"
+  },
+  "narrator": {
+   "arms": [
+    "am_michael",
+    "am_fenrir",
+    "bm_george",
+    "af_heart"
+   ],
+   "set_by": "script.voices.narrator",
+   "since": "2026-11-25",
+   "why": "only am_michael has been used on lowpoly; voice is a big part of retention in faceless Shorts"
+  },
+  "speed": {
+   "arms": [
+    1.12,
+    1.2,
+    1.28
+   ],
+   "set_by": "script.speed",
+   "since": "2026-11-25",
+   "why": "pacing: competitors cut every 2.5-3.5 s and talk fast; we've only tried 1.16-1.2"
+  },
+  "hook_form": {
+   "arms": [
+    "question",
+    "statement",
+    "number_first",
+    "dare"
+   ],
+   "set_by": "beat 1 wording",
+   "since": "2026-11-25",
+   "why": "question 'What happens if you...?' / statement 'You just got struck by lightning.' / number first '1,000 bees. 30 seconds.' / dare 'Would you...?'",
+   "metric": "retention_3s"
+  }
  },
  "content_vars": {
   "_about": "Chosen by the writer to fit the idea, not assigned, but always recorded in experiment.vars so the report can compare them.",
-  "ending": ["dies", "survives", "better"],
-  "premise": ["life_change", "beneficial", "absurd_event", "true_history"],
-  "style": ["lowpoly", "storybook", "paper", "cartoon"]
+  "ending": [
+   "dies",
+   "survives",
+   "better"
+  ],
+  "premise": [
+   "life_change",
+   "beneficial",
+   "absurd_event",
+   "true_history"
+  ],
+  "style": [
+   "lowpoly"
+  ]
  },
  "decided": {},
  "backlog": [
-  {"var": "captions", "arms": ["word_pop", "karaoke_line", "big_keyword_only"], "needs": "caption modes in web/lowpoly.js"},
-  {"var": "length", "arms": ["22-25s", "28-31s", "35-40s"]},
-  {"var": "cold_open", "arms": ["death_moment", "weirdest_image", "end_result_then_rewind"]},
-  {"var": "labels", "arms": ["time_labels", "no_labels", "countdown"]},
-  {"var": "title_form", "arms": ["what_happens_if", "you_vs", "statement_emoji"], "needs": "george to use the suggested title exactly"},
-  {"var": "loop_ending", "arms": ["loop_to_hook", "plain_end"]},
-  {"var": "sfx_density", "arms": ["pop_per_beat", "heavy_foley", "none"], "needs": "sfx modes in pipeline/mix.py"},
-  {"var": "camera_energy", "arms": ["calm", "punchy_zooms"]},
-  {"var": "upload_slot", "arms": ["12:00", "17:00", "20:00"], "needs": "george to upload at the suggested time"}
- ]
+  {
+   "var": "captions",
+   "arms": [
+    "word_pop",
+    "karaoke_line",
+    "big_keyword_only"
+   ],
+   "needs": "caption modes in web/lowpoly.js"
+  },
+  {
+   "var": "length",
+   "arms": [
+    "22-25s",
+    "28-31s",
+    "35-40s"
+   ]
+  },
+  {
+   "var": "cold_open",
+   "arms": [
+    "death_moment",
+    "weirdest_image",
+    "end_result_then_rewind"
+   ]
+  },
+  {
+   "var": "labels",
+   "arms": [
+    "time_labels",
+    "no_labels",
+    "countdown"
+   ]
+  },
+  {
+   "var": "title_form",
+   "arms": [
+    "what_happens_if",
+    "you_vs",
+    "statement_emoji"
+   ],
+   "needs": "george to use the suggested title exactly"
+  },
+  {
+   "var": "loop_ending",
+   "arms": [
+    "loop_to_hook",
+    "plain_end"
+   ]
+  },
+  {
+   "var": "sfx_density",
+   "arms": [
+    "pop_per_beat",
+    "heavy_foley",
+    "none"
+   ],
+   "needs": "sfx modes in pipeline/mix.py"
+  },
+  {
+   "var": "camera_energy",
+   "arms": [
+    "calm",
+    "punchy_zooms"
+   ]
+  },
+  {
+   "var": "upload_slot",
+   "arms": [
+    "12:00",
+    "17:00",
+    "20:00"
+   ],
+   "needs": "george to upload at the suggested time"
+  }
+ ],
+ "paused": {
+  "style": {
+   "arms": [
+    "lowpoly",
+    "storybook",
+    "paper",
+    "cartoon"
+   ],
+   "since": "2026-11-25",
+   "why": "george: storybook Shorts (007, 010/011) got ~0 views and were deleted; keep one consistent low-poly look. Don't restart without asking george."
+  }
+ }
 }

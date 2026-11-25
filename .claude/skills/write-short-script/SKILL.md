@@ -70,7 +70,7 @@ Word budget: our past episodes ran ~2.6 words/s including pauses (76 words = 29.
 Record the five scores in `experiment.scores`. Log them so we can later check whether high
 scores predict retention.
 
-## 6. Storybook (true history) extras
+## 6. True-history extras (storybook style is paused; write these for low-poly)
 
 - Real people, real dates, real quotes where they exist. Give the hero a goal and a stake
   (a prize, a rival, a deadline), not just an accident.

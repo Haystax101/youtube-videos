@@ -65,7 +65,7 @@ Ending key: **D** dies, **S** survives (often with a weird consequence), **B** b
   Arctic explorers learned the hard way.
 - **Only fast food, every meal** (S). Morgan Spurlock's 30 days: +11 kg and a fatty liver.
 
-## True-history stories (storybook: goal, stake, joke, turn)
+## True-history stories (low-poly now that style is locked: goal, stake, joke, turn)
 
 - **Eiffel Tower parachute, 1912** (D). Franz Reichelt, tailor; a cash prize for an aviator's parachute;
   told police he'd use a dummy; filmed by Pathé; turn: months later a Russian actor, Gleb Kotelnikov,

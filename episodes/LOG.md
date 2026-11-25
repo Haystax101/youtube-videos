@@ -13,7 +13,13 @@
 | 010 | 2026-11-25 | Testing your own parachute off the Eiffel Tower (true story, Franz Reichelt 1912) | - | STYLE TEST storybook #2: true-history story, hook "WOULD YOU JUMP?", policeman dialogue, 28.2 s (fixed length vs 007's 34 s) | | dies / shenanigans |
 | 011 | 2026-11-25 | Eiffel Tower parachute v2 (rewrite of 010 with the new script skill) | - | STYLE TEST storybook #3 + SCRIPT TEST: goal (prize), joke, death, turn (Kotelnikov's backpack parachute stops a car); sourced facts; 30.6 s. Post instead of 010 | | dies / follow |
 
-## Style test plan (george, 2026-11-24)
+## Style locked to low-poly (george, 2026-11-25)
+
+Both storybook Shorts got ~0 views and were deleted (007 Groom of the Stool, then the Eiffel Tower
+parachute). Style tests are on hold; every Short is low-poly so the channel has one consistent look.
+Experiments continue inside low-poly (writing/experiments.json).
+
+## Style test plan (george, 2026-11-24; superseded above)
 
 george wants to try different visual styles, formats and caption treatments and see what works.
 One video can't separate idea, hook and style, so run each style on several episodes (aim for 3+
