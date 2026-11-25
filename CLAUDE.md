@@ -40,7 +40,7 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      and numbers, make the winner the default here or in the code, and start a new test from
      `backlog` (build what its `needs` says) or one you invent. Keep 3-6 tests active and keep
      adding ideas to the backlog: hooks, pacing, captions, music, sound, cameras, length,
-     labels, titles, formats (not visual style: locked to low-poly). Write one line in the LOG on what changed and why.
+     labels, titles, formats, character poly level (not the overall look: locked to lowpoly + cel). Write one line in the LOG on what changed and why.
    - After a winner is set, about 1 Short in 5 still tries a non-default arm (explore_share).
 3. `python3 pipeline/experiments.py assign 3` gives each of today's Shorts its arms for every
    active test (balanced so the least-tested arms run first). Use them exactly; they vary
@@ -95,10 +95,16 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      down all day?"), never vague ones like "would you actually survive this long?". No "times died" counter on screen (george: clutter); it is off
      by default, so don't set `hud.counter`.
    - The `"experiment"` object also notes anything else deliberately different (setting,
-     camera style, a one-off idea) and the hypothesis behind it. **Style is locked to `"style": "lowpoly"`** (george, 2026-11-25:
-     both AI-background storybook Shorts got no views and a consistent look matters). Don't use
-     storybook, paper, cartoon, noir or news for Shorts, and don't start style tests; experiment
-     inside low-poly instead (music, hooks, voice, pacing, endings, rooms, props, cameras).
+     camera style, a one-off idea) and the hypothesis behind it. **Style is locked to `"style": "lowpoly"`
+     with `"look": "cel"`** (george, 2026-11-25: storybook Shorts got no views and a consistent look
+     matters; at 17:16 he switched the daily look to cel: toon shading, ink outlines, rooms that
+     run past the frame). Don't use storybook, paper, cartoon, noir or news for Shorts, or the old
+     `"look": "flat"`, and don't start style tests; experiment inside it instead (music, hooks,
+     voice, pacing, endings, rooms, props, cameras). Prefer the full sets (kitchen, street,
+     studio) and moving cameras (crane, crane_up, dolly, orbit, truck, back) for at least a
+     couple of beats per Short. Record `look` in `experiment.vars`.
+   - **Character poly level** (active test `character_poly`, george 2026-11-25: "a/b different
+     characters"): set `"character": {"poly": ARM}` (chunky, low, smooth) as assigned.
 5. If the idea needs new props, rooms, accessories or fx, add them to the style's renderer
    (`web/lowpoly.js` for lowpoly, `web/scene.js` for cartoon) and list them in README's
    vocabulary. Build what the idea needs; don't force reuse of the same rooms every video.

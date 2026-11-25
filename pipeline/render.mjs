@@ -40,7 +40,7 @@ async function openPage() {
   const page = await browser.newPage({ viewport: { width: VW, height: VH }, deviceScaleFactor: 1 });
   page.on('console', m => { if (m.type() === 'error') console.error('[page]', m.text()); });
   page.on('pageerror', e => console.error('[page error]', e.message));
-  await page.goto(`http://localhost:${port}/web/${PAGE}?ep=${encodeURIComponent(epRel)}`);
+  await page.goto(`http://localhost:${port}/web/${PAGE}?ep=${encodeURIComponent(epRel)}${process.env.RENDER_QS ? '&' + process.env.RENDER_QS : ''}`); // RENDER_QS e.g. look=flat&poly=smooth (previews)
   await page.waitForFunction(() => window.READY === true, null, { timeout: 120000 });
   return { browser, page, stage: await page.$('#stage'), duration: await page.evaluate(() => window.DURATION) };
 }

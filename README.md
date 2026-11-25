@@ -65,16 +65,24 @@ locked to private.
 
 ## Style: lowpoly (web/lowpoly.html + web/lowpoly.js)
 
-A separate renderer: faceted, flat-shaded 3D people with real joints in floating diorama rooms.
+A separate renderer: faceted 3D people with real joints. Two looks (script `look`, or `?look=` in the URL):
+- `cel` (default since 2026-11-25, the daily Shorts look): toon shading in 3 bands plus ink outlines from a
+  depth/normal edge pass; diorama rooms become full rooms (floor and walls run past the frame, with a door and
+  windows), the car drives through open country under a sky.
+- `flat`: the original Lambert flat shading in floating diorama rooms.
+`character.poly` (or `?poly=`): `chunky` (big facets, square limbs), `low` (default), `smooth` (rounded).
+Preview any of these with `RENDER_QS='look=flat&poly=smooth' node pipeline/render.mjs EP --stills 3`.
 `pipeline/render.mjs` loads `web/<style>.html` when it exists, else `web/index.html`. No deaths counter.
-- scene: livingroom, office, car (convertible on a moving road), hospital, gaming, garden (lawn, fence, beehive), void
-- gary: `pose` (stand, sit, type, hunch, sofa, slouch, drive, bedsit, game, clipboard, ghost),
+- scene: livingroom, office, car (convertible on a moving road), hospital, gaming, garden (lawn, fence, beehive), void,
+  kitchen (full kitchen, garden through the window), street (houses, road, lamp posts, hills), studio (blue cyclorama)
+- gary: `pose` (stand, sit, type, hunch, sofa, slouch, drive, bedsit, game, clipboard, ghost, hold, eat, shrug, wave),
   `expr` (happy, neutral, worried, tired, shocked, sick, dead), `build` 0..1 (weight gain)
 - cast: `[{"who": "doctor", "pose": "clipboard"}]`; a line with `"speaker": "doctor"` moves the doctor's mouth
   (give the voice in `voices`, e.g. `"doctor": "bf_emma"`)
 - gary.welts: true (red sting bumps on the face); script `keywords`: extra caption words to highlight
 - props: pizza, can (energy drink in hand), cans (pile of empties at Gary's feet), magnets (pair in hand);
-  fx: clot, clot_move, bees (full swarm), bees_few, xray (lightbox X-ray beside Gary); camera: push, face, wide, side, low, front, two, legs
+  fx: clot, clot_move, bees (full swarm), bees_few, xray (lightbox X-ray beside Gary); camera: push, face, wide, side, low, front, two, legs,
+  and moving set cameras crane, crane_up, dolly, orbit, truck, back
 - death: clutches chest, then slumps; red pulse
 New rooms, people (PEOPLE) and poses (POSES) are plain data in web/lowpoly.js.
 
@@ -93,7 +101,7 @@ Generated painted backgrounds with hand-drawn 2D costumed characters acting in f
 - `names`: {"speakerId": "ON-SCREEN NAME"} shows who is talking above the caption; give every speaker a voice in `voices`.
 
 
-## Style: cel (PROTOTYPE, web/cel.html + web/cel.js) — not used by the daily run
+## Style: cel (PROTOTYPE, web/cel.html + web/cel.js) — superseded: its look, sets and cameras now live in lowpoly
 
 Full 3D sets the camera can move through (kitchen, street, plus a clean blue cyclorama "studio"),
 toon shading with ink outlines from a depth/normal edge pass, and Gary's low-poly rig.

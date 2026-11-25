@@ -70,6 +70,16 @@
    "since": "2026-11-25",
    "why": "question 'What happens if you...?' / statement 'You just got struck by lightning.' / number first '1,000 bees. 30 seconds.' / dare 'Would you...?'",
    "metric": "retention_3s"
+  },
+  "character_poly": {
+   "arms": [
+    "low",
+    "chunky",
+    "smooth"
+   ],
+   "set_by": "script.character.poly",
+   "since": "2026-11-25",
+   "why": "george 2026-11-25: switched Shorts to the cel look; A/B Gary at different poly levels (chunky = big facets and square limbs, low = original Gary, smooth = rounded high-detail)"
   }
  },
  "content_vars": {
@@ -87,6 +97,10 @@
   ],
   "style": [
    "lowpoly"
+  ],
+  "look": [
+   "flat",
+   "cel"
   ]
  },
  "decided": {},
@@ -164,6 +178,14 @@
     "20:00"
    ],
    "needs": "george to upload at the suggested time"
+  },
+  {
+   "var": "character_proportions",
+   "arms": [
+    "normal",
+    "chibi"
+   ],
+   "needs": "a proportions knob in makeHuman (web/lowpoly.js): bigger head, shorter limbs"
   }
  ],
  "paused": {
@@ -175,7 +197,7 @@
     "cartoon"
    ],
    "since": "2026-11-25",
-   "why": "george: storybook Shorts (007, 010/011) got ~0 views and were deleted; keep one consistent low-poly look. Don't restart without asking george."
+   "why": "george: storybook Shorts (007, 010/011) got ~0 views and were deleted; keep one consistent low-poly look. Don't restart without asking george. 2026-11-25 17:20: george switched the lowpoly renderer to the cel look (toon + ink, full sets); still one consistent look, so no style test."
   }
  }
 }
