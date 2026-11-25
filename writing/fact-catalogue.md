@@ -46,3 +46,29 @@ their public RSS feed, not proof they told this exact fact). Credit line idea fo
   the script writer finds the original study and writes it fresh.
 - Never transcribe or quote episodes, never use their audio, logo or show name in a title; a
   credit line in the description is fine and friendly.
+
+## Fish-led shortlist (from the fan "NSTAAF - MASTER FACT LIST", added 2026-11-25)
+
+george found a fan-made sheet listing ~1,890 facts by episode (#1-#645 plus the audiobook). A
+private copy is at `/mnt/project-files/gary-tries-it/research/fish-master-fact-list.csv` (it's
+someone else's compilation, so it stays out of this public repo). Each line there is a one-sentence
+lead. These are the strongest Gary premises in it, re-sourced from the original studies and
+reworded. "Ep" is the episode to credit in the description.
+
+| # | Fact (our wording) | Gary premise | End | Ep | Sources | Status |
+|---|---|---|---|---|---|---|
+| F1 | In 1939 a Boston surgeon, John Crandon, ate no vitamin C for six months. At 3 months a cut on his back healed fine; at 6 months a new cut didn't heal at all, and he collapsed while sprinting. | What happens if you never eat vitamin C? | S | #421 | [Crandon, Lund & Dill, NEJM 1940 (via Quantified Self)](https://quantifiedself.com/vitamin-c-john-h-crandon); [Hemilä, history of vitamin C](https://www.mv.helsinki.fi/home/hemila/history) | checked |
+| F2 | A man poisoned with methanol in Vietnam (2018) was saved by doctors feeding him 15 cans of beer: the ethanol keeps the liver busy, so the methanol doesn't turn toxic before dialysis. | What happens if you drink bootleg alcohol? (no glamorising: the twist is medical) | S | #280 | [Tuoi Tre News](https://tuoitrenews.vn/news/society/20190110/vietnamese-doctors-use-beer-to-save-patient-from-alcohol-poisoning/48480.html); [VICE](https://vice.com/en/article/15-cans-of-beer-saved-this-guy-from-alcohol-poisoning) | checked |
+| F3 | A Cornell scientist stung himself in 25 places to rank the pain: nostril 9.0/10, upper lip 8.7; skull, toe tip and upper arm only 2.3. | What if you let a bee sting every part of your body? | S | #20 | [Smith, PeerJ 2014](https://peerj.com/articles/338/) | checked |
+| F4 | Ozempic-style weight-loss drugs trace back to a peptide found in Gila monster venom (exendin-4), which lasts far longer in the body than our own hormone. | What happens if a Gila monster bites you? | S/B | #569 | [Natural History Museum](https://www.nhm.ac.uk/discover/the-monster-whose-bite-saves-lives.html); [Discover](https://www.discovermagazine.com/the-venomous-gila-monster-helped-spark-the-discovery-of-ozempic-showing-how-curiosity-can-lead-to-cures-48831) | checked |
+| F5 | Lost people really do walk in circles: GPS-tracked walkers with no sun to steer by looped back across their own path without noticing. | What happens if you get lost in a forest? (payoff: how to walk straight) | S | #589 | [Souman et al., Current Biology 2009 (Max Planck)](https://www.mpg.de/596269/pressrelease200908171) | checked |
+| F6 | Swallowed Japanese eels can crawl back up a predator fish's gut and escape out through its gills (9 of 32 made it all the way out). | What if you were swallowed by a fish? | S | #574 | [Hasegawa et al., Current Biology 2024](https://www.sciencedaily.com/releases/2024/09/240909113034.htm) | checked |
+| F7 | Angry honeybees smell of bananas: their alarm pheromone is isoamyl acetate, the same chemical as banana flavouring. | Sequel to the banana Short, or eating a banana near a hive | S | #526 | verify (alarm pheromone chemistry) | lead |
+| F8 | About half the nitrogen in your body came from a factory, via fertiliser made by the Haber-Bosch process. | What if you could see where your body came from? | B | #526 | verify | lead |
+| F9 | The gravity on Mars's smallest moon (Deimos) is so weak you could ride a bike up a ramp into space. | What if you rode a bike on Mars's smallest moon? | S | #264 | verify (escape velocity ~5.6 m/s) | lead |
+| F10 | On Venus a frozen pizza would cook in seconds (about 465 °C at the surface). | What happens if you go to Venus for lunch? | D | #25 | verify | lead |
+| F11 | Doing CPR to the beat of the Macarena (~103 bpm) hits the right compression rate. | What if someone collapses next to you? (useful) | B | #230 | verify | lead |
+| F12 | A nap after learning something helps you remember it better. | What happens if you nap after studying? | B | #364 | verify (the "5x" is likely overstated) | lead |
+| F13 | Mice can't hear their own footsteps: the brain cancels the sound. | What if you couldn't hear yourself walk? | S | #245 | verify (Schneider et al., Nature 2018) | lead |
+| F14 | Your memory dips slightly with each heartbeat (study on cardiac-cycle timing). | What happens to your brain every heartbeat? | S | #572 | verify | lead |
+| F15 | Hot springs at Bath were closed to bathers after a 1978 death from a brain-eating amoeba. | What happens if you swim in a hot spring? | D | #415 | verify | lead |
