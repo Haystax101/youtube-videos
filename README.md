@@ -10,7 +10,9 @@ no on-screen death counter: george removed it as clutter).
    scene, Gary's expression and accessories, props, camera move and narration.
 2. `pipeline/tts.py`: Kokoro TTS (local, free). Writes `voice.wav` and `timeline.json`
    (beat times, per-word timings, death time).
-3. `pipeline/mix.py`: procedural music bed (plucked chords) and SFX, ducked under the voice.
+3. `pipeline/mix.py`: procedural music bed and SFX, ducked under the voice. `"music": {"mood": M}`
+   picks pluck (the style's original loop), suspense, epic, lofi, chiptune, musicbox or none.
+   Experiments: `pipeline/experiments.py assign|report` with the registry `writing/experiments.json`.
 4. `pipeline/render.mjs`: headless Chromium renders `web/index.html` (three.js) frame by
    frame at 1080x1920, 30 fps, piped into ffmpeg -> `video.mp4`.
 

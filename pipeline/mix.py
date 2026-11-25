@@ -3,6 +3,8 @@
 Everything is generated procedurally (no audio assets, nothing to license):
 a plucked-string chord loop (Karplus-Strong), a pop on every beat change,
 and a thud + bell when Gary dies.
+Music: script.json "music": {"mood": "pluck|suspense|epic|lofi|chiptune|musicbox|none"}
+(default pluck = the style's original loop), optional "bpm"/"chords" overrides.
 Usage: python3 pipeline/mix.py episodes/<slug>
 """
 import json, sys
@@ -38,6 +40,7 @@ STYLES = {
 
 
 def music(total, bpm=104, chords=None):
+    """the original plucked-string loop (mood 'pluck')"""
     beat = 60 / bpm
     chords = chords or STYLES["cartoon"]["chords"]
     pattern = [0, 1, 2, 1, 0, 1, 2, 1]
@@ -54,6 +57,96 @@ def music(total, bpm=104, chords=None):
         place(out, cache[bar % 4], t, 1.2)
         t += beat * 4; bar += 1
     return out[: int(total * SR)]
+
+
+# ---------- extra instruments for the music moods (all synthesised, nothing to license) ----------
+def _t(dur): return np.arange(int(SR * dur)) / SR
+
+
+def pad(midis, dur):
+    """soft detuned saw pad with slow attack, smoothed into a warm tone"""
+    t = _t(dur); out = np.zeros(len(t))
+    for m in midis:
+        for det in (-0.12, 0.12):
+            f = note(m + det); out += 2 * ((t * f) % 1) - 1
+    out = np.convolve(out, np.ones(24) / 24, 'same')
+    env = np.clip(t / 0.4, 0, 1) * np.clip((dur - t) / 0.4, 0, 1)
+    return out * env / (2 * len(midis))
+
+
+def epiano(m, dur):
+    t = _t(dur); f = note(m)
+    return (np.sin(2 * np.pi * f * t) + 0.3 * np.sin(4 * np.pi * f * t)) * np.exp(-t * 2.5) * (1 + 0.15 * np.sin(2 * np.pi * 5 * t))
+
+
+def square(m, dur):
+    t = _t(dur); f = note(m)
+    return np.sign(np.sin(2 * np.pi * f * t)) * np.exp(-t * 6) * 0.35
+
+
+def musicbox(m, dur):
+    t = _t(dur); f = note(m)
+    return (np.sin(2 * np.pi * f * t) + 0.25 * np.sin(2 * np.pi * 3 * f * t)) * np.exp(-t * 4)
+
+
+def kick():
+    t = _t(0.3); return np.sin(2 * np.pi * np.cumsum(120 * np.exp(-t * 18) + 40) / SR) * np.exp(-t * 10)
+
+
+def hat():
+    t = _t(0.06); n = rng.normal(0, 1, len(t)); n = n - np.convolve(n, np.ones(4) / 4, 'same')
+    return n * np.exp(-t * 70) * 0.4
+
+
+def tick():
+    t = _t(0.03); return np.sin(2 * np.pi * 3000 * t) * np.exp(-t * 200) * 0.6
+
+
+def bass(m, dur):
+    t = _t(dur); f = note(m)
+    return np.sin(2 * np.pi * f * t) * np.clip(t / 0.01, 0, 1) * np.exp(-t * 3)
+
+
+def mood_track(total, mood, bpm, chords):
+    """one bar at a time; each mood is its own arrangement"""
+    beat = 60 / bpm; out = np.zeros(int(total * SR) + 4 * SR); t = 0.0; bar = 0
+    while t < total:
+        ch = chords[bar % len(chords)]
+        if mood == "suspense":  # low drone pad, ticking clock, heartbeat kick
+            place(out, pad([c - 12 for c in ch], beat * 4), t, 1.0)
+            for k in range(8): place(out, tick(), t + k * beat / 2, 0.5)
+            for k in (0, 0.35): place(out, kick(), t + k * beat, 0.7)
+        elif mood == "epic":  # big pad, driving kick and bass on every beat
+            place(out, pad(ch + [ch[0] + 12], beat * 4), t, 1.2)
+            for k in range(4):
+                place(out, kick(), t + k * beat, 0.9); place(out, bass(ch[0] - 24, beat), t + k * beat, 0.6)
+                place(out, hat(), t + (k + 0.5) * beat, 0.5)
+        elif mood == "lofi":  # lazy electric piano chords, soft kick and hats
+            for k, off in enumerate((0, 1.5)):
+                for j, m in enumerate(ch): place(out, epiano(m, beat * 2.5), t + off * beat + j * 0.02, 0.35)
+            for k in (0, 2.5): place(out, kick(), t + k * beat, 0.5)
+            for k in range(4): place(out, hat(), t + (k + 0.5) * beat, 0.3)
+        elif mood == "chiptune":  # fast square-wave arpeggio + bass
+            arp = [ch[0], ch[1], ch[2], ch[1] + 12]
+            for k in range(16): place(out, square(arp[k % 4] + 12, beat / 4), t + k * beat / 4, 0.5)
+            for k in range(4): place(out, square(ch[0] - 12, beat / 2), t + k * beat, 0.5)
+        elif mood == "musicbox":  # delicate high arpeggio, no drums
+            arp = [ch[0], ch[2], ch[1] + 12, ch[2]]
+            for k in range(8): place(out, musicbox(arp[k % 4] + 12, beat * 1.5), t + k * beat / 2, 0.6)
+        t += beat * 4; bar += 1
+    return out[: int(total * SR)]
+
+
+# music moods for A/B tests: script.json "music": {"mood": NAME} (bpm/chords can still be overridden)
+MOODS = {
+    "pluck": dict(bpm=None, chords=None),  # the style's original plucked loop
+    "suspense": dict(bpm=78, chords=[[57, 60, 64], [53, 57, 60], [52, 56, 59], [57, 60, 64]]),   # Am F E Am
+    "epic": dict(bpm=118, chords=[[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]]),      # Am F C G
+    "lofi": dict(bpm=82, chords=[[60, 64, 67, 71], [57, 60, 64, 67], [62, 65, 69, 72], [55, 59, 62, 65]]),  # Cmaj7 Am7 Dm7 G7
+    "chiptune": dict(bpm=140, chords=[[60, 64, 67], [55, 59, 62], [57, 60, 64], [53, 57, 60]]),  # C G Am F
+    "musicbox": dict(bpm=88, chords=[[60, 64, 67], [57, 60, 64], [53, 57, 60], [55, 59, 62]]),   # C Am F G
+    "none": dict(bpm=None, chords=None),  # voice and sfx only
+}
 
 
 def pop():
@@ -101,9 +194,18 @@ def main(ep_dir):
     tl = json.loads((ep / "timeline.json").read_text())
     script = json.loads((ep / "script.json").read_text())
     style = script.get("style", "cartoon")
-    preset = {**STYLES.get(style, STYLES["cartoon"]), **script.get("music", {})}
+    mcfg = script.get("music", {}) if isinstance(script.get("music"), dict) else {}
+    mood = mcfg.get("mood", "pluck")
+    if mood not in MOODS: sys.exit(f"unknown music mood {mood!r}; choose from {', '.join(MOODS)}")
     n = len(voice)
-    bed = music(n / SR, preset["bpm"], preset["chords"])
+    if mood == "pluck":
+        preset = {**STYLES.get(style, STYLES["cartoon"]), **{k: v for k, v in mcfg.items() if k != "mood"}}
+        bed = music(n / SR, preset["bpm"], preset["chords"])
+    elif mood == "none":
+        bed = np.zeros(n)
+    else:
+        preset = {**MOODS[mood], **{k: v for k, v in mcfg.items() if k != "mood"}}
+        bed = mood_track(n / SR, mood, preset["bpm"], preset["chords"])
     bed /= np.abs(bed).max() + 1e-9
     # duck the music under speech
     env = np.convolve(np.abs(voice), np.ones(2400) / 2400, 'same')

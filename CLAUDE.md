@@ -30,10 +30,22 @@ in the order george should upload them, with a suggested upload time for each, s
 across the day (e.g. 12:00, 17:00, 20:00 London).
 
 1. `./setup.sh` (idempotent; downloads the free Kokoro TTS model if missing).
-2. Read `episodes/LOG.md` (what has been made, experiment knobs, results) and `ideas.md`.
-   If YouTube analytics are available (not yet set up), read them first and note what
-   retained viewers best.
-3. Pick the next idea from `writing/idea-bank.md` (then `ideas.md`): a small life change, a
+2. Read `episodes/LOG.md` and `ideas.md`, then run the experiment loop (george, 2026-11-25:
+   "everything should be experimented with until the data aligns on viral formats"):
+   - `python3 pipeline/experiments.py report` (after `youtube.py stats`) writes
+     `episodes/experiments-report.md`: every variable's arms scored on views, avg % viewed,
+     subs and comments per 1k views, and early retention. Commit it.
+   - Judge each active test in `writing/experiments.json` by its `rules` (enough videos, old
+     enough, a clear margin). When one is decided, move it to `decided` with the winner, date
+     and numbers, make the winner the default here or in the code, and start a new test from
+     `backlog` (build what its `needs` says) or one you invent. Keep 3-6 tests active and keep
+     adding ideas to the backlog: hooks, pacing, captions, music, sound, cameras, length,
+     labels, titles, styles, formats. Write one line in the LOG on what changed and why.
+   - After a winner is set, about 1 Short in 5 still tries a non-default arm (explore_share).
+3. `python3 pipeline/experiments.py assign 3` gives each of today's Shorts its arms for every
+   active test (balanced so the least-tested arms run first). Use them exactly; they vary
+   several knobs at once on purpose, and the report compares each variable across many videos.
+   Then pick the next idea from `writing/idea-bank.md` (then `ideas.md`): a small life change, a
    beneficial habit, a single absurd event or a true-history story. Gary does NOT have to die:
    at least one Short per day ends with him surviving or better off. Never repeat a concept.
    No poo/toilet topics. Move the idea into the log.
@@ -51,14 +63,17 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    - Last beat: if Gary dies, the `void`/heaven scene with Gary as a ghost and "You died. <CTA>";
      if he survives, Gary alive in the last scene and "You survived. <CTA>" (or "You're
      stronger than ever. <CTA>" for a beneficial habit).
-   - **Ending CTA A/B test** (george, 2026-11-25). <CTA> is one of, exactly:
+   - **Ending CTA** (an active test, george 2026-11-25): use the assigned arm, exactly:
      `shenanigans` "Comment what stupid shenanigans Gary should try tomorrow." /
      `follow` "Follow for more interesting cartoons." /
      `comment_next` "Comment what you want to know next."
-     Give each of the day's 3 Shorts a different one, rotating which slot gets which by day
-     (day of year mod 3 picks the first Short's CTA, in the order above), so upload time
-     doesn't decide the result. Record it as `experiment.ending_cta` and `experiment.ending`
-     (dies / survives / better), and fill the LOG's Ending column.
+   - **Music** (active test): set `"music": {"mood": ARM}` (pluck, suspense, epic, lofi,
+     chiptune, musicbox, none; all synthesised in `pipeline/mix.py`, nothing to license).
+     Likewise `voices.narrator`, `speed`, and the hook wording for `hook_form` (the hook still
+     speaks to the viewer in the first 2 seconds).
+   - Record `experiment.vars`: every assigned arm plus `ending` (dies / survives / better),
+     `premise` (life_change / beneficial / absurd_event / true_history) and `style`, and fill
+     the LOG's Ending / CTA column.
    - Target 25-31 s of audio (72-82 words) (george's best Veo Shorts were 24-31 s at 70-95% viewed; ours at
      43-48 s did worse). Cut slow early beats; every beat must escalate.
    - Cold open: beat 1 shows the most extreme/absurd moment (the death or the craziest image)
@@ -71,9 +86,8 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    - Suggested YouTube titles must name the premise in plain words ("What happens if you sit
      down all day?"), never vague ones like "would you actually survive this long?". No "times died" counter on screen (george: clutter); it is off
      by default, so don't set `hud.counter`.
-   - Add an `"experiment"` object recording what is deliberately different this time
-     (e.g. tempo/speed, voice, hook wording, setting, camera style, length). Change one
-     or two knobs per episode; keep what the log says worked. Default `"style": "lowpoly"` (web/lowpoly.js; best early views). Visual `style` is a knob too: follow the "Style test plan" in `episodes/LOG.md`, so
+   - The `"experiment"` object also notes anything else deliberately different (setting,
+     camera style, a one-off idea) and the hypothesis behind it. Default `"style": "lowpoly"` (web/lowpoly.js; best early views). Visual `style` is a knob too: follow the "Style test plan" in `episodes/LOG.md`, so
      each style gets several episodes before it is judged.
 5. If the idea needs new props, rooms, accessories or fx, add them to the style's renderer
    (`web/lowpoly.js` for lowpoly, `web/scene.js` for cartoon) and list them in README's
