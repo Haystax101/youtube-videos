@@ -11,7 +11,7 @@ no on-screen death counter: george removed it as clutter).
 2. `pipeline/tts.py`: Kokoro TTS (local, free). Writes `voice.wav` and `timeline.json`
    (beat times, per-word timings, death time).
 3. `pipeline/mix.py`: procedural music bed and SFX, ducked under the voice. `"music": {"mood": M}`
-   picks pluck (the style's original loop), suspense, epic, lofi, chiptune, musicbox or none.
+   picks pluck (the style's original loop), suspense, epic, hype (upbeat four-on-the-floor), lofi, chiptune, musicbox or none.
    Experiments: `pipeline/experiments.py assign|report` with the registry `writing/experiments.json`.
 4. `pipeline/render.mjs`: headless Chromium renders `web/index.html` (three.js) frame by
    frame at 1080x1920, 30 fps, piped into ffmpeg -> `video.mp4`.
@@ -73,6 +73,7 @@ A separate renderer: faceted 3D people with real joints. Two looks (script `look
 `character.poly` (or `?poly=`): `chunky` (big facets, square limbs), `low` (default), `smooth` (rounded).
 Preview any of these with `RENDER_QS='look=flat&poly=smooth' node pipeline/render.mjs EP --stills 3`.
 `pipeline/render.mjs` loads `web/<style>.html` when it exists, else `web/index.html`. No deaths counter.
+- `"noGary": true` (script) or `"gary": {"hide": true}` (beat) hides Gary for Shorts told without him.
 - scene: livingroom, office, car (convertible on a moving road), hospital, gaming, garden (lawn, fence, beehive), void,
   kitchen (full kitchen, garden through the window), street (houses, road, lamp posts, hills), studio (blue cyclorama)
 - gary: `pose` (stand, sit, type, hunch, sofa, slouch, drive, bedsit, game, clipboard, ghost, hold, eat, shrug, wave),

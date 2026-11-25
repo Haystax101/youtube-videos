@@ -806,7 +806,8 @@ window.renderFrame = (t) => {
   const gs = b.gary || {};
   const isGhost = gs.pose === 'ghost';
   const H = isGhost ? ghost : gary;
-  gary.root.visible = !isGhost; ghost.root.visible = isGhost;
+  const noGary = gs.hide || script.noGary; // Gary-less Shorts/beats: the set and cast tell the story
+  gary.root.visible = !isGhost && !noGary; ghost.root.visible = isGhost && !noGary;
 
   // pose (+ death: clutch chest, then slump)
   let pose = resolvePose(gs.pose || 'stand');

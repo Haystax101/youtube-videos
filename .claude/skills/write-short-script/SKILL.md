@@ -26,6 +26,11 @@ lines like "your body starts to suffer".
 
 ## 2. Choose the ending first
 
+Not every Short is a Gary/"you" story (george, 2026-11-25). If the best true fact is about an
+animal, place, object or historical event rather than something "you" do, write it without Gary
+(`"noGary": true`): same lowpoly cel look, new assets as needed, narrator tells it straight. Keep
+the hook to the viewer, the cold open and the five-move arc; end on the payoff and the CTA.
+
 Gary does **not** have to die. Pick the ending that the true facts support:
 - **Dies**: only if death is the real, interesting outcome and the route there has a turn.
 - **Survives**: most absurd events are survivable (90% of lightning strikes). Surviving with a

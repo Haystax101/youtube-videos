@@ -3,7 +3,7 @@
 Everything is generated procedurally (no audio assets, nothing to license):
 a plucked-string chord loop (Karplus-Strong), a pop on every beat change,
 and a thud + bell when Gary dies.
-Music: script.json "music": {"mood": "pluck|suspense|epic|lofi|chiptune|musicbox|none"}
+Music: script.json "music": {"mood": "pluck|suspense|epic|hype|lofi|chiptune|musicbox|none"}
 (default pluck = the style's original loop), optional "bpm"/"chords" overrides.
 Usage: python3 pipeline/mix.py episodes/<slug>
 """
@@ -130,6 +130,12 @@ def mood_track(total, mood, bpm, chords):
             arp = [ch[0], ch[1], ch[2], ch[1] + 12]
             for k in range(16): place(out, square(arp[k % 4] + 12, beat / 4), t + k * beat / 4, 0.5)
             for k in range(4): place(out, square(ch[0] - 12, beat / 2), t + k * beat, 0.5)
+        elif mood == "hype":  # upbeat four-on-the-floor: kick every beat, off-beat hats, pumping bass, square stabs
+            for k in range(4):
+                place(out, kick(), t + k * beat, 1.0); place(out, hat(), t + (k + 0.5) * beat, 0.6)
+                place(out, bass(ch[0] - 24, beat / 2), t + (k + 0.5) * beat, 0.7)
+            for k in (0, 0.75, 1.5, 2.5, 3.25): place(out, square(ch[1] + 12, beat / 3), t + k * beat, 0.35)
+            place(out, pad(ch, beat * 4), t, 0.6)
         elif mood == "musicbox":  # delicate high arpeggio, no drums
             arp = [ch[0], ch[2], ch[1] + 12, ch[2]]
             for k in range(8): place(out, musicbox(arp[k % 4] + 12, beat * 1.5), t + k * beat / 2, 0.6)
@@ -143,6 +149,7 @@ MOODS = {
     "suspense": dict(bpm=78, chords=[[57, 60, 64], [53, 57, 60], [52, 56, 59], [57, 60, 64]]),   # Am F E Am
     "epic": dict(bpm=118, chords=[[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]]),      # Am F C G
     "lofi": dict(bpm=82, chords=[[60, 64, 67, 71], [57, 60, 64, 67], [62, 65, 69, 72], [55, 59, 62, 65]]),  # Cmaj7 Am7 Dm7 G7
+    "hype": dict(bpm=128, chords=[[57, 60, 64], [53, 57, 60], [48, 52, 55], [55, 59, 62]]),     # Am F C G, upbeat drive
     "chiptune": dict(bpm=140, chords=[[60, 64, 67], [55, 59, 62], [57, 60, 64], [53, 57, 60]]),  # C G Am F
     "musicbox": dict(bpm=88, chords=[[60, 64, 67], [57, 60, 64], [53, 57, 60], [55, 59, 62]]),   # C Am F G
     "none": dict(bpm=None, chords=None),  # voice and sfx only

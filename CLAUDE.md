@@ -65,18 +65,28 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      2 seconds, e.g. "If you wore a face mask every single day, how long would it take for
      you to die?" On-screen label like `HOW LONG UNTIL YOU *DIE?*` (`*word*` turns red).
    - Narrate in second person ("you") throughout. Gary is the on-screen avatar of "you".
+     **Exception (george, 2026-11-25): Shorts don't have to be the Gary/"you" format.** When a
+     fact isn't about something "you" do (an animal, a place, a historical event, an object),
+     tell it straight without Gary: set `"noGary": true` in script.json (or `"gary": {"hide": true}`
+     on single beats), keep the same lowpoly cel look, and build the new people, animals, props
+     and sets the story needs in `web/lowpoly.js`. Still a hook to the viewer in the first 2 s,
+     a cold open, sourced facts and an escalating arc; the ending skips the ghost/"You died"
+     line and closes on the payoff plus the assigned CTA. Record `format` (gary_you / no_gary)
+     in `experiment.vars`. Use it where it fits the fact, not as a quota.
    - Time labels escalate: DAY 1, WEEK 1, MONTH 1, YEAR 1...
    - Facts must be real, with sources in `experiment.facts`; one myth-bust beat is good.
    - Every Short needs a real "wait, what?" fact and a real arc with a turn (see the skill).
-   - Last beat: if Gary dies, the `void`/heaven scene with Gary as a ghost and "You died. <CTA>";
+   - Last beat (Gary Shorts): if Gary dies, the `void`/heaven scene with Gary as a ghost and "You died. <CTA>";
      if he survives, Gary alive in the last scene and "You survived. <CTA>" (or "You're
      stronger than ever. <CTA>" for a beneficial habit).
    - **Ending CTA** (an active test, george 2026-11-25): use the assigned arm, exactly:
      `shenanigans` "Comment what stupid shenanigans Gary should try tomorrow." /
      `follow` "Follow for more interesting cartoons." /
      `comment_next` "Comment what you want to know next."
-   - **Music** (active test): set `"music": {"mood": ARM}` (pluck, suspense, epic, lofi,
-     chiptune, musicbox, none; all synthesised in `pipeline/mix.py`, nothing to license).
+   - **Music** (active test): set `"music": {"mood": ARM}`. george (2026-11-25): these are
+     high-stakes videos, so music is always upbeat or dramatic; the arms are epic, hype,
+     suspense and chiptune (all synthesised in `pipeline/mix.py`, nothing to license). Don't
+     use pluck, lofi, musicbox or none for Shorts.
      Likewise `voices.narrator`, `speed`, and the hook wording for `hook_form` (the hook still
      speaks to the viewer in the first 2 seconds).
    - Record `experiment.vars`: every assigned arm plus `ending` (dies / survives / better),
