@@ -63,6 +63,21 @@ youtube.readonly, yt-analytics.readonly, youtube.force-ssl). Set `YT_UPLOAD_ENAB
 after the Google Cloud project passes YouTube's API audit; until then API uploads are
 locked to private.
 
+## Style: diorama (long-form, web/diorama.html + web/diorama.js + web/diorama-inserts.js)
+
+Chosen by george on 2026-11-25 for long-form: soft, warmly lit miniature island sets (physical
+materials, image-based light, soft shadows), depth of field and bloom, a smoother rigged Gary, plus
+full-frame flat infographic inserts in a matching palette. Landscape only. Vocabulary:
+
+- `scene`: `tanis` (Cretaceous riverbank island), `burrow` (cutaway den), `today` (badlands fossil dig)
+- `phase` (tanis): `calm`, `shake`, `surge`, `glassrain`, `glow`, `fires`, `dark`, `cold`, `recovery`
+- `gary`: `{pose, expr}`; poses `stand point lookup shelter wobble run cold wave critter` (critter = Gary as a
+  tiny mammal in his hoodie); expressions `happy neutral worried shocked sick`
+- `camera`: `wide push face low orbit crane crane_up dolly truck`; `dinos: true` shows the herd
+- `insert`: `spring map scale gills debate (step 1|2) foodchain extinction timeline` (one function each in
+  web/diorama-inserts.js; add new ones there per video)
+- `card: {title, subtitle}` chapter card; `sfx`: `rumble` | `boom`; `captions: false` hides subtitles
+
 ## Style: lowpoly (web/lowpoly.html + web/lowpoly.js)
 
 A separate renderer: faceted 3D people with real joints. Two looks (script `look`, or `?look=` in the URL):
