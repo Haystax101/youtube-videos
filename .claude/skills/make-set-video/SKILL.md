@@ -113,7 +113,13 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
    - Audio-only changes need no re-render at all, just a re-mux.
    - `--part k/n` splits one video across machines or CI jobs.
    - Speed is about 0.55 s per frame on a 4-core box (2 s takes about 35 s), so a 75 s video takes about 20 minutes.
-5. Mux: `ffmpeg -i silent.mp4 -i audio.norm.wav -c:v copy -c:a aac -b:a 192k -shortest video.mp4`.
+   **Faster, free: render on 8 GitHub machines at once.**
+   - Give the episode an `audio.sh` (see the claw's), write its folder into `render-set-request.txt`, commit and push (any branch).
+   - `.github/workflows/render-set.yml` renders the chunks across 8 runners, joins them, builds the audio and publishes `video.mp4` to the pre-release `render-<slug>-<run id>`.
+   - Find the run with `gh api repos/Haystax101/youtube-videos/actions/runs --jq '.workflow_runs[0]'`.
+   - Download with `curl -sSL -o EP/video.mp4 https://github.com/Haystax101/youtube-videos/releases/download/TAG/video.mp4`.
+   - Use local `--redo` for small fixes and the workflow for full renders.
+5. Mux (local renders): `ffmpeg -i silent.mp4 -i audio.norm.wav -c:v copy -c:a aac -b:a 192k -shortest video.mp4`.
    Deliver to `/mnt/project-files/gary-tries-it/<slug>/`.
 
 ## Pre-delivery checklist (every note george has given)
