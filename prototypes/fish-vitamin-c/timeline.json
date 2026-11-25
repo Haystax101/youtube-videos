@@ -1,0 +1,573 @@
+{
+ "duration": 30.922,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 3.183,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "What",
+     "s": 0.15,
+     "e": 0.357,
+     "speaker": "narrator"
+    },
+    {
+     "w": "happens",
+     "s": 0.357,
+     "e": 0.765,
+     "speaker": "narrator"
+    },
+    {
+     "w": "if",
+     "s": 0.765,
+     "e": 0.959,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 0.959,
+     "e": 1.159,
+     "speaker": "narrator"
+    },
+    {
+     "w": "never",
+     "s": 1.159,
+     "e": 1.554,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eat",
+     "s": 1.554,
+     "e": 1.754,
+     "speaker": "narrator"
+    },
+    {
+     "w": "vitamin",
+     "s": 1.754,
+     "e": 2.342,
+     "speaker": "narrator"
+    },
+    {
+     "w": "C",
+     "s": 2.342,
+     "e": 2.529,
+     "speaker": "narrator"
+    },
+    {
+     "w": "again?",
+     "s": 2.529,
+     "e": 2.923,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 3.183,
+   "end": 8.661,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Most",
+     "s": 3.183,
+     "e": 3.419,
+     "speaker": "narrator"
+    },
+    {
+     "w": "animals",
+     "s": 3.419,
+     "e": 4.089,
+     "speaker": "narrator"
+    },
+    {
+     "w": "make",
+     "s": 4.089,
+     "e": 4.325,
+     "speaker": "narrator"
+    },
+    {
+     "w": "their",
+     "s": 4.325,
+     "e": 4.569,
+     "speaker": "narrator"
+    },
+    {
+     "w": "own",
+     "s": 4.569,
+     "e": 4.797,
+     "speaker": "narrator"
+    },
+    {
+     "w": "vitamin",
+     "s": 4.797,
+     "e": 5.466,
+     "speaker": "narrator"
+    },
+    {
+     "w": "C.",
+     "s": 5.466,
+     "e": 5.679,
+     "speaker": "narrator"
+    },
+    {
+     "w": "You",
+     "s": 5.819,
+     "e": 6.053,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lost",
+     "s": 6.053,
+     "e": 6.294,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 6.294,
+     "e": 6.535,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gene",
+     "s": 6.535,
+     "e": 6.776,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sixty",
+     "s": 6.776,
+     "e": 7.234,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 7.234,
+     "e": 7.709,
+     "speaker": "narrator"
+    },
+    {
+     "w": "years",
+     "s": 7.709,
+     "e": 7.958,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ago.",
+     "s": 7.958,
+     "e": 8.401,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 8.661,
+   "end": 12.27,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "By",
+     "s": 8.661,
+     "e": 8.884,
+     "speaker": "narrator"
+    },
+    {
+     "w": "week",
+     "s": 8.884,
+     "e": 9.124,
+     "speaker": "narrator"
+    },
+    {
+     "w": "six,",
+     "s": 9.124,
+     "e": 9.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "there's",
+     "s": 9.48,
+     "e": 9.943,
+     "speaker": "narrator"
+    },
+    {
+     "w": "no",
+     "s": 9.943,
+     "e": 10.166,
+     "speaker": "narrator"
+    },
+    {
+     "w": "vitamin",
+     "s": 10.166,
+     "e": 10.845,
+     "speaker": "narrator"
+    },
+    {
+     "w": "C",
+     "s": 10.845,
+     "e": 11.061,
+     "speaker": "narrator"
+    },
+    {
+     "w": "left",
+     "s": 11.061,
+     "e": 11.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 11.3,
+     "e": 11.524,
+     "speaker": "narrator"
+    },
+    {
+     "w": "your",
+     "s": 11.524,
+     "e": 11.763,
+     "speaker": "narrator"
+    },
+    {
+     "w": "blood.",
+     "s": 11.763,
+     "e": 12.01,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 12.27,
+   "end": 18.75,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "A",
+     "s": 12.27,
+     "e": 12.504,
+     "speaker": "narrator"
+    },
+    {
+     "w": "surgeon",
+     "s": 12.504,
+     "e": 13.015,
+     "speaker": "narrator"
+    },
+    {
+     "w": "really",
+     "s": 13.015,
+     "e": 13.517,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tried",
+     "s": 13.517,
+     "e": 13.785,
+     "speaker": "narrator"
+    },
+    {
+     "w": "this",
+     "s": 13.785,
+     "e": 14.044,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 14.044,
+     "e": 14.287,
+     "speaker": "narrator"
+    },
+    {
+     "w": "1939.",
+     "s": 14.287,
+     "e": 15.641,
+     "speaker": "narrator"
+    },
+    {
+     "w": "At",
+     "s": 15.781,
+     "e": 16.006,
+     "speaker": "narrator"
+    },
+    {
+     "w": "month",
+     "s": 16.006,
+     "e": 16.255,
+     "speaker": "narrator"
+    },
+    {
+     "w": "three,",
+     "s": 16.255,
+     "e": 16.63,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 16.63,
+     "e": 16.848,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cut",
+     "s": 16.848,
+     "e": 17.082,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 17.082,
+     "e": 17.307,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 17.307,
+     "e": 17.541,
+     "speaker": "narrator"
+    },
+    {
+     "w": "back",
+     "s": 17.541,
+     "e": 17.782,
+     "speaker": "narrator"
+    },
+    {
+     "w": "healed",
+     "s": 17.782,
+     "e": 18.249,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fine.",
+     "s": 18.249,
+     "e": 18.49,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 18.75,
+   "end": 21.719,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "At",
+     "s": 18.75,
+     "e": 18.998,
+     "speaker": "narrator"
+    },
+    {
+     "w": "month",
+     "s": 18.998,
+     "e": 19.271,
+     "speaker": "narrator"
+    },
+    {
+     "w": "six,",
+     "s": 19.271,
+     "e": 19.666,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 19.666,
+     "e": 19.905,
+     "speaker": "narrator"
+    },
+    {
+     "w": "new",
+     "s": 19.905,
+     "e": 20.161,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cut",
+     "s": 20.161,
+     "e": 20.417,
+     "speaker": "narrator"
+    },
+    {
+     "w": "didn't",
+     "s": 20.417,
+     "e": 20.691,
+     "speaker": "narrator"
+    },
+    {
+     "w": "heal",
+     "s": 20.691,
+     "e": 20.955,
+     "speaker": "narrator"
+    },
+    {
+     "w": "at",
+     "s": 20.955,
+     "e": 21.203,
+     "speaker": "narrator"
+    },
+    {
+     "w": "all.",
+     "s": 21.203,
+     "e": 21.459,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 21.719,
+   "end": 23.707,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Then",
+     "s": 21.719,
+     "e": 21.938,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 21.938,
+     "e": 22.142,
+     "speaker": "narrator"
+    },
+    {
+     "w": "collapsed",
+     "s": 22.142,
+     "e": 22.777,
+     "speaker": "narrator"
+    },
+    {
+     "w": "while",
+     "s": 22.777,
+     "e": 23.003,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sprinting.",
+     "s": 23.003,
+     "e": 23.447,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 23.707,
+   "end": 26.506,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Vitamin",
+     "s": 23.707,
+     "e": 24.267,
+     "speaker": "narrator"
+    },
+    {
+     "w": "C",
+     "s": 24.267,
+     "e": 24.445,
+     "speaker": "narrator"
+    },
+    {
+     "w": "went",
+     "s": 24.445,
+     "e": 24.642,
+     "speaker": "narrator"
+    },
+    {
+     "w": "back",
+     "s": 24.642,
+     "e": 24.839,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in,",
+     "s": 24.839,
+     "e": 25.127,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 25.127,
+     "e": 25.318,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 25.318,
+     "e": 25.502,
+     "speaker": "narrator"
+    },
+    {
+     "w": "recovered.",
+     "s": 25.502,
+     "e": 26.246,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 7,
+   "start": 26.506,
+   "end": 29.722,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You",
+     "s": 26.506,
+     "e": 26.77,
+     "speaker": "narrator"
+    },
+    {
+     "w": "survived.",
+     "s": 26.77,
+     "e": 27.551,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Comment",
+     "s": 27.691,
+     "e": 28.134,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 28.134,
+     "e": 28.359,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 28.359,
+     "e": 28.577,
+     "speaker": "narrator"
+    },
+    {
+     "w": "want",
+     "s": 28.577,
+     "e": 28.802,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 28.802,
+     "e": 29.012,
+     "speaker": "narrator"
+    },
+    {
+     "w": "know",
+     "s": 29.012,
+     "e": 29.237,
+     "speaker": "narrator"
+    },
+    {
+     "w": "next.",
+     "s": 29.237,
+     "e": 29.462,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}

@@ -6,8 +6,9 @@ description: Write or rewrite a Gary Tries It Short script (script.json) with a 
 # Writing a Gary Tries It Short
 
 The script is the main lever (george). Style and render only carry what the script gives them.
-Read `writing/competitors.md` once per run and pick the idea from `writing/idea-bank.md`
-(fall back to `ideas.md`). CLAUDE.md's format rules (hook beat, "you", 25-30 s, cold open,
+Read `writing/competitors.md` once per run and pick the idea from the No Such Thing As A Fish
+fan fact list (see CLAUDE.md step 3; george 2026-11-25: sole source for now). A row there is a
+lead, never a source: research the original study yourself and write it in your own words. CLAUDE.md's format rules (hook beat, "you", 25-30 s, cold open,
 labels, `experiment` object, no counter, plain titles) still apply; this skill is how to make
 the words good.
 

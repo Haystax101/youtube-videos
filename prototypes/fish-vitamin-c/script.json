@@ -1,0 +1,35 @@
+{
+  "title": "What happens if you never eat vitamin C again?",
+  "style": "cel",
+  "speed": 1.15,
+  "music": {"mood": "suspense"},
+  "keywords": ["vitamin", "gene", "blood", "cut", "heal", "collapsed", "recovered", "1939"],
+  "beats": [
+    {"label": "NO VITAMIN C. *THEN WHAT?*", "hook": true, "set": "studio", "gary": {"pose": "shrug", "expr": "sick", "wound": "open"}, "camera": "crane",
+     "lines": [{"text": "What happens if you never eat vitamin C again?"}]},
+    {"label": "DAY 1", "set": "kitchen", "gary": {"pose": "shrug", "expr": "neutral"}, "camera": "dolly", "big": "60,000,000 YRS",
+     "lines": [{"text": "Most animals make their own vitamin C. You lost that gene sixty million years ago."}]},
+    {"label": "WEEK 6", "set": "kitchen", "gary": {"pose": "stand", "expr": "tired"}, "camera": "orbit", "big": "0 LEFT",
+     "lines": [{"text": "By week six, there's no vitamin C left in your blood."}]},
+    {"label": "MONTH 3", "set": "studio", "gary": {"pose": "stand", "expr": "worried"}, "fx": "cut", "camera": "back",
+     "lines": [{"text": "A surgeon really tried this in 1939. At month three, a cut on his back healed fine."}]},
+    {"label": "MONTH 6", "set": "studio", "gary": {"pose": "stand", "expr": "sick"}, "fx": "wound", "camera": "back",
+     "lines": [{"text": "At month six, a new cut didn't heal at all."}]},
+    {"label": "MONTH 6", "set": "street", "gary": {"pose": "run", "expr": "sick"}, "collapse": true, "camera": "truck",
+     "lines": [{"text": "Then he collapsed while sprinting."}]},
+    {"label": "THE FIX", "set": "kitchen", "gary": {"pose": "eat", "expr": "happy"}, "props": ["orange"], "camera": "orbit",
+     "lines": [{"text": "Vitamin C went back in, and he recovered."}]},
+    {"label": "YOU *SURVIVED*", "set": "street", "gary": {"pose": "wave", "expr": "happy"}, "props": ["orange"], "camera": "crane_up",
+     "lines": [{"text": "You survived. Comment what you want to know next."}]}
+  ],
+  "experiment": {
+    "note": "Trial of the Fish-led format (george 2026-11-25: the NSTAAF master fact list is the sole idea source). Lead: episode #421 (No Such Thing As The Knipper & The Corpse); re-sourced independently. Rendered in the cel prototype style.",
+    "vars": {"ending": "survives", "premise": "true_history", "style": "cel", "ending_cta": "comment_next", "music": "suspense", "source": "fish#421"},
+    "facts": [
+      {"claim": "Humans (and other anthropoid primates) can't make vitamin C: the GULO gene broke ~61 million years ago", "source": "Drouin et al. 2011, https://pmc.ncbi.nlm.nih.gov/articles/PMC3145266/"},
+      {"claim": "Crandon (Boston City Hospital) began a no-vitamin-C diet in Oct 1939; plasma vitamin C hit zero after ~41 days", "source": "https://quantifiedself.com/vitamin-c-john-h-crandon ; Crandon, Lund & Dill, NEJM 1940; 223:353-369"},
+      {"claim": "A back incision at 3 months healed normally; one at 6 months showed no healing", "source": "https://www.mv.helsinki.fi/home/hemila/history ; Proc Nutr Soc review https://cambridge.org/core/journals/proceedings-of-the-nutrition-society/article/ascorbicacid-deficiency-in-experimental-and-surgical-subjects/7D974D053DDAD0EE04E98E2D559C704F"},
+      {"claim": "He collapsed and lost consciousness during a sprint", "source": "https://www.mv.helsinki.fi/home/hemila/history"}
+    ]
+  }
+}

@@ -45,8 +45,16 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
 3. `python3 pipeline/experiments.py assign 3` gives each of today's Shorts its arms for every
    active test (balanced so the least-tested arms run first). Use them exactly; they vary
    several knobs at once on purpose, and the report compares each variable across many videos.
-   Then pick the next idea from `writing/idea-bank.md` (then `ideas.md`): a small life change, a
-   beneficial habit, a single absurd event or a true-history story. Gary does NOT have to die:
+   Then pick the next idea. **Sole idea source (george, 2026-11-25): the No Such Thing As A Fish
+   fan fact list**, `/mnt/project-files/gary-tries-it/research/fish-master-fact-list.csv`
+   (~1,890 one-line facts by episode; if the file is missing, read Google Sheet
+   `1f8ITcZz8DfrTDVwY5f1gOphq4wjEu3VJvVqZ1SSjSWU` with the Google Drive connector). Start with the
+   unused rows of the shortlist in `writing/fact-catalogue.md`, then scan the list for facts
+   that become a "you" premise (body, animals, space, science, survival, a real experiment).
+   Each row is only a lead: find the original study or report and source every claim yourself;
+   drop it if it doesn't hold up. Never copy their wording, transcribe episodes or use their
+   audio, and keep the list itself out of this public repo. Log every fact you use (or reject
+   and why) in `writing/fish-used.md` so none repeats. Gary does NOT have to die:
    at least one Short per day ends with him surviving or better off. Never repeat a concept.
    No poo/toilet topics. Move the idea into the log.
 4. Write `episodes/NNN-slug/script.json` (next number) with the `write-short-script` skill
@@ -102,7 +110,9 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    (never commit .mp4/.wav), push.
 8. Deliver: copy the video to `/mnt/project-files/gary-tries-it/NNN-slug.mp4` and post it
    to george with a suggested YouTube title, description and 3-5 hashtags (and the
-   YouTube link plus publish time if it was uploaded).
+   YouTube link plus publish time if it was uploaded). The description ends with the credit
+   line "Fact rabbit-hole inspired by No Such Thing As A Fish (episode #N). Sources: ..." with
+   the sources from `experiment.facts`. Never put the podcast's name in the title.
 
 ## Weekly long-form procedure
 

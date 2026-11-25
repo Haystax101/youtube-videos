@@ -253,11 +253,19 @@ function makeBanana(len = 0.2, r0 = 0.024) {
   return g;
 }
 const heldBanana = makeBanana(0.2); heldBanana.scale.setScalar(1.6);
+const heldOrange = new THREE.Group();
+{ heldOrange.add(sph(0.06, '#ff8c1a', 14, 10)); const leaf = sph(0.02, '#3f9e47', 6, 4); leaf.scale.set(1.6, 0.4, 0.8); leaf.position.set(0.015, 0.06, 0); heldOrange.add(leaf); }
+// a cut on the back: 'cut' = thin line with plasters (healing), 'wound' = open, pulsing red
+const cut = new THREE.Group();
+{ const line = new THREE.Mesh(new THREE.BoxGeometry(0.012, 0.22, 0.01), new THREE.MeshBasicMaterial({ color: '#b3122a' })); cut.add(line); cut.userData.line = line;
+  const plasters = new THREE.Group(); for (const y of [-0.07, 0, 0.07]) plasters.add(at(box(0.07, 0.022, 0.006, '#f2d2b0'), 0, y, 0.004)); cut.add(plasters); cut.userData.plasters = plasters;
+  const glowW = new THREE.Sprite(new THREE.SpriteMaterial({ map: null, color: '#ff2040', transparent: true, opacity: 0.0, depthWrite: false, blending: THREE.AdditiveBlending })); glowW.scale.set(0.12, 0.3, 1); cut.add(glowW); cut.userData.glow = glowW; }
 const pile = new THREE.Group();
 { const r = rng(5); for (let i = 0; i < 140; i++) { const b = makeBanana(0.2 + r() * 0.05); const a = r() * 6.28, d = 0.55 + Math.pow(r(), 0.7) * 1.7; b.position.set(Math.cos(a) * d, 0.03 + Math.max(0, 1.75 - d) * 0.28 * r(), Math.sin(a) * d - 0.2); b.rotation.set(r() * 0.6, r() * 6.28, r() * 0.8); b.scale.setScalar(1.6); pile.add(b); } }
 const peels = new THREE.Group();
 { const r = rng(9); for (let i = 0; i < 9; i++) { const pg = new THREE.Group(); for (let f = 0; f < 4; f++) { const flap = box(0.03, 0.006, 0.12, f % 2 ? '#f2c230' : '#e0b020'); flap.geometry.translate(0, 0, 0.06); flap.rotation.y = f * Math.PI / 2 + 0.3; pg.add(flap); } pg.position.set((r() - 0.5) * 2.0, 0.01, 0.4 + r() * 1.2); pg.rotation.y = r() * 6; pg.scale.setScalar(1.4); peels.add(pg); } }
 const glowTex = canvasTex(128, 128, (g) => { const gr = g.createRadialGradient(64, 64, 0, 64, 64, 64); gr.addColorStop(0, 'rgba(230,255,200,1)'); gr.addColorStop(0.3, 'rgba(120,255,90,0.7)'); gr.addColorStop(1, 'rgba(60,255,60,0)'); g.fillStyle = gr; g.fillRect(0, 0, 128, 128); });
+cut.userData.glow.material.map = glowTex; cut.userData.glow.material.color.set('#ff3040');
 const glows = []; for (let i = 0; i < 30; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); s.visible = false; scene.add(s); glows.push(s); }
 const atoms = []; for (let i = 0; i < 26; i++) { const a = new THREE.Group(); a.add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.035, 1), new THREE.MeshBasicMaterial({ color: '#7dff6a' }))); const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending })); s.scale.setScalar(0.12); a.add(s); a.visible = false; scene.add(a); atoms.push(a); }
 
@@ -430,6 +438,7 @@ const CAMS = {
   orbit: (k, P, Hd) => { const a = lerp(-0.7, 0.55, k), r = 2.3; return { pos: Hd.clone().add(V(Math.sin(a) * r, 0.15, Math.cos(a) * r)), look: Hd.clone().add(V(0, -0.35, 0)), fov: 42 }; },
   truck: (k, P, Hd) => ({ pos: Hd.clone().add(V(lerp(-1.3, 1.0, k), -0.15, 2.9)), look: Hd.clone().add(V(lerp(-0.4, 0.3, k), -0.45, 0)), fov: 42 }),
   low: (k, P, Hd) => ({ pos: P.clone().add(V(lerp(0.7, 0.35, k), 0.3, lerp(2.6, 1.9, k))), look: Hd.clone().add(V(0, 0.15, 0)), fov: 50 }),
+  back: (k, P, Hd) => { const a = lerp(Math.PI - 0.5, Math.PI + 0.35, k), r = lerp(2.6, 2.0, k); return { pos: Hd.clone().add(V(Math.sin(a) * r, -0.3, Math.cos(a) * r)), look: Hd.clone().add(V(0, -0.62, 0)), fov: 42 }; },
   face: (k, P, Hd) => ({ pos: Hd.clone().add(V(lerp(0.3, 0.1, k), 0.04, lerp(1.1, 0.8, k))), look: Hd.clone(), fov: 40 }),
 };
 
@@ -455,14 +464,16 @@ window.renderFrame = (t) => {
   let pose = resolvePose(gs.pose || 'stand');
   const [sx, sy, sz] = S.spot;
   let gx = sx;
-  if (gs.pose === 'walk') {
-    const w = t * 7.5, s = Math.sin(w);
+  const running = gs.pose === 'run'; if (running) pose = resolvePose('walk');
+  const fallK = b.collapse ? ease((p - 0.62) / 0.22) : 0;
+  if (gs.pose === 'walk' || running) {
+    const w = (running ? 12 : 7.5) * (b.collapse ? Math.min(t, b.start + dur * 0.62) : t), s = Math.sin(w);
     pose.hipL = [0.5 * s, 0, 0.02]; pose.hipR = [-0.5 * s, 0, -0.02];
     pose.knL = [0.7 * Math.max(0, -Math.cos(w)), 0, 0]; pose.knR = [0.7 * Math.max(0, Math.cos(w)), 0, 0];
     pose.shL = [-0.4 * s, 0, 0.1]; pose.elL = [-0.35, 0, 0];
     pose.shR = [-0.5, 0, -0.18]; pose.elR = [-1.3, 0, 0.3];
     pose.hipsY += 0.025 * Math.abs(Math.cos(w));
-    gx = sx - 1.4 + lt * 0.9;
+    gx = sx - 1.4 + (b.collapse ? Math.min(lt, dur * 0.62) : lt) * (running ? 1.8 : 0.9);
   }
   if (gs.pose === 'wave') pose.elL = [0, 0, 0.5 + 0.45 * Math.sin(t * 9)];
   pose.chest = [pose.chest[0] + 0.015 * Math.sin(t * 2.4), pose.chest[1], pose.chest[2]];
@@ -472,11 +483,15 @@ window.renderFrame = (t) => {
   const chewing = gs.pose === 'eat' ? 0.25 + 0.25 * Math.abs(Math.sin(t * 10)) : 0;
   setFace(gary, gs.expr || 'neutral', { blink: (t % 3.3) < 0.11, mouth: chewing, t });
   gary.root.position.set(gx, sy, sz);
-  gary.root.rotation.set(0, gs.pose === 'walk' ? Math.PI / 2 - 0.25 : (b.set === 'kitchen' ? -0.25 : 0), 0);
+  gary.root.rotation.set(0, (gs.pose === 'walk' || running) ? Math.PI / 2 - 0.25 : (b.set === 'kitchen' ? -0.25 : 0), 0);
+  if (fallK > 0) { gary.root.rotation.z = -1.42 * fallK; gary.root.rotation.order = 'YXZ'; }
 
   // props
-  heldBanana.removeFromParent(); pile.removeFromParent(); peels.removeFromParent();
   const props = b.props || [];
+  heldBanana.removeFromParent(); heldOrange.removeFromParent(); pile.removeFromParent(); peels.removeFromParent(); cut.removeFromParent();
+  if (props.includes('orange')) { gary.j.haR.add(heldOrange); heldOrange.position.set(0, -0.1, 0.05); }
+  if (b.fx === 'cut' || b.fx === 'wound' || gs.wound) { const open = b.fx === 'wound' || gs.wound === 'open'; gary.j.chest.add(cut); cut.position.set(0.07, -0.02, -0.215); cut.rotation.set(0, Math.PI, 0.15);
+    cut.userData.line.scale.set(open ? 3.2 : 1, 1, 1); cut.userData.plasters.visible = !open; cut.userData.glow.material.opacity = open ? 0.45 + 0.35 * Math.sin(t * 7) : 0; }
   if (props.includes('banana')) { gary.j.haR.add(heldBanana); heldBanana.position.set(0.02, -0.09, 0.05); heldBanana.rotation.set(0, -1.4, 1.6); }
   if (props.includes('pile')) { scene.add(pile); pile.position.set(sx, 0, sz); }
   if (props.includes('peels')) { scene.add(peels); peels.position.set(sx, 0, sz); }
@@ -511,7 +526,7 @@ window.renderFrame = (t) => {
     labelEl.style.opacity = clamp(lt / 0.08);
     labelEl.style.transform = `translateY(${lerp(-60, 0, easeOut(lt / 0.3))}px) scale(${lerp(0.6, 1, backOut(lt / 0.32)) * (b.hook ? 1 + 0.025 * Math.sin(t * 7) : 1)})`;
   } else labelEl.style.opacity = 0;
-  if (b.big) { const q = clamp((lt - 0.9) / 0.3); bigEl.textContent = b.big; bigEl.style.opacity = q; bigEl.style.transform = `scale(${lerp(0.4, 1, backOut(q))})`; } else bigEl.style.opacity = 0;
+  if (b.big) { const q = clamp((lt - 0.9) / 0.3); bigEl.textContent = b.big; bigEl.style.fontSize = b.big.length > 10 ? '112px' : '150px'; bigEl.style.opacity = q; bigEl.style.transform = `scale(${lerp(0.4, 1, backOut(q))})`; } else bigEl.style.opacity = 0;
   const g = captionAt(t);
   if (g) {
     capEl.innerHTML = g.words.map(w => KEY.test(w) || /\d/.test(w) ? `<span class="k">${esc(w)}</span>` : esc(w)).join(' ');
