@@ -26,12 +26,13 @@ const W = 1080, H = 1920;
 // ---------- time: video t -> voice v -> world w ----------
 const HOOK_END = TL.beats[1].start, RW = 1.0, HOOK_W0 = 30.0;
 const VOICE_END = TL.duration ?? TL.beats.at(-1).end;
-const DUR = VOICE_END + RW + 0.8;
+const GAPS = [[TL.beats[11].start, 1.2], [TL.beats[12].start, 0.8]]; // breathing room in the night section
+const DUR = VOICE_END + RW + GAPS.reduce((a, g) => a + g[1], 0) + 1.2;
 const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const sstep = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * k * (k * (k * 6 - 15) + 10); };
 const ease = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * (3 - 2 * k); };
 const lerp = (a, b, k) => a + (b - a) * k;
-function voiceT(t) { return t < HOOK_END ? t : t < HOOK_END + RW ? null : t - RW; }
+function voiceT(t) { if (t < HOOK_END) return t; if (t < HOOK_END + RW) return null; let v = t - RW; for (const [g, len] of GAPS) { if (v < g) break; if (v < g + len) return null; v -= len; } return v; }
 function worldT(t) { if (t < HOOK_END) return HOOK_W0 + t; if (t < HOOK_END + RW) { const k = sstep(HOOK_END, HOOK_END + RW, t); return lerp(HOOK_W0 + HOOK_END, HOOK_END, k); } return t - RW; }
 
 const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
@@ -165,7 +166,7 @@ const you = ship({ x: YOU_X, path: w => V(YOU_X, 0, lerp(100, BOW_Z + 11, ease(4
 const sambA = ship({ x: -15.4, path: w => V(-15.4, 0, lerp(85, 28, ease(4, 22, w))), rowing: w => w < 22 });
 const sambB = ship({ x: -20.2, path: w => V(-20.2, 0, lerp(85, 28, ease(4, 22, w))), rowing: w => w < 22 });
 const flag = ship({ x: -34, L: 26, W: 2.9, H: 2.3, sailTex: SAIL_P, path: w => V(-34, 0, lerp(120, 52, ease(2, 26, w))), rowing: w => w < 26 });
-const BG = [[18, 40, 0.8, 30], [30, 62, 3, 32], [-4, 60, 1.5, 34], [45, 90, 4, 40], [-48, 80, 2, 38], [10, 100, 5, 45], [-20, 120, 6, 50], [36, 130, 3, 60], [60, 70, 2, 44], [-62, 55, 1, 40]];
+const BG = [[18, 40, 0.8, 30], [42, 62, 3, 32], [-4, 60, 1.5, 34], [45, 90, 4, 40], [-48, 80, 2, 38], [10, 100, 5, 45], [-20, 120, 6, 50], [36, 130, 3, 60], [60, 70, 2, 44], [-62, 55, 1, 40]];
 for (const [x, z1, d, z0] of BG) ship({ x, sailTex: R() < 0.5 ? SAIL_R : null, path: w => V(x, 0, lerp(z1 + 70, z1, ease(d, 24 + d, w))), rowing: w => w < 24 + d });
 // the sambuca: a tall ladder across the two lashed ships
 const ladder = new THREE.Group(); scene.add(ladder);
@@ -175,38 +176,50 @@ const ladder = new THREE.Group(); scene.add(ladder);
   for (const s of [-1, 1]) { const w = new THREE.Mesh(new THREE.BoxGeometry(0.2, 1.6, 2.2), std('#9a6a40')); w.position.set(s * 1.4, 0.8, -17); ladder.add(w); } }
 const T_STONE0 = 22.45, T_STONE1 = 23.62;
 
-// ---------- the claw: beam on the wall, iron claw on a chain ----------
-const PIV = V(8, 16.2, -1.2), LOUT = 16, LIN = 5.5, PHI_OUT = -Math.acos((BOW_Z - PIV.z) / LOUT), PHI_UP = 1.75, PHI_LIFT = 0.42;
-const T_SW0 = 28.2, T_SW1 = 29.95, T_DN0 = 30.4, T_GRAB = 32.25, T_LF0 = 33.45, T_LF1 = 35.4, T_REL = 36.62, T_BACK0 = 38.2, T_BACK1 = 41;
-function beamPhi(w) { if (w < T_SW0) return PHI_UP; if (w < T_SW1) return lerp(PHI_UP, PHI_OUT, ease(T_SW0, T_SW1, w)) + Math.sin((w - T_SW0) * 9) * 0.03 * (1 - ease(T_SW0, T_SW1, w));
-  if (w < T_LF0) return PHI_OUT + Math.sin(w * 3) * 0.006; if (w < T_REL) return lerp(PHI_OUT, PHI_LIFT, ease(T_LF0, T_LF1, w)) + Math.sin(w * 5) * 0.01;
-  if (w < T_BACK0) { const u = w - T_REL; return PHI_LIFT + 0.25 * Math.exp(-u * 3) * Math.sin(u * 14); } return lerp(PHI_LIFT, PHI_UP, ease(T_BACK0, T_BACK1, w)); }
-const beamTip = w => { const p = beamPhi(w); return V(PIV.x, PIV.y + LOUT * Math.sin(p), PIV.z + LOUT * Math.cos(p)); };
-function chainLen(w) { const tip0 = beamTip(T_SW1); const reach = tip0.y - (you.Hh + 1.0); if (w < T_DN0) return 2.2; if (w < T_GRAB) return lerp(2.2, reach, ease(T_DN0, T_GRAB - 0.15, w)); if (w < T_REL) return reach; return lerp(reach, 2.2, ease(T_REL + 0.2, T_REL + 1.6, w)); }
-const clawPos = w => { const t = beamTip(w); const sw = w > T_REL && w < T_REL + 3 ? Math.sin((w - T_REL) * 6) * 0.8 * Math.exp(-(w - T_REL)) : Math.sin(w * 1.7) * 0.08; return V(t.x + sw * 0.3, t.y - chainLen(w), t.z + sw); };
-const beamG = new THREE.Group(); beamG.position.copy(PIV); scene.add(beamG);
-{ const b = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, LOUT + LIN), std(WOOD)); b.position.z = (LOUT - LIN) / 2; b.castShadow = true; beamG.add(b);
+// ---------- claws: a beam on the wall swings out, an iron claw on a chain grabs a bow and lifts ----------
+const LOUT = 16, LIN = 5.5, PHI_UP = 1.35, PHI_LIFT = 0.1, SHIP_SINK = -1.2;
+const iron = std('#34343c', { metalness: 0.5, roughness: 0.45 });
+function makeClaw(x, S, T) {
+  const PIV = V(x, 21.5, -2), PHI_OUT = -Math.acos((BOW_Z - PIV.z) / LOUT), C = { x, S, T, PIV, splash: T.rel + 0.62 };
+  C.phi = w => { if (w < T.sw0) return PHI_UP; if (w < T.sw1) return lerp(PHI_UP, PHI_OUT, ease(T.sw0, T.sw1, w)) + Math.sin((w - T.sw0) * 9) * 0.03 * (1 - ease(T.sw0, T.sw1, w));
+    if (w < T.lf0) return PHI_OUT + Math.sin(w * 3) * 0.006; if (w < T.rel) return lerp(PHI_OUT, PHI_LIFT, ease(T.lf0, T.lf1, w)) + Math.sin(w * 5) * 0.01;
+    if (w < T.back0) { const u = w - T.rel; return PHI_LIFT + 0.25 * Math.exp(-u * 3) * Math.sin(u * 14); } return lerp(PHI_LIFT, PHI_UP, ease(T.back0, T.back1, w)); };
+  C.tip = w => { const p = C.phi(w); return V(PIV.x, PIV.y + LOUT * Math.sin(p), PIV.z + LOUT * Math.cos(p)); };
+  const reach = () => C.tip(T.sw1).y - (S.Hh + 1.0);
+  C.chainLen = w => { if (w < T.dn0) return 2.2; if (w < T.grab) return lerp(2.2, reach(), ease(T.dn0, T.grab - 0.15, w)); if (w < T.lf0) return reach(); if (w < T.rel) return lerp(reach(), 3.0, ease(T.lf0, T.lf1, w)); return lerp(3.0, 2.2, ease(T.rel + 0.2, T.rel + 1.6, w)); };
+  C.claw = w => { const t = C.tip(w); const sw = w > T.rel && w < T.rel + 3 ? Math.sin((w - T.rel) * 6) * 0.8 * Math.exp(-(w - T.rel)) : Math.sin(w * 1.7) * 0.08; return V(t.x + sw * 0.3, t.y - C.chainLen(w), t.z + sw); };
+  // ship pose: rows in, is grabbed, lifted bow-up, dropped and capsized
+  C.pose = w => { const base = S.path(w), L = S.L;
+    if (w < T.grab + 0.4) return { pos: base, pitch: 0, roll: 0, ysink: 0, free: true };
+    if (w < T.rel) { const c = C.claw(w); const bowY = clamp(c.y - 0.9 - S.Hh, -0.2, 30); const sternY = -1.4 * ease(T.lf0, T.lf1, w); const pitch = Math.asin(clamp((bowY - sternY) / L, 0, 0.97));
+      const bow = V(x, bowY, c.z); return { pos: bow.clone().add(V(0, -Math.sin(pitch) * L / 2, Math.cos(pitch) * L / 2)), pitch, roll: 0, ysink: 0 }; }
+    const p0 = C.pose(T.rel - 1e-3); const u = w - T.rel, fallT = 0.62; const stern = p0.pos.clone().add(V(0, -Math.sin(p0.pitch) * L / 2, Math.cos(p0.pitch) * L / 2));
+    if (u < fallT) { const k = (u / fallT) ** 2; const pitch = p0.pitch * (1 - k); return { pos: stern.add(V(0, Math.sin(pitch) * L / 2, -Math.cos(pitch) * L / 2)), pitch, roll: 0, ysink: 0 }; }
+    const v = u - fallT; return { pos: stern.add(V(0, 0, -L / 2)), pitch: -0.12 * Math.exp(-v * 3) * Math.sin(v * 9), roll: 2.5 * ease(0, 1.4, v), ysink: lerp(0, SHIP_SINK, ease(0.2, 3, v)) - 0.6 * Math.exp(-v * 4) * Math.sin(v * 8) }; };
+  // meshes
+  const beamG = new THREE.Group(); beamG.position.copy(PIV); scene.add(beamG);
+  const b = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, LOUT + LIN), std(WOOD)); b.position.z = (LOUT - LIN) / 2; b.castShadow = true; beamG.add(b);
   const cw = new THREE.Mesh(new THREE.BoxGeometry(2.2, 2.2, 2.2), std('#5e3a22')); cw.position.set(0, -1.4, -LIN); cw.castShadow = true; beamG.add(cw);
-  for (const z of [-LIN + 0.6, -LIN - 0.6]) { const band = new THREE.Mesh(new THREE.BoxGeometry(2.3, 2.3, 0.2), std('#3a3a40')); band.position.set(0, -1.4, z); beamG.add(band); } }
-// frame
-for (const s of [-1, 1]) { const post = add(new THREE.Mesh(new THREE.BoxGeometry(0.5, 4.2, 0.5), std(WOOD)), PIV.x + s * 0.8, WALL_TOP + 1.6, PIV.z); post.rotation.z = s * 0.12; }
-add(new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 2.2, 8).rotateZ(Math.PI / 2), std('#3a3a40')), PIV.x, PIV.y, PIV.z);
-add(new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 1.6, 12).rotateZ(Math.PI / 2), std('#6b4426')), PIV.x - 2.4, WALL_TOP + 1.0, PIV.z - 2); // winch drum
-const chain = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 1, 6), std('#2e2e34', { metalness: 0.5, roughness: 0.5 })); scene.add(chain);
-const clawG = new THREE.Group(); scene.add(clawG);
-{ const iron = std('#34343c', { metalness: 0.5, roughness: 0.45 }); const ring = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.14, 6, 12), iron); ring.position.y = 0.4; clawG.add(ring);
-  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.5, 0.8, 8), iron); clawG.add(hub);
-  for (let k = 0; k < 4; k++) { const a = k * Math.PI / 2 + Math.PI / 4; const f = new THREE.Group(); f.rotation.y = a; clawG.add(f); const t1 = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.4, 0.22), iron); t1.position.set(0.55, -0.7, 0); t1.rotation.z = 0.5; f.add(t1); const t2 = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.8, 5), iron); t2.position.set(0.75, -1.55, 0); t2.rotation.z = Math.PI + 0.7; f.add(t2); f.userData.k = k; } }
-// your ship's motion: rows in, then is grabbed, lifted bow-up, dropped and capsized
-const SHIP_SINK = -1.2;
-function youPose(w) { const base = you.path(w); const L = you.L;
-  if (w < T_GRAB + 0.4) return { pos: base, pitch: 0, roll: 0, ysink: 0 };
-  if (w < T_REL) { const c = clawPos(w); const bowY = clamp(c.y - 0.9 - you.Hh, -0.2, 30); const sternY = -1.4 * ease(T_LF0, T_LF1, w); const pitch = Math.asin(clamp((bowY - sternY) / L, 0, 0.97));
-    const bow = V(YOU_X, bowY, c.z); const center = bow.clone().add(V(0, -Math.sin(pitch) * L / 2, Math.cos(pitch) * L / 2)); return { pos: center, pitch, roll: 0, ysink: 0 }; }
-  const p0 = youPose(T_REL - 1e-3); const u = w - T_REL; const fallT = 0.62;
-  if (u < fallT) { const k = (u / fallT) ** 2; const pitch = p0.pitch * (1 - k); const stern = p0.pos.clone().add(V(0, -Math.sin(p0.pitch) * L / 2, Math.cos(p0.pitch) * L / 2)); const center = stern.add(V(0, Math.sin(pitch) * L / 2, -Math.cos(pitch) * L / 2)); return { pos: center, pitch, roll: 0, ysink: 0 }; }
-  const stern = p0.pos.clone().add(V(0, -Math.sin(p0.pitch) * L / 2, Math.cos(p0.pitch) * L / 2)); const center = stern.add(V(0, 0, -L / 2)); const v = u - fallT;
-  return { pos: center, pitch: -0.12 * Math.exp(-v * 3) * Math.sin(v * 9), roll: 2.5 * ease(0, 1.4, v), ysink: lerp(0, SHIP_SINK, ease(0.2, 3, v)) - 0.6 * Math.exp(-v * 4) * Math.sin(v * 8) }; }
+  for (const z of [-LIN + 0.6, -LIN - 0.6]) { const band = new THREE.Mesh(new THREE.BoxGeometry(2.3, 2.3, 0.2), std('#3a3a40')); band.position.set(0, -1.4, z); beamG.add(band); }
+  const ph = PIV.y - WALL_TOP + 0.4; for (const s of [-1, 1]) { const post = add(new THREE.Mesh(new THREE.BoxGeometry(0.55, ph, 0.55), std(WOOD)), PIV.x + s * 1.0, WALL_TOP + ph / 2 - 0.2, PIV.z); post.rotation.z = s * 0.08;
+    const brace = add(new THREE.Mesh(new THREE.BoxGeometry(0.35, ph * 0.8, 0.35), std(WOOD)), PIV.x + s * 1.0, WALL_TOP + ph * 0.4, PIV.z - 1.6); brace.rotation.x = -0.45; }
+  add(new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.4, 0.4), std(WOOD)), PIV.x, WALL_TOP + ph * 0.45, PIV.z);
+  add(new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 2.6, 8).rotateZ(Math.PI / 2), std('#3a3a40')), PIV.x, PIV.y, PIV.z);
+  add(new THREE.Mesh(new THREE.CylinderGeometry(0.9, 0.9, 1.6, 12).rotateZ(Math.PI / 2), std('#6b4426')), PIV.x - 2.6, WALL_TOP + 1.0, PIV.z - 1.5);
+  const chain = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.09, 1, 6), std('#2e2e34', { metalness: 0.5, roughness: 0.5 })); scene.add(chain);
+  const clawG = new THREE.Group(); scene.add(clawG);
+  { const ring = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.14, 6, 12), iron); ring.position.y = 0.4; clawG.add(ring); clawG.add(new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.5, 0.8, 8), iron));
+    for (let k = 0; k < 4; k++) { const f = new THREE.Group(); f.rotation.y = k * Math.PI / 2 + Math.PI / 4; clawG.add(f); const t1 = new THREE.Mesh(new THREE.BoxGeometry(0.22, 1.4, 0.22), iron); t1.position.set(0.55, -0.7, 0); t1.rotation.z = 0.5; f.add(t1); const t2 = new THREE.Mesh(new THREE.ConeGeometry(0.16, 0.8, 5), iron); t2.position.set(0.75, -1.55, 0); t2.rotation.z = Math.PI + 0.7; f.add(t2); f.userData.k = k; } }
+  C.update = w => { beamG.rotation.x = -C.phi(w); const tip = C.tip(w), c = C.claw(w); chain.position.copy(tip).add(c).multiplyScalar(0.5); chain.scale.y = tip.distanceTo(c); chain.quaternion.setFromUnitVectors(V(0, 1, 0), tip.clone().sub(c).normalize());
+    clawG.position.copy(c); const shut = ease(T.grab - 0.25, T.grab, w) * (1 - ease(T.rel, T.rel + 0.15, w)); clawG.children.forEach(f => { if (f.userData.k !== undefined) f.rotation.z = lerp(-0.45, 0.35, shut); });
+    const P = C.pose(w); if (!P.free) { S.outer.position.copy(P.pos).add(V(0, P.ysink, 0)); S.outer.rotation.set(P.pitch, 0, P.roll); if (P.pitch > 0.05 || P.roll > 0.05) S.oars.forEach(o => { o.rotation.y = Math.sin(w * 13 + o.position.z) * 0.4; }); } };
+  return C; }
+const ship2 = ship({ x: 30, path: w => V(30, 0, lerp(75, BOW_Z + 11, ease(14, 36.8, w))), rowing: w => w < 36.9 });
+const T_A = { sw0: 28.2, sw1: 29.95, dn0: 30.4, grab: 32.25, lf0: 33.45, lf1: 35.4, rel: 36.62, back0: 38.2, back1: 41 };
+const T_B = { sw0: 36.2, sw1: 37.7, dn0: 37.9, grab: 39.3, lf0: 39.8, lf1: 41.5, rel: 42.85, back0: 44.4, back1: 47 };
+const clawA = makeClaw(YOU_X, you, T_A), clawB = makeClaw(30, ship2, T_B);
+const PIV = clawA.PIV, T_GRAB = T_A.grab, T_REL = T_A.rel, T_LF0 = T_A.lf0, T_LF1 = T_A.lf1;
+const youPose = clawA.pose, clawPos = clawA.claw;
 const T_SPLASH = T_REL + 0.62;
 // splash spray, catapult stone, bolts, dust
 const puffTex = canvasTex(128, 128, (c) => { c.fillStyle = '#fff'; c.strokeStyle = '#16121a'; c.lineWidth = 5; c.beginPath(); c.arc(64, 64, 52, 0, 7); c.fill(); c.stroke(); c.fillStyle = 'rgba(0,0,0,.08)'; c.beginPath(); c.arc(76, 76, 34, 0, 7); c.fill(); });
@@ -214,11 +227,11 @@ const softTex = canvasTex(64, 64, (c) => { const g = c.createRadialGradient(32, 
 function sprayBurst(n, seed, color, tex = puffTex) { const r = rng(seed), arr = []; for (let i = 0; i < n; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex, color, transparent: true, depthWrite: false })); scene.add(s); const a = r() * Math.PI * 2; arr.push({ s, v: V(Math.cos(a) * (1 + r() * 4), 5 + r() * 9, Math.sin(a) * (1 + r() * 4)), sz: 0.6 + r() * 1.2, life: 1.2 + r() * 1.0 }); } return arr; }
 function runBurst(arr, at, w, origin, grav = 9.8) { const u = w - at; arr.forEach(d => { const a = u / d.life; const on = u > 0 && a < 1; d.s.visible = on; if (!on) return; d.s.position.set(origin.x + d.v.x * u, Math.max(origin.y - 0.3, origin.y + d.v.y * u - 0.5 * grav * u * u), origin.z + d.v.z * u); d.s.scale.setScalar(d.sz * (0.6 + a)); d.s.material.opacity = a < 0.6 ? 1 : (1 - a) / 0.4; }); }
 const bigSplash = sprayBurst(70, 5, '#eaf7ff'); bigSplash.forEach(d => { d.sz *= 2.2; d.v.y *= 1.5; d.v.x *= 2; d.v.z *= 2; d.life *= 1.4; }); const stoneSplash = sprayBurst(26, 7, '#eaf7ff'); const ladderSplash = sprayBurst(30, 9, '#eaf7ff');
-const woodDust = sprayBurst(18, 11, '#d9c29a');
+const woodDust = sprayBurst(18, 11, '#d9c29a'); const bigSplash2 = sprayBurst(60, 13, '#eaf7ff'); bigSplash2.forEach(d => { d.sz *= 2; d.v.y *= 1.4; d.v.x *= 1.8; d.v.z *= 1.8; d.life *= 1.3; });
 const stone = add(new THREE.Mesh(new THREE.IcosahedronGeometry(1.0, 0), std('#9b948c')), 0, -50, 0);
 const CATA = V(-12, WALL_TOP + 7.5, -3);
-{ const base = add(new THREE.Mesh(new THREE.BoxGeometry(3, 1, 4), std(WOOD)), -12, WALL_TOP + 6, -4); }
-const catArm = new THREE.Group(); catArm.position.set(-12, WALL_TOP + 6.6, -4); scene.add(catArm); { const a = new THREE.Mesh(new THREE.BoxGeometry(0.35, 5, 0.35), std(WOOD)); a.position.y = 2.5; catArm.add(a); const cup = new THREE.Mesh(new THREE.SphereGeometry(0.6, 8, 6, 0, 7, 0, 1.6), std('#5e3a22')); cup.position.y = 5; catArm.add(cup); }
+{ add(new THREE.Mesh(new THREE.BoxGeometry(3, 1, 4), std(WOOD)), -12, 17.0, -4); }
+const catArm = new THREE.Group(); catArm.position.set(-12, 17.6, -4); scene.add(catArm); { const a = new THREE.Mesh(new THREE.BoxGeometry(0.35, 5, 0.35), std(WOOD)); a.position.y = 2.5; catArm.add(a); const cup = new THREE.Mesh(new THREE.SphereGeometry(0.6, 8, 6, 0, 7, 0, 1.6), std('#5e3a22')); cup.position.y = 5; catArm.add(cup); }
 const bolts = []; for (let i = 0; i < 9; i++) { const b = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.6, 5), std('#5e3a22')); b.castShadow = true; scene.add(b); const tip = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.35, 5), std('#c9ced6')); tip.position.y = 0.9; b.add(tip); bolts.push({ m: b, t0: 24.9 + i * 0.27, from: LOOP[6 + (i * 3) % 10], to: null, k: i }); }
 // debris planks after the drop
 const planks = []; { const r = rng(31); for (let i = 0; i < 12; i++) { const p = add(new THREE.Mesh(new THREE.BoxGeometry(2 + r() * 2, 0.2, 0.5), std(r() < 0.5 ? WOOD : '#9a6a40')), 0, -20, 0); planks.push({ m: p, off: V((r() - 0.5) * 12, 0, (r() - 0.5) * 14), rot: r() * 3 }); } }
@@ -248,46 +261,53 @@ const youP = person('sailor', w => w < 40 ? overboard(you, -0.5, -4.6, YOU_FALL,
   w => w < 27.8 ? ['row', 'watch', w] : w < 31.6 ? ['lookup', 'shocked', w] : w < YOU_FALL ? ['flail', 'shocked', w] : w < 40 ? ['flail', 'worried', w] : w < 66.2 ? ['idle', 'glum', w] : ['thumb', 'joy', w]);
 for (const [lx, lz, kind, tf, px] of [[1.1, -2.5, 'roman', 34.25, 2.5], [-1, 0.5, 'sailor', 34.8, -2], [1.0, 2.6, 'roman2', 35.0, 2.2], [-1.1, 4.8, 'sailor', 35.2, -2.6], [1.0, 7.0, 'roman', 35.35, 2]])
   person(kind, overboard(you, lx, lz, tf, V(px, 0, 1)), w => w < 24.8 ? ['row', 'watch', w] : w < 27.5 ? ['cower', 'worried', w] : w < 31 ? ['lookup', 'shocked', w] : ['flail', 'shocked', w], { flip: px < 0 });
+for (const [lx, lz, kind, tf, px] of [[1, -3, 'roman', 40.5, 2.4], [-1, 0, 'sailor', 40.8, -2.2], [1, 3, 'roman2', 41.0, 2], [-1, 6, 'roman', 41.2, -2.4]])
+  person(kind, overboard(ship2, lx, lz, tf, V(px, 0, 1)), w => w < 38.5 ? ['row', 'watch', w] : w < 40.2 ? ['lookup', 'shocked', w] : ['flail', 'shocked', w], { flip: px < 0 });
+for (const S of ships.slice(5, 14)) for (const [lx, lz] of [[-0.8, 1], [0.8, 4.5]]) person(R() < 0.5 ? 'roman' : 'sailor', onShip(S, lx, lz), w => ['row', 'watch', w]);
+{ const r = rng(77); for (let x = -66; x < 68; x += 5.5) { if (Math.abs(x - 8) < 5 || Math.abs(x - 30) < 5 || Math.abs(x) < 6 || Math.abs(x + 12) < 5 || Math.abs(x - ROPE_X) < 4) continue; const z = -1.4 - r() * 1.5, seedT = r() * 3;
+  person(r() < 0.5 ? 'greek' : 'greek2', w => w < 58.3 ? V(x, WALL_TOP + 0.03, z) : V(0, -100, 0), w => w < 36.7 ? ['spear', 'watch', w] : w < 46 ? ['cheer', 'joy', w + seedT] : ['spear', 'smug', w]);
+  if (Math.abs(x) < 45 && r() < 0.6) person(r() < 0.5 ? 'roman' : 'roman2', w => w > 58.3 ? V(x + 1, WALL_TOP + 0.03, z) : V(0, -100, 0), w => ['spear', 'smug', w]); } }
 // sambuca crews
 for (const [S, lx, lz] of [[sambA, 0.8, 4], [sambA, -0.8, 7], [sambB, 0.9, 5], [sambB, -0.9, 2]]) person(R() < 0.5 ? 'roman' : 'roman2', onShip(S, lx, lz), w => w < 23.6 ? ['spear', 'smug', w] : ['cower', 'shocked', w]);
 // the flagship and Marcellus
-const marc = person('marcellus', onShip(flag, 0.2, 6.5), w => w < 50.4 ? ['hips', 'smug', w] : w < 53 ? ['cup', 'shout', w] : ['cup', 'joy', w]);
+const marcShip = onShip(flag, 0.2, 6.5); const marc = person('marcellus', w => w < 65 ? marcShip(w) : V(COURT.x - 1.6, WALL_TOP + 0.04, COURT.z + 1.8), w => w < 50.4 ? ['hips', 'smug', w] : w < 53 ? ['cup', 'shout', w] : w < 65 ? ['cup', 'joy', w] : ['idle', 'glum', w]);
 person('roman', onShip(flag, -1, 4.6), w => w < 51 ? ['spear', 'watch', w] : ['spear', 'glum', w], { flip: true });
 person('roman2', onShip(flag, 1.2, 9), w => ['spear', w > 53 ? 'worried' : 'watch', w]);
 // background ship crews (a couple each, near the camera's path)
 for (const S of ships.slice(4, 8)) person('roman', onShip(S, 0.6, -3), w => ['row', 'watch', w]);
 // Archimedes: on his tower, at the claw, then in his courtyard
-const arch = person('archimedes', w => w < 25 ? V(1.4, 17.03, -2.2) : w < 56 ? V(PIV.x - 3.2, WALL_TOP + 0.03, PIV.z - 1.2) : V(COURT.x - 0.5, WALL_TOP + 0.04, COURT.z + 0.5),
+const arch = person('archimedes', w => w < 25 ? V(1.4, 17.03, -2.2) : w < 56 ? V(PIV.x - 3.2, WALL_TOP + 0.03, PIV.z - 1.2) : w < 64.3 ? V(COURT.x - 0.5, WALL_TOP + 0.04, COURT.z + 0.5) : V(0, -100, 0),
   w => w < 21.2 ? ['hips', 'smug', w] : w < 25 ? ['point', 'smug', (w - 21.2) * 3] : w < 33.3 ? ['hips', 'smug', w] : w < 37 ? ['lever', 'smug', w] : w < 56 ? ['hips', 'joy', w] : ['draw', 'watch', w]);
 person('greek', fixed(-1.6, 17.03, -2.6), w => w < 25 ? ['spear', 'smug', w] : ['spear', 'joy', w], { flip: true });
 person('greek2', fixed(PIV.x + 2.2, WALL_TOP + 0.03, PIV.z - 1.0), w => w < 33.3 ? ['idle', 'watch', w] : w < 37 ? ['lever', 'worried', w] : ['cheer', 'joy', w]);
 person('greek', fixed(PIV.x - 0.6, WALL_TOP + 0.03, PIV.z - 2.6), w => w < 33.3 ? ['spear', 'watch', w] : w < 37 ? ['lever', 'worried', w] : ['pump', 'joy', w], { flip: true });
-person('greek2', fixed(-11, WALL_TOP + 5.5, -4.5), w => w < 22.5 ? ['lever', 'watch', w] : ['pump', 'joy', w]);
+person('greek2', fixed(-10.2, 16.53, -5.4), w => w < 22.5 ? ['lever', 'watch', w] : ['pump', 'joy', w]);
 person('greek', fixed(ROPE_X + 1.2, WALL_TOP + 0.03, -1.2), w => w < 46.4 ? ['idle', 'smug', w] : w < 48.8 ? ['point', 'smug', 1] : ['cheer', 'joy', w]);
 // the little boat's crew
 for (const [dx, dz, k] of [[-0.5, -1.2, 'roman'], [0.5, 0.2, 'roman2'], [-0.4, 1.6, 'sailor']]) person(k, w => { const b = boatPos(w); return V(b.x + dx, 0.85 + Math.sin(w * 2 + dz) * 0.08, b.z + dz); }, w => w < 47.2 ? ['row', 'watch', w] : w < 48.8 ? ['lookup', 'shocked', w] : ['flail', 'shocked', w], { s: 0.9 });
 // the soldier who finds Archimedes
-person('roman', w => V(COURT.x + 2.8 - ease(58, 61, w) * 1.2, WALL_TOP + 0.04, COURT.z + 2.4), w => w < 62.3 ? ['spear', 'watch', w] : ['sword', 'angry', (w - 62.3) * 2]);
+person('roman', w => w < 65 ? V(COURT.x + 2.8 - ease(59.2, 62.2, w) * 1.2, WALL_TOP + 0.04, COURT.z + 2.4) : V(COURT.x + 2.6, WALL_TOP + 0.04, COURT.z + 3.2), w => w < 63.4 ? ['spear', 'watch', w] : w < 65 ? ['sword', 'angry', (w - 63.4) * 2] : ['spear', 'worried', w]);
 
 // ---------- camera director: shots blend into each other, never cut ----------
 const SHOTS = [
   { at: 0, to: 1, f: w => ({ p: V(lerp(34, 16, ease(4, 11, w)), lerp(30, 13, ease(4, 11, w)), lerp(150, 104, ease(4, 11, w))), l: V(lerp(0, -6, ease(4, 11, w)), 7, lerp(20, 50, ease(4, 11, w))), fov: 50 }) },
   { at: 10.7, to: 12.0, f: w => { const s = sambA.path(w); return { p: V(s.x + 10 - (w - 11) * 0.5, 2.6 + (w - 11) * 0.4, s.z + 8 - (w - 11) * 0.6), l: V(s.x - 1.5, 5.5 + (w - 11) * 0.3, s.z - 6), fov: 52 }; } },
   { at: 15.1, to: 17.4, f: w => { const k = ease(15.1, 18.2, w); return { p: V(lerp(5, 4.2, k), lerp(3, 21.8, k), lerp(16, 6.4 - ease(18, 22, w) * 1.6, k)), l: V(lerp(2, 1.3, k), lerp(5, 18.2, k), -2.2), fov: lerp(52, 40, ease(17, 22, w)) }; } },
-  { at: 21.8, to: 22.6, f: w => ({ p: V(-9.5, WALL_TOP + 11, -10), l: V(-14, 6, 26), fov: 50 }) },
+  { at: 21.8, to: 22.6, f: w => ({ p: V(-8.5, 22.5, -11), l: V(-14, 6, 26), fov: 50 }) },
   { at: 22.6, to: 23.2, f: w => { const s = stoneAt(Math.min(w, T_STONE1)), sl = stoneAt(Math.min(w, T_STONE1) - 0.25); return { p: sl.add(V(6.5, 3, -6)), l: s.add(V(0, -1, 4)), fov: 52 }; } },
   { at: 24.2, to: 25.2, f: w => ({ p: V(19.5 - (w - 25) * 0.5, 3.8, 10.5), l: V(5, 4.4, 8.5), fov: 54 }) },
   { at: 27.4, to: 28.4, f: w => { const k = ease(28.2, 32.2, w); return { p: V(lerp(5.6, 5.2, k), lerp(3.0, 3.6, k), lerp(23.2, 24.4, k)), l: V(lerp(7.4, 7.8, k), lerp(8.5, 4.6, k), lerp(12, 13, k)), fov: 56 }; } },
   { at: 33.0, to: 34.3, f: w => ({ p: V(-6 - (w - 33) * 0.5, 10 + (w - 33) * 0.4, 46 + (w - 33) * 0.6), l: V(7, lerp(6, 9, ease(33, 35, w)) - ease(36.6, 37.4, w) * 5, 15), fov: 52 }) },
-  { at: 37.6, to: 39.2, f: w => { const a = lerp(0.75, 1.75, ease(37.6, 44, w)); return { p: V(PIV.x + Math.cos(a) * 24, 23 - ease(37.6, 44, w) * 3, PIV.z + 4 + Math.sin(a) * 24), l: V(PIV.x, 16, PIV.z + 4), fov: 50 }; } },
+  { at: 37.6, to: 39.0, f: w => ({ p: V(58 - (w - 38) * 0.5, 12 + (w - 38) * 0.3, 52 - (w - 38) * 0.4), l: V(29, lerp(7, 11, ease(39.5, 41.5, w)) - ease(42.85, 43.6, w) * 5, 16), fov: 50 }) },
   { at: 43.9, to: 45.2, f: w => { const b = boatPos(w); const up = ease(46.4, 47.4, w) * (1 - ease(48.4, 49.2, w)); const fl = ease(48.6, 49.6, w); return { p: V(ROPE_X + 9 + fl * 5, 3.4 + fl * 1.5, 17 + fl * 4), l: V(ROPE_X + lerp(0.6, 0.2, up), lerp(1.8, 9.5, up), lerp(b.z, 0.5, up)), fov: 52 }; } },
   { at: 49.5, to: 50.7, f: w => { const m = marc.where(w); return { p: V(m.x + 4.2 - (w - 50) * 0.2, m.y + 1.8, m.z - 4.0 + (w - 50) * 0.25), l: V(m.x, m.y + 1.45, m.z), fov: lerp(46, 36, ease(50.5, 54.8, w)) }; } },
   { at: 54.8, to: 56.4, f: w => ({ p: V(24, 46 - (w - 55) * 1.2, 80 - (w - 55) * 3), l: V(0, 8, 0), fov: 52 }) },
-  { at: 57.2, to: 59.2, f: w => ({ p: V(COURT.x + 1.2, WALL_TOP + lerp(10, 2.9, ease(58.5, 61.5, w)), COURT.z + lerp(17, 7.6, ease(57.5, 61.5, w))), l: V(COURT.x + 1.2, WALL_TOP + 1.3, COURT.z + 0.6), fov: 48 }) },
-  { at: 62.55, to: 63.5, f: w => ({ p: V(COURT.x + 1.2, WALL_TOP + 2.9 + (w - 62.5) * 4, COURT.z + 7.6 + (w - 62.5) * 2), l: V(moon.position.x * 0.12 + COURT.x, WALL_TOP + 30 + (w - 62.5) * 6, COURT.z - 60), fov: 52 }) },
-  { at: 65.4, to: 67.0, f: w => ({ p: V(27.6 - (w - 66) * 0.15, 2.5, 28.2 - (w - 66) * 0.25), l: V(24, 1.3, 22), fov: lerp(46, 40, ease(66.5, 71, w)) }) },
+  { at: 58.2, to: 60.4, f: w => ({ p: V(COURT.x + 1.2, WALL_TOP + lerp(10, 2.9, ease(59.6, 62.6, w)), COURT.z + lerp(17, 7.6, ease(58.6, 62.6, w))), l: V(COURT.x + 1.2, WALL_TOP + 1.3, COURT.z + 0.6), fov: 48 }) },
+  { at: 63.75, to: 64.7, f: w => ({ p: V(COURT.x + 1.2, WALL_TOP + 2.9 + (w - 63.7) * 3, COURT.z + 7.6 + (w - 63.7) * 1.5), l: V(COURT.x + 7, WALL_TOP + 28 + (w - 63.7) * 5, COURT.z - 60), fov: 52 }) },
+  { at: 65.3, to: 66.6, f: w => ({ p: V(COURT.x + 2.4 - (w - 66) * 0.2, WALL_TOP + 2.7, COURT.z + 6.6 - (w - 66) * 0.3), l: V(COURT.x - 0.6, WALL_TOP + 1.3, COURT.z + 0.8), fov: 42 }) },
+  { at: 67.9, to: 70.6, f: w => { const k = ease(67.9, 74.5, w); return { p: V(lerp(28, 46, k), lerp(16, 46, k), lerp(-6, 72, k)), l: V(lerp(COURT.x, 4, k), lerp(WALL_TOP + 2, 13, k), lerp(COURT.z, -14, k)), fov: 50 }; } },
 ];
-function stoneAt(w) { if (w < T_STONE0) { catArm.rotation.x = 0; return V(-12, WALL_TOP + 11.6, -4); } const tgt = ladderTop(T_STONE1); const p0 = V(-12, WALL_TOP + 11.6, -4); const k = (w - T_STONE0) / (T_STONE1 - T_STONE0); const p = p0.clone().lerp(tgt, k); p.y += 12 * 4 * k * (1 - k); return p; }
+function stoneAt(w) { if (w < T_STONE0) return V(-12, 17.6 + 5 * Math.cos(-1.1), -4 + 5 * Math.sin(-1.1)); const tgt = ladderTop(T_STONE1); const p0 = V(-12, 17.6 + 5 * Math.cos(0.5), -4 + 5 * Math.sin(0.5)); const k = (w - T_STONE0) / (T_STONE1 - T_STONE0); const p = p0.clone().lerp(tgt, k); p.y += 12 * 4 * k * (1 - k); return p; }
 function ladderAng(w) { if (w < 11.6) return 0.05; if (w < T_STONE1) return lerp(0.05, 0.62, ease(11.6, 14.8, w)); const u = w - T_STONE1; return lerp(0.62, -0.25, ease(0, 0.9, u)); }
 function ladderBase(w) { const a = sambA.path(w), b = sambB.path(w); return V((a.x + b.x) / 2, 2.4, a.z + 3); }
 function ladderTop(w) { const a = ladderAng(w), b = ladderBase(w); return b.add(V(0, Math.sin(a) * 17, -Math.cos(a) * 17)); }
@@ -305,25 +325,25 @@ const WORDS = TL.beats.flatMap(b => b.words); const KEY = /^(roman|sailor|warshi
 const labelEl = document.getElementById('label'), capEl = document.querySelector('#cap span'), rwEl = document.getElementById('rw');
 const script = await (await fetch('./script.json')).json();
 function overlay(t) { const v = voiceT(t); rwEl.style.opacity = v === null ? 1 : 0;
-  if (v === null) { capEl.textContent = ''; return; }
+  if (v === null) { capEl.textContent = ''; if (t > HOOK_END + RW) labelEl.style.opacity = 1; return; }
   const bi = Math.max(0, TL.beats.findIndex((b, i) => v < (TL.beats[i + 1]?.start ?? 1e9))); const lab = script.beats[bi].label || '';
   labelEl.innerHTML = lab.replace(/\*([^*]+)\*/g, '<span class="hot">$1</span>'); labelEl.style.opacity = 1;
-  let wi = -1; for (let i = 0; i < WORDS.length; i++) if (WORDS[i].s <= v + 0.02) wi = i; const wd = WORDS[wi];
-  if (!wd || v > wd.e + 0.35) { capEl.textContent = ''; return; }
+  let wi = -1; for (let i = 0; i < WORDS.length; i++) if (WORDS[i].s <= v + 0.14) wi = i; const wd = WORDS[wi];
+  if (!wd || v > wd.e + 0.3) { capEl.textContent = ''; return; }
   const txt = wd.w.replace(/[.,?!]/g, '').toUpperCase(); capEl.textContent = txt; capEl.className = KEY.test(wd.w.replace(/[.,?!]/g, '')) ? 'k' : '';
-  const a = clamp((v - wd.s) / 0.08); capEl.style.transform = `scale(${0.8 + 0.2 * a + 0.06 * Math.sin(a * Math.PI)})`; }
+  const a = clamp((v + 0.14 - wd.s) / 0.06); capEl.style.transform = `scale(${0.8 + 0.2 * a + 0.06 * Math.sin(a * Math.PI)})`; }
 
 // ---------- frame ----------
 window.DURATION = DUR;
 window.renderFrame = (t) => {
   const w = worldT(t); overlay(t);
   // day -> night
-  const n = sstep(55.2, 58.4, w); domeN.material.opacity = n; moon.material.opacity = n; scene.fog.color.copy(FOG_DAY).lerp(FOG_NIGHT, n); scene.fog.far = lerp(420, 300, n);
+  const n = sstep(55.6, 59.0, w); domeN.material.opacity = n; moon.material.opacity = n; scene.fog.color.copy(FOG_DAY).lerp(FOG_NIGHT, n); scene.fog.far = lerp(420, 300, n);
   sun.intensity = lerp(2.5, 0.55, n); sun.color.set('#fff0d6').lerp(new THREE.Color('#9db4ff'), n); hemi.intensity = lerp(1.2, 0.7, n); hemi.color.set('#e4f2ff').lerp(new THREE.Color('#6a7fc0'), n);
   torches.forEach((s, i) => { s.material.opacity = n * (0.85 + 0.15 * Math.sin(w * 9 + i)); }); courtLight.intensity = n * 60;
   // sea
   { const a = sea.geometry.attributes.position; for (let i = 0; i < a.count; i++) { const x = seaBase[i * 3], z = seaBase[i * 3 + 2] + sea.position.z; let y = waveH(x, z, w);
-      for (const [at, o, amp] of [[T_SPLASH, V(YOU_X, 0, BOW_Z + 4), 0.9], [T_STONE1 + 0.9, ladderTop(T_STONE1 + 0.9), 0.5]]) { const u = w - at; if (u > 0 && u < 6) { const d = Math.hypot(x - o.x, z - o.z); y += amp * Math.exp(-u * 0.6) * Math.sin(d * 1.6 - u * 7) * Math.exp(-Math.abs(d - u * 4.5) * 0.5); } }
+      for (const [at, o, amp] of [[T_SPLASH, V(YOU_X, 0, BOW_Z + 4), 0.9], [clawB.splash, V(30, 0, BOW_Z + 4), 0.8], [T_STONE1 + 0.9, ladderTop(T_STONE1 + 0.9), 0.5]]) { const u = w - at; if (u > 0 && u < 6) { const d = Math.hypot(x - o.x, z - o.z); y += amp * Math.exp(-u * 0.6) * Math.sin(d * 1.6 - u * 7) * Math.exp(-Math.abs(d - u * 4.5) * 0.5); } }
       a.setY(i, y); } a.needsUpdate = true; sea.geometry.computeVertexNormals(); }
   foam.material.opacity = 0.75 + 0.25 * Math.sin(w * 2);
   // ships
@@ -331,18 +351,16 @@ window.renderFrame = (t) => {
     S.outer.rotation.z = Math.sin(w * 0.9 + S.ph) * 0.03; S.outer.rotation.x = Math.sin(w * 0.7 + S.ph) * 0.015;
     const row = S.rowing(w); S.oars.forEach((o, i) => { const ph = w * 4.2 + S.ph; o.rotation.y = row ? Math.sin(ph) * 0.35 * o.userData.side : 0.05 * o.userData.side; o.rotation.z = (row ? (0.18 + 0.12 * Math.cos(ph)) : 0.3) * -o.userData.side; });
     if (S.sail) { const a = S.sail.geometry.attributes.position, b = S.sail.userData.base; for (let i = 0; i < a.count; i++) { const x = b[i * 3], y = b[i * 3 + 1]; a.setZ(i, (1 - (x / 4) ** 2) * (0.9 + 0.15 * Math.sin(w * 2 + y + S.ph)) * -1); } a.needsUpdate = true; S.sail.geometry.computeVertexNormals(); } }
-  { const P = youPose(w); you.outer.position.copy(P.pos).add(V(0, P.ysink + (P.pitch === 0 && P.roll === 0 ? waveH(P.pos.x, P.pos.z, w) * 0.6 : 0), 0)); you.outer.rotation.set(P.pitch, 0, P.roll); if (P.pitch > 0.05 || P.roll > 0.05) you.oars.forEach(o => { o.rotation.y = Math.sin(w * 13 + o.position.z) * 0.4; }); }
+  clawA.update(w); clawB.update(w);
   // sambuca ladder
   { const a = ladderAng(w), b = ladderBase(w); ladder.position.copy(b).add(V(0, waveH(b.x, b.z, w) * 0.6, 0)); ladder.rotation.set(a, 0, 0); if (w > T_STONE1) { const u = w - T_STONE1; ladder.rotation.z = 0.5 * ease(0, 0.9, u); ladder.position.y -= 1.6 * ease(0.6, 2, u); } }
   // catapult + stone
-  { catArm.rotation.x = w < T_STONE0 ? -1.1 : lerp(-1.1, 0.5, ease(T_STONE0 - 0.05, T_STONE0 + 0.25, w)); const sp = stoneAt(w); stone.visible = w > T_STONE0 - 0.6 && w < T_STONE1 + 0.15; stone.position.copy(w < T_STONE0 ? V(-12, WALL_TOP + 6.6, -4).add(V(0, 5 * Math.cos(-1.1), 5 * Math.sin(-1.1) * -1)) : sp); stone.rotation.set(w * 5, w * 3, 0); }
+  { catArm.rotation.x = w < T_STONE0 ? -1.1 : lerp(-1.1, 0.5, ease(T_STONE0 - 0.05, T_STONE0 + 0.25, w)); const sp = stoneAt(w); stone.visible = w > T_STONE0 - 0.6 && w < T_STONE1 + 0.15; stone.position.copy(sp); stone.rotation.set(w * 5, w * 3, 0); }
   runBurst(woodDust, T_STONE1, w, ladderTop(T_STONE1), 4); runBurst(ladderSplash, T_STONE1 + 0.9, w, (() => { const p = ladderTop(T_STONE1 + 0.9); p.y = 0; return p; })());
   // bolts from the loopholes
   bolts.forEach(b => { const u = w - b.t0; const on = u > 0 && w < 45; b.m.visible = on; if (!on) return; const tgt = V(YOU_X - 2.5, you.Hh - 0.2 + (b.k % 3) * 0.25, you.path(b.t0 + 0.45).z - 7 + b.k * 1.6); const k = clamp(u / 0.45); const p = b.from.clone().lerp(tgt, k); p.y += 1.2 * 4 * k * (1 - k); b.m.position.copy(p); const d = tgt.clone().sub(b.from).normalize(); b.m.quaternion.setFromUnitVectors(V(0, 1, 0), d); if (k >= 1 && w > YOU_FALL - 0.5) b.m.visible = false; });
   // claw
-  { beamG.rotation.x = -beamPhi(w); const tip = beamTip(w), c = clawPos(w); chain.position.copy(tip).add(c).multiplyScalar(0.5); chain.scale.y = tip.distanceTo(c); chain.quaternion.setFromUnitVectors(V(0, 1, 0), tip.clone().sub(c).normalize());
-    clawG.position.copy(c); const shut = ease(T_GRAB - 0.25, T_GRAB, w) * (1 - ease(T_REL, T_REL + 0.15, w)); clawG.children.forEach(f => { if (f.userData.k !== undefined) f.rotation.z = lerp(-0.45, 0.35, shut); }); clawG.rotation.x = c.z > 0 ? 0 : 0; }
-  runBurst(bigSplash, T_SPLASH, w, V(YOU_X, 0, BOW_Z + 3));
+  runBurst(bigSplash, T_SPLASH, w, V(YOU_X, 0, BOW_Z + 3)); runBurst(bigSplash2, clawB.splash, w, V(30, 0, BOW_Z + 3));
   planks.forEach(p => { const on = w > T_SPLASH + 0.2; p.m.visible = on; if (!on) return; const u = w - T_SPLASH; const c = V(YOU_X, 0, BOW_Z + 8); p.m.position.set(c.x + p.off.x * ease(0, 2.5, u), waveH(c.x + p.off.x, c.z + p.off.z, w) * 0.6 + 0.05, c.z + p.off.z * ease(0, 2.5, u)); p.m.rotation.set(0, p.rot + u * 0.1, Math.sin(w + p.rot) * 0.1); });
   // the rope + boat
   { const L = lerp(0.01, 9.5, ease(46.5, 47.2, w)); rope.scale.y = L; rope.position.set(ROPE_X + Math.sin(w * 2) * 0.15 * ease(46.5, 47.2, w), WALL_TOP + 0.4 - L / 2, 0.45); const bp = boatPos(w); boat.position.set(bp.x, waveH(bp.x, bp.z, w) * 0.6 - 0.2, bp.z); boat.rotation.set(0, w > 48.8 ? Math.sin(w * 8) * 0.08 : 0, Math.sin(w * 1.3) * 0.05); boat.visible = w > 39; }
@@ -353,8 +371,10 @@ window.renderFrame = (t) => {
   // people
   placeCamera(w, t);
   people.forEach(P => { const pos = P.where(w); P.m.position.copy(pos); P.sh.position.set(pos.x, pos.y + 0.03, pos.z); P.sh.visible = pos.y > -0.5;
-    const [pose, expr, pt, extra] = P.script(w); drawPerson(P.ctx, CW, CH, P.kind, pose, expr, pt, P.seed, { flip: P.opts.flip, ...(extra || {}) }); P.tex.needsUpdate = true;
-    P.m.rotation.y = Math.atan2(cam.position.x - pos.x, cam.position.z - pos.z); P.m.visible = cam.position.distanceTo(pos) < 160; });
+    const d = cam.position.distanceTo(pos); P.m.visible = d < 160 && pos.y > -50; if (!P.m.visible) return;
+    const [pose, expr, pt0, extra] = P.script(w); const q = d > 35 ? 8 : 30; const pt = Math.round(pt0 * q) / q; const key = `${pose}|${expr}|${pt}|${JSON.stringify(extra || {})}`;
+    if (key !== P.last) { drawPerson(P.ctx, CW, CH, P.kind, pose, expr, pt, P.seed, { flip: P.opts.flip, ...(extra || {}) }); P.tex.needsUpdate = true; P.last = key; }
+    P.m.rotation.y = Math.atan2(cam.position.x - pos.x, cam.position.z - pos.z); });
   renderer.render(scene, cam);
 };
 await document.fonts.ready;

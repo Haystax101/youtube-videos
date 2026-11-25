@@ -1,5 +1,5 @@
 {
- "duration": 71.835,
+ "duration": 72.477,
  "beats": [
   {
    "i": 0,
@@ -1050,267 +1050,311 @@
   {
    "i": 10,
    "start": 54.921,
-   "end": 65.829,
+   "end": 57.378,
    "deathAt": null,
    "words": [
     {
      "w": "So",
      "s": 54.921,
-     "e": 55.182,
+     "e": 55.165,
      "speaker": "narrator"
     },
     {
      "w": "Rome",
-     "s": 55.182,
-     "e": 55.461,
+     "s": 55.165,
+     "e": 55.427,
      "speaker": "narrator"
     },
     {
      "w": "stops",
-     "s": 55.461,
-     "e": 55.749,
+     "s": 55.427,
+     "e": 55.698,
      "speaker": "narrator"
     },
     {
-     "w": "attacking",
-     "s": 55.749,
-     "e": 56.56,
+     "w": "attacking,",
+     "s": 55.698,
+     "e": 56.594,
      "speaker": "narrator"
     },
     {
      "w": "and",
-     "s": 56.56,
-     "e": 56.83,
+     "s": 56.594,
+     "e": 56.848,
      "speaker": "narrator"
     },
     {
      "w": "waits.",
-     "s": 56.83,
+     "s": 56.848,
      "e": 57.118,
-     "speaker": "narrator"
-    },
-    {
-     "w": "When",
-     "s": 57.258,
-     "e": 57.477,
-     "speaker": "narrator"
-    },
-    {
-     "w": "the",
-     "s": 57.477,
-     "e": 57.69,
-     "speaker": "narrator"
-    },
-    {
-     "w": "city",
-     "s": 57.69,
-     "e": 58.1,
-     "speaker": "narrator"
-    },
-    {
-     "w": "finally",
-     "s": 58.1,
-     "e": 58.722,
-     "speaker": "narrator"
-    },
-    {
-     "w": "falls,",
-     "s": 58.722,
-     "e": 59.063,
-     "speaker": "narrator"
-    },
-    {
-     "w": "a",
-     "s": 59.063,
-     "e": 59.261,
-     "speaker": "narrator"
-    },
-    {
-     "w": "soldier",
-     "s": 59.261,
-     "e": 59.693,
-     "speaker": "narrator"
-    },
-    {
-     "w": "finds",
-     "s": 59.693,
-     "e": 59.919,
-     "speaker": "narrator"
-    },
-    {
-     "w": "Archimedes",
-     "s": 59.919,
-     "e": 60.754,
-     "speaker": "narrator"
-    },
-    {
-     "w": "in",
-     "s": 60.754,
-     "e": 60.959,
-     "speaker": "narrator"
-    },
-    {
-     "w": "the",
-     "s": 60.959,
-     "e": 61.171,
-     "speaker": "narrator"
-    },
-    {
-     "w": "middle",
-     "s": 61.171,
-     "e": 61.405,
-     "speaker": "narrator"
-    },
-    {
-     "w": "of",
-     "s": 61.405,
-     "e": 61.61,
-     "speaker": "narrator"
-    },
-    {
-     "w": "a",
-     "s": 61.61,
-     "e": 61.808,
-     "speaker": "narrator"
-    },
-    {
-     "w": "maths",
-     "s": 61.808,
-     "e": 62.034,
-     "speaker": "narrator"
-    },
-    {
-     "w": "problem,",
-     "s": 62.034,
-     "e": 62.58,
-     "speaker": "narrator"
-    },
-    {
-     "w": "and",
-     "s": 62.58,
-     "e": 62.793,
-     "speaker": "narrator"
-    },
-    {
-     "w": "kills",
-     "s": 62.793,
-     "e": 63.019,
-     "speaker": "narrator"
-    },
-    {
-     "w": "him.",
-     "s": 63.019,
-     "e": 63.231,
-     "speaker": "narrator"
-    },
-    {
-     "w": "His",
-     "s": 63.371,
-     "e": 63.572,
-     "speaker": "narrator"
-    },
-    {
-     "w": "commander",
-     "s": 63.572,
-     "e": 64.175,
-     "speaker": "narrator"
-    },
-    {
-     "w": "had",
-     "s": 64.175,
-     "e": 64.376,
-     "speaker": "narrator"
-    },
-    {
-     "w": "ordered",
-     "s": 64.376,
-     "e": 64.966,
-     "speaker": "narrator"
-    },
-    {
-     "w": "him",
-     "s": 64.966,
-     "e": 65.167,
-     "speaker": "narrator"
-    },
-    {
-     "w": "spared.",
-     "s": 65.167,
-     "e": 65.569,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 11,
-   "start": 65.829,
-   "end": 70.635,
+   "start": 57.378,
+   "end": 65.949,
    "deathAt": null,
    "words": [
     {
-     "w": "You",
-     "s": 65.829,
-     "e": 66.076,
+     "w": "When",
+     "s": 57.378,
+     "e": 57.597,
      "speaker": "narrator"
     },
     {
-     "w": "survived.",
-     "s": 66.076,
-     "e": 66.81,
+     "w": "the",
+     "s": 57.597,
+     "e": 57.81,
+     "speaker": "narrator"
+    },
+    {
+     "w": "city",
+     "s": 57.81,
+     "e": 58.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "finally",
+     "s": 58.22,
+     "e": 58.842,
+     "speaker": "narrator"
+    },
+    {
+     "w": "falls,",
+     "s": 58.842,
+     "e": 59.183,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 59.183,
+     "e": 59.381,
+     "speaker": "narrator"
+    },
+    {
+     "w": "soldier",
+     "s": 59.381,
+     "e": 59.813,
+     "speaker": "narrator"
+    },
+    {
+     "w": "finds",
+     "s": 59.813,
+     "e": 60.039,
      "speaker": "narrator"
     },
     {
      "w": "Archimedes",
-     "s": 66.95,
-     "e": 68.091,
+     "s": 60.039,
+     "e": 60.874,
      "speaker": "narrator"
     },
     {
-     "w": "didn't.",
-     "s": 68.091,
-     "e": 68.401,
+     "w": "in",
+     "s": 60.874,
+     "e": 61.079,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 61.079,
+     "e": 61.291,
+     "speaker": "narrator"
+    },
+    {
+     "w": "middle",
+     "s": 61.291,
+     "e": 61.525,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 61.525,
+     "e": 61.73,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 61.73,
+     "e": 61.928,
+     "speaker": "narrator"
+    },
+    {
+     "w": "maths",
+     "s": 61.928,
+     "e": 62.154,
+     "speaker": "narrator"
+    },
+    {
+     "w": "problem,",
+     "s": 62.154,
+     "e": 62.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 62.7,
+     "e": 62.913,
+     "speaker": "narrator"
+    },
+    {
+     "w": "kills",
+     "s": 62.913,
+     "e": 63.139,
+     "speaker": "narrator"
+    },
+    {
+     "w": "him.",
+     "s": 63.139,
+     "e": 63.351,
+     "speaker": "narrator"
+    },
+    {
+     "w": "His",
+     "s": 63.491,
+     "e": 63.692,
+     "speaker": "narrator"
+    },
+    {
+     "w": "commander",
+     "s": 63.692,
+     "e": 64.295,
+     "speaker": "narrator"
+    },
+    {
+     "w": "had",
+     "s": 64.295,
+     "e": 64.496,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ordered",
+     "s": 64.496,
+     "e": 65.086,
+     "speaker": "narrator"
+    },
+    {
+     "w": "him",
+     "s": 65.086,
+     "e": 65.287,
+     "speaker": "narrator"
+    },
+    {
+     "w": "spared.",
+     "s": 65.287,
+     "e": 65.689,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 12,
+   "start": 65.949,
+   "end": 71.277,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "One",
+     "s": 65.949,
+     "e": 66.206,
+     "speaker": "narrator"
+    },
+    {
+     "w": "old",
+     "s": 66.206,
+     "e": 66.463,
+     "speaker": "narrator"
+    },
+    {
+     "w": "man",
+     "s": 66.463,
+     "e": 66.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "held",
+     "s": 66.72,
+     "e": 66.986,
+     "speaker": "narrator"
+    },
+    {
+     "w": "off",
+     "s": 66.986,
+     "e": 67.243,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 67.243,
+     "e": 67.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Roman",
+     "s": 67.5,
+     "e": 68.005,
+     "speaker": "narrator"
+    },
+    {
+     "w": "army",
+     "s": 68.005,
+     "e": 68.502,
+     "speaker": "narrator"
+    },
+    {
+     "w": "with",
+     "s": 68.502,
+     "e": 68.768,
+     "speaker": "narrator"
+    },
+    {
+     "w": "maths.",
+     "s": 68.768,
+     "e": 69.042,
      "speaker": "narrator"
     },
     {
      "w": "Comment",
-     "s": 68.541,
-     "e": 68.999,
+     "s": 69.182,
+     "e": 69.641,
      "speaker": "narrator"
     },
     {
      "w": "what",
-     "s": 68.999,
-     "e": 69.232,
+     "s": 69.641,
+     "e": 69.874,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 69.232,
-     "e": 69.458,
+     "s": 69.874,
+     "e": 70.099,
      "speaker": "narrator"
     },
     {
      "w": "want",
-     "s": 69.458,
-     "e": 69.691,
+     "s": 70.099,
+     "e": 70.332,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 69.691,
-     "e": 69.909,
+     "s": 70.332,
+     "e": 70.55,
      "speaker": "narrator"
     },
     {
      "w": "know",
-     "s": 69.909,
-     "e": 70.142,
+     "s": 70.55,
+     "e": 70.784,
      "speaker": "narrator"
     },
     {
      "w": "next.",
-     "s": 70.142,
-     "e": 70.375,
+     "s": 70.784,
+     "e": 71.017,
      "speaker": "narrator"
     }
    ]
