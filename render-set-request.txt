@@ -2,3 +2,4 @@ prototypes/darwin-chair
 # continuity fixes 1539
 # retry 1542
 # beat 3 retime 1601
+# v3 occlusion, door entrance, seated hop 1647
