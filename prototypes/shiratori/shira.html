@@ -172,7 +172,7 @@ const snowGround = add(new THREE.Mesh(new THREE.PlaneGeometry(100, 100).rotateX(
 const ROOF = new THREE.Group(); ROOF.position.set(120, 0, 0); scene.add(ROOF);
 { add(new THREE.Mesh(new THREE.PlaneGeometry(200, 200).rotateX(-Math.PI / 2), M.snow), 0, -6, 0, ROOF);
   for (const s of [-1, 1]) { const r = add(new THREE.Mesh(new THREE.BoxGeometry(6, 0.25, 20), M.roof), s * 2.7, 0.8, 0, ROOF); r.rotation.z = -s * 0.3; const sn = add(new THREE.Mesh(new THREE.BoxGeometry(5.8, 0.1, 19.6), std('#eef2fa')), s * 2.7, 0.96, 0, ROOF); sn.rotation.z = -s * 0.3; }
-  box(0.4, 0.4, 20, M.beam, 0, 1.75, 0, ROOF); box(1.1, 0.5, 1.1, M.beam, -1.6, 1.35, 0, ROOF, 0.02);
+  box(0.4, 0.4, 20, M.beam, 0, 1.75, 0, ROOF); box(1.1, 0.5, 1.1, M.beam, -1.6, 1.35, 0, ROOF, 0.02).userData.noCheck = true;   // the skylight shaft he climbs out of
   const hole = add(new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.8).rotateX(-Math.PI / 2), std('#ffcf8a', { emissive: '#ffb050', emissiveIntensity: 1.2 })), -1.6, 1.61, 0, ROOF); hole.rotation.z = 0;
   ROOF.userData.lid = box(0.95, 0.06, 0.95, M.plank2, -1.6, 1.64, 0, ROOF, 0.01);
   const glow = new THREE.PointLight('#ffc890', 1.2, 3, 1.5); glow.position.set(-1.6, 1.4, 0); ROOF.add(glow); lamps.push(glow);
@@ -296,8 +296,8 @@ shot(WT(2, 'Caught'), 'night_in', move({ p: V(0.35, 1.0, -8.2), l: V(0, 1.0, -14
   (u, t) => { const z = -15 + u * 2.6; place(G1, V(-0.45, 0, z - 0.5), 0, 'walk', 'angry', t); place(SH, V(0.05, 0, z), 0, 'cuffed', 'sad', t); place(G2, V(0.5, 0, z - 0.5), 0, 'walk', 'neutral', t + 0.3); }, { cuffs: SH });
 shot(WT(2, 'cell'), 'night_in', move({ p: at(C2, 1.6, 0.9, 1.7), l: at(C2, -0.8, 1.3, -0.5), fov: 64 }, { p: at(C2, 1.6, 0.9, 1.7), l: at(C2, -1.0, 6.4, -0.5), fov: 64 }, 0),
   (u, t) => place(SH, at(C2, -0.7, 0, -0.5), RIGHT + 0.5, 'reach', 'worried', t), { hide: [2] });
-shot(WT(2, 'He', 2), 'night_in', move({ p: at(C2, 1.5, 0.5, 1.6), l: at(C2, -1.5, 3.2, -0.2), fov: 72 }, { p: at(C2, 1.5, 0.7, 1.6), l: at(C2, -1.5, 5.4, -0.2), fov: 72 }, 0),
-  (u, t) => place(SH, at(C2, -1.75, 1.2 + u * 3.6, -0.2), -RIGHT, 'climb', 'focus', t), { hide: [2] });
+shot(WT(2, 'He', 2), 'night_in', move({ p: at(C2, 1.5, 0.5, 1.6), l: at(C2, -1.3, 3.2, 0.6), fov: 72 }, { p: at(C2, 1.5, 0.7, 1.6), l: at(C2, -1.3, 5.4, 0.6), fov: 72 }, 0),
+  (u, t) => place(SH, at(C2, -1.72, 1.2 + u * 3.6, 0.9), -RIGHT, 'climb', 'focus', t), { hide: [2] });
 shot(WT(2, 'slipped'), 'night_out', move(frame(at(R0, -1.6, 1.9, 0), 3.4, 40, 14, 42), frame(at(R0, -1.2, 2.2, 0), 3.0, 30, 10, 42), 0.3),
   (u, t) => { const k = ease(0, 0.55, u); place(SH, at(R0, -1.6 + ease(0.55, 1, u) * 1.0, 0.75 + k * 0.95, 0), 0.6, k < 1 ? 'reach' : 'walk', 'grin', t); }, { lid: 1, snow: 1 });
 // ---- Abashiri: the coldest prison, iron cuffs
@@ -406,8 +406,12 @@ window.renderFrame = (t) => {
   const f = snapFocus(c.l.clone().setY(0), KEY_DIR[s.env], half); key.target.position.copy(f); key.position.copy(f).add(KEY_DIR[s.env].clone().normalize().multiplyScalar(40));
   caption(t);
   scene.updateMatrixWorld(true);
+  if (window.NODRAW) return;
   L.render();
 };
+// overlap check hook (tools/check_overlap.cjs): characters on screen; anyone on the bench may touch it
+const NAMES = ['shiratori', 'guard1', 'guard2', 'cop', 'warden'];
+window.QA = { scene, camera: cam, THREE, actors: () => CAST.map((c, i) => ({ name: NAMES[i], root: c.root, head: c.head, seat: c.root.visible && Math.abs(c.root.position.y - BENCH_SIT) < 0.05 ? VIL.userData.bench : null })).filter(a => a.root.visible) };
 window.DURATION = DUR; window.SHOTS = S.map(s => s.t);
 renderFrame(0); window.READY = true; window.DONE = true;
 </script></body></html>

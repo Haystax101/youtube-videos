@@ -1,2 +1,2 @@
 prototypes/shiratori
-# v3: ink outlines, soft cel shading
+# v4: overlap-check fixes on top of v3

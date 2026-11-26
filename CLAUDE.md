@@ -122,7 +122,9 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      Short is a set video in the **smol look**: big-head 2.5D characters (`prototypes/smol-look/bighead.js`)
      and its renderer/post stack (`prototypes/smol-look/look.js`: clean warm lighting, depth of field on
      close-ups, whip pans between quick cuts, soft bloom), bright clean detailed sets, dynamic cameras
-     with auto framing (`prototypes/smol-look/shot.cjs`). Template: the Shiratori Short
+     with auto framing (`frame()` and `fitShot()` in the template page: each shot is framed by the width it
+     shows, and the camera is pulled in front of anything blocking it). Characters have ink outlines and
+     soft cel shading, like the reference's drawn figures. Template: the Shiratori Short
      (`prototypes/shiratori`: `shira.html` sets and shots, `rend.cjs`, `score.py` + `mixshira.py` +
      `audio.sh` soundtrack with recorded sfx and two-pass -14 LUFS loudnorm, `sheet.py`). Copy that
      folder to `episodes/NNN-slug/` and build new sets, characters and shots for the new story; follow
@@ -144,8 +146,10 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      deliver a second or third only if each also clears the bar.
 5. Build the sets, characters, props and shots the story needs in the episode's own page (copied
    from the Shiratori template). Add any new reusable pose or character feature to
-   `prototypes/smol-look/bighead.js` so later Shorts get it too. Check framing with the shot
-   checker (heads projected every 0.1 s with rendering skipped) before rendering.
+   `prototypes/smol-look/bighead.js` so later Shorts get it too. Render stills with the page's
+   `rend.cjs stills t1,t2,...` and a contact sheet with `sheet.py` (one still every 1-2 s), and run
+   `node tools/check_overlap.cjs EP/page.html` (the template already sets `window.QA` and
+   `window.NODRAW`): 0 overlaps before the full render. Big heads need about 1 m between people.
 6. Narration must spell out exactly what is spoken (george, 2026-11-26: "Mt. Gox" was read as a
    sentence end): no abbreviations with periods, digits, symbols or bare acronyms, and phonetic
    `pronounce` entries for names. `tts.py` runs `tools/lint_voice.py` first and stops on errors.
