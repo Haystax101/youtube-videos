@@ -7,8 +7,11 @@ REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')); sys.pa
 from tts import split_sentences, syllables, SR
 from kokoro_onnx import Kokoro
 EP = sys.argv[1]; script = json.load(open(f'{EP}/script.json'))
-q, qsr = sf.read(f'{EP}/voice.qwen.wav'); q = q.mean(1) if q.ndim > 1 else q; assert qsr == SR
-qtl = json.load(open(f'{EP}/timeline.qwen.json'))
+HAVE_Q = os.path.exists(f'{EP}/voice.qwen.wav')
+if HAVE_Q:
+    q, qsr = sf.read(f'{EP}/voice.qwen.wav'); q = q.mean(1) if q.ndim > 1 else q; assert qsr == SR
+    qtl = json.load(open(f'{EP}/timeline.qwen.json'))
+KOKO_CHAR = {'darwin': 'bm_george', 'critic': 'bm_lewis'}  # placeholder when the Qwen render isn't here yet
 k = Kokoro(f'{REPO}/models/kokoro-v1.0.onnx', f'{REPO}/models/voices-v1.0.bin')
 narr = script.get('voices', {}).get('narrator', 'am_michael'); speed = script.get('speed', 1.12); cgain = script.get('character_gain', 1.0)
 def sil(s): return np.zeros(int(s * SR), dtype=np.float32)
@@ -16,13 +19,15 @@ def norm(x, rms=0.09):  # loudness-match every sentence (RMS of voiced part), ca
     v = x[np.abs(x) > 0.02 * np.abs(x).max()]; y = x * rms / (np.sqrt(np.mean(v ** 2)) + 1e-9); return np.clip(y, -0.98, 0.98)
 audio = [sil(0.15)]; t = 0.15; beats = []
 for i, beat in enumerate(script['beats']):
-    b0 = t; words = []; qwords = [w for w in qtl['beats'][i]['words']]
+    b0 = t; words = []; qwords = [w for w in qtl['beats'][i]['words']] if HAVE_Q else []
     for line in beat['lines']:
         spk = line.get('speaker', 'narrator')
         for sent in split_sentences(line['text']):
             ws = sent.split()
-            if spk == 'narrator':
-                w, sr = k.create(sent, voice=narr, speed=speed * line.get('speed', 1.0), lang='en-us'); w = norm(np.asarray(w, np.float32))
+            if spk == 'narrator' or not HAVE_Q:
+                if spk != 'narrator': w, sr = k.create(sent, voice=KOKO_CHAR.get(spk, 'bm_george'), speed=1.0, lang='en-gb'); w = norm(np.asarray(w, np.float32)) * cgain
+                else:
+                    w, sr = k.create(sent, voice=narr, speed=speed * line.get('speed', 1.0), lang='en-us'); w = norm(np.asarray(w, np.float32))
             else:  # find this sentence in the Qwen render (same words, same speaker)
                 n = len(ws); idx = next(j for j in range(len(qwords) - n + 1) if all(qwords[j + m]['speaker'] == spk for m in range(n)) and qwords[j]['w'] == ws[0])
                 s, e = qwords[idx]['s'], qwords[idx + n - 1]['e']; w = q[max(0, int((s - 0.03) * SR)): int((e + 0.08) * SR)].astype(np.float32)
