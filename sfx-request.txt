@@ -1,0 +1,4 @@
+eel-escape
+sfx: underwater ambience, underwater, bubbles, bubble, gulp, swallow, water splash, splash, swimming underwater, river stream, water drip, whoosh, swoosh, squelch, slime, stomach growl, heartbeat, x-ray machine, electrical hum, beep, camera shutter, laboratory, aquarium pump, cartoon pop, boing, impact, thud
+tex: sand, river gravel, pebbles, mud, rock moss, aerial beach
+kenney: impact-sounds, interface-sounds, digital-audio, sci-fi-sounds

@@ -1,0 +1,31 @@
+name: Fetch CC0 sound effects for one video
+
+# Searches Wikimedia Commons (CC0 / public domain audio), OpenGameArt (CC0) and Poly Haven
+# (CC0 textures) for the queries in sfx-request.txt (see tools/fetch_sfx.py) and publishes the
+# files as sfx.tar on the release sfx-<name>. Start it by changing sfx-request.txt and pushing.
+on:
+  push:
+    paths: [sfx-request.txt]
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch
+        run: python3 tools/fetch_sfx.py sfx-request.txt out
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NAME="$(head -n1 sfx-request.txt | tr -cd 'a-z0-9-')"; TAG="sfx-$NAME"
+          tar -cf sfx.tar -C out .
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --prerelease --title "CC0 sounds: $NAME" --notes "Fetched by tools/fetch_sfx.py; see manifest.json for sources and licences." --target "${{ github.sha }}"
+          gh release upload "$TAG" sfx.tar out/manifest.json --clobber
