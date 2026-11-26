@@ -37,6 +37,13 @@ Copy that folder as the starting point. Don't start from an empty page.
   - Projectiles leave from the arm tip.
   - george spotted the claw clipping the castle in v1. Check every moving part against what it
     swings past.
+- **Detailed water and scenery.** george (26 Nov, rewatching Archimedes): "the sea could've been more
+  detailed". Give water real surface detail (layered normal-mapped waves, foam at hulls and rocks,
+  spray, light glints), and use the CC0 textures, HDRIs and plant models in release `assets-v1`
+  (`EP/assets.txt` makes render-set.yml fetch them). Keep photoscans light: swiftshader renders on CPU,
+  so use models under ~10k triangles and a few hundred instances.
+- **Keep the camera clear.** Vegetation and props keep a clear band around the paths cameras fly
+  along, and a clearing around close-up props, or low shots end up inside ferns and grass.
 - **Time jumps clear the stage.** After "MONTHS LATER", anything that belonged to the earlier
   scene (wrecks, debris, oars, swimmers) sinks or fades away during the label change. v2's
   leftover floating oars at the end "looked a little silly".
@@ -96,6 +103,12 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
   - Sound effects ×0.18 through a `0.15·tanh` soft limit. In v1 they were "WAY too loud".
   - Then `loudnorm I=-14 TP=-1.5`.
   - Ambience (waves, crickets at night) stays quiet.
+- **Recorded effects, not synthesised.** george found the synthesised sfx "crude". Use recorded CC0
+  sounds from release `sfx-v1` (`tools/fetch_sfx.py`; add keywords to `sfx-keywords.txt`) through
+  `pipeline/sfxlib.py`: ambience beds, footsteps, fire, whooshes on whip pans, impacts on turns.
+- **Character voices.** Let characters say a line or two in their own voice: Qwen3-TTS via
+  `tools/qwen_voice.py` (`"qwen_speakers"` in script.json, GitHub job voice.yml), then
+  `tools/retime_voice.py` to bring Qwen's slow read up to pace.
 - **The rewind** gets a reversed, pitched slice of the music plus a tape squeal, and nothing else.
 
 ## Workflow
