@@ -61,7 +61,7 @@ const ff = (a) => spawnSync('ffmpeg', ['-y', '-loglevel', 'error', ...a], { stdi
     while (todo.length) { const i = todo.shift(); const [f0, f1] = chunkSpan(i); const tmp = cfile(i) + '.part.mp4';
       const enc = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', ...ENC, tmp], { stdio: ['pipe', 'inherit', 'inherit'] });
       const closed = new Promise(r => enc.on('close', r));
-      for (let f = f0; f < f1; f++) { await w.p.evaluate(t => window.renderFrame(t), f / FPS); const buf = await w.p.screenshot({ type: 'jpeg', quality: 92 });
+      for (let f = f0; f < f1; f++) { await w.p.evaluate(t => window.renderFrame(t), f / FPS); const buf = await w.p.screenshot({ type: 'jpeg', quality: 92, timeout: 0 });
         if (!enc.stdin.write(buf)) await new Promise(r => enc.stdin.once('drain', r)); }
       enc.stdin.end(); await closed; fs.renameSync(tmp, cfile(i)); done++;
       console.log(`chunk ${i} done (${done} this run, ${((Date.now() - t0) / 1000).toFixed(0)}s)`); }
