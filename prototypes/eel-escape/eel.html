@@ -1,0 +1,686 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Poppins"; font-weight: 800; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2"); }
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Poppins,sans-serif}
+canvas{position:absolute;inset:0}
+#cap{position:absolute;left:0;right:0;top:1180px;text-align:center}
+#cap span{display:inline-block;font:800 96px Poppins;color:#fff;-webkit-text-stroke:15px #111;paint-order:stroke fill;letter-spacing:1px;transform-origin:50% 60%;text-shadow:0 8px 18px rgba(0,0,0,.45)}
+#cap span.k{color:#ffd23a}
+#cap span.r{color:#ff4a3a}
+#label{position:absolute;left:0;right:0;top:250px;text-align:center;font:800 74px Poppins;color:#fff;-webkit-text-stroke:12px #111;paint-order:stroke fill;transform-origin:50% 50%}
+#label b{color:#ff4a3a;font-weight:800}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+#xui{position:absolute;inset:0;display:none;pointer-events:none}
+#xui .scan{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.05) 0 2px,rgba(0,0,0,0) 2px 6px);mix-blend-mode:screen}
+#xui .vig{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 46%,rgba(0,0,0,0) 45%,rgba(0,0,0,.75) 100%)}
+#xui .tl{position:absolute;left:70px;top:120px;font:800 46px Poppins;color:#cfe9ff;letter-spacing:4px}
+#xui .tl i{display:inline-block;width:30px;height:30px;border-radius:50%;background:#ff3b30;margin-right:16px;vertical-align:-2px}
+#xui .tr{position:absolute;right:70px;top:120px;font:800 46px Poppins;color:#cfe9ff;letter-spacing:3px}
+#xui .br{position:absolute;left:70px;right:70px;bottom:120px;height:4px;background:rgba(207,233,255,.35)}
+#xui .corner{position:absolute;width:90px;height:90px;border:6px solid rgba(207,233,255,.7)}
+#timer{position:absolute;left:50%;top:420px;transform:translateX(-50%);display:none;font:800 64px Poppins;color:#fff;background:rgba(10,14,20,.78);border:6px solid #ffd23a;border-radius:28px;padding:6px 34px;letter-spacing:3px}
+#timer small{font-size:36px;color:#ffd23a;margin-right:16px;letter-spacing:2px}
+#stats{position:absolute;inset:0;display:none}
+#rw{position:absolute;inset:0;display:none;pointer-events:none}
+#rw .bars{position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.12) 0 3px,rgba(0,0,0,0) 3px 9px)}
+#rw .txt{position:absolute;left:70px;top:130px;font:800 80px Poppins;color:#fff;-webkit-text-stroke:10px #111;paint-order:stroke fill}
+</style>
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }</script>
+</head><body><div id="stage"><canvas id="gl" width="1080" height="1920"></canvas>
+<div id="xui"><div class="scan"></div><div class="vig"></div><div class="tl"><i></i>X-RAY &nbsp;REC</div><div class="tr" id="xclock">00:00:00</div>
+<div class="corner" style="left:50px;top:220px;border-right:0;border-bottom:0"></div><div class="corner" style="right:50px;top:220px;border-left:0;border-bottom:0"></div>
+<div class="corner" style="left:50px;bottom:200px;border-right:0;border-top:0"></div><div class="corner" style="right:50px;bottom:200px;border-left:0;border-top:0"></div></div>
+<canvas id="stats" width="1080" height="1920"></canvas>
+<div id="timer"><small>INSIDE FOR</small><span id="tval">0:00</span></div>
+<div id="rw"><div class="bars"></div><div class="txt">◀◀ REWIND</div></div>
+<div id="flash"></div><div id="label"></div><div id="cap"><span></span></div></div>
+<script type="module">
+// "This eel got eaten alive, then escaped through the gills" (Fish #574; Hasegawa et al., Current Biology 2024).
+// Fast-cut set video: three sets in one scene (riverbed, inside the stomach, Nagasaki X-ray lab + X-ray view).
+// Each shot is a camera set-up; shots start on spoken words from timeline.json.
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { drawPerson } from './people2d.js';
+const TL = await (await fetch('./timeline.json')).json();
+const W = 1080, H = 1920, DUR = TL.duration;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * (3 - 2 * k); };
+const lerp = (a, b, k) => a + (b - a) * k;
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function noise3(x, y, z) { // cheap smooth value noise
+  const h = (i, j, k) => { let n = i * 374761393 + j * 668265263 + k * 1274126177; n = (n ^ (n >>> 13)) * 1274126177; return ((n ^ (n >>> 16)) >>> 0) / 4294967296; };
+  const xi = Math.floor(x), yi = Math.floor(y), zi = Math.floor(z), xf = x - xi, yf = y - yi, zf = z - zi, s = v => v * v * (3 - 2 * v);
+  const u = s(xf), v = s(yf), w = s(zf); let r = 0;
+  for (let a = 0; a < 2; a++) for (let b = 0; b < 2; b++) for (let c = 0; c < 2; c++) r += h(xi + a, yi + b, zi + c) * (a ? u : 1 - u) * (b ? v : 1 - v) * (c ? w : 1 - w);
+  return r; }
+const fbm = (x, y, z) => noise3(x, y, z) * 0.55 + noise3(x * 2.1, y * 2.1, z * 2.1) * 0.3 + noise3(x * 4.3, y * 4.3, z * 4.3) * 0.15;
+const WORDS = TL.beats.flatMap((b, bi) => b.words.map(w => ({ ...w, bi })));
+const BEAT = id => ({ hook: 0, meet: 1, fish: 2, gulp: 3, inside: 4, lab: 5, circle: 6, reverse: 7, tail: 8, free: 9, stats: 10, payoff: 11, cta: 12 })[id];
+const WT = (id, word, n = 1) => { const bi = BEAT(id); let c = 0; for (const w of WORDS) if (w.bi === bi && w.w.replace(/[^A-Za-z0-9'-]/g, '').toLowerCase() === word.toLowerCase() && ++c === n) return w.s; throw new Error('no word ' + id + ' ' + word); };
+const BS = id => TL.beats[BEAT(id)].start, BE = id => TL.beats[BEAT(id)].end;
+
+// ---------- renderer + post ----------
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false); renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(45, W / H, 0.02, 900);
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, cam));
+const bokeh = new BokehPass(scene, cam, { focus: 3, aperture: 0.002, maxblur: 0.008 }); composer.addPass(bokeh);
+const bloom = new UnrealBloomPass(new THREE.Vector2(W / 2, H / 2), 0.35, 0.5, 0.85); composer.addPass(bloom);
+composer.addPass(new OutputPass());
+function canvasTex(w, h, draw, rep) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); } return t; }
+const dummy = new THREE.Object3D();
+const U = { time: { value: 0 }, caus: { value: 1 } };
+
+// Caustics + optional sway, injected into standard materials used underwater.
+const CAUSTIC_GLSL = `
+uniform float uTime; uniform float uCaus; varying vec3 vCWP; varying vec3 vCWN;
+float causticF(vec2 uv, float t) {
+  vec2 p = mod(uv * 6.28318, 6.28318) - 250.0; vec2 i = p; float c = 1.0; float inten = .005;
+  for (int n = 0; n < 4; n++) { float tt = t * (1.0 - (3.5 / float(n + 1)));
+    i = p + vec2(cos(tt - i.x) + sin(tt + i.y), sin(tt - i.y) + cos(tt + i.x));
+    c += 1.0 / length(vec2(p.x / (sin(i.x + tt) / inten), p.y / (cos(i.y + tt) / inten))); }
+  c /= 4.0; c = 1.17 - pow(c, 1.4); return pow(abs(c), 8.0); }`;
+function underwater(mat, o = {}) {
+  mat.onBeforeCompile = (sh) => {
+    sh.uniforms.uTime = U.time; sh.uniforms.uCaus = U.caus;
+    sh.vertexShader = 'uniform float uTime; varying vec3 vCWP; varying vec3 vCWN;\n' + sh.vertexShader
+      .replace('#include <begin_vertex>', `#include <begin_vertex>
+        ${o.sway ? `{ vec4 ip = vec4(0.0);
+          #ifdef USE_INSTANCING
+          ip = instanceMatrix[3];
+          #endif
+          float k = pow(uv.y, 1.6); transformed.x += (sin(uTime * 1.4 + ip.x * 0.7 + ip.z * 0.5) * 0.35 + sin(uTime * 2.3 + ip.z) * 0.12) * k * ${o.sway.toFixed(2)};
+          transformed.z += cos(uTime * 1.1 + ip.x * 0.4) * 0.2 * k * ${o.sway.toFixed(2)}; }` : ''}`)
+      .replace('#include <project_vertex>', `#include <project_vertex>
+        { mat4 mm = modelMatrix;
+          #ifdef USE_INSTANCING
+          mm = modelMatrix * instanceMatrix;
+          #endif
+          vCWP = (mm * vec4(transformed, 1.0)).xyz; vCWN = normalize(mat3(mm) * objectNormal); }`);
+    sh.fragmentShader = CAUSTIC_GLSL + '\n' + sh.fragmentShader.replace('#include <dithering_fragment>', `#include <dithering_fragment>
+        { float up = clamp(vCWN.y * 0.8 + 0.25, 0.0, 1.0);
+          float cs = causticF(vCWP.xz * 0.17 + vec2(vCWP.y * 0.05), uTime * 0.55) * 0.85 + causticF(vCWP.xz * 0.31 + 3.1, uTime * 0.7) * 0.4;
+          gl_FragColor.rgb += vec3(0.75, 0.95, 1.0) * cs * up * uCaus * ${(o.caus ?? 0.55).toFixed(2)} * (0.4 + 0.6 * gl_FragColor.rgb * 2.0); }`);
+  };
+  return mat; }
+const std = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, ...o });
+const uw = (color, o = {}, u = {}) => underwater(std(color, o), u);
+
+// ================= SET 1: the riverbed =================
+const RIVER = new THREE.Group(); scene.add(RIVER);
+const WATER = new THREE.Color('#1d6f7a');
+const hemi = new THREE.HemisphereLight('#bff3ff', '#3a4a2c', 1.25); scene.add(hemi);
+const sun = new THREE.DirectionalLight('#fff6dc', 2.4); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0005; sun.shadow.normalBias = 0.03;
+{ const s = sun.shadow.camera; s.left = s.bottom = -14; s.right = s.top = 14; s.near = 1; s.far = 120; } scene.add(sun, sun.target);
+function sunAt(p, dir = V(-12, 40, 9)) { sun.target.position.copy(p); sun.position.copy(p).add(dir); }
+// bed: gentle dunes and ripples, sand / gravel / mud colours
+{ const g = new THREE.PlaneGeometry(220, 220, 260, 260).rotateX(-Math.PI / 2); const pos = g.attributes.position, col = [];
+  for (let i = 0; i < pos.count; i++) { const x = pos.getX(i), z = pos.getZ(i);
+    let y = (fbm(x * 0.06, 0, z * 0.06) - 0.5) * 3.2 + Math.sin(x * 1.7 + Math.sin(z * 0.6) * 1.5) * 0.04 + (fbm(x * 0.9, 1, z * 0.9) - 0.5) * 0.18;
+    y += Math.max(0, Math.hypot(x, z) - 30) * 0.08; // rises into banks away from the action
+    pos.setY(i, y); const n = fbm(x * 0.35, 7, z * 0.35), m = fbm(x * 2.5, 3, z * 2.5);
+    const c = new THREE.Color().lerpColors(new THREE.Color('#c9b48a'), new THREE.Color('#8d7a58'), clamp(n * 1.6 - 0.3)).lerp(new THREE.Color('#5d5a3e'), clamp((m - 0.55) * 3) * 0.6);
+    col.push(c.r, c.g, c.b); }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals();
+  const bed = new THREE.Mesh(g, uw('#ffffff', { vertexColors: true, roughness: 0.95 }, { caus: 0.75 })); bed.receiveShadow = true; RIVER.add(bed); }
+const bedY = (x, z) => (fbm(x * 0.06, 0, z * 0.06) - 0.5) * 3.2 + Math.max(0, Math.hypot(x, z) - 30) * 0.08 + (fbm(x * 0.9, 1, z * 0.9) - 0.5) * 0.18;
+// pebbles
+{ const r = rng(3), N = 5200, m = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.1, 1), uw('#ffffff', { roughness: 0.7 }, { caus: 0.5 }), N); const c = new THREE.Color();
+  for (let i = 0; i < N; i++) { const a = r() * 6.283, d = Math.pow(r(), 0.7) * 34, x = Math.cos(a) * d, z = Math.sin(a) * d, s = (0.35 + r() * r() * 2.4) * (Math.hypot(x - 0.8, z - 0.8) < 3.2 ? 0.45 : 1);
+    dummy.position.set(x, bedY(x, z) + 0.02 * s, z); dummy.rotation.set(r() * 3, r() * 3, r() * 3); dummy.scale.set(s, s * (0.45 + r() * 0.3), s * (0.7 + r() * 0.4)); dummy.updateMatrix(); m.setMatrixAt(i, dummy.matrix);
+    m.setColorAt(i, c.set(['#9a8f7c', '#7d7363', '#b9ab90', '#6a6052', '#a7835a', '#5b6a5a', '#c7c0ae'][Math.floor(r() * 7)])); }
+  m.castShadow = m.receiveShadow = true; RIVER.add(m); }
+// boulders with moss on top
+function boulder(seed, s) { const g = new THREE.IcosahedronGeometry(1, 3), p = g.attributes.position, col = [];
+  for (let i = 0; i < p.count; i++) { const v = V(p.getX(i), p.getY(i), p.getZ(i)); const k = 0.75 + fbm(v.x * 1.3 + seed, v.y * 1.3, v.z * 1.3) * 0.55; v.multiplyScalar(k); v.y *= 0.72; p.setXYZ(i, v.x, v.y, v.z); }
+  g.computeVertexNormals(); const nn = g.attributes.normal;
+  for (let i = 0; i < p.count; i++) { const moss = clamp((nn.getY(i) - 0.35) * 2.2) * clamp(fbm(p.getX(i) * 3 + seed, p.getY(i) * 3, p.getZ(i) * 3) * 1.8 - 0.3);
+    const c = new THREE.Color('#7b7a72').lerp(new THREE.Color('#5c5f56'), fbm(p.getX(i) * 5, seed, p.getZ(i) * 5)).lerp(new THREE.Color('#4f7a2e'), moss); col.push(c.r, c.g, c.b); }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  const m = new THREE.Mesh(g, uw('#ffffff', { vertexColors: true, roughness: 0.9, flatShading: false }, { caus: 0.6 })); m.scale.setScalar(s); m.castShadow = m.receiveShadow = true; return m; }
+const ROCKS = [[-3.2, -2.6, 1.7], [3.8, -3.5, 2.2], [-6.5, 3.5, 2.6], [7.5, 2.2, 1.6], [0.5, -7.5, 3.2], [-10, -6, 3.6], [11, -8, 3.1], [-1.5, 8.5, 1.9], [14, 6, 3.5], [-14, 5, 3.2], [5, 11, 2.6], [-6, -12, 2.8], [-2.6, -1.6, 0.7], [0.2, -3.2, 0.8], [6.5, -1.0, 0.9]];
+ROCKS.forEach(([x, z, s], i) => { const b = boulder(i * 3.1, s); b.position.set(x, bedY(x, z) + s * 0.25, z); b.rotation.y = i; RIVER.add(b); });
+{ const r = rng(91); for (let i = 0; i < 40; i++) { const a = r() * 6.283, d = 16 + r() * 40, x = Math.cos(a) * d, z = Math.sin(a) * d, s = 1.5 + r() * 4; const b = boulder(50 + i, s); b.position.set(x, bedY(x, z) + s * 0.2, z); RIVER.add(b); } }
+// sunken branches
+function branch(x, z, len, rot, tilt) { const grp = new THREE.Group(); const bark = uw('#5a4632', { roughness: 0.95 }, { caus: 0.5 });
+  const m = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.24, len, 9).rotateZ(Math.PI / 2), bark); m.castShadow = m.receiveShadow = true; grp.add(m);
+  for (const [o, a, l] of [[0.25, 0.8, len * 0.35], [-0.2, -0.6, len * 0.3], [0.05, 2.2, len * 0.25]]) { const t = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.09, l, 6).translate(0, l / 2, 0), bark); t.position.set(o * len, 0, 0); t.rotation.set(a, 0, 0.6 * Math.sign(o)); t.castShadow = true; grp.add(t); }
+  grp.position.set(x, bedY(x, z) + 0.15, z); grp.rotation.set(0, rot, tilt); RIVER.add(grp); }
+branch(-5.5, -5.5, 7, 0.6, 0.05); branch(6, 6.5, 5, -0.9, -0.04); branch(-9, 9, 6, 2.0, 0.03);
+// water weed: swaying ribbons (instanced)
+const weedTex = canvasTex(64, 512, (x, w, h) => { const g = x.createLinearGradient(0, h, 0, 0); g.addColorStop(0, '#2d5a22'); g.addColorStop(0.5, '#4f8a33'); g.addColorStop(1, '#8cc35a'); x.fillStyle = g;
+  x.beginPath(); x.moveTo(w * 0.2, h); x.quadraticCurveTo(0, h * 0.4, w * 0.5, 0); x.quadraticCurveTo(w, h * 0.4, w * 0.8, h); x.fill(); x.strokeStyle = 'rgba(20,50,15,.6)'; x.lineWidth = 3; x.beginPath(); x.moveTo(w / 2, h); x.lineTo(w / 2, 10); x.stroke(); });
+{ const r = rng(17), N = 2600, geo = new THREE.PlaneGeometry(0.22, 1, 1, 8).translate(0, 0.5, 0);
+  const m = new THREE.InstancedMesh(geo, uw('#ffffff', { map: weedTex, transparent: true, alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.7 }, { sway: 1, caus: 0.4 }), N);
+  let k = 0; for (let i = 0; i < N * 3 && k < N; i++) { const cl = Math.floor(r() * 60); const cr = rng(cl * 7 + 1); const ca = cr() * 6.283, cd = 3 + cr() * 30; const x = Math.cos(ca) * cd + (r() - 0.5) * 2.2, z = Math.sin(ca) * cd + (r() - 0.5) * 2.2;
+    if (Math.hypot(x - 0, z - 0) < 2.8) continue; const hgt = 0.8 + r() * 2.6;
+    dummy.position.set(x, bedY(x, z) - 0.05, z); dummy.rotation.set((r() - 0.5) * 0.2, r() * 6, (r() - 0.5) * 0.2); dummy.scale.set(0.8 + r(), hgt, 1); dummy.updateMatrix(); m.setMatrixAt(k++, dummy.matrix); }
+  m.count = k; m.castShadow = true; RIVER.add(m); }
+// water surface seen from below + Snell's window glow
+const surfTex = canvasTex(512, 512, (x, w, h) => { x.fillStyle = '#5fc6cf'; x.fillRect(0, 0, w, h); const r = rng(5); for (let i = 0; i < 900; i++) { x.strokeStyle = `rgba(230,255,255,${0.15 + r() * 0.35})`; x.lineWidth = 2 + r() * 4; x.beginPath(); const cx = r() * w, cy = r() * h, rr = 8 + r() * 30; x.ellipse(cx, cy, rr, rr * 0.6, r() * 3, 0, 4 + r() * 2); x.stroke(); } }, 30);
+const surface = new THREE.Mesh(new THREE.PlaneGeometry(400, 400).rotateX(Math.PI / 2), new THREE.MeshBasicMaterial({ map: surfTex, fog: true, transparent: true, opacity: 0.95, side: THREE.DoubleSide })); surface.position.y = 13; RIVER.add(surface);
+const snell = new THREE.Mesh(new THREE.CircleGeometry(9, 48).rotateX(Math.PI / 2), new THREE.MeshBasicMaterial({ map: canvasTex(256, 256, (x) => { const g = x.createRadialGradient(128, 128, 10, 128, 128, 128); g.addColorStop(0, 'rgba(255,255,240,1)'); g.addColorStop(0.6, 'rgba(210,250,255,.6)'); g.addColorStop(1, 'rgba(210,250,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 256, 256); }), transparent: true, fog: false, depthWrite: false, blending: THREE.AdditiveBlending }));
+snell.position.y = 12.9; RIVER.add(snell);
+// god rays
+const rayTex = canvasTex(64, 256, (x, w, h) => { const g = x.createLinearGradient(0, 0, w, 0); g.addColorStop(0, 'rgba(220,255,250,0)'); g.addColorStop(0.5, 'rgba(220,255,250,1)'); g.addColorStop(1, 'rgba(220,255,250,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h); x.globalCompositeOperation = 'destination-in'; const g2 = x.createLinearGradient(0, 0, 0, h); g2.addColorStop(0, 'rgba(0,0,0,1)'); g2.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g2; x.fillRect(0, 0, w, h); });
+const rays = []; { const r = rng(55); for (let i = 0; i < 46; i++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.8 + r() * 2.2, 16), new THREE.MeshBasicMaterial({ map: rayTex, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
+  m.position.set((r() - 0.5) * 30, 5.5, (r() - 0.5) * 30); m.rotation.set(0.25, r() * 3, 0.12); m.userData.ph = r() * 6; RIVER.add(m); rays.push(m); } }
+// drifting specks
+const specks = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: '#d8f4ee', size: 0.035, transparent: true, opacity: 0.7, depthWrite: false }));
+{ const r = rng(8), a = []; for (let i = 0; i < 9000; i++) a.push((r() - 0.5) * 30, r() * 12 - 1, (r() - 0.5) * 30); specks.geometry.setAttribute('position', new THREE.Float32BufferAttribute(a, 3)); } RIVER.add(specks);
+// a far school of little fish
+const school = new THREE.InstancedMesh(new THREE.ConeGeometry(0.06, 0.3, 5).rotateZ(-Math.PI / 2), uw('#a9b8b0', { roughness: 0.4, metalness: 0.3 }), 60); RIVER.add(school);
+// bubbles
+const bubTex = canvasTex(64, 64, (x) => { x.strokeStyle = 'rgba(240,255,255,.95)'; x.lineWidth = 4; x.beginPath(); x.arc(32, 32, 26, 0, 7); x.stroke(); x.fillStyle = 'rgba(220,250,255,.25)'; x.fill(); x.fillStyle = 'rgba(255,255,255,.95)'; x.beginPath(); x.arc(22, 22, 7, 0, 7); x.fill(); });
+const bubbles = []; for (let i = 0; i < 90; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: bubTex, transparent: true, depthWrite: false })); s.visible = false; scene.add(s); bubbles.push(s); }
+let bubN = 0;
+function bubble(p, size, a) { if (bubN >= bubbles.length) return; const s = bubbles[bubN++]; s.visible = true; s.position.copy(p); s.scale.setScalar(size); s.material.opacity = a ?? 1; }
+// a stream of bubbles from a point: emitted over time, rising and wobbling
+function bubbleStream(p0, t, rate, life, seed, size = 0.06, spread = 0.1, rise = 1.2) {
+  for (let k = 0; k < rate * life; k++) { const r = rng(seed * 100 + k), born = k / rate + r() * 0.3, age = ((t - born) % life + life) % life;
+    const sz = size * (0.6 + r() * 0.9); bubble(p0.clone().add(V(Math.sin(age * 5 + k) * spread * age + (r() - 0.5) * spread, age * rise, Math.cos(age * 4 + k) * spread * age)), sz, clamp(age * 6) * clamp((life - age) * 3)); } }
+
+// ================= the dark sleeper (3D, head towards +x) =================
+const FL = 1.3; // half body length
+const bendW = x => Math.pow(ease(0.45, -1.95, x), 1.4);
+function makeFish(o = {}) {
+  const grp = new THREE.Group(), bendables = [];
+  const prof = u => { const env = Math.pow(Math.max(0, 1 - u * u), 0.5), tap = 0.4 + 0.6 * ease(-1.0, 0.35, u); const ry = 0.4 * env * tap; return [ry, ry * (0.85 + 0.38 * ease(0.1, 0.9, u))]; };
+  // body
+  const g = new THREE.SphereGeometry(1, 72, 44).rotateZ(-Math.PI / 2); const p = g.attributes.position, col = [];
+  for (let i = 0; i < p.count; i++) { const u = p.getX(i), sy = p.getY(i), sz = p.getZ(i), len = Math.hypot(sy, sz) || 1e-6; const [ry, rz] = prof(u);
+    let y = sy / len * Math.hypot(sy, sz) * 0 + (sy / Math.max(1e-6, Math.sqrt(1 - u * u))) * ry, z = (sz / Math.max(1e-6, Math.sqrt(1 - u * u))) * rz;
+    if (!isFinite(y)) y = 0; if (!isFinite(z)) z = 0;
+    if (y > 0) y *= 1 - 0.12 * ease(0.3, 0.9, u);                 // flat broad head
+    if (y < 0) y *= 1 - 0.85 * ease(0.62, 0.92, u);                // the lower jaw replaces the chin
+    p.setXYZ(i, u * FL, y, z); }
+  g.computeVertexNormals();
+  for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i);
+    const blot = ease(0.47, 0.66, fbm(x * 2.3 + 4, y * 2.3, z * 2.3)), band = Math.max(0, Math.sin(x * 5.2 + 0.6)) * ease(0.05, 0.3, y);
+    const c = new THREE.Color('#8a7350').lerp(new THREE.Color('#3f3021'), blot * 0.95 + band * 0.6).lerp(new THREE.Color('#e2cf9f'), ease(0.02, -0.26, y) * 0.9);
+    if (fbm(x * 9, y * 9 + 3, z * 9) > 0.68) c.lerp(new THREE.Color('#d9c48e'), 0.55);
+    col.push(c.r, c.g, c.b); }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+  const skin = o.mat || uw('#ffffff', { vertexColors: true, roughness: 0.5 }, { caus: 0.45 });
+  const body = new THREE.Mesh(g, skin); body.castShadow = body.receiveShadow = true; grp.add(body); bendables.push(body);
+  // fins: ray texture, semi-transparent
+  const finTex = canvasTex(256, 256, (x, w, h) => { x.fillStyle = 'rgba(120,96,62,0.85)'; x.fillRect(0, 0, w, h); const r = rng(2); for (let i = 0; i < 260; i++) { x.fillStyle = `rgba(50,36,20,${0.3 + r() * 0.4})`; x.beginPath(); x.arc(r() * w, r() * h, 3 + r() * 7, 0, 7); x.fill(); }
+    x.strokeStyle = 'rgba(40,28,14,.8)'; x.lineWidth = 3; for (let i = 0; i <= 16; i++) { x.beginPath(); x.moveTo(0, h / 2); x.lineTo(w, i / 16 * h); x.stroke(); } x.fillStyle = 'rgba(240,220,170,.5)'; x.fillRect(0, 0, w, 6); });
+  const finMat = o.finMat || uw('#ffffff', { map: finTex, transparent: true, opacity: 0.92, side: THREE.DoubleSide, roughness: 0.6, depthWrite: true }, { caus: 0.3 });
+  function fin(pts, uvf) { const sh = new THREE.Shape(pts.map(([a, b]) => new THREE.Vector2(a, b))); const fg = new THREE.ShapeGeometry(sh, 16); const fp = fg.attributes.position, uv = fg.attributes.uv;
+    for (let i = 0; i < fp.count; i++) { const [a, b] = uvf(fp.getX(i), fp.getY(i)); uv.setXY(i, a, b); } const m = new THREE.Mesh(fg, finMat); m.castShadow = true; grp.add(m); bendables.push(m); return m; }
+  const arc = (cx, cy, r, a0, a1, n = 14) => [...Array(n + 1)].map((_, i) => { const a = a0 + (a1 - a0) * i / n; return [cx + Math.cos(a) * r, cy + Math.sin(a) * r]; });
+  fin([[-1.2, 0.07], ...arc(-1.28, 0, 0.62, 2.35, 3.93, 18), [-1.2, -0.07]], (x, y) => [clamp((-1.2 - x) / 0.62), clamp(0.5 + y / 1.0)]);                 // rounded tail
+  fin([[0.32, 0.3], [0.22, 0.6], [0.0, 0.64], [-0.16, 0.38]], (x, y) => [clamp((y - 0.3) / 0.35), clamp((x + 0.2) / 0.55)]);                           // first dorsal
+  fin([[-0.22, 0.34], [-0.36, 0.62], [-0.9, 0.5], [-1.08, 0.2]], (x, y) => [clamp((y - 0.25) / 0.4), clamp((x + 1.1) / 0.9)]);                         // second dorsal
+  fin([[-0.3, -0.28], [-0.45, -0.52], [-0.95, -0.42], [-1.08, -0.18]], (x, y) => [clamp((-y - 0.2) / 0.35), clamp((x + 1.1) / 0.8)]);                   // anal
+  const pecs = [-1, 1].map(s => { const pg = new THREE.ShapeGeometry(new THREE.Shape([[0, 0.06], ...arc(-0.05, 0, 0.32, 2.3, 4.0, 12), [0, -0.06]].map(([a, b]) => new THREE.Vector2(a, b))), 8);
+    const uv = pg.attributes.uv, pp = pg.attributes.position; for (let i = 0; i < pp.count; i++) uv.setXY(i, clamp(-pp.getX(i) / 0.37), clamp(0.5 + pp.getY(i))); const m = new THREE.Mesh(pg, finMat);
+    const piv = new THREE.Group(); piv.position.set(0.36, -0.2, s * 0.27); piv.add(m); grp.add(piv); return { piv, s }; });
+  // lower jaw (hinged) + mouth inside
+  const jawPiv = new THREE.Group(); jawPiv.position.set(0.78, -0.03, 0); grp.add(jawPiv);
+  const jg = new THREE.SphereGeometry(1, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2); jg.scale(0.3, 0.13, 0.27); jg.translate(0.26, 0, 0);
+  { const jp = jg.attributes.position, jc = []; for (let i = 0; i < jp.count; i++) { const c = new THREE.Color('#d9c497').lerp(new THREE.Color('#7a6446'), ease(-0.04, 0.0, jp.getY(i)) * 0.6); jc.push(c.r, c.g, c.b); } jg.setAttribute('color', new THREE.Float32BufferAttribute(jc, 3)); }
+  const jaw = new THREE.Mesh(jg, o.jawMat || uw('#ffffff', { vertexColors: true, roughness: 0.5, side: THREE.DoubleSide }, { caus: 0.4 })); jaw.castShadow = true; jawPiv.add(jaw);
+  const tongue = new THREE.Mesh(new THREE.CircleGeometry(1, 24).rotateX(-Math.PI / 2).scale(0.26, 1, 0.23).translate(0.27, -0.004, 0), o.inMat || std('#5a1820', { roughness: 0.4 })); jawPiv.add(tongue);
+  const gullet = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 12).scale(0.25, 0.09, 0.19), o.inMat || std('#3a0d12', { roughness: 0.5 })); gullet.position.set(1.0, -0.06, 0); grp.add(gullet);
+  // eyes (dorsal, cartoon) with lids
+  const eyes = [-1, 1].map(s => { const e = new THREE.Group(); e.position.set(1.0, 0.205, s * 0.15); grp.add(e);
+    const white = new THREE.Mesh(new THREE.SphereGeometry(0.092, 24, 16), o.eyeMat || std('#f4f1e4', { roughness: 0.25 })); e.add(white);
+    const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.052, 18, 12), o.pupilMat || std('#0d0b10', { roughness: 0.2 })); e.add(pupil);
+    const glint = new THREE.Mesh(new THREE.SphereGeometry(0.016, 8, 6), new THREE.MeshBasicMaterial({ color: '#ffffff' })); e.add(glint);
+    const lid = new THREE.Mesh(new THREE.SphereGeometry(0.1, 24, 12, 0, Math.PI * 2, 0, Math.PI / 2), o.lidMat || uw('#6e5839', { roughness: 0.5, side: THREE.DoubleSide })); e.add(lid);
+    const brow = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.035, 0.04), o.browMat || std('#2a1d12')); brow.position.set(0, 0.11, 0); e.add(brow);
+    return { e, white, pupil, glint, lid, brow, s }; });
+  // gill slit (dark crescent) and the opening where the eel comes out
+  const slits = [-1, 1].map(s => { const pts = []; for (let k = 0; k <= 16; k++) { const a = -1.15 + k / 16 * 2.0; const [ry, rz] = prof(0.55 / FL); pts.push(V(0.55 + Math.cos(a * 1.2) * 0.05, Math.sin(a) * ry * 0.92, s * Math.cos(a) * rz * 1.01)); }
+    const m = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 24, 0.012, 5), o.slitMat || std('#2a1c10')); grp.add(m); return m; });
+  const holes = [-1, 1].map(s => { const m = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 10), o.holeMat || std('#3a0d12', { roughness: 0.6 })); m.position.set(0.55, -0.03, s * 0.335); m.scale.set(0.01, 0.06, 0.05); grp.add(m); return m; });
+  // gill covers: a copy of the body skin over the gill area, hinged at its front edge, lifts outward
+  const flaps = [-1, 1].map(sd => { const src = g.toNonIndexed(), sp = src.attributes.position, sc = src.attributes.color, keep = [], kc = [];
+    for (let i = 0; i < sp.count; i += 3) { let ok = true; for (let j = 0; j < 3; j++) { const x = sp.getX(i + j), y = sp.getY(i + j), z = sp.getZ(i + j); if (!(x > 0.5 && x < 0.84 && z * sd > 0.12 && y > -0.2 && y < 0.2)) ok = false; }
+      if (ok) for (let j = 0; j < 3; j++) { keep.push(sp.getX(i + j), sp.getY(i + j), sp.getZ(i + j) * 1.015); kc.push(sc.getX(i + j) * 0.9, sc.getY(i + j) * 0.9, sc.getZ(i + j) * 0.9); } }
+    const fg = new THREE.BufferGeometry(); fg.setAttribute('position', new THREE.Float32BufferAttribute(keep, 3)); fg.setAttribute('color', new THREE.Float32BufferAttribute(kc, 3));
+    const hz = prof(0.84 / FL)[1] * sd; fg.translate(-0.84, 0, -hz); fg.computeVertexNormals();
+    const piv = new THREE.Group(); piv.position.set(0.84, 0, hz); const m = new THREE.Mesh(fg, o.mat ? skin : uw('#ffffff', { vertexColors: true, roughness: 0.5, side: THREE.DoubleSide }, { caus: 0.45 })); m.castShadow = true; piv.add(m); grp.add(piv); return { piv, s: sd }; });
+  for (const b of bendables) b.userData.base = b.geometry.attributes.position.array.slice();
+  const F = { grp, body, eyes, jawPiv, flaps, holes, pecs, prof, bendables, amp: 0.06, ph: 0, gape: 0, gill: 0, gillSide: 1,
+    bend(x, t) { return this.amp * Math.sin(x * 2.4 - t * 6.5 + this.ph) * bendW(x); },
+    pose(t, s = {}) { this.t = t; Object.assign(this, s);
+      for (const b of this.bendables) { const a = b.geometry.attributes.position, base = b.userData.base; for (let i = 0; i < a.count; i++) a.array[i * 3 + 2] = base[i * 3 + 2] + this.bend(base[i * 3], t); a.needsUpdate = true; b.geometry.computeVertexNormals(); }
+      this.jawPiv.rotation.z = -0.75 * this.gape;
+      this.pecs.forEach(({ piv, s: sd }) => { piv.rotation.set(0, sd * (0.9 + 0.35 * Math.sin(t * 5 + sd)), 0); });
+      this.flaps.forEach(({ piv, s: sd }) => { const open = sd === this.gillSide ? this.gill : this.gill * 0.2; piv.rotation.y = sd * (0.6 * open); });
+      this.holes.forEach((h, k) => { const open = (k ? 1 : -1) === this.gillSide ? this.gill : 0; h.visible = open > 0.02; h.scale.set(0.006 + 0.01 * open, 0.03 + 0.06 * open, 0.02 + 0.012 * open); });
+      const lid = this.lid ?? 0.45, bulge = this.bulge ?? 0;
+      this.eyes.forEach(E => { E.e.scale.setScalar(1 + bulge * 0.5); E.lid.rotation.set(0, 0, 0); E.lid.rotation.x = 0; E.lid.quaternion.setFromAxisAngle(V(0, 0, 1), 0);
+        // lid: a dome turned to cover the top part of the eye by `lid` (0 open, 1 shut)
+        E.lid.rotation.set(0, 0, Math.PI / 2 - lid * Math.PI * 0.55 - 0.15); E.lid.rotation.order = 'YZX';
+        const look = (this.look || V(1, -0.1, 0)).clone().normalize(); E.pupil.position.copy(look).multiplyScalar(0.06); E.glint.position.copy(look).multiplyScalar(0.088).add(V(-0.02, 0.03, 0.01));
+        E.brow.visible = !!this.angry; E.brow.rotation.set(0, 0, -0.4 * E.s * 0 + 0.35); E.brow.position.set(0.02, 0.105, 0); });
+      grp.updateMatrixWorld(true); },
+    lookAtWorld(p) { const l = this.grp.worldToLocal(p.clone()).sub(V(1.0, 0.2, 0)); this.look = l.normalize(); },
+    toWorld(pl) { const q = pl.clone(); q.z += this.bend(q.x, this.t || 0); return this.grp.localToWorld(q); } };
+  return F; }
+
+// ================= the eel (3D tube, spine from a list of points, head first) =================
+const EL = 1.15, ESEG = 56, ERAD = 12, ESC_R = 1.2;
+function eelR(s) { const k = s / EL; return k < 0.06 ? 0.05 * Math.sqrt(k / 0.06) * 0.85 + 0.008 : 0.062 * (1 - Math.pow(ease(0.12, 1.0, k), 1.15) * 0.78); }
+function makeEel(o = {}) {
+  const n = (ESEG + 1) * ERAD + 2, pos = new Float32Array(n * 3), colA = new Float32Array(n * 3), idx = [];
+  for (let i = 0; i < ESEG; i++) for (let j = 0; j < ERAD; j++) { const a = i * ERAD + j, b = i * ERAD + (j + 1) % ERAD, c = a + ERAD, d = b + ERAD; idx.push(a, c, b, b, c, d); }
+  const tip = (ESEG + 1) * ERAD, end = tip + 1; for (let j = 0; j < ERAD; j++) { idx.push(tip, (j + 1) % ERAD, j); const o2 = ESEG * ERAD; idx.push(end, o2 + j, o2 + (j + 1) % ERAD); }
+  for (let i = 0; i <= ESEG; i++) for (let j = 0; j < ERAD; j++) { const up = Math.cos(j / ERAD * 6.283), k = i / ESEG; const c = new THREE.Color('#c8c3a2').lerp(new THREE.Color('#3b4431'), ease(-0.35, 0.45, up)).lerp(new THREE.Color('#2c3226'), ease(0.5, 1, up) * 0.6); if (k > 0.85) c.lerp(new THREE.Color('#8c8a66'), (k - 0.85) * 3); colA.set([c.r, c.g, c.b], (i * ERAD + j) * 3); }
+  colA.set([0.35, 0.38, 0.3], tip * 3); colA.set([0.4, 0.4, 0.32], end * 3);
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(colA, 3)); g.setIndex(idx);
+  const mat = uw('#ffffff', { vertexColors: true, roughness: 0.28, metalness: 0.05 }, { caus: 0.5 });
+  const mesh = new THREE.Mesh(g, mat); mesh.castShadow = true; mesh.frustumCulled = false; scene.add(mesh);
+  const head = new THREE.Group(); scene.add(head);
+  const eyeMat = std('#f6f3e8', { roughness: 0.2 }), pupMat = std('#08080c', { roughness: 0.2 });
+  const eyes = [-1, 1].map(s => { const e = new THREE.Group(); e.position.set(0.028, 0.036, s * 0.032); head.add(e); const w = new THREE.Mesh(new THREE.SphereGeometry(0.03, 16, 12), eyeMat), pu = new THREE.Mesh(new THREE.SphereGeometry(0.018, 12, 8), pupMat), gl = new THREE.Mesh(new THREE.SphereGeometry(0.006, 6, 4), new THREE.MeshBasicMaterial({ color: '#fff' }));
+    const lid = new THREE.Mesh(new THREE.SphereGeometry(0.032, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2), std('#3b4431', { roughness: 0.3, side: THREE.DoubleSide })); const brow = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.01, 0.012), std('#15180f'));
+    e.add(w, pu, gl, lid, brow); return { e, w, pu, gl, lid, brow, s }; });
+  const mouth = new THREE.Mesh(new THREE.TorusGeometry(0.018, 0.0045, 5, 12, Math.PI), std('#1a120e')); head.add(mouth);
+  const mouthO = new THREE.Mesh(new THREE.SphereGeometry(0.016, 10, 8), std('#4a0e14')); head.add(mouthO);
+  const E = { mesh, head, eyes, mouth, mouthO, mat, pts: [], visible: true,
+    // pts: ESEG+1 points from head (0) to tail; up: reference up vector
+    set(pts, up = V(0, 1, 0), face = {}) {
+      this.pts = pts; mesh.visible = this.visible; head.visible = this.visible && !face.hide;
+      const P = new THREE.Vector3(), T = new THREE.Vector3(), N = new THREE.Vector3(), B = new THREE.Vector3(); let prevN = null;
+      for (let i = 0; i <= ESEG; i++) { P.copy(pts[i]); T.copy(pts[Math.min(ESEG, i + 1)]).sub(pts[Math.max(0, i - 1)]).normalize().negate(); // T points towards the head
+        N.copy(up).addScaledVector(T, -up.dot(T)); if (N.lengthSq() < 1e-6) N.copy(prevN || V(0, 0, 1)); N.normalize(); if (prevN && N.dot(prevN) < 0.2) N.lerp(prevN, 0.7).normalize(); prevN = N.clone(); B.crossVectors(T, N);
+        const r = eelR(i / ESEG * EL) * (face.fat ?? 1);
+        for (let j = 0; j < ERAD; j++) { const a = j / ERAD * 6.283, ca = Math.cos(a), sa = Math.sin(a); pos.set([P.x + (N.x * ca + B.x * sa) * r * (ca > 0 ? 1.05 : 0.9), P.y + (N.y * ca + B.y * sa) * r, P.z + (N.z * ca + B.z * sa) * r], (i * ERAD + j) * 3); }
+        if (i === 0) { const tp = P.clone().addScaledVector(T, 0.012); pos.set([tp.x, tp.y, tp.z], tip * 3); this.hT = T.clone(); this.hN = N.clone(); this.hB = B.clone(); }
+        if (i === ESEG) { const tp = P.clone().addScaledVector(T, -0.006); pos.set([tp.x, tp.y, tp.z], end * 3); } }
+      g.attributes.position.needsUpdate = true; g.computeVertexNormals(); g.computeBoundingSphere();
+      // head frame: x along T, y along N, z along B, at about 2 cm behind the tip
+      const hp = pts[1].clone().lerp(pts[2], 0.5); const m = new THREE.Matrix4().makeBasis(this.hT, this.hN, this.hB); head.position.copy(hp); head.quaternion.setFromRotationMatrix(m); head.scale.setScalar(face.eyeScale ?? 1);
+      const lid = face.lid ?? 0.15, ex = face.expr || 'happy';
+      this.eyes.forEach(Q => { Q.lid.rotation.set(0, 0, Math.PI / 2 - lid * Math.PI * 0.55 - 0.1); Q.lid.rotation.order = 'YZX';
+        const look = (face.look || V(1, 0.1, Q.s * 0.15)).clone().normalize(); Q.pu.position.copy(look).multiplyScalar(0.02); Q.gl.position.copy(look).multiplyScalar(0.03).add(V(-0.005, 0.01, 0));
+        Q.brow.visible = ex === 'angry' || ex === 'determined'; Q.brow.position.set(0.004, 0.034, 0); Q.brow.rotation.set(Q.s * (ex === 'angry' ? 0.5 : 0.25), 0, 0);
+        if (face.wink && Q.s > 0) { Q.lid.rotation.set(0, 0, Math.PI / 2 - Math.PI * 0.6); } });
+      mouth.position.set(0.05, -0.012, 0); mouth.rotation.set(Math.PI / 2, 0, ex === 'angry' || ex === 'worried' ? Math.PI / 2 : -Math.PI / 2); mouth.rotation.order = 'XZY';
+      mouth.visible = !face.yell; mouthO.visible = !!face.yell; mouthO.position.set(0.05, -0.012, 0); mouthO.scale.set(1, face.yell ? 1.3 : 1, 1.2);
+      this.eyes.forEach(Q => Q.e.visible = !face.noEyes); }
+  };
+  return E; }
+// spine helpers -------------------------------------------------------
+// along a world-space curve (CatmullRom), head at arc length `headS`, wiggle amplitude `amp`, side vector from `up`
+function spineAlong(curve, headS, t, amp = 0.05, up = V(0, 1, 0), freq = 11, speed = 14, mapFn = null) {
+  const L = curve.getLength(), pts = [];
+  for (let i = 0; i <= ESEG; i++) { const s = headS - i / ESEG * EL; let p, tg;
+    if (s >= 0 && s <= L) { p = curve.getPointAt(s / L); tg = curve.getTangentAt(clamp(s / L, 0.0001, 0.9999)); }
+    else if (s < 0) { tg = curve.getTangentAt(0.0001); p = curve.getPointAt(0).addScaledVector(tg, s); }
+    else { tg = curve.getTangentAt(0.9999); p = curve.getPointAt(1).addScaledVector(tg, s - L); }
+    const side = new THREE.Vector3().crossVectors(tg, up).normalize(); const k = i / ESEG;
+    p.addScaledVector(side, amp * Math.sin(k * freq - t * speed) * (0.25 + 0.75 * k)); if (mapFn) p = mapFn(p); pts.push(p); }
+  return pts; }
+// free swimming in a straight-ish line: head position + direction
+function spineFree(head, dir, t, amp = 0.07, curl = 0, up = V(0, 1, 0)) { const pts = [], d = dir.clone().normalize(), side = new THREE.Vector3().crossVectors(d, up).normalize();
+  for (let i = 0; i <= ESEG; i++) { const k = i / ESEG, s = k * EL; const p = head.clone().addScaledVector(d, -s).addScaledVector(side, amp * Math.sin(k * 10 - t * 13) * (0.2 + 0.8 * k) + curl * s * s); pts.push(p); }
+  return pts; }
+
+// ================= actors in the river =================
+const fish = makeFish(); RIVER.add(fish.grp);
+const FISH_HOME = V(0.6, 0, 0.4);
+const eel = makeEel();
+// gut paths in fish-local space (unbent); world mapping goes through fish.toWorld (adds the swim bend)
+const LP = a => a.map(([x, y, z]) => V(x, y, z));
+const SWALLOW = new THREE.CatmullRomCurve3(LP([[3.2, 0.1, 0.5], [2.3, 0.0, 0.18], [1.55, -0.05, 0.02], [1.12, -0.06, 0], [0.8, -0.06, 0], [0.5, -0.1, 0], [0.25, -0.15, 0.06], [-0.05, -0.18, 0.08], [-0.3, -0.15, 0.02], [-0.33, -0.08, -0.06], [-0.1, -0.06, -0.1], [0.2, -0.08, -0.08], [0.36, -0.12, 0.0]]));
+const COIL = new THREE.CatmullRomCurve3(LP([...Array(12)].map((_, i) => { const a = i / 12 * 6.283; return [0.03 + 0.32 * Math.cos(a), -0.12 + 0.045 * Math.sin(2 * a), 0.14 * Math.sin(a)]; })), true);
+const ESC_PTS = [[-1.1, -0.55, 0.95], [-0.35, -0.3, 0.66], [0.22, -0.1, 0.47], [0.5, -0.03, 0.37], [0.63, -0.03, 0.26], [0.75, -0.05, 0.12], [0.8, -0.06, 0.0], [0.55, -0.1, 0], [0.3, -0.14, 0.05], [0.05, -0.17, 0.08], [-0.25, -0.15, 0.05], [-0.32, -0.09, -0.04], [-0.1, -0.07, -0.1], [0.2, -0.09, -0.07]];
+const ESC = new THREE.CatmullRomCurve3(LP(ESC_PTS));
+const arcOf = (curve, idx, n) => { const L = curve.getLength(), lens = curve.getLengths(400); const tU = idx / (n - 1); return lens[Math.round(tU * 400)]; };
+const ESC_L = ESC.getLength(), ESC_GILL = arcOf(ESC, 3, ESC_PTS.length), ESC_GUT = arcOf(ESC, 6, ESC_PTS.length);
+// escape progress e: 0 = coiled in the stomach, tail at the gullet; ~0.45 tail reaches the gill; 1 = head leaves the gill
+const escHead = e => e < 0.45 ? lerp(ESC_L, ESC_GUT + EL - 0.02 + (ESC_L - ESC_GUT - EL) * 0, e / 0.45) : lerp(ESC_GUT + EL - 0.02, ESC_GILL - 0.08, (e - 0.45) / 0.55);
+const escHead2 = e => lerp(ESC_L, ESC_GILL - 0.1, e); // simple monotone version
+function eelInFish(F, curve, headS, t, amp = 0.012, closed = false) { const L = curve.getLength(); const c = closed ? { getLength: () => 1e9, getPointAt: u => curve.getPointAt(((u * 1e9 % L) + L) % L / L), getTangentAt: u => curve.getTangentAt(((u * 1e9 % L) + L) % L / L) } : curve;
+  return spineAlong(c, headS, t, amp, V(0, 1, 0), 11, 12, p => F.toWorld(p)); }
+const fishUp = F => V(0, 1, 0).applyQuaternion(F.grp.getWorldQuaternion(new THREE.Quaternion()));
+
+// ================= SET 2: inside the stomach (eel scale) =================
+const SO = V(0, 0, -300), STOM = new THREE.Group(); STOM.position.copy(SO); scene.add(STOM);
+const SA = 2.3, SB = 1.05, SC = 1.2;
+{ const g = new THREE.SphereGeometry(1, 120, 70); const p = g.attributes.position, col = [];
+  for (let i = 0; i < p.count; i++) { const v = V(p.getX(i), p.getY(i), p.getZ(i)); const th = Math.atan2(v.z, v.y);
+    const ridge = Math.pow(Math.abs(Math.sin(th * 7 + v.x * 1.6 + fbm(v.x * 2, v.y * 2, v.z * 2) * 2.5)), 3), bump = fbm(v.x * 4 + 1, v.y * 4, v.z * 4);
+    const k = 1 - 0.13 * ridge - 0.08 * bump; p.setXYZ(i, v.x * SA * k, v.y * SB * k, v.z * SC * k);
+    const c = new THREE.Color('#d9707a').lerp(new THREE.Color('#7a1f2e'), ridge * 0.7).lerp(new THREE.Color('#f2a3a0'), ease(0.55, 0.8, bump) * 0.5); col.push(c.r, c.g, c.b); }
+  // gullet hole at +x: push those vertices outward into a short tunnel
+  for (let i = 0; i < p.count; i++) { const x = p.getX(i), y = p.getY(i), z = p.getZ(i), r = Math.hypot(y - 0.25, z); if (x > 1.6 && r < 0.42) { const k = 1 - r / 0.42; p.setX(i, x + k * 2.2); col[i * 3] *= 1 - 0.85 * k; col[i * 3 + 1] *= 1 - 0.9 * k; col[i * 3 + 2] *= 1 - 0.85 * k; } }
+  g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals();
+  const m = new THREE.Mesh(g, std('#ffffff', { vertexColors: true, roughness: 0.32, metalness: 0.0, side: THREE.BackSide })); m.receiveShadow = true; STOM.add(m); }
+const GULLET = V(SA * 0.97, 0.25, 0); // the way out (local)
+const gulletRing = new THREE.Mesh(new THREE.TorusGeometry(0.38, 0.07, 10, 32).rotateY(Math.PI / 2), std('#b8475a', { roughness: 0.3 })); gulletRing.position.copy(GULLET).add(V(-0.08, 0, 0)); STOM.add(gulletRing);
+const gulletGlow = new THREE.PointLight('#ffb0a0', 0, 2.5, 2); gulletGlow.position.copy(GULLET).add(V(-0.3, 0, 0)); STOM.add(gulletGlow);
+// digestive juice at the bottom, bubbling
+const juice = new THREE.Mesh(new THREE.CircleGeometry(1, 48).rotateX(-Math.PI / 2).scale(SA * 0.55, 1, SC * 0.5), new THREE.MeshStandardMaterial({ color: '#5a6a1c', emissive: '#1a2404', emissiveIntensity: 0.5, roughness: 0.1, transparent: true, opacity: 0.8 }));
+juice.position.set(0, -SB * 0.74, 0); STOM.add(juice);
+// earlier lunch: a shrimp shell and a beetle wing
+{ const sh = new THREE.Group(); for (let i = 0; i < 6; i++) { const seg = new THREE.Mesh(new THREE.TorusGeometry(0.07 - i * 0.008, 0.03, 6, 12, Math.PI), std('#e08a5a', { roughness: 0.4 })); seg.position.set(i * 0.05, 0, 0); seg.rotation.y = Math.PI / 2; sh.add(seg); }
+  sh.position.set(-1.1, -SB * 0.6, 0.35); sh.rotation.set(0.3, 0.6, 0.4); STOM.add(sh);
+  const wing = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 8).scale(1, 0.15, 0.5), std('#2a3a22', { metalness: 0.6, roughness: 0.3 })); wing.position.set(0.7, -SB * 0.62, -0.5); STOM.add(wing); }
+// mucus strands from the roof
+const strands = []; { const r = rng(4); for (let i = 0; i < 14; i++) { const x = (r() - 0.5) * SA * 1.4, z = (r() - 0.5) * SC * 1.1, len = 0.2 + r() * 0.5; const m = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.02, len, 6).translate(0, -len / 2, 0), new THREE.MeshStandardMaterial({ color: '#f6d0c8', roughness: 0.1, transparent: true, opacity: 0.55 }));
+  m.position.set(x, SB * 0.85 * Math.sqrt(Math.max(0.1, 1 - (x / SA) ** 2 - (z / SC) ** 2)), z); STOM.add(m); strands.push(m); } }
+const stomLight = new THREE.PointLight('#ffd6c8', 0, 7, 1.4); scene.add(stomLight);
+const stomFill = new THREE.PointLight('#ff6a5a', 0, 6, 1.6); stomFill.position.copy(SO).add(V(-1.2, 0.2, 0)); scene.add(stomFill);
+const eelS = makeEel(); // the eel as seen inside
+
+// ================= SET 3: the X-ray lab in Nagasaki =================
+const LO = V(300, 0, 0), LAB = new THREE.Group(); LAB.position.copy(LO); scene.add(LAB);
+{ const tile = canvasTex(256, 256, (x, w, h) => { x.fillStyle = '#c9cfc8'; x.fillRect(0, 0, w, h); x.strokeStyle = '#9fa69e'; x.lineWidth = 3; for (let i = 0; i <= 4; i++) { x.beginPath(); x.moveTo(i * 64, 0); x.lineTo(i * 64, h); x.stroke(); x.beginPath(); x.moveTo(0, i * 64); x.lineTo(w, i * 64); x.stroke(); } const r = rng(3); for (let i = 0; i < 300; i++) { x.fillStyle = `rgba(90,100,90,${r() * 0.15})`; x.fillRect(r() * w, r() * h, 3, 3); } }, 10);
+  const floor = new THREE.Mesh(new THREE.PlaneGeometry(20, 20).rotateX(-Math.PI / 2), std('#ffffff', { map: tile, roughness: 0.5 })); floor.receiveShadow = true; LAB.add(floor);
+  const wallM = std('#dfe8e2', { roughness: 0.9 });
+  const back = new THREE.Mesh(new THREE.PlaneGeometry(20, 6), wallM); back.position.set(0, 3, -3.2); back.receiveShadow = true; LAB.add(back);
+  const left = new THREE.Mesh(new THREE.PlaneGeometry(20, 6), wallM); left.position.set(-5, 3, 0); left.rotation.y = Math.PI / 2; LAB.add(left);
+  const right = new THREE.Mesh(new THREE.PlaneGeometry(20, 6), wallM); right.position.set(6, 3, 0); right.rotation.y = -Math.PI / 2; LAB.add(right);
+  const ceil = new THREE.Mesh(new THREE.PlaneGeometry(20, 20).rotateX(Math.PI / 2), std('#f2f4f2')); ceil.position.y = 4.2; LAB.add(ceil);
+  for (const [x, z] of [[-2, -1], [2, -1], [-2, 2], [2, 2]]) { const pnl = new THREE.Mesh(new THREE.BoxGeometry(1.6, 0.05, 0.5), new THREE.MeshBasicMaterial({ color: '#fbfff6' })); pnl.position.set(x, 4.17, z); LAB.add(pnl); }
+  const skirting = new THREE.Mesh(new THREE.BoxGeometry(20, 0.18, 0.05), std('#7aa89a')); skirting.position.set(0, 0.09, -3.17); LAB.add(skirting);
+  // benches (white tops, grey cabinets)
+  const bench = (x, z, w, d, rot = 0) => { const b = new THREE.Group(); const top = new THREE.Mesh(new THREE.BoxGeometry(w, 0.06, d), std('#f3f3f0', { roughness: 0.4 })); top.position.y = 0.97; const cab = new THREE.Mesh(new THREE.BoxGeometry(w - 0.06, 0.92, d - 0.08), std('#8fa1a8', { roughness: 0.6 })); cab.position.y = 0.47;
+    b.add(top, cab); for (let i = 0; i < Math.floor(w / 0.6); i++) { const h = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.025, 0.02), std('#cfd6d9', { metalness: 0.6, roughness: 0.3 })); h.position.set(-w / 2 + 0.3 + i * 0.6, 0.8, d / 2 - 0.02); b.add(h); }
+    b.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; } }); b.position.set(x, 0, z); b.rotation.y = rot; LAB.add(b); return b; };
+  bench(0, -2.4, 7, 1.2); bench(-4.2, 0.4, 3.5, 1.2, Math.PI / 2); bench(0.4, 0.3, 3.2, 1.3);
+  // shelves with jars and books on the back wall
+  const r = rng(12);
+  for (const y of [2.0, 2.7, 3.4]) { const sh = new THREE.Mesh(new THREE.BoxGeometry(6.4, 0.05, 0.35), std('#b08a5a')); sh.position.set(0, y, -3.0); LAB.add(sh);
+    for (let x = -3.0; x < 3.0; x += 0.25 + r() * 0.2) { if (r() < 0.5) { const h = 0.18 + r() * 0.2; const jar = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, h, 12), new THREE.MeshStandardMaterial({ color: ['#a9e2d9', '#e8d28a', '#c9a2e8', '#f2b7a0', '#b9e89a'][Math.floor(r() * 5)], transparent: true, opacity: 0.7, roughness: 0.1 })); jar.position.set(x, y + h / 2 + 0.03, -2.95); LAB.add(jar); const lid = new THREE.Mesh(new THREE.CylinderGeometry(0.085, 0.085, 0.03, 12), std('#333')); lid.position.set(x, y + h + 0.04, -2.95); LAB.add(lid); }
+      else { const h = 0.22 + r() * 0.12; const bk = new THREE.Mesh(new THREE.BoxGeometry(0.06 + r() * 0.04, h, 0.24), std(['#b8322a', '#2f5aa8', '#3f8a4a', '#e2b23e', '#6b4a8a'][Math.floor(r() * 5)])); bk.position.set(x, y + h / 2 + 0.03, -2.98); LAB.add(bk); } } }
+  // poster: eel vs fish diagram, and a wall clock
+  const poster = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.5), new THREE.MeshStandardMaterial({ map: canvasTex(330, 450, (x, w, h) => { x.fillStyle = '#fdf8ea'; x.fillRect(0, 0, w, h); x.fillStyle = '#16121a'; x.font = '800 34px Poppins'; x.textAlign = 'center'; x.fillText('ANGUILLA', w / 2, 52); x.fillText('JAPONICA', w / 2, 90);
+    x.strokeStyle = '#3b4431'; x.lineWidth = 12; x.lineCap = 'round'; x.beginPath(); x.moveTo(40, 220); x.bezierCurveTo(110, 150, 170, 290, 290, 200); x.stroke(); x.fillStyle = '#fff'; x.beginPath(); x.arc(286, 196, 7, 0, 7); x.fill(); x.fillStyle = '#7a6644'; x.beginPath(); x.ellipse(165, 360, 110, 45, 0, 0, 7); x.fill(); x.fillStyle = '#16121a'; x.font = '800 22px Poppins'; x.fillText('ODONTOBUTIS OBSCURA', w / 2, 430); }), roughness: 0.8 }));
+  poster.position.set(-3.6, 2.4, -3.18 + 0.01 + 0.0); poster.position.z = -3.18; LAB.add(poster);
+  const clock = new THREE.Mesh(new THREE.CircleGeometry(0.3, 32), new THREE.MeshStandardMaterial({ map: canvasTex(128, 128, (x) => { x.fillStyle = '#fff'; x.beginPath(); x.arc(64, 64, 62, 0, 7); x.fill(); x.strokeStyle = '#222'; x.lineWidth = 6; x.stroke(); for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283; x.fillRect(64 + Math.cos(a) * 50 - 2, 64 + Math.sin(a) * 50 - 2, 5, 5); } x.lineWidth = 5; x.beginPath(); x.moveTo(64, 64); x.lineTo(64, 26); x.moveTo(64, 64); x.lineTo(92, 70); x.stroke(); }) }));
+  clock.position.set(3.4, 3.4, -3.17); LAB.add(clock);
+  // window with a view of Nagasaki harbour hills
+  const win = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 1.6), new THREE.MeshBasicMaterial({ map: canvasTex(520, 320, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#8fcff0'); g.addColorStop(1, '#e6f4f2'); x.fillStyle = g; x.fillRect(0, 0, w, h); x.fillStyle = '#6f9a6a'; x.beginPath(); x.moveTo(0, 200); x.quadraticCurveTo(120, 110, 260, 180); x.quadraticCurveTo(380, 120, 520, 170); x.lineTo(520, 320); x.lineTo(0, 320); x.fill(); x.fillStyle = '#4f7e86'; x.fillRect(0, 250, w, 70);
+    const r2 = rng(5); for (let i = 0; i < 40; i++) { x.fillStyle = ['#e9e4d8', '#d8c9b0', '#c7d4de'][i % 3]; x.fillRect(r2() * w, 190 + r2() * 50, 10 + r2() * 14, 8 + r2() * 12); } x.strokeStyle = '#e8ecea'; x.lineWidth = 12; x.strokeRect(0, 0, w, h); x.beginPath(); x.moveTo(w / 2, 0); x.lineTo(w / 2, h); x.stroke(); }) }));
+  win.rotation.y = -Math.PI / 2; win.position.set(5.98, 2.3, -1.0); LAB.add(win); }
+// the tank on the centre bench, a small fish in it, and the X-ray tube over it
+const TANK = V(0.2, 1.0, 0.3);
+{ const glass = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.62, 0.62), new THREE.MeshStandardMaterial({ color: '#cdeff2', transparent: true, opacity: 0.22, roughness: 0.05, metalness: 0.1, depthWrite: false })); glass.position.copy(TANK).add(V(0, 0.31, 0)); LAB.add(glass);
+  const water = new THREE.Mesh(new THREE.BoxGeometry(1.26, 0.52, 0.58), new THREE.MeshStandardMaterial({ color: '#4fb3b8', transparent: true, opacity: 0.25, roughness: 0.1, depthWrite: false })); water.position.copy(TANK).add(V(0, 0.27, 0)); LAB.add(water);
+  const grav = new THREE.Mesh(new THREE.BoxGeometry(1.26, 0.05, 0.58), std('#b5a47e')); grav.position.copy(TANK).add(V(0, 0.03, 0)); LAB.add(grav);
+  const rim = new THREE.Mesh(new THREE.BoxGeometry(1.34, 0.03, 0.66), std('#2b2f33')); rim.position.copy(TANK).add(V(0, 0.62, 0)); LAB.add(rim); }
+const tankFish = makeFish(); tankFish.grp.scale.setScalar(0.17); tankFish.grp.position.copy(TANK).add(V(0.05, 0.22, 0)); LAB.add(tankFish.grp);
+const xtube = new THREE.Group(); { const arm = std('#e9ecef', { roughness: 0.35, metalness: 0.2 });
+  const post = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.2, 12), arm); post.position.set(-0.85, 2.05, 0); xtube.add(post);
+  const boom = new THREE.Mesh(new THREE.BoxGeometry(1.0, 0.1, 0.12), arm); boom.position.set(-0.4, 3.1, 0); xtube.add(boom);
+  const head = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.36, 0.42), std('#f2c94c', { roughness: 0.4 })); head.position.set(0.0, 2.92, 0); xtube.add(head);
+  const cone = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.2, 0.25, 16), std('#3a3f44')); cone.position.set(0.0, 2.62, 0); xtube.add(cone);
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(0.3, 0.3), new THREE.MeshBasicMaterial({ map: canvasTex(128, 128, (x) => { x.fillStyle = '#f2c94c'; x.fillRect(0, 0, 128, 128); x.fillStyle = '#16121a'; x.beginPath(); x.arc(64, 64, 12, 0, 7); x.fill(); for (let i = 0; i < 3; i++) { x.beginPath(); x.moveTo(64, 64); x.arc(64, 64, 52, i * 2.094 - 0.5, i * 2.094 + 0.5); x.fill(); } }) })); sign.position.set(0, 2.92, 0.215); xtube.add(sign);
+  const det = new THREE.Mesh(new THREE.BoxGeometry(1.4, 0.05, 0.7), std('#3a4148', { roughness: 0.4 })); det.position.set(0, 0.995, 0); xtube.add(det);
+  xtube.traverse(o => { if (o.isMesh) o.castShadow = true; }); xtube.position.set(TANK.x, 0, TANK.z); LAB.add(xtube); }
+const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.62, 1.95, 24, 1, true), new THREE.MeshBasicMaterial({ color: '#9fe8ff', transparent: true, opacity: 0.0, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+beam.position.set(TANK.x, 1.58, TANK.z); LAB.add(beam);
+const labLight = new THREE.PointLight('#fffaf0', 0, 14, 1.2); labLight.position.copy(LO).add(V(0, 3.8, 1)); scene.add(labLight);
+// the monitor: shows the X-ray camera live
+const RT = new THREE.WebGLRenderTarget(640, 420, { samples: 4 }); RT.texture.colorSpace = THREE.SRGBColorSpace;
+const monitor = new THREE.Group(); { const case_ = new THREE.Mesh(new THREE.BoxGeometry(1.15, 0.78, 0.08), std('#22262b', { roughness: 0.4 })); monitor.add(case_);
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(1.05, 0.69), new THREE.MeshBasicMaterial({ map: RT.texture })); scr.position.z = 0.042; monitor.add(scr); monitor.userData.scr = scr;
+  const st = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.35, 8), std('#22262b')); st.position.y = -0.55; monitor.add(st); const ft = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.03, 0.25), std('#22262b')); ft.position.y = -0.72; monitor.add(ft);
+  monitor.position.set(1.55, 1.73, -2.2); monitor.rotation.y = -0.35; LAB.add(monitor); }
+const screenGlow = new THREE.PointLight('#a9dcff', 0, 3, 1.5); screenGlow.position.copy(LO).add(V(1.4, 1.75, -1.7)); scene.add(screenGlow);
+// scientists (2D cards)
+const CW = 448, CH = 640, CARD_H = 2.9;
+const people = [];
+function person(kind, seed = 0) { const c = document.createElement('canvas'); c.width = CW; c.height = CH; const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const geo = new THREE.PlaneGeometry(CARD_H * CW / CH, CARD_H); geo.translate(0, CARD_H / 2, 0);
+  const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.4, side: THREE.DoubleSide })); m.castShadow = true; scene.add(m);
+  const P = { kind, m, ctx: c.getContext('2d'), tex, last: '', seed }; people.push(P); return P; }
+function place(P, posLocal, pose, expr, t, opts = {}) { P.m.visible = true; P.m.position.copy(LO).add(posLocal); P.pend = { pose, expr, t, opts }; }
+function finishPeople() { for (const P of people) { if (!P.m.visible || !P.pend) continue; const { pose, expr, t, opts } = P.pend, pos = P.m.position;
+  P.m.rotation.set(0, Math.atan2(cam.position.x - pos.x, cam.position.z - pos.z), 0);
+  const pt = Math.round(t * 30) / 30, key = [pose, expr, pt, opts.flip].join('|');
+  if (key !== P.last) { drawPerson(P.ctx, CW, CH, P.kind, pose, expr, pt, P.seed, opts); P.tex.needsUpdate = true; P.last = key; } } }
+const sciA = person('sci', 0.3), sciB = person('sci2', 1.7);
+
+// ================= SET 4: the X-ray view =================
+const XO = V(-300, 0, 0), XR = new THREE.Group(); XR.position.copy(XO); scene.add(XR);
+function xmat(base, rim, k = 1, a0 = 0.1) { return new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false,
+  uniforms: { base: { value: new THREE.Color(base) }, rim: { value: new THREE.Color(rim) }, k: { value: k }, a0: { value: a0 } },
+  vertexShader: 'varying vec3 vN; varying vec3 vV; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }',
+  fragmentShader: 'uniform vec3 base; uniform vec3 rim; uniform float k; uniform float a0; varying vec3 vN; varying vec3 vV; void main(){ float f = pow(1.0 - abs(dot(normalize(vN), vV)), 1.7); vec3 c = mix(base, rim, f) * k; gl_FragColor = vec4(c * (a0 + f), 1.0); }' }); }
+const XM = { body: xmat('#0e1c28', '#7fb6e0', 0.42, 0.04), fin: xmat('#08121a', '#5a8db5', 0.3, 0.03), bone: xmat('#6f93b0', '#e8f4ff', 0.55, 0.35), gut: xmat('#12222e', '#6fa4cc', 0.35, 0.05) };
+const xfish = makeFish({ mat: XM.body, finMat: XM.fin, jawMat: XM.body, inMat: XM.gut, lipMat: XM.fin, eyeMat: XM.bone, pupilMat: XM.bone, lidMat: XM.fin, browMat: XM.fin, slitMat: XM.fin, holeMat: XM.fin });
+xfish.grp.traverse(o => { if (o.material && o.material.type === 'MeshBasicMaterial') o.visible = false; });
+XR.add(xfish.grp);
+// skeleton: skull, spine, ribs (positioned each frame with the bend)
+const verts = [], ribs = [];
+{ const skull = new THREE.Mesh(new THREE.SphereGeometry(1, 20, 14).scale(0.36, 0.2, 0.22), XM.bone); skull.position.set(0.95, 0.08, 0); xfish.grp.add(skull);
+  const jawB = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.02, 6, 20, Math.PI).rotateX(Math.PI / 2).scale(1, 1, 0.8), XM.bone); jawB.rotation.z = Math.PI; jawB.position.set(0.0, 0, 0); xfish.jawPiv.add(jawB); jawB.position.set(0.45, -0.03, 0); jawB.rotation.set(0, Math.PI / 2, 0);
+  for (let i = 0; i < 26; i++) { const x = 0.62 - i * 0.072; const v = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.055, 10).rotateZ(Math.PI / 2), XM.bone); xfish.grp.add(v); verts.push({ m: v, x });
+    if (i > 1 && i < 14) for (const s of [-1, 1]) { const rb = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.006, 0.3, 5).translate(0, -0.15, 0), XM.bone); xfish.grp.add(rb); ribs.push({ m: rb, x, s }); } } }
+const xstomach = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 16).scale(0.42, 0.19, 0.2), XM.gut); xstomach.position.set(0.03, -0.12, 0); xfish.grp.add(xstomach);
+const xgut = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(LP([[1.05, -0.06, 0], [0.8, -0.06, 0], [0.45, -0.1, 0]])), 12, 0.05, 8), XM.gut); xfish.grp.add(xgut);
+const xeel = makeEel(); xeel.mesh.material = new THREE.MeshBasicMaterial({ color: '#f4fbff' });
+// dark backdrop with a soft centre
+const xbg = new THREE.Mesh(new THREE.SphereGeometry(40, 32, 16), new THREE.MeshBasicMaterial({ side: THREE.BackSide, fog: false, map: canvasTex(256, 256, (x) => { const g = x.createRadialGradient(128, 128, 10, 128, 128, 128); g.addColorStop(0, '#24384a'); g.addColorStop(1, '#03070c'); x.fillStyle = g; x.fillRect(0, 0, 256, 256); }) }));
+XR.add(xbg);
+const xcam = new THREE.PerspectiveCamera(32, 640 / 420, 0.05, 100);
+function poseXfish(t, s) { xfish.pose(t, s); for (const v of verts) v.m.position.set(v.x, 0.02, xfish.bend(v.x, t)); for (const r of ribs) { r.m.position.set(r.x, 0.0, xfish.bend(r.x, t) + r.s * 0.03); r.m.rotation.set(r.s * 0.55, 0, -0.35); } xfish.grp.updateMatrixWorld(true); }
+
+// ================= modes (lighting / fog per set) =================
+let MODE = '';
+function setMode(m) { MODE = m;
+  RIVER.visible = m === 'river'; STOM.visible = m === 'stom'; LAB.visible = m === 'lab'; XR.visible = m === 'xray';
+  hemi.intensity = { river: 1.25, stom: 0.25, lab: 1.0, xray: 0 }[m]; hemi.color.set(m === 'stom' ? '#ffb4a8' : m === 'lab' ? '#ffffff' : '#bff3ff'); hemi.groundColor.set(m === 'stom' ? '#4a0a10' : m === 'lab' ? '#8a8f88' : '#3a4a2c');
+  sun.intensity = { river: 2.4, stom: 0, lab: 1.3, xray: 0 }[m]; sun.color.set(m === 'lab' ? '#fff1dc' : '#fff6dc');
+  stomLight.intensity = m === 'stom' ? 4.5 : 0; stomFill.intensity = m === 'stom' ? 3 : 0; labLight.intensity = m === 'lab' ? 16 : 0; screenGlow.intensity = 0; gulletGlow.intensity = 0;
+  scene.fog = m === 'river' ? new THREE.FogExp2(WATER, 0.05) : m === 'stom' ? new THREE.FogExp2(new THREE.Color('#3a0a12'), 0.16) : null;
+  scene.background = m === 'river' ? WATER : m === 'stom' ? new THREE.Color('#2a060c') : m === 'xray' ? new THREE.Color('#03070c') : new THREE.Color('#dfe8e2');
+  U.caus.value = m === 'river' ? 1 : 0; renderer.toneMappingExposure = 1.05; bloom.strength = m === 'xray' ? 0.55 : m === 'stom' ? 0.45 : 0.35; }
+let SHAKE = 0;
+let ROLL = 0;
+function look(p, l, fov = 45, focus = null, ap = 0.004) { cam.up.set(Math.sin(ROLL), Math.cos(ROLL), 0); cam.position.copy(p); if (SHAKE > 0) cam.position.add(V(Math.sin(T * 91) * SHAKE, Math.sin(T * 77 + 1) * SHAKE, Math.sin(T * 63 + 2) * SHAKE)); cam.fov = fov; cam.updateProjectionMatrix(); cam.lookAt(l);
+  bokeh.enabled = focus !== null; if (focus !== null) { bokeh.uniforms.focus.value = focus; bokeh.uniforms.aperture.value = ap; bokeh.uniforms.maxblur.value = 0.012; } }
+const handheld = (t, a = 0.02) => V(Math.sin(t * 1.7) * a + Math.sin(t * 3.1) * a * 0.4, Math.sin(t * 2.3 + 1) * a, Math.sin(t * 1.3 + 2) * a * 0.6);
+let T = 0;
+
+// ---------- the river fish ----------
+function riverFish(t, st = {}) { const p = FISH_HOME.clone(); p.y = bedY(p.x, p.z) + 0.47 + Math.sin(t * 1.3) * 0.02 + (st.dy || 0); p.x += st.dx || 0;
+  fish.grp.position.copy(p); fish.grp.rotation.set(Math.sin(t * 0.9) * 0.02 + (st.pitch || 0), (st.yaw || 0) + Math.sin(t * 0.7) * 0.03, Math.sin(t * 1.1) * 0.015);
+  fish.pose(t, { amp: 0.05, gape: 0, lid: 0.45, gill: 0, bulge: 0, angry: false, look: V(1, -0.1, 0.1), gillSide: 1, ...st });
+  // gills breathe: little bubbles from the gill slits now and then
+  if (!st.noBubbles) bubbleStream(fish.toWorld(V(0.5, 0.1, 0.36)), t, 1.2, 2.2, 3, 0.05, 0.04, 0.7); }
+function escEel(t, e, amp = 0.014, F = fish, E = eel) { E.visible = true; E.set(eelInFish(F, ESC, escHead2(e), t, amp + (e > 0.4 ? 0.03 * ease(0.4, 0.6, e) : 0)), fishUp(F), { hide: true }); }
+const swimPath = new THREE.CatmullRomCurve3(LP([[-9, 0, 4.5], [-6, 0, 2.2], [-3.2, 0, 2.6], [-0.8, 0, 1.6], [1.8, 0, 1.2], [3.6, 0, 0.6], [4.6, 0, 0.45]]).map(p => { p.y = bedY(p.x, p.z) + 0.32; return p; }));
+const SWIM_L = swimPath.getLength();
+function swimEel(s, t, face = {}, amp = 0.06) { eel.visible = true; eel.set(spineAlong(swimPath, s, t, amp, V(0, 1, 0), 10, 13), V(0, 1, 0), face); return swimPath.getPointAt(clamp(s / SWIM_L)); }
+// timer: story seconds inside the fish (reaches 0:56 when it gets out)
+let tGone = 0, tOut = 1;
+function timer(t, show) { const el = document.getElementById('timer'); el.style.display = show ? 'block' : 'none'; if (!show) return; const s = Math.round(clamp((t - tGone) / (tOut - tGone)) * 56); document.getElementById('tval').textContent = `0:${String(s).padStart(2, '0')}`; }
+function xui(show, t = 0) { document.getElementById('xui').style.display = show ? 'block' : 'none'; if (show) { const f = Math.floor(t * 30); document.getElementById('xclock').textContent = `00:${String(Math.floor(t / 60)).padStart(2, '0')}:${String(Math.floor(t % 60)).padStart(2, '0')}:${String(f % 30).padStart(2, '0')}`; } }
+// X-ray scene setup: xfish side-on at XO, eel by escape progress or coil
+function xrayScene(t, st) { xfish.grp.position.set(0, 0, 0); xfish.grp.rotation.set(0, 0, Math.sin(t * 1.1) * 0.02); poseXfish(t, { amp: 0.035, gape: st.gape || 0, lid: 0.3, gill: st.gill || 0, look: V(1, 0, 0), gillSide: 1 });
+  xeel.visible = true;
+  if (st.coil != null) xeel.set(eelInFish(xfish, COIL, 8 + st.coil, t, 0.012, true), V(0, 1, 0), { hide: true });
+  else if (st.swallow != null) xeel.set(spineAlong(SWALLOW, st.swallow, t, 0.02, V(0, 1, 0), 11, 12, p => xfish.toWorld(p)), V(0, 1, 0), { hide: true });
+  else xeel.set(eelInFish(xfish, ESC, escHead2(st.e), t, 0.012 + (st.e > 0.4 ? 0.025 : 0)), V(0, 1, 0), { hide: true });
+  xeel.head.visible = false; }
+function xrayLook(c, p, l, fov) { c.position.copy(XO).add(p); c.fov = fov; c.updateProjectionMatrix(); c.lookAt(XO.clone().add(l)); }
+// stomach interior: eel spine in local stomach coords
+function stomEel(pts, face, up = V(0, 1, 0)) { eelS.visible = true; eelS.set(pts.map(p => p.clone().add(SO)), up, face); }
+const coilS = (t, c, r = 1.1, y = -0.42) => { const pts = []; for (let i = 0; i <= ESEG; i++) { const k = i / ESEG, a = c - k * (EL * 1.6 / r); pts.push(V(Math.cos(a) * r * 1.25, y + Math.sin(k * 9 - t * 6) * 0.03 + k * 0.05, Math.sin(a) * r * 0.62)); } return pts; };
+
+// ================= shots =================
+const S = [];
+const shot = (at, mode, f, o = {}) => S.push({ at, mode, f, ...o });
+// hook -----------------------------------------------------------
+const H1 = (t, u) => { riverFish(t, { gill: 1, bulge: 0.6, lid: 0.05, look: V(0.2, 0.1, 1), noBubbles: true }); const e = 0.5 + u * 0.035; escEel(t, e, 0.02);
+  bubbleStream(fish.toWorld(V(0.5, 0, 0.42)), t, 6, 1.4, 9, 0.04, 0.12, 0.9);
+  const tg = fish.toWorld(V(0.42, -0.02, 0.4)); look(fish.toWorld(V(-0.15 + u * 0.06, 0.25 - u * 0.02, 1.55 - u * 0.12)).add(handheld(t, 0.015)), tg, 44, 1.35 - u * 0.1); };
+shot(0, 'river', H1, { label: 'SWALLOWED <b>ALIVE</b>' });
+shot(WT('hook', 'And'), 'river', (t, u) => { riverFish(t, { gill: 1, bulge: 0.7, lid: 0.0, look: V(0.4, -0.2, 0.9), noBubbles: true }); escEel(t, 0.56 + u * 0.035, 0.03);
+  look(fish.toWorld(V(2.1 - u * 0.15, -0.3 + u * 0.04, 1.05)).add(handheld(t, 0.01)), fish.toWorld(V(0.75, 0.05, 0.25)), 40, 1.7); }, { flash: true });
+shot(WT('hook', 'through'), 'xray', (t, u) => { xrayScene(t, { e: 0.62 + u * 0.06, gill: 1 }); xui(true, t); ROLL = -0.75; look(XO.clone().add(V(0.3 + u * 0.1, 0.35, 2.6 - u * 0.2)), XO.clone().add(V(0.3, -0.05, 0.2)), 40); }, { flash: true });
+const RW0 = TL.beats[0].words.at(-1).e + 0.08, RW1 = BS('meet');
+shot(RW0, 'river', (t, u) => { const k = u / (RW1 - RW0); const uu = (1 - k) * 1.6; riverFish(t - 2 * u, { gill: 1 - k, bulge: 0.6 * (1 - k), lid: 0.05, noBubbles: true }); escEel(t - 2 * u, 0.55 - k * 0.55, 0.02);
+  look(fish.toWorld(V(-0.15 + k * 2.5, 0.25 + k * 1.2, 1.55 + k * 2.5)), fish.toWorld(V(0.42 - k * 0.2, -0.02, 0.4 - k * 0.2)), 44 + k * 8); }, { rewind: true });
+// meet the eel --------------------------------------------------------
+shot(BS('meet'), 'river', (t, u) => { riverFish(t, { lid: 0.6 }); const s = 2.2 + u * 1.1; const p = swimEel(s, t, { expr: 'happy', look: V(1, 0.1, 0.4) });
+  const tg = swimPath.getTangentAt(clamp(s / SWIM_L)); const side = V(-tg.z, 0, tg.x); look(p.clone().addScaledVector(side, 0.85).addScaledVector(tg, 0.15).add(V(0, 0.12, 0)).add(handheld(t, 0.01)), p.clone().addScaledVector(tg, -0.35), 42, 0.85); });
+shot(WT('meet', 'Tiny'), 'river', (t, u) => { riverFish(t, { lid: 0.6 }); const s = 4.1 + u * 0.55; const p = swimEel(s, t, { expr: 'happy', lid: Math.abs(Math.sin(u * 2.6)) > 0.97 ? 1 : 0.1, look: V(1, 0.15, 0) }, 0.05);
+  const tg = swimPath.getTangentAt(clamp(s / SWIM_L)); look(p.clone().addScaledVector(tg, 0.55 - u * 0.05).add(V(0.05, 0.06, 0.1)), p.clone().add(V(0, 0.02, 0)), 38, 0.55); });
+shot(WT('meet', 'on'), 'river', (t, u) => { const s = 5.2 + u * 0.3; const p = swimEel(s, t, { expr: 'happy', look: V(1, 0.1, 0.2) }, 0.05); const eyeW = fish.toWorld(V(1, 0.2, 0));
+  riverFish(t, { lid: lerp(0.6, 0.15, ease(0.2, 0.6, u)), look: fish.grp.worldToLocal(p.clone()).sub(V(1, 0.2, 0)).normalize() });
+  look(p.clone().add(V(-1.3 - u * 0.5, 0.35 + u * 0.15, 0.9 + u * 0.3)), p.clone().lerp(eyeW, 0.6), 46, 1.6); }, { label: 'ON THE <b>MENU</b>' });
+// the dark sleeper -------------------------------------------------------
+shot(BS('fish'), 'river', (t, u) => { riverFish(t, { lid: 0.5, angry: true, look: V(1, -0.25, 0) }); look(fish.toWorld(V(3.0 - u * 0.35, -0.32 + u * 0.03, 0.2)), fish.toWorld(V(0.9, 0.12, 0)), 40, 2.0); }, { label: 'DARK <b>SLEEPER</b>' });
+shot(WT('fish', 'It'), 'river', (t, u) => { riverFish(t, { lid: 0.5, look: V(1, 0, 0.3), amp: 0.08 }); look(fish.toWorld(V(-1.4 + u * 1.2, 0.35, 1.9)), fish.toWorld(V(-0.6 + u * 1.2, 0.0, 0)), 42, 1.95); });
+shot(WT('fish', 'swallows'), 'river', (t, u) => { riverFish(t, { lid: 0.2, gape: ease(0.1, 0.9, u), look: V(1, -0.1, 0), angry: true }); SHAKE = 0.006 * ease(0.3, 1, u);
+  look(fish.toWorld(V(2.35 - u * 0.2, 0.0, 0.04)), fish.toWorld(V(1.0, -0.06, 0)), 50, 1.3); });
+// gulp ------------------------------------------------------------------
+shot(BS('gulp'), 'river', (t, u) => { const tg = WT('gulp', 'gone') - BS('gulp'); const k = ease(tg - 0.45, tg - 0.05, u);
+  riverFish(t, { lid: 0.1, gape: k < 1 ? Math.sin(Math.PI * clamp(k * 1.2)) : 0, dx: 0.5 * Math.sin(Math.PI * k), look: V(1, -0.1, 0), angry: true });
+  if (u < tg) { eel.visible = true; eel.set(spineAlong(SWALLOW, lerp(0.5, SWALLOW.getLength() + 0.2, k), t, 0.06 * (1 - k), V(0, 1, 0), 11, 16, p => fish.toWorld(p)), V(0, 1, 0), { expr: 'worried', look: V(1, 0.3, 0) }); }
+  SHAKE = u > tg ? 0.03 * Math.max(0, 1 - (u - tg) * 3) : 0;
+  look(fish.toWorld(V(1.3, 0.3, 3.4)), fish.toWorld(V(1.6, -0.05, 0)), 44); }, { flash: [WT('gulp', 'gone')] });
+shot(WT('gulp', 'Straight'), 'river', (t, u) => { riverFish(t, { lid: 0.3, gape: 0.85, look: V(1, 0, 0) }); const k = ease(0, BE('gulp') - WT('gulp', 'Straight'), u); look(fish.toWorld(V(lerp(2.4, 1.02, k), lerp(0.05, -0.06, k), 0)), fish.toWorld(V(0.6, -0.08, 0)), lerp(45, 75, k)); }, { dark: true });
+// inside -------------------------------------------------------------------
+shot(BS('inside'), 'stom', (t, u) => { const pts = coilS(t, 1.2 + u * 0.3, 0.9, -0.5); stomEel(pts, { expr: 'angry', yell: true, look: V(1, 0.2, -0.6), eyeScale: 1.3 });
+  const h = pts[2].clone().add(SO); look(h.clone().add(V(0.25, 0.2, 0.55)).add(handheld(t, 0.01)), h, 46, 0.6); stomLight.position.copy(cam.position).add(V(0.2, 0.5, 0.2)); }, { flash: true });
+shot(WT('inside', "It's"), 'stom', (t, u) => { const pts = coilS(t, 1.5 + u * 0.4, 0.9, -0.5); stomEel(pts, { expr: 'worried', look: V(1, 0.4, 0) });
+  const a = 2.2 + u * 0.25; look(SO.clone().add(V(Math.cos(a) * 1.3, 0.2, Math.sin(a) * 0.5)), SO.clone().add(V(0, -0.45, 0)), 66); stomLight.position.copy(cam.position).add(V(0, 0.4, 0)); });
+shot(WT('inside', 'only'), 'stom', (t, u) => { const pts = coilS(t, 1.9 + u * 0.4, 0.9, -0.5); stomEel(pts, { expr: 'worried', look: V(0.6, -0.6, 0) });
+  for (let k = 0; k < 18; k++) { const r = rng(k + 40); const a = r() * 6.283, d = r() * 1.2, age = (t * 0.8 + r()) % 1; bubble(SO.clone().add(V(Math.cos(a) * d * 1.3, -SB * 0.66 + age * 0.15, Math.sin(a) * d * 0.7)), 0.03 + r() * 0.04, clamp((1 - age) * 3)); }
+  look(SO.clone().add(V(-0.3 + u * 0.1, -0.35, 0.45)), SO.clone().add(V(0.3, -0.62, -0.1)), 44, 0.75); stomLight.position.copy(cam.position).add(V(0, 0.3, 0)); }, { label: 'ONLY A FEW <b>MINUTES</b>' });
+// the lab ------------------------------------------------------------------
+const labPeople = (t, a = {}) => { place(sciA, V(-0.55, 0, 1.15), a.pa || 'hips', a.ea || 'watch', t); place(sciB, V(1.05, 0, 1.2), a.pb || 'idle', a.eb || 'smug', t + 1); };
+function tankPose(t) { tankFish.grp.position.copy(TANK).add(V(0.05 + Math.sin(t * 0.4) * 0.05, 0.2, 0)); tankFish.pose(t, { amp: 0.04, lid: 0.4, look: V(1, 0, 0.5) }); }
+function monitorFeed(t, st) { xrayScene(t, st); MON = true; }
+let MON = false;
+shot(BS('lab'), 'lab', (t, u) => { labPeople(t); tankPose(t); monitorFeed(t, { coil: t * 0.3 }); const k = ease(0, 2.2, u);
+  look(LO.clone().add(V(lerp(0.2, 0.9, k), lerp(4.0, 2.2, k), lerp(1.2, 4.6, k))), LO.clone().add(V(0.2, lerp(0.8, 1.3, k), 0.3)), 50); }, { label: 'NAGASAKI, <b>JAPAN</b>' });
+shot(WT('lab', 'wanted'), 'lab', (t, u) => { place(sciA, V(0.15, 0, -0.45), 'idle', 'shocked', t); tankPose(t); monitorFeed(t, { coil: t * 0.3 });
+  look(LO.clone().add(V(0.25 - u * 0.05, 1.35, 1.25 - u * 0.1)), LO.clone().add(V(0.15, 1.55, -0.4)), 40, 1.6); });
+shot(WT('lab', 'So'), 'lab', (t, u) => { place(sciB, V(1.25, 0, 1.0), 'point', 'smug', t); tankPose(t); monitorFeed(t, { coil: t * 0.3 }); const on = ease(0.3, 0.6, u);
+  beam.material.opacity = 0.35 * on * (0.8 + 0.2 * Math.sin(t * 40)); screenGlow.intensity = 3 * on;
+  look(LO.clone().add(V(-0.9 + u * 0.2, 1.1, 1.6)), LO.clone().add(V(0.2, 2.5, 0.2)), 50); });
+shot(WT('lab', 'Recording'), 'lab', (t, u) => { place(sciB, V(1.05, 0, 1.2), 'pump', 'joy', t); tankPose(t); monitorFeed(t, { coil: t * 0.3 }); beam.material.opacity = 0.35; screenGlow.intensity = 3;
+  look(LO.clone().add(V(0.4, 1.75, 3.0 - u * 0.2)), LO.clone().add(V(1.05, 1.55, 1.2)), 40, 1.9); });
+// circling ------------------------------------------------------------------
+shot(BS('circle'), 'xray', (t, u) => { xrayScene(t, { coil: (t - BS('circle')) * 0.55 }); xui(true, t); timer(t, true); const a = -0.25 + u * 0.08;
+  ROLL = 1.0; look(XO.clone().add(V(Math.sin(a) * 3.6, 0.4, Math.cos(a) * 3.6)), XO.clone().add(V(0.1, -0.08, 0)), 40); }, { flash: true });
+shot(WT('circle', 'hunting'), 'stom', (t, u) => { const pts = coilS(t, 2.6 + u * 0.9, 1.0, -0.35); stomEel(pts, { expr: 'determined', look: V(1, 0, 0.5) }); timer(t, true);
+  const h = pts[0].clone().add(SO); look(h.clone().add(V(-0.55, 0.25, 0.25)).add(handheld(t, 0.02)), h.clone().add(V(0.2, 0, 0)), 52, 0.6); stomLight.position.copy(cam.position).add(V(0, 0.3, 0)); });
+// reverse ------------------------------------------------------------------
+const toGullet = (t, k) => { // eel turned round: tail (pts[ESEG]) heading into the gullet as k goes 0 -> 1
+  const pts = []; const g = GULLET.clone(), start = V(0.6, -0.25, 0.1);
+  for (let i = 0; i <= ESEG; i++) { const s = i / ESEG; const along = (1 - s) * EL; // head is furthest from the gullet
+    const d = EL * (1 - s) - k * 0.5; const p = g.clone().add(V(-d * 0.9 - 0.05, -0.15 * clamp(d), Math.sin(s * 8 - t * 7) * 0.04 * clamp(d * 2) + 0.12 * Math.sin(d * 2.5)));
+    if (d < 0) { p.set(g.x - d * 0.9, g.y, 0); } pts.push(p); } return pts; };
+shot(BS('reverse'), 'stom', (t, u) => { const pts = coilS(t, 3.2 + u * 0.2, 1.0, -0.3); stomEel(pts, { expr: 'determined', look: V(1, 0.2, 0) }); timer(t, true); gulletGlow.intensity = 1.6 + Math.sin(t * 5) * 0.5;
+  const h = pts[0].clone().add(SO); look(h.clone().add(V(-0.45, 0.18, 0.05)), SO.clone().add(GULLET), 46, 0.9); stomLight.position.copy(cam.position).add(V(0, 0.4, 0)); }, { label: 'THE WAY <b>OUT</b>' });
+shot(WT('reverse', 'jams'), 'stom', (t, u) => { const k = ease(0, 1.4, u); stomEel(toGullet(t, k), { expr: 'determined', look: V(-1, 0.3, 0) }, V(0, 1, 0)); timer(t, true); gulletGlow.intensity = 1.4;
+  look(SO.clone().add(GULLET).add(V(-1.0, 0.15, 0.45)), SO.clone().add(GULLET).add(V(-0.2, -0.05, 0)), 50, 1.05); stomLight.position.copy(cam.position).add(V(0, 0.4, 0)); });
+shot(WT('reverse', 'reverses'), 'xray', (t, u) => { const k = ease(0, WT('reverse', 'towards') - WT('reverse', 'reverses'), u); xrayScene(t, { e: k * 0.38 }); xui(true, t); timer(t, true);
+  ROLL = -0.9; look(XO.clone().add(V(0.25, 0.25, 2.5 - u * 0.25)), XO.clone().add(V(0.3, -0.08, 0)), 38); }, { label: '<b>BACKWARDS</b>', flash: true });
+shot(WT('reverse', 'towards'), 'xray', (t, u) => { const k = ease(0, BE('reverse') - WT('reverse', 'towards'), u); xrayScene(t, { e: 0.38 + k * 0.1, gill: k }); xui(true, t); timer(t, true);
+  look(XO.clone().add(V(1.5 - u * 0.1, 0.9, 1.4)), XO.clone().add(V(0.6, -0.03, 0.22)), 32); });
+// the tail ------------------------------------------------------------------
+shot(BS('tail'), 'river', (t, u) => { const k = ease(0.4, 1.0, u); riverFish(t, { gill: 0.4 + 0.6 * k, bulge: 0.3 + 0.4 * k, lid: 0.1, look: V(0.2, 0.2, 1), noBubbles: true }); escEel(t, 0.47 + k * 0.1, 0.02); timer(t, true);
+  if (u > 0.6) bubbleStream(fish.toWorld(V(0.5, 0, 0.42)), t, 8, 1.2, 12, 0.04, 0.12, 0.9);
+  look(fish.toWorld(V(0.05, 0.15, 1.25 - u * 0.1)), fish.toWorld(V(0.45, -0.03, 0.38)), 40, 0.95); }, { flash: [WT('tail', 'pops')] });
+shot(WT('tail', 'Is'), 'lab', (t, u) => { place(sciA, V(1.1, 0, -1.1), 'idle', 'shocked', t); tankPose(t); monitorFeed(t, { e: 0.6 + u * 0.03, gill: 1 }); screenGlow.intensity = 4; timer(t, true);
+  look(LO.clone().add(V(1.75 - u * 0.05, 1.55, -1.95)), LO.clone().add(V(1.1, 1.55, -1.1)), 42, 0.95); });
+// wriggle free -----------------------------------------------------------------
+shot(BS('free'), 'river', (t, u) => { const k = ease(0, WT('free', 'and') - BS('free'), u); riverFish(t, { gill: 1, bulge: 0.7, lid: 0, look: V(0.3, -0.2, 1), noBubbles: true, yaw: Math.sin(t * 9) * 0.05 }); escEel(t, 0.6 + k * 0.25, 0.05); timer(t, true);
+  bubbleStream(fish.toWorld(V(0.5, 0, 0.42)), t, 10, 1.0, 14, 0.035, 0.15, 1.0);
+  look(fish.toWorld(V(-0.7, -0.28, 1.5)).add(handheld(t, 0.02)), fish.toWorld(V(0.3, -0.05, 0.5)), 46, 1.3); });
+let FREE = null;
+shot(WT('free', 'and'), 'river', (t, u) => { const tout = WT('free', 'out') - WT('free', 'and'); const k = ease(0, tout, u); riverFish(t, { gill: 1 - ease(tout, tout + 0.4, u), bulge: 0.4, lid: Math.abs(Math.sin((u - tout) * 3)) > 0.95 ? 1 : 0.2, look: V(0.2, 0, 1), noBubbles: true });
+  timer(t, u < tout + 0.05);
+  if (u < tout) escEel(t, 0.85 + k * 0.15, 0.06);
+  else { const g = fish.toWorld(V(0.3, -0.1, 0.5)), d = V(-0.3, 0.05, 1).normalize(); const w = u - tout; eel.visible = true; eel.set(spineFree(g.clone().addScaledVector(d, 1.2 + w * 2.2), d, t, 0.09), V(0, 1, 0), { expr: 'happy', look: V(1, 0.2, 0) }); }
+  look(fish.toWorld(V(0.6, 0.1, 2.6)), fish.toWorld(V(0.4, -0.05, 0.9)), 50); }, { flash: [WT('free', 'out')] });
+// stats ------------------------------------------------------------------------
+shot(BS('stats'), 'xray', (t, u) => { xrayScene(t, { e: 1.0 }); xeel.visible = false; xeel.mesh.visible = false; xui(true, t); const a = u * 0.05; look(XO.clone().add(V(Math.sin(a) * 3.2, 0.3, Math.cos(a) * 3.2)), XO.clone(), 38); STATS = true; });
+let STATS = false;
+// payoff ----------------------------------------------------------------------
+shot(BS('payoff'), 'river', (t, u) => { riverFish(t, { lid: 0.7, look: V(0.5, 0.5, 0.5) }); const p0 = FISH_HOME.clone().add(V(-0.5, 0.4, 2.4)); const d = V(0.15, 0.55, 0.5).normalize();
+  const h = p0.clone().addScaledVector(d, u * 1.0); eel.visible = true; eel.set(spineFree(h, d, t, 0.08), V(0, 0, 1).cross(d).normalize().cross(d).negate(), { expr: 'happy' });
+  look(h.clone().add(V(-0.9, -0.35 - u * 0.1, -1.4)), h.clone().add(V(0.1, 0.15, 0)), 48, 1.6); }, { label: 'THE ONLY ONE <b>EVER</b>' });
+shot(WT('payoff', 'Tail'), 'river', (t, u) => { riverFish(t, { lid: 0.75, look: V(1, 0.3, 0.5) }); const h = FISH_HOME.clone().add(V(1.8, 0.95, 2.1)); const a = u * 3.0; const d = V(Math.cos(a), 0.1, Math.sin(a)).normalize();
+  eel.visible = true; eel.set(spineFree(h, d, t, 0.05, 0.45), V(0, 1, 0), { expr: 'happy', wink: u > 0.35, look: V(0.3, 0.2, -1), eyeScale: 1.2 });
+  look(h.clone().add(V(0.35, 0.1, 0.95)), h.clone().add(V(0, -0.05, 0)), 40, 0.95); });
+shot(BS('cta'), 'river', (t, u) => { riverFish(t, { lid: 0.85, gape: 0.4 * Math.sin(clamp(u / 1.2) * Math.PI), look: V(1, 0.2, 0.3) }); const h = FISH_HOME.clone().add(V(4 + u * 1.3, 0.9 + u * 0.2, 2.6 + u * 0.4)); eel.visible = true; eel.set(spineFree(h, V(1, 0.1, 0.2), t, 0.08), V(0, 1, 0), { expr: 'happy' });
+  look(FISH_HOME.clone().add(V(0.8 - u * 0.3, 1.3 + u * 0.3, 6.4 + u * 0.6)), FISH_HOME.clone().add(V(2.8 + u * 1.0, 0.75, 2.2)), 52); });
+S.sort((a, b) => a.at - b.at);
+tGone = WT('gulp', 'gone'); tOut = WT('free', 'out');
+const shotAt = t => { let i = 0; for (let k = 0; k < S.length; k++) if (t >= S[k].at) i = k; return i; };
+
+// ---------- stats overlay (32 eels, 13 tails out, 9 escaped) ----------
+const sc = document.getElementById('stats'), sx = sc.getContext('2d');
+function drawStats(t) { sc.style.display = 'block'; sx.clearRect(0, 0, W, H); const t0 = BS('stats'), t13 = WT('stats', 'thirteen'), t9 = WT('stats', 'nine'), t56 = WT('stats', 'fifty-six');
+  sx.fillStyle = 'rgba(4,8,14,0.55)'; sx.fillRect(0, 0, W, H);
+  const cols = 4, cw = 230, ch = 150, x0 = (W - cols * cw) / 2 + cw / 2, y0 = 470;
+  for (let i = 0; i < 32; i++) { const a = clamp((t - t0 - i * 0.035) * 6); if (a <= 0) continue; const cx = x0 + (i % cols) * cw, cy = y0 + Math.floor(i / cols) * ch * 0.62;
+    const tail = i < 13 && t > t13 + i * 0.04, esc = i < 9 && t > t9 + i * 0.05; sx.save(); sx.translate(cx, cy); sx.scale(a, a);
+    sx.lineCap = 'round'; sx.lineWidth = 22; sx.strokeStyle = '#111'; sx.beginPath(); const w = Math.sin(t * 8 + i) * 8; sx.moveTo(-70, 0); sx.bezierCurveTo(-30, -20 + w, 20, 20 - w, 70, 0); sx.stroke();
+    sx.lineWidth = 13; sx.strokeStyle = esc ? '#5fe07a' : tail ? '#ffd23a' : '#d9e6f2'; sx.stroke(); sx.fillStyle = '#111'; sx.beginPath(); sx.arc(62, -4, 4, 0, 7); sx.fill(); sx.restore(); }
+  sx.textAlign = 'center'; sx.font = '800 64px Poppins'; sx.lineWidth = 12; sx.strokeStyle = '#111';
+  const lab = (txt, y, c, a) => { if (a <= 0) return; sx.globalAlpha = a; sx.fillStyle = c; sx.strokeText(txt, W / 2, y); sx.fillText(txt, W / 2, y); sx.globalAlpha = 1; };
+  lab('32 SWALLOWED', 400, '#ffffff', clamp((t - t0) * 4)); lab('13 TAILS OUT', 1120 + 0, '#ffd23a', clamp((t - t13) * 4)); lab('9 ESCAPED', 1050 - 0 + 160, '#5fe07a', clamp((t - t9) * 4));
+  if (t > t56) { const a = clamp((t - t56) * 5); sx.save(); sx.translate(W / 2, 1440); sx.scale(0.7 + 0.3 * a, 0.7 + 0.3 * a); sx.font = '800 150px Poppins'; sx.lineWidth = 20; sx.fillStyle = '#ffd23a'; sx.strokeText('0:56', 0, 0); sx.fillText('0:56', 0, 0); sx.font = '800 46px Poppins'; sx.lineWidth = 10; sx.fillStyle = '#fff'; sx.strokeText('AVERAGE ESCAPE', 0, 70); sx.fillText('AVERAGE ESCAPE', 0, 70); sx.restore(); } }
+
+// ---------- captions ----------
+const capEl = document.querySelector('#cap span'), labEl = document.getElementById('label');
+const KEY = /^(EATEN|ALIVE|GILLS|GILL|ESCAPE|ESCAPED|SLEEPER|WHOLE|GONE|STOMACH|MINUTES|X-RAY|CIRCLES|BACKWARDS|TAIL|TAILS|OUT|NINE|THIRTEEN|THIRTY-TWO|FIFTY-SIX|ONLY|EVER|NAGASAKI)$/;
+function captions(t) { let wi = -1; for (let i = 0; i < WORDS.length; i++) if (WORDS[i].s <= t + 0.14) wi = i; const wd = WORDS[wi];
+  if (!wd || t > wd.e + 0.3) { capEl.textContent = ''; return; }
+  const txt = wd.w.replace(/[.,?!]/g, '').toUpperCase(); capEl.textContent = txt; capEl.className = wd.speaker && wd.speaker !== 'narrator' ? 'r' : KEY.test(txt) ? 'k' : '';
+  const a = clamp((t + 0.14 - wd.s) / 0.06); capEl.style.transform = `scale(${0.82 + 0.18 * a + 0.05 * Math.sin(a * Math.PI)})`; }
+
+// ================= frame =================
+window.DURATION = DUR;
+window.renderFrame = (t) => {
+  T = t; U.time.value = t; const si = shotAt(t), sh = S[si], u = t - sh.at;
+  SHAKE = 0; ROLL = 0; MON = false; STATS = false; bubN = 0; beam.material.opacity = 0;
+  for (const P of people) P.m.visible = false; for (const e of [eel, eelS, xeel]) { e.visible = false; e.mesh.visible = false; e.head.visible = false; }
+  xui(false); timer(t, false); document.getElementById('stats').style.display = 'none';
+  setMode(sh.mode); sh.f(t, u);
+  for (const e of [eel, eelS, xeel]) if (!e.visible) { e.mesh.visible = false; e.head.visible = false; }
+  for (let i = bubN; i < bubbles.length; i++) bubbles[i].visible = false;
+  cam.updateMatrixWorld(); finishPeople();
+  if (MODE === 'river') { const d = cam.getWorldDirection(V(0, 0, 0)); sunAt(cam.position.clone().add(d.multiplyScalar(3)).setY(0));
+    rays.forEach(m => { m.material.opacity = 0.07 + 0.05 * Math.sin(t * 0.6 + m.userData.ph); }); surface.material.map.offset.set(t * 0.01, t * 0.007);
+    specks.position.set(Math.sin(t * 0.2) * 0.3, Math.sin(t * 0.13) * 0.2, t * 0.05);
+    for (let i = 0; i < 60; i++) { const a = t * 0.25 + i * 0.105, r = 9 + Math.sin(i * 1.7) * 1.5; dummy.position.set(Math.cos(a) * r - 3, 3.5 + Math.sin(i * 2.3 + t) * 0.5 + (i % 5) * 0.2, Math.sin(a) * r - 6); dummy.rotation.set(0, -a - Math.PI / 2 + Math.sin(t * 8 + i) * 0.15, 0); dummy.updateMatrix(); school.setMatrixAt(i, dummy.matrix); } school.instanceMatrix.needsUpdate = true; }
+  if (MODE === 'stom') { const br = 1 + Math.sin(t * 2.2) * 0.025; STOM.scale.set(br, 1 / br, br); strands.forEach((m, i) => { m.scale.y = 1 + Math.sin(t * 1.5 + i) * 0.15; }); }
+  // monitor feed
+  if (MON) { const was = [RIVER.visible, STOM.visible, LAB.visible, XR.visible], bg = scene.background, fog = scene.fog; RIVER.visible = STOM.visible = LAB.visible = false; XR.visible = true; scene.background = new THREE.Color('#03070c'); scene.fog = null;
+    xrayLook(xcam, V(0.15, 0.3, 2.3), V(0.15, -0.08, 0), 34); renderer.setRenderTarget(RT); renderer.toneMappingExposure = 1.3; renderer.render(scene, xcam); renderer.setRenderTarget(null); renderer.toneMappingExposure = 1.05;
+    [RIVER.visible, STOM.visible, LAB.visible, XR.visible] = was; scene.background = bg; scene.fog = fog; }
+  captions(t); labEl.innerHTML = sh.label && u < 1.6 ? sh.label : ''; if (sh.label) { const a = clamp(u / 0.12); labEl.style.transform = `scale(${0.7 + 0.3 * a}) rotate(-2deg)`; labEl.style.opacity = clamp((1.6 - u) * 6); }
+  if (STATS || si === S.findIndex(x => x.at === BS('stats'))) drawStats(t);
+  document.getElementById('rw').style.display = sh.rewind ? 'block' : 'none';
+  // flashes: at the cut (sh.flash === true) or on listed times
+  let fl = 0; if (sh.flash === true) fl = Math.max(0, 0.55 - u * 4); if (Array.isArray(sh.flash)) for (const ft of sh.flash) if (t >= ft) fl = Math.max(fl, 0.6 - (t - ft) * 4);
+  if (sh.dark) fl = 0; document.getElementById('flash').style.opacity = fl; document.getElementById('flash').style.background = '#fff';
+  if (sh.dark) { const k = ease(BE('gulp') - 0.35, BE('gulp'), t); document.getElementById('flash').style.background = '#000'; document.getElementById('flash').style.opacity = k; }
+  if (window.CAMO) { cam.position.copy(window.CAMO[0]); cam.lookAt(window.CAMO[1]); cam.fov = window.CAMO[2] || 45; cam.updateProjectionMatrix(); bokeh.enabled = false; }
+  window.DBG = { si, mode: MODE, cam: cam.position.toArray().map(v => +v.toFixed(2)) };
+  composer.render();
+};
+await document.fonts.load('800 92px Poppins');
+setMode('river'); window.renderFrame(0); window.READY = true; window.SHOTS = S.map(x => x.at);
+window.dbg = (t, p, l, fov) => { const F = window.FOCUS === 'x' ? xfish : fish; window.CAMO = p ? [F.grp.localToWorld(V(...p)), F.grp.localToWorld(V(...l)), fov] : null; window.renderFrame(t); return window.DBG; };
+
+</script>
+</body></html>

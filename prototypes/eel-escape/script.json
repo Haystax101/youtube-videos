@@ -2,10 +2,22 @@
  "title": "This eel got eaten alive, then escaped through the gills",
  "style": "set3d",
  "noGary": true,
- "voices": { "narrator": "am_michael", "eel": "am_puck", "scientist": "af_nicole" },
+ "voices": {
+  "narrator": "am_michael",
+  "eel": "am_puck",
+  "scientist": "af_nicole"
+ },
  "speed": 1.2,
  "tail": 0.7,
- "qwen_speakers": { "narrator": ["Ryan", "Dolce", "Arthur"], "eel": "Aiden", "scientist": "Ono_Anna" },
+ "qwen_speakers": {
+  "narrator": [
+   "Ryan",
+   "Dolce",
+   "Arthur"
+  ],
+  "eel": "Aiden",
+  "scientist": "Ono_Anna"
+ },
  "qwen_instruct": {
   "narrator": "Gripping, punchy storyteller narrating a wild true nature story. Fast and energetic, dramatic on the big moments.",
   "eel": "A small, cheeky, sarcastic cartoon creature. Quick and squeaky.",
@@ -13,29 +25,173 @@
  },
  "qwen_speed": 1.08,
  "beats": [
-  { "id": "hook", "lines": [ { "text": "This eel just got eaten alive. And it's about to escape, through the fish's gills." } ], "hold": 0.1 },
-  { "id": "meet", "lines": [ { "text": "Meet a baby Japanese eel. Tiny, slippery, and on the menu." } ], "hold": 0.05 },
-  { "id": "fish", "lines": [ { "text": "This is a dark sleeper. It doesn't chew. It swallows prey whole." } ], "hold": 0.05 },
-  { "id": "gulp", "lines": [ { "text": "One lunge, and the eel is gone. Straight down, into the stomach." } ], "hold": 0.05 },
-  { "id": "inside", "lines": [ { "speaker": "eel", "text": "Oh, come on!" }, { "text": "It's dark, it's tight, and it only has a few minutes." } ], "hold": 0.1 },
-  { "id": "lab", "lines": [ { "text": "Scientists in Nagasaki, Japan, wanted to see what happens next. So they filmed it on X-ray." }, { "speaker": "scientist", "text": "Recording!" } ], "hold": 0.05 },
-  { "id": "circle", "lines": [ { "text": "Inside the stomach, the eel swims in circles, hunting for a way out." } ], "hold": 0.05 },
-  { "id": "reverse", "lines": [ { "text": "Then it finds the tube it came down, jams its tail in, and reverses. Backwards, up the throat, towards the gills." } ], "hold": 0.25 },
-  { "id": "tail", "lines": [ { "text": "And out of the gill, pops a tail." }, { "speaker": "scientist", "text": "Is that a tail?" } ], "hold": 0.05 },
-  { "id": "free", "lines": [ { "text": "Wriggle, wriggle, and it's out." } ], "hold": 0.1 },
-  { "id": "stats", "lines": [ { "text": "Of thirty-two eels swallowed, thirteen got their tails out, and nine escaped completely. On average, in fifty-six seconds." } ], "hold": 0.1 },
-  { "id": "payoff", "lines": [ { "text": "It's the only fish ever confirmed to escape from a predator's stomach." }, { "speaker": "eel", "text": "Tail first, baby!" } ], "hold": 0.1 },
-  { "id": "cta", "lines": [ { "text": "Follow for more interesting cartoons." } ], "hold": 0.05 }
+  {
+   "id": "hook",
+   "lines": [
+    {
+     "text": "This eel just got eaten alive. And it's about to escape, through the fish's gills."
+    }
+   ],
+   "hold": 1.05
+  },
+  {
+   "id": "meet",
+   "lines": [
+    {
+     "text": "Meet a baby Japanese eel. Tiny, slippery, and on the menu."
+    }
+   ],
+   "hold": 0.05
+  },
+  {
+   "id": "fish",
+   "lines": [
+    {
+     "text": "This is a dark sleeper. It doesn't chew. It swallows prey whole."
+    }
+   ],
+   "hold": 0.05
+  },
+  {
+   "id": "gulp",
+   "lines": [
+    {
+     "text": "One lunge, and the eel is gone. Straight down, into the stomach."
+    }
+   ],
+   "hold": 0.05
+  },
+  {
+   "id": "inside",
+   "lines": [
+    {
+     "speaker": "eel",
+     "text": "Oh, come on!"
+    },
+    {
+     "text": "It's dark, it's tight, and it only has a few minutes."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "lab",
+   "lines": [
+    {
+     "text": "Scientists in Nagasaki, Japan, wanted to see what happens next. So they filmed it on X-ray."
+    },
+    {
+     "speaker": "scientist",
+     "text": "Recording!"
+    }
+   ],
+   "hold": 0.05
+  },
+  {
+   "id": "circle",
+   "lines": [
+    {
+     "text": "Inside the stomach, the eel swims in circles, hunting for a way out."
+    }
+   ],
+   "hold": 0.05
+  },
+  {
+   "id": "reverse",
+   "lines": [
+    {
+     "text": "Then it finds the tube it came down, jams its tail in, and reverses. Backwards, up the throat, towards the gills."
+    }
+   ],
+   "hold": 0.25
+  },
+  {
+   "id": "tail",
+   "lines": [
+    {
+     "text": "And out of the gill, pops a tail."
+    },
+    {
+     "speaker": "scientist",
+     "text": "Is that a tail?"
+    }
+   ],
+   "hold": 0.05
+  },
+  {
+   "id": "free",
+   "lines": [
+    {
+     "text": "Wriggle, wriggle, and it's out."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "stats",
+   "lines": [
+    {
+     "text": "Of thirty-two eels swallowed, thirteen got their tails out, and nine escaped completely. On average, in fifty-six seconds."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "payoff",
+   "lines": [
+    {
+     "text": "It's the only fish ever confirmed to escape from a predator's stomach."
+    },
+    {
+     "speaker": "eel",
+     "text": "Tail first, baby!"
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "cta",
+   "lines": [
+    {
+     "text": "Follow for more interesting cartoons."
+    }
+   ],
+   "hold": 0.05
+  }
  ],
  "experiment": {
   "hypothesis": "Remake of 013 in the fast-cut set style: cold open on the tail poking out of the gill, a cut every ~2 s across three sets (riverbed, inside the stomach, X-ray lab), an on-screen escape timer, character lines for the eel and a scientist.",
   "facts": [
-   { "claim": "Hasegawa et al. (Nagasaki University), Current Biology 2024: juvenile Japanese eels injected with barium sulfate were filmed on X-ray video after being swallowed by dark sleepers (Odontobutis obscura).", "source": "https://www.eurekalert.org/news-releases/1056826" },
-   { "claim": "Of 32 eels that reached the stomach, 28 tried to escape; 13 got their tails out of a gill and 9 escaped completely, in 56 seconds on average.", "source": "https://www.smithsonianmag.com/smart-news/watch-eels-make-a-great-escape-from-a-fishs-stomach-after-being-swallowed-alive-180985055/" },
-   { "claim": "Eels moved back up the oesophagus tail first towards the gills; some circled the stomach first, apparently searching for a way out.", "source": "https://www.livescience.com/animals/fish/watch-an-eel-climb-up-its-predator-s-digestive-tract-and-wriggle-to-freedom-through-its-gills" },
-   { "claim": "Eels that failed to escape stopped moving after roughly two and a half to three minutes in the stomach.", "source": "https://cosmosmagazine.com/nature/animals/eels-escape-predator-stomach" },
-   { "claim": "Hasegawa: the Japanese eel is the only fish species confirmed to escape from a predatory fish's digestive tract after capture.", "source": "https://www.smithsonianmag.com/smart-news/watch-eels-make-a-great-escape-from-a-fishs-stomach-after-being-swallowed-alive-180985055/" }
+   {
+    "claim": "Hasegawa et al. (Nagasaki University), Current Biology 2024: juvenile Japanese eels injected with barium sulfate were filmed on X-ray video after being swallowed by dark sleepers (Odontobutis obscura).",
+    "source": "https://www.eurekalert.org/news-releases/1056826"
+   },
+   {
+    "claim": "Of 32 eels that reached the stomach, 28 tried to escape; 13 got their tails out of a gill and 9 escaped completely, in 56 seconds on average.",
+    "source": "https://www.smithsonianmag.com/smart-news/watch-eels-make-a-great-escape-from-a-fishs-stomach-after-being-swallowed-alive-180985055/"
+   },
+   {
+    "claim": "Eels moved back up the oesophagus tail first towards the gills; some circled the stomach first, apparently searching for a way out.",
+    "source": "https://www.livescience.com/animals/fish/watch-an-eel-climb-up-its-predator-s-digestive-tract-and-wriggle-to-freedom-through-its-gills"
+   },
+   {
+    "claim": "Eels that failed to escape stopped moving after roughly two and a half to three minutes in the stomach.",
+    "source": "https://cosmosmagazine.com/nature/animals/eels-escape-predator-stomach"
+   },
+   {
+    "claim": "Hasegawa: the Japanese eel is the only fish species confirmed to escape from a predatory fish's digestive tract after capture.",
+    "source": "https://www.smithsonianmag.com/smart-news/watch-eels-make-a-great-escape-from-a-fishs-stomach-after-being-swallowed-alive-180985055/"
+   }
   ],
-  "vars": { "format": "no_gary", "style": "set3d", "edit": "fast_cuts", "fish_ep": 574, "voice": "qwen_library", "ending_cta": "follow", "ending": "survives", "premise": "absurd_event" }
+  "vars": {
+   "format": "no_gary",
+   "style": "set3d",
+   "edit": "fast_cuts",
+   "fish_ep": 574,
+   "voice": "qwen_library",
+   "ending_cta": "follow",
+   "ending": "survives",
+   "premise": "absurd_event"
+  }
  }
 }
