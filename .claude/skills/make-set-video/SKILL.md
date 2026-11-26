@@ -11,6 +11,13 @@ Copy that folder as the starting point. Don't start from an empty page.
 
 ## The look
 
+**Quality bar (george, 26 Nov 18:31): quality over quantity.** The successful channels are high
+fidelity, vibrant, and NEVER show an asset that looks unrealistic, only stylised. Every model,
+character and effect must read instantly as what it is, in one consistent stylised look: no
+placeholder primitives, lumpy blobs, mismatched photoreal pieces or odd proportions. Colours are
+rich and saturated, lighting shapes every form. If a scene or prop can't reach this bar, cut it or
+rebuild it; george would rather post fewer videos than weaker ones.
+
 - **One big persistent world.** Build one set per video in three.js 0.170: a castle, a harbour, a
   lab, a body. Use one camera and no cuts. The camera is always moving, with eased pushes, slides
   and cranes between targets.
@@ -145,6 +152,8 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
    Deliver to `/mnt/project-files/gary-tries-it/<slug>/`.
 
 ## Pre-delivery checklist (every note george has given)
+
+- [ ] Quality bar: high fidelity and vibrant, and no asset anywhere looks unrealistic or unfinished, only stylised. Otherwise fix or cut it before delivery.
 
 - [ ] `python3 tools/check_frames.py video.mp4` reports no dark patches. It catches the camera inside grass or trunks and one-frame black glitch rectangles; george spotted one at 13 s. Move cameras that sit inside geometry and re-render with `--redo`; for one-frame black tiles (a swiftshader glitch that can recur on re-render) use `--fix OUT.mp4`, which swaps in the previous frame.
 - [ ] Characters use the same pearly-white faces as Syracuse and walk-in-circles, and the set is detailed and angular.

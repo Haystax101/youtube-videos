@@ -22,7 +22,12 @@ YouTube step and just deliver the file. Never print or commit these values.
 
 ## Daily episode procedure
 
-**Shorts per day: 3** (george, 2026-11-24; may go to 5 if retention holds). Each run repeats
+**Quality over quantity (george, 2026-11-26 18:31):** "having a higher quality threshold is really
+important ... I'm happy to reduce the number we put out". Every Short must clear the quality bar in
+step 6 before it is delivered. If one doesn't, fix it or drop it and deliver fewer that day; say in
+the post which concept was held back and why. Never ship a weak Short to hit the count.
+
+**Shorts per day: up to 3** (george, 2026-11-24; fewer when the quality bar needs it). Each run repeats
 steps 2-7 once per Short: every one a different concept with its own episode number, its
 own experiment knobs (vary them across the day's Shorts so each run tests several ideas),
 then deliver them all in one post (step 8),
@@ -128,6 +133,12 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
 6. `python3 pipeline/tts.py EP && python3 pipeline/mix.py EP`, then render stills
    (`NODE_PATH=$(npm root -g) node pipeline/render.mjs EP --stills 1,8,15,...`) and look
    at them. Fix anything broken (overlaps, missing props, text off screen) before the
+   full render. **Quality bar** (george, 2026-11-26): the successful channels look high
+   fidelity and vibrant and NEVER show an asset that looks unrealistic, only stylised. Check
+   every still: colours rich and saturated, lighting that shapes forms, detailed sets, every
+   prop and creature clearly readable as what it is in one consistent stylised look (no blobs,
+   placeholder boxes, mismatched photoreal pieces, broken proportions). If anything fails,
+   improve it or drop the Short. Then the
    full render: `NODE_PATH=$(npm root -g) node pipeline/render.mjs EP` (~8 min).
 7. Append a row to `episodes/LOG.md`, commit the script and any code changes to `main`
    (never commit .mp4/.wav), push.
