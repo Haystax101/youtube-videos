@@ -30,11 +30,15 @@ jobs:
       - name: Fetch
         env:
           SFX_KEYWORDS: prototypes/eel-escape/sfx-keywords.txt
-        run: python3 tools/fetch_sfx.py assets/sfx
+          SFX_COMMONS_MIN: "30"
+        # hard cap so Publish always runs with whatever was saved (manifest is written after every file)
+        run: timeout 55m python3 tools/fetch_sfx.py assets/sfx || echo "fetch stopped early; publishing partial set"
+
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          mkdir -p assets/sfx; [ -f assets/sfx/manifest.json ] || echo '[]' > assets/sfx/manifest.json
           tar -cf sfx.tar assets/sfx
           ls -la sfx.tar
           TAG="sfx-eel-escape"

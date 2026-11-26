@@ -40,6 +40,7 @@ def save(folder, name, data, src, lic, author=''):
         return False
     total[0] += os.path.getsize(out)
     man.append({'file': os.path.relpath(out, OUT), 'folder': folder, 'source': src, 'license': lic, 'author': author})
+    json.dump(man, open(os.path.join(OUT, 'manifest.json'), 'w'), indent=1)  # partial results survive a timeout
     print('saved', os.path.relpath(out, OUT), os.path.getsize(out) // 1024, 'KB', lic); return True
 
 # ---------------- Wikimedia Commons ----------------
@@ -104,14 +105,19 @@ def oga(folder, q, n):
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     kw = [l.split(':', 1) for l in open(os.environ.get('SFX_KEYWORDS', 'sfx-keywords.txt')) if ':' in l and not l.startswith('#')]
+    # Kenney and OpenGameArt first (fast, no rate limit); Wikimedia Commons throttles hard (HTTP 429), so it
+    # gets a wall-clock budget (SFX_COMMONS_MIN, default 35 min) and stops trying once it is spent.
+    for s in ['impact-sounds', 'rpg-audio', 'interface-sounds', 'casino-audio', 'sci-fi-sounds', 'digital-audio', 'music-jingles']:
+        kenney(s)
+    for folder, qs in kw:
+        oga(slug(folder), qs.split('|')[0].strip(), 2)
+    t_end = time.time() + 60 * float(os.environ.get('SFX_COMMONS_MIN', '35'))
     for folder, qs in kw:
         folder = slug(folder)
         for q in [x.strip() for x in qs.split('|') if x.strip()]:
+            if time.time() > t_end: print('commons budget spent, skipping', folder, q); continue
             got = commons(folder, q, 4)
             print(f'[{folder}] commons "{q}": {got}', flush=True)
-        oga(folder, qs.split('|')[0].strip(), 2)
-    for s in ['impact-sounds', 'rpg-audio', 'interface-sounds', 'casino-audio', 'sci-fi-sounds', 'digital-audio', 'music-jingles']:
-        kenney(s)
     json.dump(man, open(os.path.join(OUT, 'manifest.json'), 'w'), indent=1)
     by = {}
     for m in man: by[m['folder']] = by.get(m['folder'], 0) + 1

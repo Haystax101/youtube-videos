@@ -9,3 +9,4 @@ cartoon: pop | boing | cartoon pop | squeak
 lab: laboratory | electrical hum | machine hum | x-ray | power up
 beep: beep | camera beep | electronic beep | camera shutter
 rewind: tape rewind | rewind | vhs rewind | record scratch
+# retry 2: kenney/oga first, commons time budget
