@@ -1,6 +1,6 @@
 """Swap 015's narrator for a cloned-voice render without moving the picture: each narrator sentence of the
 clone (voice_NAME.wav + timeline_NAME.json from voice.yml) is denoised, loudness-matched and time-fitted
-(ffmpeg rubberband, pitch kept) into the slot the Kokoro sentence holds in timeline.json; character lines
+(ffmpeg atempo, pitch kept) into the slot the Kokoro sentence holds in timeline.json; character lines
 stay as they are in the hybrid voice.wav. timeline.json is unchanged.
 Usage: python3 clone_fit.py EP NAME   (reads EP/voice.wav, writes EP/voice.wav; keeps EP/voice.kokoro.wav)"""
 import json, os, shutil, subprocess, sys, tempfile, numpy as np, soundfile as sf
@@ -13,7 +13,11 @@ def ff(x, sr_in, af):
         subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', f'{d}/i.wav', '-af', af, '-ar', str(SR), '-ac', '1', f'{d}/o.wav'], check=True)
         return sf.read(f'{d}/o.wav', dtype='float32')[0]
 cw, csr = sf.read(f'{EP}/voice_{NAME}.wav', dtype='float32'); cw = cw.mean(1) if cw.ndim > 1 else cw
-cw = ff(cw, csr, 'highpass=f=70,afftdn=nr=24:nf=-40:tn=1,lowpass=f=10000')  # phone-recording hiss copied by the clone
+# The clone copies george's phone recording: dull above 3 kHz (8-10 dB under Kokoro), boomy low-mids and a room tail.
+# Light denoise only (heavy afftdn made it watery), cut mud, restore presence/air, and a soft gate to shorten the room tail.
+CHAIN = os.environ.get('CLONE_CHAIN', 'highpass=f=80,afftdn=nr=10:nf=-50,equalizer=f=250:width_type=o:width=1.5:g=-4,'
+        'equalizer=f=5000:width_type=o:width=1.2:g=7,treble=g=3:f=7000,agate=threshold=0.015:ratio=2:attack=5:release=120:range=0.25')
+cw = ff(cw, csr, CHAIN)
 ct, kt = json.load(open(f'{EP}/timeline_{NAME}.json')), json.load(open(f'{EP}/timeline.json'))
 def sents(tl):  # narrator sentences as (first word, last word)
     out = []
@@ -47,7 +51,7 @@ for c, k in zip(cs, ks):
         i = max(j, i + 1)
     seg = np.concatenate([seg[k * hop:(k + 1) * hop] for k in np.where(keep)[0]])
     tgt = room - s0; r = len(seg) / SR / tgt; ratios.append(round(r, 2))
-    y = ff(seg, SR, f'rubberband=tempo={max(r, 0.85):.4f}:transients=smooth:formant=preserved') if abs(r - 1) > 0.01 else seg
+    y = ff(seg, SR, f'atempo={r:.4f}') if r > 1.03 else seg  # WSOLA (atempo) is cleaner on speech than rubberband's phasey stretch; never slow down
     y = y[:int(tgt * SR)]; f = min(len(y), int(0.01 * SR)); y[-f:] *= np.linspace(1, 0, f)
     ref = base[int(s0 * SR):int(s1 * SR)]; y = y * rms(ref) / rms(y)
     a = int((s0 - 0.03) * SR); out[a:int(room * SR) + int(0.03 * SR)] = 0; out[int(s0 * SR):int(s0 * SR) + len(y)] = y
