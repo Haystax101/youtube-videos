@@ -1,0 +1,6 @@
+stills/
+frames/
+*.mp4
+*.wav
+parts.txt
+render.log

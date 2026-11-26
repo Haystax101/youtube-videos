@@ -1,0 +1,56 @@
+{
+ "title": "Did Charles Darwin invent the office chair?",
+ "style": "set",
+ "look": "office-toon",
+ "noGary": true,
+ "voices": {"narrator": "am_michael"},
+ "speed": 1.12,
+ "qwen_speakers": {"narrator": ["Ryan"], "darwin": "Uncle_Fu", "critic": "Eric"},
+ "qwen_instruct": {
+  "narrator": "Punchy, amused storyteller, fast and confident.",
+  "darwin": "Delighted, posh old-fashioned English gentleman, pleased with himself.",
+  "critic": "Outraged, pompous Victorian gentleman, scandalised."
+ },
+ "character_gain": 1.0,
+ "tail": 1.0,
+ "beats": [
+  {"label": "WHO INVENTED THE *OFFICE CHAIR?*", "hook": true, "hold": 0.2,
+   "lines": [{"text": "Charles Darwin explained evolution. He also helped evolve your office chair."}]},
+  {"label": "KENT, 1842",
+   "lines": [{"text": "In eighteen forty-two, Darwin moved to a quiet house in Kent, and filled his study with specimens."}]},
+  {"label": "BARNACLES: *8 YEARS*",
+   "lines": [{"text": "Beetles. Pickled creatures. And barnacles. He spent eight years studying barnacles."}]},
+  {"label": "UP. DOWN. *UP.*",
+   "lines": [{"text": "Every jar meant getting up, walking over, and sitting back down. Again and again."}]},
+  {"label": "*WHEELS*",
+   "lines": [{"text": "So he put wheels on his armchair, and scooted from specimen to specimen."},
+             {"speaker": "darwin", "text": "Splendid!"}]},
+  {"label": "REAL OR *MYTH?*",
+   "lines": [{"text": "So did Darwin invent the office chair? Not quite. Furniture had little wheels long before him."}]},
+  {"label": "LONDON, 1851",
+   "lines": [{"text": "In eighteen fifty-one, at the Great Exhibition, an American showed off a chair that swivelled, tilted, bounced on springs, and rolled."}]},
+  {"label": "TOO *COMFORTABLE*",
+   "lines": [{"text": "Critics weren't impressed. It was too comfortable to be proper."},
+             {"speaker": "critic", "text": "A man might fall asleep in it!"}]},
+  {"label": "TODAY",
+   "lines": [{"text": "Comfort won. Offices filled up with rolling, spinning chairs."}]},
+  {"label": "*DARWIN'S* CHAIR",
+   "lines": [{"text": "So next time you scoot across the office, remember: Darwin got there first."},
+             {"text": "Follow for more interesting cartoons."}]}
+ ],
+ "experiment": {
+  "vars": {"format": "no_gary", "premise": "true_history", "style": "set", "look": "office-toon", "cta": "follow", "music": "orchestral-playful"},
+  "notes": "First video in the clean office-toon look (outlined toon sets, flat face-to-camera characters). Three sets: modern office, Darwin's study at Down House, the 1851 Great Exhibition.",
+  "facts": [
+   {"claim": "Darwin's study at Down House holds his mahogany armchair on castors; he wrote On the Origin of Species there.", "source": "https://www.english-heritage.org.uk/learn/teaching-resources/curators-collections/---home-of-charles-darwin---down-house/"},
+   {"claim": "Darwin added castors to a William IV armchair in the early 1840s so he could reach his specimens while writing.", "source": "https://www.irishexaminer.com/property/homeandgardens/arid-40812126.html"},
+   {"claim": "The study held preserved specimens in spirit and 'Darwin's wheeled chair'.", "source": "https://stem.org.uk/system/files/elibrary-resources/legacy_files_migrated/8555-catalyst_19_4_422.pdf"},
+   {"claim": "Darwin moved to Down House in Kent in 1842.", "source": "https://www.english-heritage.org.uk/visit/places/home-of-charles-darwin-down-house/history/"},
+   {"claim": "Darwin studied barnacles for about eight years (1846-1854).", "source": "https://www.darwinproject.ac.uk/"},
+   {"claim": "Castors were already common on Georgian furniture before Darwin.", "source": "https://www.ukceramics.org/news/how-to-estimate-the-age-of-furniture-using-castor-wheels/"},
+   {"claim": "Thomas E. Warren's Centripetal Spring Armchair (1849) swivelled, tilted on springs and rolled on castors; shown at the 1851 Great Exhibition in London.", "source": "https://en.wikipedia.org/wiki/Centripetal_Spring_Armchair"},
+   {"claim": "It sold poorly outside the US after the exhibition, deemed too comfortable for a proper office.", "source": "https://www.davisart.com/blogs/curators-corner/industrial-comfort-ingenuity/"}
+  ],
+  "fish": "#387 No Such Thing as the Northern Lights"
+ }
+}
