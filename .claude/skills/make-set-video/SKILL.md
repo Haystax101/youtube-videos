@@ -114,6 +114,17 @@ Use `web/lib/stage2d.js` in every set page (import it; don't copy it):
   on-screen problems: cards inside furniture, chairs seen from behind with someone in them, props hitting
   things, teleports. `tools/tests/stage2d.html` is a worked example that shows each failure once.
 - Every character and camera starts inside the room's walls; entrances come through an opened door.
+- **Overlap check for 3D characters (george, 26 Nov, on Xbox Underground: "quite a few inconsistencies with
+  the objects overlapping"):** every set page with 3D characters (smol-look big heads included) sets
+  `window.QA = { scene, camera, actors: () => [{ name, root, head, seat }] }` (seat = the chair someone sits
+  on right now) and adds `if (window.NODRAW) return` before drawing. `tools/check_overlap.cjs PAGE` (also run
+  by `tools/qa.py`, which now finds the page itself) tests a head sphere and three body spheres per character
+  against each other and against every prop's own rotated box, for whatever the camera films. It runs a
+  2-minute video in about 10 s. It must report 0 before the full render. What it caught on Xbox Underground
+  that stills and the frame checks missed: two walkers' heads merged while walking side by side, heads through
+  a door edge and a glass mullion, a head inside a desk top, a judge's head inside his chair back, defendants'
+  bodies through their table, an officer's head inside a canopy pillar, a man standing half inside a car, and
+  two people "talking" with their heads 20 cm inside each other. Big heads need about 1 m between two people.
 
 ## Story and script
 

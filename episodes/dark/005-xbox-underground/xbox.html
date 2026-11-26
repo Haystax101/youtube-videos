@@ -817,4 +817,9 @@ function renderFrame(t) {
 buildShots(); SHOTS.sort((a, b) => a.t - b.t); await document.fonts.ready;
 window.renderFrame = renderFrame; window.DURATION = DUR; renderFrame(0.5); window.READY = true;
 window.DBG = { V, camera, SETS, SHOTS, VB, WT, B, cards };
+// overlap check hook (tools/check_overlap.cjs): seated characters may touch the seat group under them
+const roots = new Set(cards.map(c => c.api.root));
+window.QA = { scene, camera, actors: () => cards.filter(c => c.on).map(c => { let seat = null;
+  if (c.pose && c.pose.sit) { const wp = c.api.root.getWorldPosition(V()); let best = 0.8; for (const o of c.G.children) { if (roots.has(o) || !o.isGroup) continue; const op = o.getWorldPosition(V()); const d = Math.hypot(op.x - wp.x, op.z - wp.z); if (d < best) { best = d; seat = o; } } }
+  return { name: c.kind, root: c.api.root, head: c.api.head, seat }; }) };
 </script></body></html>
