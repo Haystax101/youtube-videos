@@ -6,6 +6,8 @@ import json, os, re, sys, numpy as np, soundfile as sf
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')); sys.path.insert(0, f'{REPO}/pipeline')
 from tts import split_sentences, syllables, SR
 from kokoro_onnx import Kokoro
+def LPF(x, fc=6000):  # Qwen clips carry breathy hiss above ~6 kHz: smooth FFT low-pass (zero-phase, same length)
+    X = np.fft.rfft(x); f = np.fft.rfftfreq(len(x), 1 / SR); X *= 1 / (1 + (f / fc) ** 8); return np.fft.irfft(X, len(x))
 EP = sys.argv[1]; script = json.load(open(f'{EP}/script.json'))
 q, qsr = sf.read(f'{EP}/voice.qwen.wav'); q = q.mean(1) if q.ndim > 1 else q; assert qsr == SR
 qtl = json.load(open(f'{EP}/timeline.qwen.json'))
@@ -26,7 +28,7 @@ for i, beat in enumerate(script['beats']):
             else:  # find this sentence in the Qwen render (same words, same speaker)
                 n = len(ws); idx = next(j for j in range(len(qwords) - n + 1) if all(qwords[j + m]['speaker'] == spk for m in range(n)) and qwords[j]['w'] == ws[0])
                 s, e = qwords[idx]['s'], qwords[idx + n - 1]['e']; w = q[max(0, int((s - 0.03) * SR)): int((e + 0.08) * SR)].astype(np.float32)
-                w = norm(w) * cgain; qwords = qwords[idx + n:]
+                w = norm(LPF(w).astype(np.float32)) * cgain; qwords = qwords[idx + n:]
             dur = len(w) / SR; wt = [syllables(x) + (0.6 if re.search(r'[,;:]$', x) else 0) for x in ws]; tot = sum(wt); c = t
             for x, g in zip(ws, wt): d = dur * g / tot; words.append({'w': x, 's': round(c, 3), 'e': round(c + d, 3), 'speaker': spk}); c += d
             audio.append(w); t += dur; gap = line.get('gap', 0.12); audio.append(sil(gap)); t += gap

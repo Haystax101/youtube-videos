@@ -52,33 +52,33 @@ def hb(): t = tt(0.25); return np.sin(2 * np.pi * 55 * t) * np.exp(-t * 18) * 1.
 # hook: heartbeat + heart monitor, night room
 for k in range(int(B[1] / 0.85)): put('heart', 0.1 + k * 0.85, 0.9, maxlen=0.6, fallback=hb)
 put('heart', 0.2, 0.5, k=1, maxlen=B[1], fallback=beep)
-put('whoosh', WT(0, 'thirty') - 0.15, 0.9, fallback=whoosh)
+put('whoosh', WT(0, 'thirty') - 0.15, 0.9)
 # day 1
 put('sheets', B[1], 0.8, maxlen=1.2); put('clock', WT(1, 'alarm') - 0.1, 0.8, k=1, maxlen=0.6, fallback=beep)
 put('impact', WT(1, 'alarm') + 0.45, 0.5, maxlen=0.4, fallback=thud)            # alarm slapped off
 put('snack', WT(1, 'Snacks'), 0.9, maxlen=1.2); put('bed', WT(1, 'Bliss'), 0.7, maxlen=1.0)
 bed('birds', B[1], B[2], 0.25)
 # 1966 ward
-put('whoosh', B[2] - 0.1, 0.8, fallback=whoosh); put('projector', B[2], 0.6, maxlen=2.5)
-bed('hospital', B[2], B[4], 0.35); put('clock', WT(2, 'Three'), 0.7, maxlen=2.0, fallback=tick)
-put('whoosh', WT(3, 'Your'), 0.7, k=1, fallback=whoosh); put('fall', WT(3, 'spins') + 0.3, 1.0, maxlen=0.8, fallback=thud)
+put('whoosh', B[2] - 0.1, 0.8); put('projector', B[2], 0.6, maxlen=2.5)
+bed('hospital', B[2], B[4], 0.35); put('clock', WT(2, 'Three'), 0.7, maxlen=2.0)
+put('whoosh', WT(3, 'Your'), 0.7, k=1); put('fall', WT(3, 'spins') + 0.3, 1.0, maxlen=0.8, fallback=thud)
 # treadmill + heart
 bed('treadmill', B[4], WT(4, 'crashed'), 0.6); put('impact', WT(4, 'crashed'), 0.7, maxlen=0.5, fallback=thud)
 for k in range(int((B[6] - B[5]) / 0.8)): put('heart', B[5] + k * 0.8, 1.0, maxlen=0.6, fallback=hb)
 put('water', B[5] + 0.3, 0.5, maxlen=2.0)
 # month 2: bones
-put('whoosh', B[6], 0.6, fallback=whoosh); put('bones', WT(6, 'bones'), 0.9, maxlen=0.8)
+put('whoosh', B[6], 0.6); put('bones', WT(6, 'bones'), 0.9, maxlen=0.8)
 # NASA: money
 put('heart', B[7], 0.35, k=1, maxlen=2.5, fallback=beep); put('cash', WT(7, 'eighteen'), 1.0, maxlen=1.2, fallback=beep)
-for k in range(6): put('whoosh', WT(7, 'eighteen') + 0.3 + k * 0.3, 0.25, k=k, fallback=whoosh)
+for k in range(6): put('whoosh', WT(7, 'eighteen') + 0.3 + k * 0.3, 0.25, k=k)
 # 1996
-put('whoosh', B[8], 0.7, fallback=whoosh); bed('footsteps_hard', B[8], WT(8, 'Not') - 0.1, 0.5); put('impact', WT(8, 'Three'), 0.4, maxlen=0.4, fallback=thud)
+put('whoosh', B[8], 0.7); bed('footsteps_hard', B[8], WT(8, 'Not') - 0.1, 0.5); put('impact', WT(8, 'Three'), 0.4, maxlen=0.4, fallback=thud)
 # twist: record scratch + crowd at the track
 put('cartoon', B[9], 0.7, maxlen=0.6); bed('crowd', B[9], WT(9, 'eight'), 0.45); bed('treadmill', WT(9, 'eight'), WT(9, 'fitter'), 0.5); put('crowd', WT(9, 'fitter'), 0.5, k=1, maxlen=2.0)
 # fix: hospital then corridor footsteps
 bed('hospital', B[10], B[11], 0.35, k=1); bed('footsteps_hard', WT(10, 'now'), B[11], 0.4, k=1)
 # get up: curtains whoosh, birds, street
-put('whoosh', B[11] + 0.5, 0.9, fallback=whoosh); bed('street', WT(11, 'heart'), N / SR - 0.2, 0.4); bed('birds', B[11] + 0.6, N / SR - 0.2, 0.35, k=1)
+put('whoosh', B[11] + 0.5, 0.9); bed('street', WT(11, 'heart'), N / SR - 0.2, 0.4); bed('birds', B[11] + 0.6, N / SR - 0.2, 0.35, k=1)
 bed('footsteps_forest', WT(11, 'heart'), N / SR - 0.3, 0.35)
 
 venv = np.convolve(np.abs(pad(voice)), np.ones(2400) / 2400, 'same'); duck = 1 - 0.55 * np.clip(venv / (venv.max() * 0.25), 0, 1)
