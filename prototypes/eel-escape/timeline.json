@@ -1,0 +1,1137 @@
+{
+ "duration": 69.951,
+ "sr": 24000,
+ "engine": "qwen3-tts",
+ "voice": "ryan",
+ "cast": {
+  "narrator": "ryan",
+  "eel": "aiden",
+  "scientist": "ono_anna"
+ },
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 5.902,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "This",
+     "s": 0.15,
+     "e": 0.402,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eel",
+     "s": 0.402,
+     "e": 0.645,
+     "speaker": "narrator"
+    },
+    {
+     "w": "just",
+     "s": 0.645,
+     "e": 0.897,
+     "speaker": "narrator"
+    },
+    {
+     "w": "got",
+     "s": 0.897,
+     "e": 1.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eaten",
+     "s": 1.14,
+     "e": 1.619,
+     "speaker": "narrator"
+    },
+    {
+     "w": "alive.",
+     "s": 1.619,
+     "e": 2.098,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 2.178,
+     "e": 2.395,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it's",
+     "s": 2.395,
+     "e": 2.611,
+     "speaker": "narrator"
+    },
+    {
+     "w": "about",
+     "s": 2.611,
+     "e": 3.037,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 3.037,
+     "e": 3.247,
+     "speaker": "narrator"
+    },
+    {
+     "w": "escape,",
+     "s": 3.247,
+     "e": 3.797,
+     "speaker": "narrator"
+    },
+    {
+     "w": "through",
+     "s": 3.797,
+     "e": 4.043,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 4.043,
+     "e": 4.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fish's",
+     "s": 4.26,
+     "e": 4.491,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gills.",
+     "s": 4.491,
+     "e": 4.722,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 5.902,
+   "end": 10.594,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Meet",
+     "s": 5.902,
+     "e": 6.187,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 6.187,
+     "e": 6.444,
+     "speaker": "narrator"
+    },
+    {
+     "w": "baby",
+     "s": 6.444,
+     "e": 6.977,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Japanese",
+     "s": 6.977,
+     "e": 7.794,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eel.",
+     "s": 7.794,
+     "e": 8.07,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Tiny,",
+     "s": 8.15,
+     "e": 8.676,
+     "speaker": "narrator"
+    },
+    {
+     "w": "slippery,",
+     "s": 8.676,
+     "e": 9.422,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 9.422,
+     "e": 9.635,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 9.635,
+     "e": 9.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 9.84,
+     "e": 10.053,
+     "speaker": "narrator"
+    },
+    {
+     "w": "menu.",
+     "s": 10.053,
+     "e": 10.464,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 10.594,
+   "end": 15.853,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "This",
+     "s": 10.594,
+     "e": 10.841,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 10.841,
+     "e": 11.072,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 11.072,
+     "e": 11.295,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dark",
+     "s": 11.295,
+     "e": 11.542,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sleeper.",
+     "s": 11.542,
+     "e": 12.028,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 12.108,
+     "e": 12.555,
+     "speaker": "narrator"
+    },
+    {
+     "w": "doesn't",
+     "s": 12.555,
+     "e": 13.064,
+     "speaker": "narrator"
+    },
+    {
+     "w": "chew.",
+     "s": 13.064,
+     "e": 13.542,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 13.622,
+     "e": 14.017,
+     "speaker": "narrator"
+    },
+    {
+     "w": "swallows",
+     "s": 14.017,
+     "e": 14.863,
+     "speaker": "narrator"
+    },
+    {
+     "w": "prey",
+     "s": 14.863,
+     "e": 15.286,
+     "speaker": "narrator"
+    },
+    {
+     "w": "whole.",
+     "s": 15.286,
+     "e": 15.723,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 15.853,
+   "end": 20.115,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "One",
+     "s": 15.853,
+     "e": 16.109,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lunge,",
+     "s": 16.109,
+     "e": 16.522,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 16.522,
+     "e": 16.778,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 16.778,
+     "e": 17.035,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eel",
+     "s": 17.035,
+     "e": 17.291,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 17.291,
+     "e": 17.539,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gone.",
+     "s": 17.539,
+     "e": 17.805,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Straight",
+     "s": 17.885,
+     "e": 18.203,
+     "speaker": "narrator"
+    },
+    {
+     "w": "down,",
+     "s": 18.203,
+     "e": 18.632,
+     "speaker": "narrator"
+    },
+    {
+     "w": "into",
+     "s": 18.632,
+     "e": 19.158,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 19.158,
+     "e": 19.431,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stomach.",
+     "s": 19.431,
+     "e": 19.985,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 20.115,
+   "end": 25.37,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Oh,",
+     "s": 20.115,
+     "e": 20.598,
+     "speaker": "eel"
+    },
+    {
+     "w": "come",
+     "s": 20.598,
+     "e": 20.929,
+     "speaker": "eel"
+    },
+    {
+     "w": "on!",
+     "s": 20.929,
+     "e": 21.238,
+     "speaker": "eel"
+    },
+    {
+     "w": "It's",
+     "s": 21.318,
+     "e": 21.577,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dark,",
+     "s": 21.577,
+     "e": 21.985,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it's",
+     "s": 21.985,
+     "e": 22.244,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tight,",
+     "s": 22.244,
+     "e": 22.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 22.66,
+     "e": 22.919,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 22.919,
+     "e": 23.17,
+     "speaker": "narrator"
+    },
+    {
+     "w": "only",
+     "s": 23.17,
+     "e": 23.67,
+     "speaker": "narrator"
+    },
+    {
+     "w": "has",
+     "s": 23.67,
+     "e": 23.93,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 23.93,
+     "e": 24.171,
+     "speaker": "narrator"
+    },
+    {
+     "w": "few",
+     "s": 24.171,
+     "e": 24.43,
+     "speaker": "narrator"
+    },
+    {
+     "w": "minutes.",
+     "s": 24.43,
+     "e": 25.19,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 25.37,
+   "end": 32.323,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Scientists",
+     "s": 25.37,
+     "e": 25.863,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 25.863,
+     "e": 26.086,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Nagasaki,",
+     "s": 26.086,
+     "e": 27.103,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Japan,",
+     "s": 27.103,
+     "e": 27.682,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wanted",
+     "s": 27.682,
+     "e": 28.144,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 28.144,
+     "e": 28.367,
+     "speaker": "narrator"
+    },
+    {
+     "w": "see",
+     "s": 28.367,
+     "e": 28.598,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 28.598,
+     "e": 28.836,
+     "speaker": "narrator"
+    },
+    {
+     "w": "happens",
+     "s": 28.836,
+     "e": 29.306,
+     "speaker": "narrator"
+    },
+    {
+     "w": "next.",
+     "s": 29.306,
+     "e": 29.545,
+     "speaker": "narrator"
+    },
+    {
+     "w": "So",
+     "s": 29.625,
+     "e": 29.875,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 29.875,
+     "e": 30.143,
+     "speaker": "narrator"
+    },
+    {
+     "w": "filmed",
+     "s": 30.143,
+     "e": 30.661,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 30.661,
+     "e": 30.911,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 30.911,
+     "e": 31.161,
+     "speaker": "narrator"
+    },
+    {
+     "w": "X-ray.",
+     "s": 31.161,
+     "e": 31.429,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Recording!",
+     "s": 31.509,
+     "e": 32.193,
+     "speaker": "scientist"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 32.323,
+   "end": 36.109,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Inside",
+     "s": 32.323,
+     "e": 32.726,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 32.726,
+     "e": 32.927,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stomach,",
+     "s": 32.927,
+     "e": 33.446,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 33.446,
+     "e": 33.647,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eel",
+     "s": 33.647,
+     "e": 33.849,
+     "speaker": "narrator"
+    },
+    {
+     "w": "swims",
+     "s": 33.849,
+     "e": 34.064,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 34.064,
+     "e": 34.258,
+     "speaker": "narrator"
+    },
+    {
+     "w": "circles,",
+     "s": 34.258,
+     "e": 34.777,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hunting",
+     "s": 34.777,
+     "e": 35.186,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 35.186,
+     "e": 35.388,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 35.388,
+     "e": 35.576,
+     "speaker": "narrator"
+    },
+    {
+     "w": "way",
+     "s": 35.576,
+     "e": 35.777,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out.",
+     "s": 35.777,
+     "e": 35.979,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 7,
+   "start": 36.109,
+   "end": 42.788,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Then",
+     "s": 36.109,
+     "e": 36.35,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 36.35,
+     "e": 36.576,
+     "speaker": "narrator"
+    },
+    {
+     "w": "finds",
+     "s": 36.576,
+     "e": 36.825,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 36.825,
+     "e": 37.059,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tube",
+     "s": 37.059,
+     "e": 37.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 37.3,
+     "e": 37.526,
+     "speaker": "narrator"
+    },
+    {
+     "w": "came",
+     "s": 37.526,
+     "e": 37.767,
+     "speaker": "narrator"
+    },
+    {
+     "w": "down,",
+     "s": 37.767,
+     "e": 38.135,
+     "speaker": "narrator"
+    },
+    {
+     "w": "jams",
+     "s": 38.135,
+     "e": 38.376,
+     "speaker": "narrator"
+    },
+    {
+     "w": "its",
+     "s": 38.376,
+     "e": 38.61,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tail",
+     "s": 38.61,
+     "e": 38.851,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in,",
+     "s": 38.851,
+     "e": 39.203,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 39.203,
+     "e": 39.437,
+     "speaker": "narrator"
+    },
+    {
+     "w": "reverses.",
+     "s": 39.437,
+     "e": 40.129,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Backwards,",
+     "s": 40.209,
+     "e": 40.783,
+     "speaker": "narrator"
+    },
+    {
+     "w": "up",
+     "s": 40.783,
+     "e": 40.993,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 40.993,
+     "e": 41.21,
+     "speaker": "narrator"
+    },
+    {
+     "w": "throat,",
+     "s": 41.21,
+     "e": 41.567,
+     "speaker": "narrator"
+    },
+    {
+     "w": "towards",
+     "s": 41.567,
+     "e": 42.009,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 42.009,
+     "e": 42.226,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gills.",
+     "s": 42.226,
+     "e": 42.458,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 8,
+   "start": 42.788,
+   "end": 46.076,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "And",
+     "s": 42.788,
+     "e": 43.007,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out",
+     "s": 43.007,
+     "e": 43.225,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 43.225,
+     "e": 43.436,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 43.436,
+     "e": 43.655,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gill,",
+     "s": 43.655,
+     "e": 43.999,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pops",
+     "s": 43.999,
+     "e": 44.225,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 44.225,
+     "e": 44.428,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tail.",
+     "s": 44.428,
+     "e": 44.654,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Is",
+     "s": 44.734,
+     "e": 45.029,
+     "speaker": "scientist"
+    },
+    {
+     "w": "that",
+     "s": 45.029,
+     "e": 45.345,
+     "speaker": "scientist"
+    },
+    {
+     "w": "a",
+     "s": 45.345,
+     "e": 45.63,
+     "speaker": "scientist"
+    },
+    {
+     "w": "tail?",
+     "s": 45.63,
+     "e": 45.946,
+     "speaker": "scientist"
+    }
+   ]
+  },
+  {
+   "i": 9,
+   "start": 46.076,
+   "end": 50.578,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Wriggle,",
+     "s": 46.076,
+     "e": 47.216,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wriggle,",
+     "s": 47.216,
+     "e": 48.356,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 48.356,
+     "e": 49.037,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it's",
+     "s": 49.037,
+     "e": 49.718,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out.",
+     "s": 49.718,
+     "e": 50.398,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 10,
+   "start": 50.578,
+   "end": 62.203,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Of",
+     "s": 50.578,
+     "e": 50.878,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thirty-two",
+     "s": 50.878,
+     "e": 51.808,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eels",
+     "s": 51.808,
+     "e": 52.129,
+     "speaker": "narrator"
+    },
+    {
+     "w": "swallowed,",
+     "s": 52.129,
+     "e": 53.226,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thirteen",
+     "s": 53.226,
+     "e": 53.867,
+     "speaker": "narrator"
+    },
+    {
+     "w": "got",
+     "s": 53.867,
+     "e": 54.177,
+     "speaker": "narrator"
+    },
+    {
+     "w": "their",
+     "s": 54.177,
+     "e": 54.508,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tails",
+     "s": 54.508,
+     "e": 54.839,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out,",
+     "s": 54.839,
+     "e": 55.317,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 55.317,
+     "e": 55.627,
+     "speaker": "narrator"
+    },
+    {
+     "w": "nine",
+     "s": 55.627,
+     "e": 55.947,
+     "speaker": "narrator"
+    },
+    {
+     "w": "escaped",
+     "s": 55.947,
+     "e": 56.857,
+     "speaker": "narrator"
+    },
+    {
+     "w": "completely.",
+     "s": 56.857,
+     "e": 58.076,
+     "speaker": "narrator"
+    },
+    {
+     "w": "On",
+     "s": 58.156,
+     "e": 58.515,
+     "speaker": "narrator"
+    },
+    {
+     "w": "average,",
+     "s": 58.515,
+     "e": 59.806,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 59.806,
+     "e": 60.165,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fifty-six",
+     "s": 60.165,
+     "e": 61.267,
+     "speaker": "narrator"
+    },
+    {
+     "w": "seconds.",
+     "s": 61.267,
+     "e": 62.023,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 11,
+   "start": 62.203,
+   "end": 67.17,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "It's",
+     "s": 62.203,
+     "e": 62.386,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 62.386,
+     "e": 62.57,
+     "speaker": "narrator"
+    },
+    {
+     "w": "only",
+     "s": 62.57,
+     "e": 62.924,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fish",
+     "s": 62.924,
+     "e": 63.114,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ever",
+     "s": 63.114,
+     "e": 63.469,
+     "speaker": "narrator"
+    },
+    {
+     "w": "confirmed",
+     "s": 63.469,
+     "e": 64.019,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 64.019,
+     "e": 64.196,
+     "speaker": "narrator"
+    },
+    {
+     "w": "escape",
+     "s": 64.196,
+     "e": 64.563,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 64.563,
+     "e": 64.753,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 64.753,
+     "e": 64.924,
+     "speaker": "narrator"
+    },
+    {
+     "w": "predator's",
+     "s": 64.924,
+     "e": 65.474,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stomach.",
+     "s": 65.474,
+     "e": 65.847,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Tail",
+     "s": 65.927,
+     "e": 66.167,
+     "speaker": "eel"
+    },
+    {
+     "w": "first,",
+     "s": 66.167,
+     "e": 66.541,
+     "speaker": "eel"
+    },
+    {
+     "w": "baby!",
+     "s": 66.541,
+     "e": 66.99,
+     "speaker": "eel"
+    }
+   ]
+  },
+  {
+   "i": 12,
+   "start": 67.17,
+   "end": 69.251,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Follow",
+     "s": 67.17,
+     "e": 67.558,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 67.558,
+     "e": 67.752,
+     "speaker": "narrator"
+    },
+    {
+     "w": "more",
+     "s": 67.752,
+     "e": 67.952,
+     "speaker": "narrator"
+    },
+    {
+     "w": "interesting",
+     "s": 67.952,
+     "e": 68.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cartoons.",
+     "s": 68.72,
+     "e": 69.121,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}

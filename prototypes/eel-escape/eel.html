@@ -371,7 +371,7 @@ const juice = new THREE.Mesh(new THREE.CircleGeometry(1, 48).rotateX(-Math.PI / 
 juice.position.set(0, -SB * 0.74, 0); STOM.add(juice);
 // earlier lunch: a shrimp shell and a beetle wing
 { const sh = new THREE.Group(); for (let i = 0; i < 6; i++) { const seg = new THREE.Mesh(new THREE.TorusGeometry(0.07 - i * 0.008, 0.03, 6, 12, Math.PI), std('#e08a5a', { roughness: 0.4 })); seg.position.set(i * 0.05, 0, 0); seg.rotation.y = Math.PI / 2; sh.add(seg); }
-  sh.position.set(-1.1, -SB * 0.6, 0.35); sh.rotation.set(0.3, 0.6, 0.4); STOM.add(sh);
+  sh.position.set(-1.6, -SB * 0.62, -0.55); sh.rotation.set(0.3, 0.6, 0.4); sh.scale.setScalar(0.6); STOM.add(sh);
   const wing = new THREE.Mesh(new THREE.SphereGeometry(0.16, 12, 8).scale(1, 0.15, 0.5), std('#2a3a22', { metalness: 0.6, roughness: 0.3 })); wing.position.set(0.7, -SB * 0.62, -0.5); STOM.add(wing); }
 // mucus strands from the roof
 const strands = []; { const r = rng(4); for (let i = 0; i < 14; i++) { const x = (r() - 0.5) * SA * 1.4, z = (r() - 0.5) * SC * 1.1, len = 0.2 + r() * 0.5; const m = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.02, len, 6).translate(0, -len / 2, 0), new THREE.MeshStandardMaterial({ color: '#f6d0c8', roughness: 0.1, transparent: true, opacity: 0.55 }));
@@ -522,7 +522,7 @@ const coilS = (t, c, r = 1.1, y = -0.42) => { const pts = []; for (let i = 0; i 
 const S = [];
 const shot = (at, mode, f, o = {}) => S.push({ at, mode, f, ...o });
 // hook -----------------------------------------------------------
-const H1 = (t, u) => { riverFish(t, { gill: 1, bulge: 0.6, lid: 0.05, look: V(0.2, 0.1, 1), noBubbles: true }); const e = 0.5 + u * 0.035; escEel(t, e, 0.02);
+const H1 = (t, u) => { riverFish(t, { gill: 1, bulge: 0.6, lid: 0.05, look: V(0.2, 0.1, 1), noBubbles: true }); const e = 0.56 + u * 0.03; escEel(t, e, 0.025);
   bubbleStream(fish.toWorld(V(0.5, 0, 0.42)), t, 6, 1.4, 9, 0.04, 0.12, 0.9);
   const tg = fish.toWorld(V(0.42, -0.02, 0.4)); look(fish.toWorld(V(-0.15 + u * 0.06, 0.25 - u * 0.02, 1.55 - u * 0.12)).add(handheld(t, 0.015)), tg, 44, 1.35 - u * 0.1); };
 shot(0, 'river', H1, { label: 'SWALLOWED <b>ALIVE</b>' });
@@ -534,7 +534,7 @@ shot(RW0, 'river', (t, u) => { const k = u / (RW1 - RW0); const uu = (1 - k) * 1
   look(fish.toWorld(V(-0.15 + k * 2.5, 0.25 + k * 1.2, 1.55 + k * 2.5)), fish.toWorld(V(0.42 - k * 0.2, -0.02, 0.4 - k * 0.2)), 44 + k * 8); }, { rewind: true });
 // meet the eel --------------------------------------------------------
 shot(BS('meet'), 'river', (t, u) => { riverFish(t, { lid: 0.6 }); const s = 2.2 + u * 1.1; const p = swimEel(s, t, { expr: 'happy', look: V(1, 0.1, 0.4) });
-  const tg = swimPath.getTangentAt(clamp(s / SWIM_L)); const side = V(-tg.z, 0, tg.x); look(p.clone().addScaledVector(side, 0.85).addScaledVector(tg, 0.15).add(V(0, 0.12, 0)).add(handheld(t, 0.01)), p.clone().addScaledVector(tg, -0.35), 42, 0.85); });
+  const tg = swimPath.getTangentAt(clamp(s / SWIM_L)); const side = V(-tg.z, 0, tg.x); look(p.clone().addScaledVector(side, 0.6).addScaledVector(tg, 0.55).add(V(0, 0.1, 0)).add(handheld(t, 0.01)), p.clone().addScaledVector(tg, -0.25), 42, 0.8); });
 shot(WT('meet', 'Tiny'), 'river', (t, u) => { riverFish(t, { lid: 0.6 }); const s = 4.1 + u * 0.55; const p = swimEel(s, t, { expr: 'happy', lid: Math.abs(Math.sin(u * 2.6)) > 0.97 ? 1 : 0.1, look: V(1, 0.15, 0) }, 0.05);
   const tg = swimPath.getTangentAt(clamp(s / SWIM_L)); look(p.clone().addScaledVector(tg, 0.55 - u * 0.05).add(V(0.05, 0.06, 0.1)), p.clone().add(V(0, 0.02, 0)), 38, 0.55); });
 shot(WT('meet', 'on'), 'river', (t, u) => { const s = 5.2 + u * 0.3; const p = swimEel(s, t, { expr: 'happy', look: V(1, 0.1, 0.2) }, 0.05); const eyeW = fish.toWorld(V(1, 0.2, 0));
@@ -550,7 +550,7 @@ shot(BS('gulp'), 'river', (t, u) => { const tg = WT('gulp', 'gone') - BS('gulp')
   riverFish(t, { lid: 0.1, gape: k < 1 ? Math.sin(Math.PI * clamp(k * 1.2)) : 0, dx: 0.5 * Math.sin(Math.PI * k), look: V(1, -0.1, 0), angry: true });
   if (u < tg) { eel.visible = true; eel.set(spineAlong(SWALLOW, lerp(0.5, SWALLOW.getLength() + 0.2, k), t, 0.06 * (1 - k), V(0, 1, 0), 11, 16, p => fish.toWorld(p)), V(0, 1, 0), { expr: 'worried', look: V(1, 0.3, 0) }); }
   SHAKE = u > tg ? 0.03 * Math.max(0, 1 - (u - tg) * 3) : 0;
-  look(fish.toWorld(V(1.3, 0.3, 3.4)), fish.toWorld(V(1.6, -0.05, 0)), 44); }, { flash: [WT('gulp', 'gone')] });
+  look(fish.toWorld(V(1.5, 0.3, 1.9)), fish.toWorld(V(1.15, -0.05, 0)), 50); }, { flash: [WT('gulp', 'gone')] });
 shot(WT('gulp', 'Straight'), 'river', (t, u) => { riverFish(t, { lid: 0.3, gape: 0.85, look: V(1, 0, 0) }); const k = ease(0, BE('gulp') - WT('gulp', 'Straight'), u); look(fish.toWorld(V(lerp(2.4, 1.02, k), lerp(0.05, -0.06, k), 0)), fish.toWorld(V(0.6, -0.08, 0)), lerp(45, 75, k)); }, { dark: true });
 // inside -------------------------------------------------------------------
 shot(BS('inside'), 'stom', (t, u) => { const pts = coilS(t, 1.2 + u * 0.3, 0.9, -0.5); stomEel(pts, { expr: 'angry', yell: true, look: V(1, 0.2, -0.6), eyeScale: 1.3 });
@@ -566,7 +566,7 @@ function tankPose(t) { tankFish.grp.position.copy(TANK).add(V(0.05 + Math.sin(t 
 function monitorFeed(t, st) { xrayScene(t, st); MON = true; }
 let MON = false;
 shot(BS('lab'), 'lab', (t, u) => { labPeople(t); tankPose(t); monitorFeed(t, { coil: t * 0.3 }); const k = ease(0, 2.2, u);
-  look(LO.clone().add(V(lerp(0.2, 0.9, k), lerp(4.0, 2.2, k), lerp(1.2, 4.6, k))), LO.clone().add(V(0.2, lerp(0.8, 1.3, k), 0.3)), 50); }, { label: 'NAGASAKI, <b>JAPAN</b>' });
+  look(LO.clone().add(V(lerp(0.5, 0.9, k), lerp(3.7, 2.2, k), lerp(2.8, 4.6, k))), LO.clone().add(V(0.2, lerp(0.8, 1.3, k), 0.3)), 50); }, { label: 'NAGASAKI, <b>JAPAN</b>' });
 shot(WT('lab', 'wanted'), 'lab', (t, u) => { place(sciA, V(0.15, 0, -0.45), 'idle', 'shocked', t); tankPose(t); monitorFeed(t, { coil: t * 0.3 });
   look(LO.clone().add(V(0.25 - u * 0.05, 1.35, 1.25 - u * 0.1)), LO.clone().add(V(0.15, 1.55, -0.4)), 40, 1.6); });
 shot(WT('lab', 'So'), 'lab', (t, u) => { place(sciB, V(1.25, 0, 1.0), 'point', 'smug', t); tankPose(t); monitorFeed(t, { coil: t * 0.3 }); const on = ease(0.3, 0.6, u);
@@ -620,7 +620,7 @@ shot(WT('payoff', 'Tail'), 'river', (t, u) => { riverFish(t, { lid: 0.75, look: 
   eel.visible = true; eel.set(spineFree(h, d, t, 0.05, 0.45), V(0, 1, 0), { expr: 'happy', wink: u > 0.35, look: V(0.3, 0.2, -1), eyeScale: 1.2 });
   look(h.clone().add(V(0.35, 0.1, 0.95)), h.clone().add(V(0, -0.05, 0)), 40, 0.95); });
 shot(BS('cta'), 'river', (t, u) => { riverFish(t, { lid: 0.85, gape: 0.4 * Math.sin(clamp(u / 1.2) * Math.PI), look: V(1, 0.2, 0.3) }); const h = FISH_HOME.clone().add(V(4 + u * 1.3, 0.9 + u * 0.2, 2.6 + u * 0.4)); eel.visible = true; eel.set(spineFree(h, V(1, 0.1, 0.2), t, 0.08), V(0, 1, 0), { expr: 'happy' });
-  look(FISH_HOME.clone().add(V(0.8 - u * 0.3, 1.3 + u * 0.3, 6.4 + u * 0.6)), FISH_HOME.clone().add(V(2.8 + u * 1.0, 0.75, 2.2)), 52); });
+  look(h.clone().add(V(-1.5 - u * 0.3, 0.35 + u * 0.2, 1.1 + u * 0.3)), h.clone().add(V(-0.3, -0.1, 0)), 50, 1.8); });
 S.sort((a, b) => a.at - b.at);
 tGone = WT('gulp', 'gone'); tOut = WT('free', 'out');
 const shotAt = t => { let i = 0; for (let k = 0; k < S.length; k++) if (t >= S[k].at) i = k; return i; };
@@ -636,7 +636,7 @@ function drawStats(t) { sc.style.display = 'block'; sx.clearRect(0, 0, W, H); co
     sx.lineWidth = 13; sx.strokeStyle = esc ? '#5fe07a' : tail ? '#ffd23a' : '#d9e6f2'; sx.stroke(); sx.fillStyle = '#111'; sx.beginPath(); sx.arc(62, -4, 4, 0, 7); sx.fill(); sx.restore(); }
   sx.textAlign = 'center'; sx.font = '800 64px Poppins'; sx.lineWidth = 12; sx.strokeStyle = '#111';
   const lab = (txt, y, c, a) => { if (a <= 0) return; sx.globalAlpha = a; sx.fillStyle = c; sx.strokeText(txt, W / 2, y); sx.fillText(txt, W / 2, y); sx.globalAlpha = 1; };
-  lab('32 SWALLOWED', 400, '#ffffff', clamp((t - t0) * 4)); lab('13 TAILS OUT', 1120 + 0, '#ffd23a', clamp((t - t13) * 4)); lab('9 ESCAPED', 1050 - 0 + 160, '#5fe07a', clamp((t - t9) * 4));
+  if (t < t13) lab('32 SWALLOWED', 400, '#ffffff', clamp((t - t0) * 4)); else if (t < t9) lab('13 TAILS OUT', 400, '#ffd23a', clamp((t - t13) * 4)); else lab('9 ESCAPED', 400, '#5fe07a', clamp((t - t9) * 4));
   if (t > t56) { const a = clamp((t - t56) * 5); sx.save(); sx.translate(W / 2, 1440); sx.scale(0.7 + 0.3 * a, 0.7 + 0.3 * a); sx.font = '800 150px Poppins'; sx.lineWidth = 20; sx.fillStyle = '#ffd23a'; sx.strokeText('0:56', 0, 0); sx.fillText('0:56', 0, 0); sx.font = '800 46px Poppins'; sx.lineWidth = 10; sx.fillStyle = '#fff'; sx.strokeText('AVERAGE ESCAPE', 0, 70); sx.fillText('AVERAGE ESCAPE', 0, 70); sx.restore(); } }
 
 // ---------- captions ----------
