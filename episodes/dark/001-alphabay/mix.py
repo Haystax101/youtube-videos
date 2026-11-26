@@ -5,7 +5,7 @@ music 0.36 ducked 55% under the voice, SFX x0.18 through a 0.15*tanh soft limit.
 Usage: python3 mix.py EP_DIR -> EP_DIR/audio.mix.wav (video time)"""
 import sys, os, re, json, glob, subprocess, numpy as np, soundfile as sf
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')); sys.path.insert(0, f'{REPO}/pipeline')
-from mix import SR, place as _place, whoosh
+from mix import SR, place as _place
 EP = sys.argv[1]; rng = np.random.default_rng(7); RW = 1.0
 tl = json.load(open(f'{EP}/timeline.json')); B = [b['start'] for b in tl['beats']]
 words = [(b['i'], w) for b in tl['beats'] for w in b['words']]
@@ -64,10 +64,10 @@ def siren(d=4.0):  # European two-tone police siren
     x = np.sign(np.sin(ph)) * 0.4 + np.sin(ph) * 0.6; x = lpf(x, 2500); env = np.minimum(1, np.minimum(t, d - t) * 3); return norm(x * env, 0.8)
 def engine(d=2.0, f0=55, f1=110):  # car engine revving past
     t = tt(d); f = f0 + (f1 - f0) * np.clip(t / d, 0, 1) ** 0.7; ph = 2 * np.pi * np.cumsum(f) / SR
-    x = sum(np.sin(ph * h) / h for h in range(1, 7)) + rng.normal(0, 0.3, len(t)); x = lpf(x, 900); env = np.minimum(1, np.minimum(t * 3, (d - t) * 4)); return norm(x * env, 0.9)
+    x = sum(np.sin(ph * h) / h * (1 + 0.3 * np.sin(2 * np.pi * 23 * t * h)) for h in range(1, 7)); x = lpf(x, 900); env = np.minimum(1, np.minimum(t * 3, (d - t) * 4)); return norm(x * env, 0.9)
 def crash():  # car through a metal gate: thump, crunch, metal ring, glass
     t = tt(2.2); x = np.sin(2 * np.pi * 48 * t) * np.exp(-t * 7) * 1.4
-    x += lpf(rng.normal(0, 1, len(t)), 3000) * np.exp(-t * 4) * 0.9
+    x += sum(np.sin(2 * np.pi * fr * t + rng.random() * 6) for fr in rng.uniform(90, 600, 24)) / 6 * np.exp(-t * 6) * 0.9
     for fr in [310, 523, 787, 1130, 1490]: x += np.sin(2 * np.pi * fr * t + rng.random() * 6) * np.exp(-t * (2.5 + fr / 900)) * 0.18
     gl = np.zeros(len(t))
     for _ in range(40):
@@ -75,19 +75,23 @@ def crash():  # car through a metal gate: thump, crunch, metal ring, glass
     return norm(x + gl, 1.0)
 def clang():  # cell door / gate clang
     t = tt(1.8); x = sum(np.sin(2 * np.pi * fr * t) * np.exp(-t * dk) * g for fr, dk, g in [(180, 2.2, 1), (431, 3, 0.6), (713, 4, 0.4), (1180, 6, 0.3), (2210, 9, 0.2)])
-    x += rng.normal(0, 1, len(t)) * np.exp(-t * 60) * 0.6; return norm(x, 0.9)
+    x += np.sin(2 * np.pi * 95 * t) * np.exp(-t * 30) * 0.8; return norm(x, 0.9)
 def typing(d=2.0, rate=9):
     out = np.zeros(int(d * SR)); t = 0.0
     while t < d - 0.05:
-        s = int(t * SR); L = int(0.025 * SR); k = rng.normal(0, 1, L) * np.exp(-tt(0.025) * 260); out[s:s + L] += bpf(np.pad(k, (0, 256)), 1500, 6000)[:L] * rng.uniform(0.5, 1)
+        s = int(t * SR); L = int(0.025 * SR); k = np.sin(2 * np.pi * rng.uniform(1400, 2600) * tt(0.025)) * np.exp(-tt(0.025) * 300); out[s:s + L] += k * rng.uniform(0.5, 1)
         t += rng.exponential(1 / rate) + 0.03
     return norm(out, 0.7)
 def murmur(d=8.0):  # crowd of buyers
-    t = tt(d); x = bpf(rng.normal(0, 1, len(t)), 250, 1400) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.7 * t) * np.sin(2 * np.pi * 1.9 * t + 1)); return norm(x, 0.6)
+    t = tt(d); x = np.zeros(len(t))
+    for _ in range(14):
+        f0 = rng.uniform(110, 230); ph = 2 * np.pi * np.cumsum(f0 * (1 + 0.06 * np.sin(2 * np.pi * rng.uniform(2, 5) * t + rng.random() * 6))) / SR
+        x += sum(np.sin(ph * h) / h for h in (1, 2, 3)) * np.clip(np.sin(2 * np.pi * rng.uniform(1.5, 4) * t + rng.random() * 6), 0, 1)
+    return norm(lpf(x, 900), 0.6)
 def hum(d=8.0, f=60):  # neon / server hum
-    t = tt(d); x = np.sin(2 * np.pi * f * t) + 0.5 * np.sin(2 * np.pi * 2 * f * t) + 0.25 * np.sin(2 * np.pi * 3 * f * t) + rng.normal(0, 0.05, len(t)); return norm(x, 0.5)
+    t = tt(d); x = np.sin(2 * np.pi * f * t) + 0.5 * np.sin(2 * np.pi * 2 * f * t) + 0.25 * np.sin(2 * np.pi * 3 * f * t); return norm(x, 0.5)
 def wind(d=8.0):
-    t = tt(d); x = lpf(rng.normal(0, 1, len(t)), 500) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.15 * t)); return norm(x, 0.6)
+    t = tt(d); x = sum(np.sin(2 * np.pi * np.cumsum(f * (1 + 0.15 * np.sin(2 * np.pi * 0.11 * t + f))) / SR) for f in (180, 241, 317)) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.15 * t)); return norm(x, 0.5)
 def cicadas(d=8.0):
     t = tt(d); x = np.sin(2 * np.pi * 4500 * t) * (0.5 + 0.5 * np.sin(2 * np.pi * 38 * t)) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.3 * t)); return norm(x, 0.35)
 def coin():
@@ -102,12 +106,12 @@ def ding():  # new-mail notification
 def cuffs():
     out = np.zeros(int(0.7 * SR))
     for s in [0.0, 0.18, 0.3]:
-        L = int(0.06 * SR); i = int(s * SR); out[i:i + L] += bpf(np.pad(rng.normal(0, 1, L) * np.exp(-tt(0.06) * 90), (0, 64)), 2000, 8000)[:L]
+        L = int(0.06 * SR); i = int(s * SR); out[i:i + L] += (np.sin(2 * np.pi * 2300 * tt(0.06)) + np.sin(2 * np.pi * 3470 * tt(0.06))) * np.exp(-tt(0.06) * 90)
     t = tt(0.7); out += np.sin(2 * np.pi * 3100 * t) * np.exp(-t * 14) * 0.2; return norm(out, 0.8)
 def powerdown():
     t = tt(1.6); f = 220 * np.exp(-t * 1.6) + 30; x = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 1.2) + 0.4 * np.sign(np.sin(2 * np.pi * np.cumsum(f * 2) / SR)) * np.exp(-t * 2); return norm(lpf(x, 1800), 0.9)
 def beep(f=1000): t = tt(0.12); return np.sin(2 * np.pi * f * t) * np.exp(-t * 16) * 0.6
-def click(): L = int(0.02 * SR); return bpf(np.pad(rng.normal(0, 1, L) * np.exp(-tt(0.02) * 300), (0, 64)), 1000, 6000)[:L] * 0.8
+def click(): t = tt(0.02); return np.sin(2 * np.pi * 2000 * t) * np.exp(-t * 350) * 0.8
 def thump(): t = tt(0.3); return np.sin(2 * np.pi * 70 * t) * np.exp(-t * 18) * 1.0
 def ticktock(d=8.0):
     out = np.zeros(int(d * SR))
@@ -118,7 +122,9 @@ def drip(d=8.0):
     for k in range(int(d / 1.7)):
         t = tt(0.15); x = np.sin(2 * np.pi * (900 + 600 * np.exp(-t * 40)) * t) * np.exp(-t * 30) * 0.5; i = int((0.4 + k * 1.7) * SR); out[i:i + len(x)] += x
     return out
-def swish(): return whoosh()
+def swish():
+    t = tt(0.5); f = 900 * np.exp(-t * 4) + 120; return norm(np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * t / 0.5) ** 2, 0.5)
+def whoosh(): return swish()
 
 # ---- placement (voice seconds) -------------------------------------------------------------------
 H1 = B[1]
@@ -196,5 +202,6 @@ t = tt(RW); squeal = np.sin(2 * np.pi * np.cumsum(900 + 1400 * t) / SR) * 0.08 *
 fade = np.linspace(1, 0, int(0.05 * SR)); rw[-len(fade):] *= fade
 mix = np.concatenate([mix[:Hs], rw, mix[Hs:]])
 mix /= np.abs(mix).max() * 1.05; sf.write(f'{EP}/audio.mix.wav', mix.astype(np.float32), SR)
+sf.write(f'{EP}/sfx.wav', (0.15 * np.tanh(fx[:N] * 0.18 / 0.15)).astype(np.float32), SR)
 json.dump(used, open(f'{EP}/sfx-used.json', 'w'), indent=1)
 print('audio', round(len(mix) / SR, 2), 's; recorded sfx files used:', len(used))
