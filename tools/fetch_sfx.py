@@ -12,6 +12,8 @@ Usage: python3 tools/fetch_sfx.py [OUT]"""
 import io, json, os, re, subprocess, sys, time, urllib.parse, urllib.request, zipfile
 OUT = sys.argv[1] if len(sys.argv) > 1 else 'sfx'
 UA = {'User-Agent': 'world-of-how-sfx-fetch/1.0 (CC0 sound effects for an educational channel)'}
+PACE = float(os.environ.get('SFX_PACE', '1.5'))   # seconds between Commons downloads (it rate-limits bursts)
+DEADLINE = time.time() + 60 * float(os.environ.get('SFX_MINUTES', '55'))   # stop searching in time to publish
 man = []; seen = set(); total = [0]; MAX_FILE = 25 * 2**20; MAX_LEN = 90  # seconds
 
 def get(url, binary=True, tries=3):
@@ -20,7 +22,11 @@ def get(url, binary=True, tries=3):
             with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=60) as r:
                 b = r.read(); return b if binary else b.decode('utf-8', 'replace')
         except Exception as e:
-            print('  retry', k, url[:120], e); time.sleep(2 + k * 3)
+            print('  retry', k, url[:120], e)
+            if getattr(e, 'code', 0) == 429:   # Commons rate limit: honour Retry-After, back off hard
+                ra = (getattr(e, 'headers', None) or {}).get('Retry-After') or ''
+                time.sleep(min(120, int(ra)) if ra.isdigit() else 20 + k * 30)
+            else: time.sleep(2 + k * 3)
     return None
 
 def slug(s): return re.sub(r'[^a-z0-9]+', '_', s.lower()).strip('_')[:60]
@@ -59,6 +65,10 @@ def commons(folder, q, n):
             lic = (md.get('LicenseShortName') or {}).get('value', '')
             if not OK_LIC.match(lic.strip()): continue
             if ii.get('size', 0) > MAX_FILE: continue
+            words = [w[:5] for w in re.findall(r'[a-z]+', q.lower()) if len(w) > 2]
+            if words and not any(w in p['title'].lower() for w in words): continue   # search is fuzzy: keep files named for the sound
+            if time.time() > DEADLINE: return got
+            time.sleep(PACE)
             if save(folder, p['title'].split(':', 1)[-1], get(ii['url']), ii.get('descriptionurl', ii['url']), lic,
                      re.sub('<[^>]+>', '', (md.get('Artist') or {}).get('value', ''))[:120]):
                 got += 1
@@ -103,15 +113,15 @@ def oga(folder, q, n):
 
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
+    for s in ['impact-sounds', 'rpg-audio', 'interface-sounds', 'casino-audio', 'sci-fi-sounds', 'digital-audio', 'music-jingles']:
+        kenney(s)   # first: no rate limit, so these always arrive
     kw = [l.split(':', 1) for l in open(os.environ.get('SFX_KEYWORDS', 'sfx-keywords.txt')) if ':' in l and not l.startswith('#')]
     for folder, qs in kw:
         folder = slug(folder)
         for q in [x.strip() for x in qs.split('|') if x.strip()]:
             got = commons(folder, q, 4)
             print(f'[{folder}] commons "{q}": {got}', flush=True)
-        oga(folder, qs.split('|')[0].strip(), 2)
-    for s in ['impact-sounds', 'rpg-audio', 'interface-sounds', 'casino-audio', 'sci-fi-sounds', 'digital-audio', 'music-jingles']:
-        kenney(s)
+        if time.time() < DEADLINE: oga(folder, qs.split('|')[0].strip(), 2)
     json.dump(man, open(os.path.join(OUT, 'manifest.json'), 'w'), indent=1)
     by = {}
     for m in man: by[m['folder']] = by.get(m['folder'], 0) + 1

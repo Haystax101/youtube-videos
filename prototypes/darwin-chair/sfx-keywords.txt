@@ -1,17 +1,13 @@
-footsteps_hard: footsteps wood | footsteps stone
-fire: campfire | fire crackling | fireplace
-birds: birdsong | blackbird | robin song | crow
+footsteps_hard: footsteps wood | footsteps
 whoosh: whoosh | swoosh | swish
-cartoon: boing | slide whistle | pop | squeak
-crowd: crowd cheer | crowd | applause | laughter
-water: water splash | bubbles | underwater | river
-bed: bed creak | yawn | snoring | alarm clock
-clock: clock ticking | alarm clock ring | wind-up alarm
-rolling: office chair rolling | castor wheels | trolley wheels | rolling cart
-creak: wood creak | chair creak | floorboard creak | leather creak
-office: office ambience | typing keyboard | computer keyboard | mouse click
-quill: quill pen writing | pen scratching | writing on paper | page turn
-glass: glass jar | glass clink | bottle clink | jar lid
-spring: spring boing | metal spring | sproing
-murmur: crowd murmur | crowd talking | indoor crowd | exhibition hall
-gasp: gasp | crowd gasp | shocked
+cartoon: boing | slide whistle | squeak
+crowd: crowd cheer | applause
+rolling: chair rolling | castor | trolley | rolling
+creak: chair creak | wood creak | creak
+office: office ambience | typing keyboard
+quill: quill writing | pen writing | page turn
+glass: glass jar | glass clink | jar
+spring: spring boing | spring
+murmur: crowd murmur | crowd talking
+gasp: gasp
+clock: clock ticking
