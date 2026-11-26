@@ -290,17 +290,28 @@ function pillPose(name, t, seed) {
   if (name === 'wheel') { const st = Math.sin(t * 1.6 + seed) * 10; b.l = [[-120, -120], [-70 + st, -128 - st * 0.4]]; b.r = [[120, -120], [70 + st, -128 + st * 0.4]]; b.front = true; }
   if (name === 'gesture') { const k = 0.5 + 0.5 * Math.sin(t * 5 + seed); b.r = [[170, -200], [168 + k * 14, -250 - k * 30]]; }
   if (name === 'wave') { const k = Math.sin(t * 9 + seed); b.r = [[190, -260], [200 + k * 26, -380]]; }
+  if (name === 'point') { b.r = [[200, -230], [262, -250]]; b.lean = -0.03; }
+  if (name === 'pointdown') { b.r = [[180, -150], [236, -70]]; b.lean = 0.04; }
+  if (name === 'thumb') { b.r = [[176, -230], [196, -300]]; b.thumb = true; }
+  if (name === 'shock') { const k = Math.sin(t * 20 + seed) * 6; b.l = [[-180, -300], [-200 + k, -400]]; b.r = [[180, -300], [200 - k, -400]]; b.bob = 0; }
+  if (name === 'shiver') { const k = Math.sin(t * 40 + seed) * 5; b.l = [[-60, -170], [60 + k, -175]]; b.r = [[60, -170], [-60 - k, -180]]; b.front = true; b.bob = k * 0.6; b.lean = k * 0.004; }
+  if (name === 'carry') { b.l = [[-140, -120], [-90, -60]]; b.r = [[140, -120], [90, -60]]; b.front = true; }
   return b;
 }
 export function drawPill(ctx, W, H, kindName, poseName, expr, t, seed = 0, opts = {}) {
   g = ctx; const K = KINDS[kindName]; BLIND = false; BACK = !!opts.back;
   g.clearRect(0, 0, W, H);
-  const p = pillPose(poseName, t, seed), S = H / 720;
+  const p = pillPose(poseName, t, seed), S = H / (opts.stand ? 800 : 720);
   g.save(); g.translate(W / 2, H - 10 * S); g.scale(S * (opts.flip ? -1 : 1), S);
+  if (opts.stand) { // stubby legs and wellies, then lift the figure onto them
+    const hop = opts.hop || 0; for (const d of [-1, 1]) { stick([d * 42, -70 - hop], [d * 44, -40 - hop], [d * 44, -26 - hop], 16);
+      P(() => { g.moveTo(d * 44 - 30, -40 - hop); g.lineTo(d * 44 + 26, -40 - hop); g.lineTo(d * 44 + 28, -18 - hop); g.quadraticCurveTo(d * 44 + 30 + d * 26, -14 - hop, d * 44 + d * 34, 0 - hop); g.lineTo(d * 44 - 32, 0 - hop); g.closePath(); }, opts.boots || '#2f6b3a', 6); }
+    g.translate(0, -84 - hop); }
   const sh = d => [d * 96, -250];
   if (!p.front) for (const [side, d] of [[p.l, -1], [p.r, 1]]) pillArm(sh(d), side[0], side[1]);
   g.save(); g.translate(0, p.bob); g.rotate(p.lean); pillBody(K, opts); g.restore();
   if (p.front) for (const [side, d] of [[p.l, -1], [p.r, 1]]) pillArm(sh(d), side[0], side[1]);
+  if (p.thumb) { const [hx, hy] = p.r[1]; P(() => g.roundRect(hx - 13, hy - 64, 28, 52, 13), '#f7f2ea', 5); P(() => g.arc(hx, hy, 24, 0, 7), '#f7f2ea', 6); }
   const blink = ((t + seed * 0.71) % 3.4) < 0.12;
   g.save(); g.translate(0, -400 + p.bob * 1.2); g.rotate(p.lean * 2 + Math.sin(t * 1.7 + seed) * 0.02);
   head(K, expr, t, opts.turn || 0, blink); g.translate(0, -22); hat(K, t);
