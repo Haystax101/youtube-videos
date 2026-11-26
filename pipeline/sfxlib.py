@@ -49,6 +49,7 @@ class Sfx:
         if not fs: return None
         x = self.load(fs[which % len(fs)] if which is not None else fs[self.rng.integers(len(fs))])
         n = int(seconds * self.SR)
+        if n <= 0: return None
         if len(x) <= n: x = np.tile(x, n // max(1, len(x)) + 1)
         s = self.rng.integers(0, len(x) - n + 1); y = x[s:s + n].copy()
         k = min(n // 3, int(fade * self.SR)); y[:k] *= np.linspace(0, 1, k); y[-k:] *= np.linspace(1, 0, k)

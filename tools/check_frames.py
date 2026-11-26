@@ -2,8 +2,10 @@
 Flags (1) frames where more than AREA of the picture is darker than LUMA (out of 255): the camera inside
 a tree trunk, grass or a wall; (2) frames where pure black (luma < 4) jumps by more than JUMP above the
 surrounding frames: one-frame glitch rectangles (a sprite or pass that failed to draw).
-Usage: python3 tools/check_frames.py video.mp4 [--fps 30] [--luma 22] [--area 0.6] [--jump 0.06]
-Prints merged time ranges and exits 1 if any were found."""
+Usage: python3 tools/check_frames.py video.mp4 [--fps 30] [--luma 22] [--area 0.6] [--jump 0.06] [--fix OUT.mp4]
+Prints merged time ranges and exits 1 if any were found. --fix writes OUT.mp4 with every flagged glitch
+range of 1-3 frames replaced by the frame before it (swiftshader occasionally drops a tile to black for
+one frame, and it can recur on a re-render, so patching is more reliable than re-rendering)."""
 import subprocess, sys
 import numpy as np
 
@@ -29,4 +31,15 @@ for t, d in bad:
     else: ranges.append([t, t, d])
 for s, e, d in ranges: print(f'{s:6.2f}-{e:6.2f}s  dark {d:.0%} of frame')
 print(f'{len(ranges)} dark patch(es) in {i / FPS:.1f}s')
+if '--fix' in a:
+    out = a[a.index('--fix') + 1]; vf = []
+    for s_, e, d in ranges:
+        f0, f1 = round(s_ * FPS), round(e * FPS)
+        if 0 < f0 and f1 - f0 < 3: vf.append(f'freezeframes=first={f0}:last={f1}:replace={f0 - 1}')
+        else: print(f'not patched (too long or first frame): {s_:.2f}-{e:.2f}s')
+    g, cur = [], '0:v'  # freezeframes takes two inputs (the source and the replacement source)
+    for k, f in enumerate(vf): g.append(f'[{cur}]split[a{k}][b{k}];[a{k}][b{k}]{f}[v{k}]'); cur = f'v{k}'
+    subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', a[0], '-filter_complex', ';'.join(g) or '[0:v]null[v]', '-map', f'[{cur if vf else "v"}]', '-c:v', 'libx264',
+                    '-crf', '16', '-preset', 'medium', '-pix_fmt', 'yuv420p', '-an', out], check=True)
+    print('patched', len(vf), 'range(s) ->', out)
 sys.exit(1 if ranges else 0)
