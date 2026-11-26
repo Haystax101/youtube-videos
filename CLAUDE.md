@@ -45,7 +45,7 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      and numbers, make the winner the default here or in the code, and start a new test from
      `backlog` (build what its `needs` says) or one you invent. Keep 3-6 tests active and keep
      adding ideas to the backlog: hooks, pacing, captions, music, sound, cameras, length,
-     labels, titles, formats, character poly level (not the overall look: locked to lowpoly + cel). Write one line in the LOG on what changed and why.
+     labels, titles, formats, camera moves, set density (not the overall look: locked to the smol look). Write one line in the LOG on what changed and why.
    - After a winner is set, about 1 Short in 5 still tries a non-default arm (explore_share).
 3. `python3 pipeline/experiments.py assign 3` gives each of today's Shorts its arms for every
    active test (balanced so the least-tested arms run first). Use them exactly; they vary
@@ -77,17 +77,16 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      **Exception (george, 2026-11-25): Shorts don't have to be the Gary/"you" format.** When a
      fact isn't about something "you" do (an animal, a place, a historical event, an object),
      tell it straight without Gary: set `"noGary": true` in script.json (or `"gary": {"hide": true}`
-     on single beats), keep the same lowpoly cel look, and build the new people, animals, props
-     and sets the story needs in `web/lowpoly.js`. Still a hook to the viewer in the first 2 s,
+     on single beats), keep the same smol look (see below), and build the new people, animals,
+     props and sets the story needs. Still a hook to the viewer in the first 2 s,
      a cold open, sourced facts and an escalating arc; the ending skips the ghost/"You died"
      line and closes on the payoff plus the assigned CTA. Record `format` (gary_you / no_gary)
      in `experiment.vars`. Use it where it fits the fact, not as a quota.
    - Time labels escalate: DAY 1, WEEK 1, MONTH 1, YEAR 1...
    - Facts must be real, with sources in `experiment.facts`; one myth-bust beat is good.
    - Every Short needs a real "wait, what?" fact and a real arc with a turn (see the skill).
-   - Last beat (Gary Shorts): if Gary dies, the `void`/heaven scene with Gary as a ghost and "You died. <CTA>";
-     if he survives, Gary alive in the last scene and "You survived. <CTA>" (or "You're
-     stronger than ever. <CTA>" for a beneficial habit).
+   - Last beat: close on the payoff image (the outcome, or the "you" character alive/better/dead as
+     the facts say) with a short outcome line, then the CTA. The old lowpoly ghost/void scene is retired.
    - **Ending CTA** (an active test, george 2026-11-25): use the assigned arm, exactly:
      `shenanigans` "Comment what stupid shenanigans Gary should try tomorrow." /
      `follow` "Follow for more interesting cartoons." /
@@ -117,36 +116,49 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      down all day?"), never vague ones like "would you actually survive this long?". No "times died" counter on screen (george: clutter); it is off
      by default, so don't set `hud.counter`.
    - The `"experiment"` object also notes anything else deliberately different (setting,
-     camera style, a one-off idea) and the hypothesis behind it. **Style is locked to `"style": "lowpoly"`
-     with `"look": "cel"`** (george, 2026-11-25: storybook Shorts got no views and a consistent look
-     matters; at 17:16 he switched the daily look to cel: toon shading, ink outlines, rooms that
-     run past the frame). Don't use storybook, paper, cartoon, noir or news for Shorts, or the old
-     `"look": "flat"`, and don't start style tests; experiment inside it instead (music, hooks,
-     voice, pacing, endings, rooms, props, cameras). Prefer the full sets (kitchen, street,
-     studio) and moving cameras (crane, crane_up, dolly, orbit, truck, back) for at least a
-     couple of beats per Short. Record `look` in `experiment.vars`.
-   - **Faces and sets (george, 2026-11-26):** keep the pearly-white faces we already use (the
-     characters in Archimedes/Syracuse and walk-in-circles are the reference; this is not a new
-     style), and make scenes super detailed with angular environments (strong shapes and hard
-     edges, layered detail at every distance). See the `make-set-video` skill.
-   - **Character poly level** (active test `character_poly`, george 2026-11-25: "a/b different
-     characters"): set `"character": {"poly": ARM}` (chunky, low, smooth) as assigned.
-5. If the idea needs new props, rooms, accessories or fx, add them to the style's renderer
-   (`web/lowpoly.js` for lowpoly, `web/scene.js` for cartoon) and list them in README's
-   vocabulary. Build what the idea needs; don't force reuse of the same rooms every video.
+     camera style, a one-off idea) and the hypothesis behind it.
+   - **The daily look is the World of How reference style (george, 2026-11-26 23:31: "ensure the
+     script will be creating videos in the same style as we've iterated towards").** Every daily
+     Short is a set video in the **smol look**: big-head 2.5D characters (`prototypes/smol-look/bighead.js`)
+     and its renderer/post stack (`prototypes/smol-look/look.js`: clean warm lighting, depth of field on
+     close-ups, whip pans between quick cuts, soft bloom), bright clean detailed sets, dynamic cameras
+     with auto framing (`prototypes/smol-look/shot.cjs`). Template: the Shiratori Short
+     (`prototypes/shiratori`: `shira.html` sets and shots, `rend.cjs`, `score.py` + `mixshira.py` +
+     `audio.sh` soundtrack with recorded sfx and two-pass -14 LUFS loudnorm, `sheet.py`). Copy that
+     folder to `episodes/NNN-slug/` and build new sets, characters and shots for the new story; follow
+     the `make-set-video` skill (glitch-safe rendering, characters that move like 3D, physical
+     honesty, recorded sfx, soundfont score). If `prototypes/smol-look` or `prototypes/shiratori` is
+     not on main yet, take them from branch `claude/project-thread-dj8ktq`
+     (`git checkout origin/claude/project-thread-dj8ktq -- prototypes/smol-look prototypes/shiratori`)
+     and commit them with the episode. Do NOT use `web/lowpoly.js`, storybook, paper, cartoon, noir or
+     news for daily Shorts any more; record `"look": "smol"` in `experiment.vars`.
+   - Gary is optional in this look: "you" is the viewer, played by a big-head character when the
+     story is about something you do; history and animal facts are told straight. Keep the strong
+     "you" cold-open hook (bold claim over the most striking image), escalating labels, sourced
+     facts and the assigned CTA. Length is whatever the story needs (Shiratori ~48 s); don't pad.
+   - **Faces and sets (george, 2026-11-26):** keep the pearly-white faces we already use, and make
+     scenes super detailed with angular environments (strong shapes and hard edges, layered detail
+     at every distance). See the `make-set-video` skill.
+   - **Effort goes to quality (george, 2026-11-26):** one excellent Short beats three average ones.
+     Start with the strongest idea and finish it through the quality gate before starting a second;
+     deliver a second or third only if each also clears the bar.
+5. Build the sets, characters, props and shots the story needs in the episode's own page (copied
+   from the Shiratori template). Add any new reusable pose or character feature to
+   `prototypes/smol-look/bighead.js` so later Shorts get it too. Check framing with the shot
+   checker (heads projected every 0.1 s with rendering skipped) before rendering.
 6. Narration must spell out exactly what is spoken (george, 2026-11-26: "Mt. Gox" was read as a
    sentence end): no abbreviations with periods, digits, symbols or bare acronyms, and phonetic
    `pronounce` entries for names. `tts.py` runs `tools/lint_voice.py` first and stops on errors.
-   `python3 pipeline/tts.py EP && python3 pipeline/mix.py EP`, then render stills
-   (`NODE_PATH=$(npm root -g) node pipeline/render.mjs EP --stills 1,8,15,...`) and look
-   at them. Fix anything broken (overlaps, missing props, text off screen) before the
+   Voice and soundtrack with the template's `audio.sh EP` (Kokoro via `pipeline/tts.py`, score,
+   recorded sfx, loudness), then render stills across the whole Short and look at them. Fix anything broken (overlaps, missing props, text off screen) before the
    full render. **Quality bar** (george, 2026-11-26): the successful channels look high
    fidelity and vibrant and NEVER show an asset that looks unrealistic, only stylised. Check
    every still: colours rich and saturated, lighting that shapes forms, detailed sets, every
    prop and creature clearly readable as what it is in one consistent stylised look (no blobs,
    placeholder boxes, mismatched photoreal pieces, broken proportions). If anything fails,
    improve it or drop the Short. Then the
-   full render: `NODE_PATH=$(npm root -g) node pipeline/render.mjs EP` (~8 min).
+   full render on 8 GitHub runners via `render-set-request.txt` (see "Set videos" below and the
+   `make-set-video` skill); render locally only if Actions fails.
    Then the **quality gate** (`qa-video` skill): `python3 tools/qa.py EP --fix` must have no FAIL, and
    you review its contact sheet (`EP/qa/contact.jpg`) against this bar before delivery.
 7. Append a row to `episodes/LOG.md`, commit the script and any code changes to `main`
