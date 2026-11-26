@@ -131,7 +131,7 @@ const HATCH = new THREE.Group(); HATCH.position.set(-1.4, 0, 0); CELL.add(HATCH)
 const BOLT_M = std('#62666e', { roughness: 0.4, metalness: 0.4 });
 const RUST_T = tex((x, w, h) => { x.fillStyle = '#8a4420'; x.fillRect(0, 0, w, h); const r = rng(5); for (let i = 0; i < 300; i++) { x.fillStyle = ['#a8552a', '#c0703a', '#5a2a14'][i % 3]; x.beginPath(); x.arc(r() * w, r() * h, 2 + r() * 6, 0, 7); x.fill(); } }, 64, 64);
 { for (const sx of [-1, 1]) { const hole = add(new THREE.Mesh(new THREE.PlaneGeometry(0.46, 0.28), std('#0e0c10')), sx * 0.065, HY, HZ, HATCH); hole.rotation.y = sx * Math.PI / 2; }
-  { const hl = new THREE.PointLight('#fff0d8', 7, 3.5, 1.2); hl.position.set(-0.55, 1.05, HZ + 0.45); CELL.add(hl); lamps.push(hl); } HATCH.userData.flap = box(0.04, 0.3, 0.5, M.iron, 0.09, HY, HZ, HATCH, 0.01);
+  { const hl = new THREE.PointLight('#fff0d8', 6, 3, 1.2); hl.position.set(-0.45, 0.9, HZ + 0.3); CELL.add(hl); HATCH.userData.light = hl; } HATCH.userData.flap = box(0.04, 0.3, 0.5, M.iron, 0.09, HY, HZ, HATCH, 0.01);
   for (const sx of [-1, 1]) for (const [dy, dz] of [[0.2, -0.3], [0.2, 0.3], [-0.2, -0.3], [-0.2, 0.3]]) { const b = cyl(0.055, 0.055, 0.08, BOLT_M, sx * 0.1, HY + dy, HZ + dz, HATCH, 12); b.rotation.z = Math.PI / 2; }
   for (const sx of [-1, 1]) for (const dz of [-0.3, 0.3]) box(0.03, 0.5, 0.08, M.iron, sx * 0.085, HY, HZ + dz, HATCH, 0); }
 // cell 4 (index 3, Sapporo): a pried-up board, a hole and a dirt pile
@@ -228,14 +228,14 @@ const FU = new THREE.Group(); FU.position.set(0, 0, 80); scene.add(FU);
 }
 
 // ---------- characters ----------
-const SH = makeBighead(THREE, { cloth: '#d97a34', wrap: '#b45e24', pattern: 'weave', sleeve: '#d97a34', trousers: '#c46a2a', scalp: '#e4b19c', stubble: true, limb: '#f0d8c2' });
+const SH = makeBighead(THREE, { cloth: '#d97a34', wrap: '#b45e24', pattern: 'weave', sleeve: '#d97a34', trousers: '#c46a2a', skin: '#f6e4c4', scalp: '#e6cba8', stubble: true, limb: '#f0d8c2' });
 const G1 = makeBighead(THREE, { cloth: '#27324c', buttons: '#e2b54a', belt: '#1a1a1e', hat: 'police', hatC: '#27324c', badge: '#e2b54a', brows: 'thick' });
 const G2 = makeBighead(THREE, { cloth: '#27324c', buttons: '#e2b54a', belt: '#1a1a1e', hat: 'police', hatC: '#27324c', badge: '#e2b54a', tache: true });
 const COP = makeBighead(THREE, { cloth: '#1f2a44', buttons: '#e8c060', belt: '#3a2a1c', hat: 'police', hatC: '#1f2a44', badge: '#e8c060', tache: true, tacheC: '#4a3428' });
 const WARD = makeBighead(THREE, { cloth: '#4e5058', collar: '#f2efe6', glasses: true, hair: '#7a7470', brows: 'thin', trousers: '#3a3c42' });
 const CAST = [SH, G1, G2, COP, WARD]; CAST.forEach(c => scene.add(c.root));
 // keep the pearly faces from clipping to flat white under the interior lights
-CAST.forEach(c => c.head.traverse(o => { if (o.material && o.material.color) o.material.color.multiplyScalar(0.84); }));
+CAST.forEach(c => c.head.traverse(o => { if (o.material && o.material.color) o.material.color.multiplyScalar(0.93); }));
 // props in hands
 const WIRE = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([V(0, 0, 0), V(0.02, 0.06, 0.06), V(0.0, 0.1, 0.16), V(0.03, 0.12, 0.24)]), 16, 0.006, 6), M.iron); WIRE.castShadow = true;
 const BOWL = new THREE.Group(); { const prof = [V(0, 0, 0), V(0.05, 0, 0), V(0.07, 0.015, 0), V(0.1, 0.07, 0), V(0.095, 0.072, 0), V(0.065, 0.02, 0)].map(v => new THREE.Vector2(v.x, v.y));
@@ -294,8 +294,8 @@ shot(WT(1, 'wire'), 'night_in', move(frame(at(BUCKET.position.clone().add(V(XC *
 // ---- Akita: the tall cell and the skylight
 shot(WT(2, 'Caught'), 'night_in', move({ p: V(0.35, 1.0, -8.2), l: V(0, 1.0, -14), fov: 46 }, { p: V(0.3, 1.0, -8.8), l: V(0, 1.0, -14), fov: 46 }, 0.3),
   (u, t) => { const z = -15 + u * 2.6; place(G1, V(-0.45, 0, z - 0.5), 0, 'walk', 'angry', t); place(SH, V(0.05, 0, z), 0, 'cuffed', 'sad', t); place(G2, V(0.5, 0, z - 0.5), 0, 'walk', 'neutral', t + 0.3); }, { cuffs: SH });
-shot(WT(2, 'cell'), 'night_in', move({ p: at(C2, 1.7, 0.4, 1.6), l: at(C2, -0.2, 1.4, -0.3), fov: 62 }, { p: at(C2, 1.7, 0.4, 1.6), l: at(C2, -0.6, 6.4, -0.3), fov: 62 }, 0),
-  (u, t) => place(SH, at(C2, 0.3, 0, 0.1), RIGHT + 0.5, 'reach', 'worried', t), { hide: [2] });
+shot(WT(2, 'cell'), 'night_in', move({ p: at(C2, 1.6, 0.9, 1.7), l: at(C2, -0.8, 1.3, -0.5), fov: 64 }, { p: at(C2, 1.6, 0.9, 1.7), l: at(C2, -1.0, 6.4, -0.5), fov: 64 }, 0),
+  (u, t) => place(SH, at(C2, -0.7, 0, -0.5), RIGHT + 0.5, 'reach', 'worried', t), { hide: [2] });
 shot(WT(2, 'He', 2), 'night_in', move({ p: at(C2, 1.5, 0.5, 1.6), l: at(C2, -1.5, 3.2, -0.2), fov: 72 }, { p: at(C2, 1.5, 0.7, 1.6), l: at(C2, -1.5, 5.4, -0.2), fov: 72 }, 0),
   (u, t) => place(SH, at(C2, -1.75, 1.2 + u * 3.6, -0.2), -RIGHT, 'climb', 'focus', t), { hide: [2] });
 shot(WT(2, 'slipped'), 'night_out', move(frame(at(R0, -1.6, 1.9, 0), 3.4, 40, 14, 42), frame(at(R0, -1.2, 2.2, 0), 3.0, 30, 10, 42), 0.3),
@@ -311,7 +311,7 @@ shot(WT(4, 'Every'), 'cold_in', move(frame(V(-1.3, 0.8, HZ), 2.2, 55, 8, 38), fr
   (u, t) => { place(G1, V(-0.85, 0, HZ - 0.15), -RIGHT, 'offer', 'neutral', t); G1.hand('r').add(BOWL); BOWL.position.set(0, 0.03, 0); }, { flap: 1 });
 shot(WT(4, 'poured'), 'cold_in', move(frame(V(-1.8, HY + 0.3, HZ - 0.15), 1.9, 176, 10, 50), frame(V(-1.8, HY + 0.3, HZ - 0.15), 1.6, 168, 10, 50), 0.4),
   (u, t) => place(SH, V(-2.05, 0, HZ - 0.15), RIGHT, 'pour', 'focus', t, { k: 0.5 + u * 0.3 }), { pour: 1, rust: (u) => 0.2 + u * 0.35 });
-shot(WT(4, 'until'), 'cold_in', move(frame(V(-1.4, HY, HZ), 0.8, 62, 10, 40), frame(V(-1.4, HY, HZ), 0.6, 68, 10, 40), 0.7), (u, t) => { }, { rust: (u) => 0.55 + u * 0.45 });
+shot(WT(4, 'until'), 'cold_in', move(frame(V(-1.4, HY, HZ), 0.8, 62, 10, 40), frame(V(-1.4, HY, HZ), 0.6, 68, 10, 40), 0.7), (u, t) => { }, { rust: (u) => 0.55 + u * 0.45, rl: 1 });
 shot(WT(4, 'Then'), 'cold_in', move(frame(V(-1.9, 0.95, HZ - 0.1), 1.5, 172, 6, 50), frame(V(-1.9, 0.95, HZ - 0.1), 1.25, 164, 6, 50), 0.5),
   (u, t) => place(SH, V(-2.0, 0, HZ - 0.1), RIGHT, 'squeeze', 'pain', t, { k: ease(0, 0.6, u) }), { rust: () => 1 });
 shot(WT(4, 'squeezed'), 'cold_in', move(frame(V(-1.4, 0.45, HZ), 2.6, 30, 10, 50), frame(V(-0.8, 0.4, HZ), 2.4, 38, 10, 50), 0.25),
@@ -345,9 +345,9 @@ shot(WT(7, 'never'), 'day', move(frame(at(F0, 0, 0.8, 0.4), 3, 20, 10, 44), fram
 shot(WT(8, 'Follow'), 'day', move(frame(at(F0, 0.3, 0.95, 0), 2.4, 14, 6, 40), frame(at(F0, 0.3, 0.95, 0), 2.1, 6, 6, 40), 0.6),
   (u, t) => { place(SH, at(F0, 0, 0, 0), 0.15, 'wave', 'grin', t); place(WARD, at(F0, 1.0, 0, -0.7), -0.4, 'idle', 'kind', t); });
 const ray = new THREE.Raycaster(), fitCache = new Map();
-const OCC = []; scene.traverse(o => { if (o.isMesh && !o.isSprite && !o.isPoints) OCC.push(o); });
+const OCC = []; scene.traverse(o => { if (o.isMesh && !o.isSprite && !o.isPoints && !o.userData.ink) OCC.push(o); });
 function fitShot(si) { if (fitCache.has(si)) return fitCache.get(si); const s = S[si]; let k = 1; const sides = [];
-  scene.updateMatrixWorld(true); scene.traverse(o => { if (o.isMesh && o.material && !Array.isArray(o.material)) { sides.push([o.material, o.material.side]); o.material.side = THREE.DoubleSide; } });
+  scene.updateMatrixWorld(true); const seen = new Set(); scene.traverse(o => { if (o.isMesh && o.material && !Array.isArray(o.material) && !seen.has(o.material)) { seen.add(o.material); sides.push([o.material, o.material.side]); o.material.side = THREE.DoubleSide; } });   // shared materials: record each once
   const vis = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
   for (const u of [0, 0.25, 0.5, 0.75, 1]) { const c = s.camf(u), dir = c.p.clone().sub(c.l), d = dir.length(); ray.set(c.l, dir.normalize()); ray.far = d;
     ray.camera = cam; const hits = ray.intersectObjects(OCC, false).filter(h => h.object.isMesh && vis(h.object) && !CAST.some(ch => { for (let o = h.object; o; o = o.parent) if (o === ch.root) return true; return false; }) && h.distance > 0.35);
@@ -373,6 +373,7 @@ window.renderFrame = (t) => {
   BUCKET.userData.hoops[1].visible = s.hoop !== 0;
   HATCH.userData.flap.rotation.z = s.flap ? -1.2 : (s.flapOpen ? -1.4 : 0); HATCH.userData.flap.position.y = s.flap || s.flapOpen ? 0.82 : 0.62;
   ROOF.userData.lid.visible = !s.lid; FRONTS.forEach((f, i) => { if (f) f.visible = !(s.hide || []).includes(i); }); HATCH.visible = !(s.hide || []).includes(1) || true;
+  HATCH.userData.light.visible = !!s.rl;
   s.act(un, t);
   if (s.cuffs) { s.cuffs.root.updateMatrixWorld(true); const a = s.cuffs.arms.l.hand.getWorldPosition(V(0, 0, 0)), b = s.cuffs.arms.r.hand.getWorldPosition(V(0, 0, 0)); CUFFS.position.copy(a).add(b).multiplyScalar(0.5); CUFFS.rotation.set(0, s.cuffs.root.rotation.y, 0); CUFFS.visible = true; }
   // environment

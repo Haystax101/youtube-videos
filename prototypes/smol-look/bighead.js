@@ -13,9 +13,22 @@
 const TOON = {};
 function toonGrad(THREE) {
   if (TOON.g) return TOON.g;
-  const d = new Uint8Array([90, 90, 90, 255, 170, 170, 170, 255, 235, 235, 235, 255, 255, 255, 255, 255]);
+  const d = new Uint8Array([135, 135, 135, 255, 200, 200, 200, 255, 245, 245, 245, 255, 255, 255, 255, 255]);   // soft cel: flat fill, gentle shadow
   const t = new THREE.DataTexture(d, 4, 1, THREE.RGBAFormat); t.minFilter = t.magFilter = THREE.NearestFilter; t.needsUpdate = true;
   return (TOON.g = t);
+}
+// Ink outline (inverted hull): a dark back-face shell pushed out along the normals, like the reference's drawn linework.
+const INKM = {};
+export function inkMaterial(THREE, width = 0.011) {
+  if (INKM[width]) return INKM[width];
+  const m = new THREE.MeshBasicMaterial({ color: '#1c1417', side: THREE.BackSide, toneMapped: false });
+  m.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>\n  transformed += normalize(normal) * ${width.toFixed(5)};`); };
+  m.customProgramCacheKey = () => 'ink' + width;
+  return (INKM[width] = m);
+}
+export function addInk(THREE, root, width = 0.011, skip = new Set()) {
+  const meshes = []; root.traverse((o) => { if (o.isMesh && !skip.has(o) && !o.userData.noInk && !(o.material && o.material.transparent)) meshes.push(o); });
+  for (const m of meshes) { const sh = new THREE.Mesh(m.geometry, inkMaterial(THREE, width)); sh.castShadow = false; sh.receiveShadow = false; sh.userData.noInk = true; sh.userData.ink = true; m.add(sh); }
 }
 export function toon(THREE, color, extra = {}) { return new THREE.MeshToonMaterial({ color, gradientMap: toonGrad(THREE), ...extra }); }
 
@@ -126,6 +139,7 @@ export function makeBighead(THREE, spec = {}) {
   const Y = new THREE.Vector3(0, 1, 0), tmp = new THREE.Vector3();
   function bone(m, a, b) { tmp.subVectors(b, a); const L = tmp.length(); m.position.copy(a).addScaledVector(tmp, 0.5); m.scale.set(1, Math.max(0.01, L), 1); m.quaternion.setFromUnitVectors(Y, tmp.normalize()); }
   function arm(s, elbow, hand) { const A = arms[s]; const e = new THREE.Vector3(...elbow), h = new THREE.Vector3(...hand); bone(A.up, A.sh, e); bone(A.lo, e, h); A.hand.position.copy(h); A.elb.position.copy(e); }
+  if (spec.ink !== false) addInk(THREE, root, spec.ink || 0.011, new Set([decal]));
   let lastExpr = '', lastT = -1;
   const api = {
     root, head, hips, decal, arms, legs, spec,

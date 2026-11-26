@@ -1,2 +1,2 @@
 prototypes/shiratori
-# v2
+# v3: ink outlines, soft cel shading
