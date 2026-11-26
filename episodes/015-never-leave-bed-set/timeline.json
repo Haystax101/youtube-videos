@@ -1,1185 +1,1176 @@
 {
- "duration": 63.84,
- "sr": 24000,
- "engine": "qwen3-tts",
- "voice": "ryan",
- "cast": {
-  "narrator": "ryan",
-  "doctor": "uncle_fu",
-  "gary": "aiden",
-  "oldgary": "aiden"
- },
+ "duration": 64.594,
+ "engine": "kokoro:am_michael+qwen3-tts characters",
  "beats": [
   {
    "i": 0,
-   "start": 0.142,
-   "end": 4.038,
+   "start": 0.15,
+   "end": 4.595,
    "deathAt": null,
    "words": [
     {
      "w": "Three",
-     "s": 0.142,
-     "e": 0.35,
+     "s": 0.15,
+     "e": 0.387,
      "speaker": "narrator"
     },
     {
      "w": "weeks",
-     "s": 0.35,
-     "e": 0.558,
+     "s": 0.387,
+     "e": 0.624,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 0.558,
-     "e": 0.748,
+     "s": 0.624,
+     "e": 0.839,
      "speaker": "narrator"
     },
     {
      "w": "bed",
-     "s": 0.748,
-     "e": 0.943,
+     "s": 0.839,
+     "e": 1.061,
      "speaker": "narrator"
     },
     {
      "w": "will",
-     "s": 0.943,
-     "e": 1.145,
+     "s": 1.061,
+     "e": 1.291,
      "speaker": "narrator"
     },
     {
      "w": "wreck",
-     "s": 1.145,
-     "e": 1.354,
+     "s": 1.291,
+     "e": 1.528,
      "speaker": "narrator"
     },
     {
      "w": "your",
-     "s": 1.354,
-     "e": 1.557,
+     "s": 1.528,
+     "e": 1.758,
      "speaker": "narrator"
     },
     {
      "w": "body",
-     "s": 1.557,
-     "e": 1.934,
+     "s": 1.758,
+     "e": 2.187,
      "speaker": "narrator"
     },
     {
      "w": "worse",
-     "s": 1.934,
-     "e": 2.142,
+     "s": 2.187,
+     "e": 2.425,
      "speaker": "narrator"
     },
     {
      "w": "than",
-     "s": 2.142,
-     "e": 2.345,
+     "s": 2.425,
+     "e": 2.654,
      "speaker": "narrator"
     },
     {
      "w": "thirty",
-     "s": 2.345,
-     "e": 2.736,
+     "s": 2.654,
+     "e": 3.099,
      "speaker": "narrator"
     },
     {
      "w": "years",
-     "s": 2.736,
-     "e": 2.944,
+     "s": 3.099,
+     "e": 3.336,
      "speaker": "narrator"
     },
     {
      "w": "of",
-     "s": 2.944,
-     "e": 3.134,
+     "s": 3.336,
+     "e": 3.551,
      "speaker": "narrator"
     },
     {
      "w": "getting",
-     "s": 3.134,
-     "e": 3.531,
+     "s": 3.551,
+     "e": 4.002,
      "speaker": "narrator"
     },
     {
      "w": "old.",
-     "s": 3.531,
-     "e": 3.726,
+     "s": 4.002,
+     "e": 4.225,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 1,
-   "start": 4.038,
-   "end": 8.752,
+   "start": 4.595,
+   "end": 9.967,
    "deathAt": null,
    "words": [
     {
      "w": "Day",
-     "s": 4.038,
-     "e": 4.3,
+     "s": 4.595,
+     "e": 5.011,
      "speaker": "narrator"
     },
     {
      "w": "one.",
-     "s": 4.3,
-     "e": 4.562,
+     "s": 5.011,
+     "e": 5.427,
      "speaker": "narrator"
     },
     {
      "w": "No",
-     "s": 4.638,
-     "e": 4.974,
+     "s": 5.547,
+     "e": 5.877,
      "speaker": "narrator"
     },
     {
      "w": "alarm.",
-     "s": 4.974,
-     "e": 5.658,
+     "s": 5.877,
+     "e": 6.549,
      "speaker": "narrator"
     },
     {
      "w": "No",
-     "s": 5.734,
-     "e": 6.076,
+     "s": 6.669,
+     "e": 7.128,
      "speaker": "narrator"
     },
     {
      "w": "stairs.",
-     "s": 6.076,
-     "e": 6.466,
+     "s": 7.128,
+     "e": 7.651,
      "speaker": "narrator"
     },
     {
      "w": "Snacks",
-     "s": 6.542,
-     "e": 7.05,
+     "s": 7.771,
+     "e": 8.183,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 7.05,
-     "e": 7.497,
+     "s": 8.183,
+     "e": 8.544,
      "speaker": "narrator"
     },
     {
      "w": "reach.",
-     "s": 7.497,
-     "e": 7.991,
+     "s": 8.544,
+     "e": 8.944,
      "speaker": "narrator"
     },
     {
      "w": "Bliss.",
-     "s": 8.066,
-     "e": 8.582,
+     "s": 9.064,
+     "e": 9.747,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 2,
-   "start": 8.752,
-   "end": 15.435,
+   "start": 9.967,
+   "end": 17.155,
    "deathAt": null,
    "words": [
     {
      "w": "In",
-     "s": 8.752,
-     "e": 8.96,
+     "s": 9.967,
+     "e": 10.21,
      "speaker": "narrator"
     },
     {
      "w": "1966,",
-     "s": 8.96,
-     "e": 10.242,
+     "s": 10.21,
+     "e": 11.701,
      "speaker": "narrator"
     },
     {
      "w": "scientists",
-     "s": 10.242,
-     "e": 10.704,
+     "s": 11.701,
+     "e": 12.237,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 10.704,
-     "e": 10.912,
+     "s": 12.237,
+     "e": 12.48,
      "speaker": "narrator"
     },
     {
      "w": "Dallas",
-     "s": 10.912,
-     "e": 11.344,
+     "s": 12.48,
+     "e": 12.983,
      "speaker": "narrator"
     },
     {
      "w": "did",
-     "s": 11.344,
-     "e": 11.56,
+     "s": 12.983,
+     "e": 13.234,
      "speaker": "narrator"
     },
     {
      "w": "this",
-     "s": 11.56,
-     "e": 11.784,
+     "s": 13.234,
+     "e": 13.494,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 11.784,
-     "e": 11.992,
+     "s": 13.494,
+     "e": 13.737,
      "speaker": "narrator"
     },
     {
      "w": "five",
-     "s": 11.992,
-     "e": 12.216,
+     "s": 13.737,
+     "e": 13.996,
      "speaker": "narrator"
     },
     {
      "w": "fit",
-     "s": 12.216,
-     "e": 12.432,
+     "s": 13.996,
+     "e": 14.248,
      "speaker": "narrator"
     },
     {
      "w": "twenty-year-olds.",
-     "s": 12.432,
-     "e": 13.117,
+     "s": 14.248,
+     "e": 15.044,
      "speaker": "narrator"
     },
     {
      "w": "Three",
-     "s": 13.192,
-     "e": 13.517,
+     "s": 15.164,
+     "e": 15.442,
      "speaker": "narrator"
     },
     {
      "w": "weeks,",
-     "s": 13.517,
-     "e": 14.006,
+     "s": 15.442,
+     "e": 15.859,
      "speaker": "narrator"
     },
     {
      "w": "flat",
-     "s": 14.006,
-     "e": 14.321,
+     "s": 15.859,
+     "e": 16.128,
      "speaker": "narrator"
     },
     {
      "w": "on",
-     "s": 14.321,
-     "e": 14.615,
+     "s": 16.128,
+     "e": 16.38,
      "speaker": "narrator"
     },
     {
      "w": "their",
-     "s": 14.615,
-     "e": 14.94,
+     "s": 16.38,
+     "e": 16.657,
      "speaker": "narrator"
     },
     {
      "w": "backs.",
-     "s": 14.94,
-     "e": 15.265,
+     "s": 16.657,
+     "e": 16.935,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 3,
-   "start": 15.435,
-   "end": 21.81,
+   "start": 17.155,
+   "end": 23.757,
    "deathAt": null,
    "words": [
     {
      "w": "Okay.",
-     "s": 15.435,
-     "e": 15.873,
+     "s": 17.155,
+     "e": 17.729,
      "speaker": "doctor"
     },
     {
      "w": "Stand",
-     "s": 15.948,
-     "e": 16.469,
+     "s": 17.849,
+     "e": 18.432,
      "speaker": "doctor"
     },
     {
      "w": "up,",
-     "s": 16.469,
-     "e": 17.203,
+     "s": 18.432,
+     "e": 19.255,
      "speaker": "doctor"
     },
     {
      "w": "please.",
-     "s": 17.203,
-     "e": 17.739,
+     "s": 19.255,
+     "e": 19.857,
      "speaker": "doctor"
     },
     {
      "w": "Easy!",
-     "s": 17.814,
-     "e": 18.622,
+     "s": 19.977,
+     "e": 20.943,
      "speaker": "gary"
     },
     {
      "w": "Your",
-     "s": 18.697,
-     "e": 18.977,
+     "s": 21.063,
+     "e": 21.299,
      "speaker": "narrator"
     },
     {
      "w": "blood",
-     "s": 18.977,
-     "e": 19.268,
+     "s": 21.299,
+     "e": 21.542,
      "speaker": "narrator"
     },
     {
      "w": "drops",
-     "s": 19.268,
-     "e": 19.558,
+     "s": 21.542,
+     "e": 21.786,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 19.558,
-     "e": 19.82,
+     "s": 21.786,
+     "e": 22.006,
      "speaker": "narrator"
     },
     {
      "w": "your",
-     "s": 19.82,
-     "e": 20.1,
+     "s": 22.006,
+     "e": 22.242,
      "speaker": "narrator"
     },
     {
      "w": "feet,",
-     "s": 20.1,
-     "e": 20.527,
+     "s": 22.242,
+     "e": 22.601,
      "speaker": "narrator"
     },
     {
      "w": "and",
-     "s": 20.527,
-     "e": 20.799,
+     "s": 22.601,
+     "e": 22.83,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 20.799,
-     "e": 21.071,
+     "s": 22.83,
+     "e": 23.058,
      "speaker": "narrator"
     },
     {
      "w": "room",
-     "s": 21.071,
-     "e": 21.351,
+     "s": 23.058,
+     "e": 23.294,
      "speaker": "narrator"
     },
     {
      "w": "spins.",
-     "s": 21.351,
-     "e": 21.641,
+     "s": 23.294,
+     "e": 23.537,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 4,
-   "start": 21.81,
-   "end": 25.758,
+   "start": 23.757,
+   "end": 27.092,
    "deathAt": null,
    "words": [
     {
      "w": "On",
-     "s": 21.81,
-     "e": 22.029,
+     "s": 23.757,
+     "e": 23.937,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 22.029,
-     "e": 22.255,
+     "s": 23.937,
+     "e": 24.123,
      "speaker": "narrator"
     },
     {
      "w": "treadmill,",
-     "s": 22.255,
-     "e": 22.85,
+     "s": 24.123,
+     "e": 24.614,
      "speaker": "narrator"
     },
     {
      "w": "their",
-     "s": 22.85,
-     "e": 23.091,
+     "s": 24.614,
+     "e": 24.813,
      "speaker": "narrator"
     },
     {
      "w": "fitness",
-     "s": 23.091,
-     "e": 23.55,
+     "s": 24.813,
+     "e": 25.191,
      "speaker": "narrator"
     },
     {
      "w": "had",
-     "s": 23.55,
-     "e": 23.775,
+     "s": 25.191,
+     "e": 25.377,
      "speaker": "narrator"
     },
     {
      "w": "crashed",
-     "s": 23.775,
-     "e": 24.234,
+     "s": 25.377,
+     "e": 25.756,
      "speaker": "narrator"
     },
     {
      "w": "by",
-     "s": 24.234,
-     "e": 24.453,
+     "s": 25.756,
+     "e": 25.936,
      "speaker": "narrator"
     },
     {
      "w": "more",
-     "s": 24.453,
-     "e": 24.686,
+     "s": 25.936,
+     "e": 26.128,
      "speaker": "narrator"
     },
     {
      "w": "than",
-     "s": 24.686,
-     "e": 24.919,
+     "s": 26.128,
+     "e": 26.32,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 24.919,
-     "e": 25.129,
+     "s": 26.32,
+     "e": 26.494,
      "speaker": "narrator"
     },
     {
      "w": "quarter.",
-     "s": 25.129,
-     "e": 25.588,
+     "s": 26.494,
+     "e": 26.872,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 5,
-   "start": 25.758,
-   "end": 29.58,
+   "start": 27.092,
+   "end": 30.043,
    "deathAt": null,
    "words": [
     {
      "w": "Every",
-     "s": 25.758,
-     "e": 26.502,
+     "s": 27.092,
+     "e": 27.648,
      "speaker": "narrator"
     },
     {
      "w": "heartbeat",
-     "s": 26.502,
-     "e": 27.047,
+     "s": 27.648,
+     "e": 28.056,
      "speaker": "narrator"
     },
     {
      "w": "pushed",
-     "s": 27.047,
-     "e": 27.566,
+     "s": 28.056,
+     "e": 28.444,
      "speaker": "narrator"
     },
     {
      "w": "out",
-     "s": 27.566,
-     "e": 27.826,
+     "s": 28.444,
+     "e": 28.638,
      "speaker": "narrator"
     },
     {
      "w": "almost",
-     "s": 27.826,
-     "e": 28.345,
+     "s": 28.638,
+     "e": 29.027,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 28.345,
-     "e": 28.588,
+     "s": 29.027,
+     "e": 29.208,
      "speaker": "narrator"
     },
     {
      "w": "third",
-     "s": 28.588,
-     "e": 28.864,
+     "s": 29.208,
+     "e": 29.415,
      "speaker": "narrator"
     },
     {
      "w": "less",
-     "s": 28.864,
-     "e": 29.133,
+     "s": 29.415,
+     "e": 29.615,
      "speaker": "narrator"
     },
     {
      "w": "blood.",
-     "s": 29.133,
-     "e": 29.41,
+     "s": 29.615,
+     "e": 29.823,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 6,
-   "start": 29.58,
-   "end": 33.62,
+   "start": 30.043,
+   "end": 33.655,
    "deathAt": null,
    "words": [
     {
      "w": "Stay",
-     "s": 29.58,
-     "e": 29.822,
+     "s": 30.043,
+     "e": 30.254,
      "speaker": "narrator"
     },
     {
      "w": "longer,",
-     "s": 29.822,
-     "e": 30.414,
+     "s": 30.254,
+     "e": 30.774,
      "speaker": "narrator"
     },
     {
      "w": "and",
-     "s": 30.414,
-     "e": 30.648,
+     "s": 30.774,
+     "e": 30.979,
      "speaker": "narrator"
     },
     {
      "w": "your",
-     "s": 30.648,
-     "e": 30.89,
+     "s": 30.979,
+     "e": 31.19,
      "speaker": "narrator"
     },
     {
      "w": "bones",
-     "s": 30.89,
-     "e": 31.348,
+     "s": 31.19,
+     "e": 31.593,
      "speaker": "narrator"
     },
     {
      "w": "thin",
-     "s": 31.348,
-     "e": 31.59,
+     "s": 31.593,
+     "e": 31.804,
      "speaker": "narrator"
     },
     {
      "w": "by",
-     "s": 31.59,
-     "e": 31.815,
+     "s": 31.804,
+     "e": 32.002,
      "speaker": "narrator"
     },
     {
      "w": "about",
-     "s": 31.815,
-     "e": 32.275,
+     "s": 32.002,
+     "e": 32.404,
      "speaker": "narrator"
     },
     {
      "w": "one",
-     "s": 32.275,
-     "e": 32.508,
+     "s": 32.404,
+     "e": 32.609,
      "speaker": "narrator"
     },
     {
      "w": "percent",
-     "s": 32.508,
-     "e": 32.983,
+     "s": 32.609,
+     "e": 33.025,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 32.983,
-     "e": 33.201,
+     "s": 33.025,
+     "e": 33.216,
      "speaker": "narrator"
     },
     {
      "w": "month.",
-     "s": 33.201,
-     "e": 33.45,
+     "s": 33.216,
+     "e": 33.435,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 7,
-   "start": 33.62,
-   "end": 39.573,
+   "start": 33.655,
+   "end": 39.336,
    "deathAt": null,
    "words": [
     {
      "w": "NASA",
-     "s": 33.62,
-     "e": 34.042,
+     "s": 33.655,
+     "e": 34.054,
      "speaker": "narrator"
     },
     {
      "w": "once",
-     "s": 34.042,
-     "e": 34.269,
+     "s": 34.054,
+     "e": 34.267,
      "speaker": "narrator"
     },
     {
      "w": "offered",
-     "s": 34.269,
-     "e": 34.91,
+     "s": 34.267,
+     "e": 34.873,
      "speaker": "narrator"
     },
     {
      "w": "eighteen",
-     "s": 34.91,
-     "e": 35.362,
+     "s": 34.873,
+     "e": 35.3,
      "speaker": "narrator"
     },
     {
      "w": "thousand",
-     "s": 35.362,
-     "e": 35.814,
+     "s": 35.3,
+     "e": 35.727,
      "speaker": "narrator"
     },
     {
      "w": "dollars",
-     "s": 35.814,
-     "e": 36.259,
+     "s": 35.727,
+     "e": 36.147,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 36.259,
-     "e": 36.471,
+     "s": 36.147,
+     "e": 36.347,
      "speaker": "narrator"
     },
     {
      "w": "lie",
-     "s": 36.471,
-     "e": 36.69,
+     "s": 36.347,
+     "e": 36.554,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 36.69,
-     "e": 36.901,
+     "s": 36.554,
+     "e": 36.753,
      "speaker": "narrator"
     },
     {
      "w": "bed",
-     "s": 36.901,
-     "e": 37.12,
+     "s": 36.753,
+     "e": 36.96,
      "speaker": "narrator"
     },
     {
      "w": "for",
-     "s": 37.12,
-     "e": 37.339,
+     "s": 36.96,
+     "e": 37.166,
      "speaker": "narrator"
     },
     {
      "w": "seventy",
-     "s": 37.339,
-     "e": 37.98,
+     "s": 37.166,
+     "e": 37.772,
      "speaker": "narrator"
     },
     {
      "w": "days,",
-     "s": 37.98,
-     "e": 38.324,
+     "s": 37.772,
+     "e": 38.097,
      "speaker": "narrator"
     },
     {
      "w": "just",
-     "s": 38.324,
-     "e": 38.55,
+     "s": 38.097,
+     "e": 38.311,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 38.55,
-     "e": 38.761,
+     "s": 38.311,
+     "e": 38.51,
      "speaker": "narrator"
     },
     {
      "w": "study",
-     "s": 38.761,
-     "e": 39.192,
+     "s": 38.51,
+     "e": 38.916,
      "speaker": "narrator"
     },
     {
      "w": "it.",
-     "s": 39.192,
-     "e": 39.403,
+     "s": 38.916,
+     "e": 39.116,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 8,
-   "start": 39.573,
-   "end": 47.952,
+   "start": 39.336,
+   "end": 48.195,
    "deathAt": null,
    "words": [
     {
      "w": "Thirty",
-     "s": 39.573,
-     "e": 40.163,
+     "s": 39.336,
+     "e": 39.816,
      "speaker": "narrator"
     },
     {
      "w": "years",
-     "s": 40.163,
-     "e": 40.478,
+     "s": 39.816,
+     "e": 40.072,
      "speaker": "narrator"
     },
     {
      "w": "later,",
-     "s": 40.478,
-     "e": 41.218,
+     "s": 40.072,
+     "e": 40.673,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 41.218,
-     "e": 41.514,
+     "s": 40.673,
+     "e": 40.912,
      "speaker": "narrator"
     },
     {
      "w": "same",
-     "s": 41.514,
-     "e": 41.819,
+     "s": 40.912,
+     "e": 41.16,
      "speaker": "narrator"
     },
     {
      "w": "men",
-     "s": 41.819,
-     "e": 42.114,
+     "s": 41.16,
+     "e": 41.4,
      "speaker": "narrator"
     },
     {
      "w": "came",
-     "s": 42.114,
-     "e": 42.42,
+     "s": 41.4,
+     "e": 41.648,
      "speaker": "narrator"
     },
     {
      "w": "back.",
-     "s": 42.42,
-     "e": 42.725,
+     "s": 41.648,
+     "e": 41.896,
      "speaker": "narrator"
     },
     {
      "w": "Not",
-     "s": 42.8,
-     "e": 43.061,
+     "s": 42.016,
+     "e": 42.315,
      "speaker": "oldgary"
     },
     {
      "w": "this",
-     "s": 43.061,
-     "e": 43.331,
+     "s": 42.315,
+     "e": 42.624,
      "speaker": "oldgary"
     },
     {
      "w": "bed",
-     "s": 43.331,
-     "e": 43.592,
+     "s": 42.624,
+     "e": 42.922,
      "speaker": "oldgary"
     },
     {
      "w": "again.",
-     "s": 43.592,
-     "e": 44.106,
+     "s": 42.922,
+     "e": 43.51,
      "speaker": "oldgary"
     },
     {
      "w": "Three",
-     "s": 44.181,
-     "e": 44.375,
+     "s": 43.63,
+     "e": 43.864,
      "speaker": "narrator"
     },
     {
      "w": "decades",
-     "s": 44.375,
-     "e": 44.907,
+     "s": 43.864,
+     "e": 44.508,
      "speaker": "narrator"
     },
     {
      "w": "of",
-     "s": 44.907,
-     "e": 45.081,
+     "s": 44.508,
+     "e": 44.72,
      "speaker": "narrator"
     },
     {
      "w": "ageing",
-     "s": 45.081,
-     "e": 45.444,
+     "s": 44.72,
+     "e": 45.159,
      "speaker": "narrator"
     },
     {
      "w": "had",
-     "s": 45.444,
-     "e": 45.625,
+     "s": 45.159,
+     "e": 45.379,
      "speaker": "narrator"
     },
     {
      "w": "hurt",
-     "s": 45.625,
-     "e": 45.813,
+     "s": 45.379,
+     "e": 45.606,
      "speaker": "narrator"
     },
     {
      "w": "their",
-     "s": 45.813,
-     "e": 46.007,
+     "s": 45.606,
+     "e": 45.84,
      "speaker": "narrator"
     },
     {
      "w": "fitness",
-     "s": 46.007,
-     "e": 46.375,
+     "s": 45.84,
+     "e": 46.287,
      "speaker": "narrator"
     },
     {
      "w": "less",
-     "s": 46.375,
-     "e": 46.563,
+     "s": 46.287,
+     "e": 46.514,
      "speaker": "narrator"
     },
     {
      "w": "than",
-     "s": 46.563,
-     "e": 46.75,
+     "s": 46.514,
+     "e": 46.741,
      "speaker": "narrator"
     },
     {
      "w": "those",
-     "s": 46.75,
-     "e": 46.943,
+     "s": 46.741,
+     "e": 46.975,
      "speaker": "narrator"
     },
     {
      "w": "three",
-     "s": 46.943,
-     "e": 47.138,
+     "s": 46.975,
+     "e": 47.209,
      "speaker": "narrator"
     },
     {
      "w": "weeks",
-     "s": 47.138,
-     "e": 47.331,
+     "s": 47.209,
+     "e": 47.444,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 47.331,
-     "e": 47.507,
+     "s": 47.444,
+     "e": 47.656,
      "speaker": "narrator"
     },
     {
      "w": "bed.",
-     "s": 47.507,
-     "e": 47.688,
+     "s": 47.656,
+     "e": 47.875,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 9,
-   "start": 47.952,
-   "end": 54.142,
+   "start": 48.195,
+   "end": 54.338,
    "deathAt": null,
    "words": [
     {
      "w": "But",
-     "s": 47.952,
-     "e": 48.266,
+     "s": 48.195,
+     "e": 48.441,
      "speaker": "narrator"
     },
     {
      "w": "here's",
-     "s": 48.266,
-     "e": 48.885,
+     "s": 48.441,
+     "e": 48.924,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 48.885,
-     "e": 49.199,
+     "s": 48.924,
+     "e": 49.17,
      "speaker": "narrator"
     },
     {
      "w": "twist.",
-     "s": 49.199,
-     "e": 49.535,
+     "s": 49.17,
+     "e": 49.433,
      "speaker": "narrator"
     },
     {
      "w": "Back",
-     "s": 49.61,
-     "e": 49.834,
+     "s": 49.553,
+     "e": 49.786,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 49.834,
-     "e": 50.042,
+     "s": 49.786,
+     "e": 50.005,
      "speaker": "narrator"
     },
     {
      "w": "1966,",
-     "s": 50.042,
-     "e": 51.324,
+     "s": 50.005,
+     "e": 51.345,
      "speaker": "narrator"
     },
     {
      "w": "eight",
-     "s": 51.324,
-     "e": 51.554,
+     "s": 51.345,
+     "e": 51.586,
      "speaker": "narrator"
     },
     {
      "w": "weeks",
-     "s": 51.554,
-     "e": 51.785,
+     "s": 51.586,
+     "e": 51.828,
      "speaker": "narrator"
     },
     {
      "w": "of",
-     "s": 51.785,
-     "e": 51.993,
+     "s": 51.828,
+     "e": 52.046,
      "speaker": "narrator"
     },
     {
      "w": "training",
-     "s": 51.993,
-     "e": 52.44,
+     "s": 52.046,
+     "e": 52.513,
      "speaker": "narrator"
     },
     {
      "w": "made",
-     "s": 52.44,
-     "e": 52.663,
+     "s": 52.513,
+     "e": 52.747,
      "speaker": "narrator"
     },
     {
      "w": "them",
-     "s": 52.663,
-     "e": 52.886,
+     "s": 52.747,
+     "e": 52.98,
      "speaker": "narrator"
     },
     {
      "w": "fitter",
-     "s": 52.886,
-     "e": 53.318,
+     "s": 52.98,
+     "e": 53.432,
      "speaker": "narrator"
     },
     {
      "w": "than",
-     "s": 53.318,
-     "e": 53.542,
+     "s": 53.432,
+     "e": 53.666,
      "speaker": "narrator"
     },
     {
      "w": "before.",
-     "s": 53.542,
-     "e": 53.973,
+     "s": 53.666,
+     "e": 54.118,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 10,
-   "start": 54.142,
-   "end": 59.251,
+   "start": 54.338,
+   "end": 59.102,
    "deathAt": null,
    "words": [
     {
      "w": "That's",
-     "s": 54.142,
-     "e": 54.429,
+     "s": 54.338,
+     "e": 54.602,
      "speaker": "narrator"
     },
     {
      "w": "why",
-     "s": 54.429,
-     "e": 54.698,
+     "s": 54.602,
+     "e": 54.849,
      "speaker": "narrator"
     },
     {
      "w": "heart",
-     "s": 54.698,
-     "e": 54.985,
+     "s": 54.849,
+     "e": 55.113,
      "speaker": "narrator"
     },
     {
      "w": "patients,",
-     "s": 54.985,
-     "e": 55.685,
+     "s": 55.113,
+     "e": 55.757,
      "speaker": "narrator"
     },
     {
      "w": "once",
-     "s": 55.685,
-     "e": 55.963,
+     "s": 55.757,
+     "e": 56.013,
      "speaker": "narrator"
     },
     {
      "w": "kept",
-     "s": 55.963,
-     "e": 56.241,
+     "s": 56.013,
+     "e": 56.268,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 56.241,
-     "e": 56.5,
+     "s": 56.268,
+     "e": 56.507,
      "speaker": "narrator"
     },
     {
      "w": "bed",
-     "s": 56.5,
-     "e": 56.769,
+     "s": 56.507,
+     "e": 56.754,
      "speaker": "narrator"
     },
     {
      "w": "for",
-     "s": 56.769,
-     "e": 57.038,
+     "s": 56.754,
+     "e": 57.002,
      "speaker": "narrator"
     },
     {
      "w": "weeks,",
-     "s": 57.038,
-     "e": 57.469,
+     "s": 57.002,
+     "e": 57.399,
      "speaker": "narrator"
     },
     {
      "w": "now",
-     "s": 57.469,
-     "e": 57.738,
+     "s": 57.399,
+     "e": 57.646,
      "speaker": "narrator"
     },
     {
      "w": "get",
-     "s": 57.738,
-     "e": 58.007,
+     "s": 57.646,
+     "e": 57.893,
      "speaker": "narrator"
     },
     {
      "w": "up",
-     "s": 58.007,
-     "e": 58.266,
+     "s": 57.893,
+     "e": 58.132,
      "speaker": "narrator"
     },
     {
      "w": "within",
-     "s": 58.266,
-     "e": 58.803,
+     "s": 58.132,
+     "e": 58.626,
      "speaker": "narrator"
     },
     {
      "w": "days.",
-     "s": 58.803,
-     "e": 59.081,
+     "s": 58.626,
+     "e": 58.882,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 11,
-   "start": 59.251,
-   "end": 62.896,
+   "start": 59.102,
+   "end": 63.594,
    "deathAt": null,
    "words": [
     {
      "w": "So",
-     "s": 59.251,
-     "e": 59.493,
+     "s": 59.102,
+     "e": 59.404,
      "speaker": "narrator"
     },
     {
      "w": "get",
-     "s": 59.493,
-     "e": 59.745,
+     "s": 59.404,
+     "e": 59.717,
      "speaker": "narrator"
     },
     {
      "w": "up.",
-     "s": 59.745,
-     "e": 59.988,
+     "s": 59.717,
+     "e": 60.019,
      "speaker": "narrator"
     },
     {
      "w": "Your",
-     "s": 60.063,
-     "e": 60.326,
+     "s": 60.139,
+     "e": 60.401,
      "speaker": "narrator"
     },
     {
      "w": "heart",
-     "s": 60.326,
-     "e": 60.598,
+     "s": 60.401,
+     "e": 60.672,
      "speaker": "narrator"
     },
     {
      "w": "is",
-     "s": 60.598,
-     "e": 60.844,
+     "s": 60.672,
+     "e": 60.917,
      "speaker": "narrator"
     },
     {
      "w": "counting.",
-     "s": 60.844,
-     "e": 61.371,
+     "s": 60.917,
+     "e": 61.441,
      "speaker": "narrator"
     },
     {
      "w": "Comment",
-     "s": 61.446,
-     "e": 61.766,
+     "s": 61.561,
+     "e": 62.014,
      "speaker": "narrator"
     },
     {
      "w": "what",
-     "s": 61.766,
-     "e": 61.929,
+     "s": 62.014,
+     "e": 62.244,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 61.929,
-     "e": 62.087,
+     "s": 62.244,
+     "e": 62.467,
      "speaker": "narrator"
     },
     {
      "w": "want",
-     "s": 62.087,
-     "e": 62.249,
+     "s": 62.467,
+     "e": 62.698,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 62.249,
-     "e": 62.401,
+     "s": 62.698,
+     "e": 62.913,
      "speaker": "narrator"
     },
     {
      "w": "know",
-     "s": 62.401,
-     "e": 62.564,
+     "s": 62.913,
+     "e": 63.144,
      "speaker": "narrator"
     },
     {
      "w": "next.",
-     "s": 62.564,
-     "e": 62.726,
+     "s": 63.144,
+     "e": 63.374,
      "speaker": "narrator"
     }
    ]
   }
- ],
- "tempo": 1.06
+ ]
 }

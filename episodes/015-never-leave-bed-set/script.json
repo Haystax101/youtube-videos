@@ -139,18 +139,20 @@
   }
  ],
  "experiment": {
-  "note": "Remake of 014 in the new set-video style: several 3D sets (bedroom, 1966 Dallas lab, treadmill, heart/X-ray, NASA tilt bed, 1996 reunion, 1950s ward, morning street), a cut about every 2 s, character lines in other voices, recorded CC0 SFX. Hypothesis: fast cuts + a hard number hook hold retention better than 014's slow cel version.",
+  "note": "Remake of 014 in the new set-video style: several 3D sets (bedroom, 1966 Dallas lab, treadmill, heart/X-ray, NASA tilt bed, 1996 reunion, 1950s ward, morning street), a cut about every 2 s, character lines in other voices, recorded CC0 SFX. Hypothesis: fast cuts + a hard number hook hold retention better than 014's slow cel version. Narrator switched to Kokoro am_michael after george found the Qwen Ryan narrator unnatural; character lines stay Qwen.",
   "vars": {
    "format": "gary_you",
    "premise": "life_change",
    "ending": "better",
    "style": "set",
    "look": "set_fastcut",
-   "narrator": "qwen_ryan",
+   "narrator": "am_michael",
    "music": "orchestral",
    "ending_cta": "comment_next",
    "hook_form": "number_first",
-   "source": "fish#443"
+   "source": "fish#443",
+   "character_voices": "qwen3-tts (Uncle_Fu doctor, Aiden Gary)",
+   "speed": 1.2
   },
   "facts": [
    {
@@ -180,9 +182,7 @@
   ]
  },
  "voices": {
-  "narrator": "am_fenrir",
-  "doctor": "am_michael",
-  "gary": "am_puck",
-  "oldgary": "bm_george"
- }
+  "narrator": "am_michael"
+ },
+ "speed": 1.2
 }
