@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset="utf-8">
+<!-- Self-test for web/lib/stage2d.js: NODE_PATH=$(npm root -g) node tools/set_check.cjs tools/tests/stage2d.html 0.25
+     Expected (by design): a card walking through the table at 1-2 s, and the camera seeing the chair's back at 4-5 s. -->
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }</script>
+</head><body><div id="stage" style="width:1080px;height:1920px"><canvas id="gl" width="1080" height="1920"></canvas></div>
+<script type="module">
+import * as THREE from 'three';
+import { walkAlong, anchorSeat, seatOn, faceCam, makeSetCheck } from '/web/lib/stage2d.js';
+const V = (x = 0, y = 0, z = 0) => new THREE.Vector3(x, y, z);
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), preserveDrawingBuffer: true });
+const scene = new THREE.Scene(), camera = new THREE.PerspectiveCamera(45, 1080 / 1920, 0.05, 100); camera.position.set(0, 1.6, 5); camera.lookAt(0, 0.8, 0);
+const room = new THREE.Group(); scene.add(room);
+const table = new THREE.Mesh(new THREE.BoxGeometry(1, 0.75, 0.6), new THREE.MeshBasicMaterial()); table.position.set(0, 0.375, 0); table.name = 'table'; room.add(table);
+const chair = new THREE.Group(); chair.name = 'chair'; room.add(chair); chair.position.set(1.5, 0, 0);
+const seat = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.08, 0.5), new THREE.MeshBasicMaterial()); seat.position.y = 0.48; chair.add(seat);
+const back = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.06), new THREE.MeshBasicMaterial()); back.position.set(0, 0.8, -0.22); chair.add(back);
+anchorSeat(chair, { seatY: 0.5 });
+const card = { kind: 'tester', pos: V(), G: room, on: true, m: new THREE.Mesh(new THREE.PlaneGeometry(0.6, 1.7), new THREE.MeshBasicMaterial()) }; room.add(card.m);
+const route = [V(-2, 0, 0), V(2, 0, 0)];        // straight through the table: must be flagged
+const around = [V(-2, 0, 0), V(-1, 0, 1), V(1, 0, 1), V(1.5, 0, 0.6)];  // round it: clean
+let steps = [];
+function pose(t) {
+  card.seatedOn = null; chair.rotation.y = faceCam(chair, camera);
+  if (t < 1) Object.assign(card.pos, walkAlong(around, t).p);
+  else if (t < 2) Object.assign(card.pos, walkAlong(route, t - 1).p);
+  else if (t < 4) seatOn(card, chair, camera);
+  else { seatOn(card, chair, camera); chair.rotation.y = faceCam(chair, camera) + Math.PI; }   // turned away: must be flagged
+  card.m.position.copy(card.pos);
+}
+// walk phase grows with distance, not time: half the progress = half the steps, and 0 when stopped
+const a = walkAlong(around, 0.5), b = walkAlong(around, 1), c = walkAlong(around, 0.25);
+window.UNIT = { halfway: a.walk, quarter: c.walk, stopped: b.walk };
+window.SETCHECK = makeSetCheck({ sets: { room }, cards: [card], camera, render: pose, shotSet: () => 'room' });
+window.renderFrame = t => { pose(t); renderer.render(scene, camera); };
+window.DURATION = 5; window.READY = true;
+</script></body></html>

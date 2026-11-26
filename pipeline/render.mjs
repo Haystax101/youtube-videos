@@ -13,6 +13,7 @@ import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 const { chromium } = createRequire(import.meta.url)('playwright');
 const makeGuard = createRequire(import.meta.url)('./frame_guard.cjs');
+const gl = createRequire(import.meta.url)('./browser.cjs'); gl.reexecUnderXvfb();   // fast llvmpipe GL on Linux
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const args = process.argv.slice(2);
@@ -37,7 +38,7 @@ const server = http.createServer((req, res) => {
 const port = server.address().port;
 
 async function openPage() {
-  const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  const browser = await gl.launch(chromium);
   const page = await browser.newPage({ viewport: { width: VW, height: VH }, deviceScaleFactor: 1 });
   page.on('console', m => { if (m.type() === 'error') console.error('[page]', m.text()); });
   page.on('pageerror', e => console.error('[page error]', e.message));
