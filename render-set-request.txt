@@ -1,2 +1,2 @@
 episodes/dark/002-video-poker
-# v3: quality pass (detailed machines, reframed strip/lab/court shots)
+# v3b: wait for Poppins before drawing build-time canvases

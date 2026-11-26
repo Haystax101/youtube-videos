@@ -22,6 +22,7 @@ import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
 import { drawChar, KINDS } from './people.js';
+await Promise.all(['900 40px Poppins', '800 40px Poppins', '600 40px Poppins'].map(f => document.fonts.load(f))); // canvases drawn at build time need the font first
 const SCRIPT = await (await fetch('./script.json')).json();
 
 const W = 1080, H = 1920;
