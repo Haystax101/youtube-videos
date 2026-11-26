@@ -340,7 +340,7 @@ const SUNNY = { storm: 0 }, STORM = { storm: 1 };
 const SHOTS = [
   // COLD OPEN (storm): rush in low over the surf at the tree, lightning
   { at: 0, env: STORM, label: 'DEADLIEST TREE ON *EARTH*', f: (t, u) => { place(you, UNDER, 'cower', 'pain', t, { welts: 1, wet: 1, steam: 1 });
-    look(V(lerp(10, 4.5, ease(0, 2.2, u)), lerp(1.0, 2.2, ease(0, 2.2, u)), lerp(14, 3.2, ease(0, 2.2, u))), TREE.clone().add(V(0.3, lerp(4.2, 2.4, ease(0, 2.2, u)), 0)), 50); shake = 0.02; } },
+    look(V(lerp(7, 3.0, ease(0, 1.4, u)), lerp(1.3, 1.6, ease(0, 1.4, u)), lerp(7, -4.2, ease(0, 1.4, u))), VL(TREE.clone().add(V(0.3, 3.4, 0)), face(you, 0.8), ease(0, 1.3, u)), 52); shake = 0.02; } },
   { at: () => toVid(VTw(0, 'And')), env: STORM, label: 'DEADLIEST TREE ON *EARTH*', f: (t, u) => { place(you, UNDER, 'scratch', 'pain', t, { welts: 1, wet: 1, steam: 1 }); const a = 0.4 + u * 0.7;
     look(orbitP(face(you, 0.9), 2.0, a, 0.15), face(you, 0.95), 40, 2.0); shake = 0.01; } },
   { at: C.hook_drip, env: STORM, label: 'DEADLIEST TREE ON *EARTH*', f: (t, u) => { place(you, UNDER, 'scratch', 'pain', t, { welts: 1, wet: 1, steam: 1 }); const d = dropAt(u, 0.0, 0.5); const mid = d.clone().lerp(face(you, 1.0), 0.5); look(mid.clone().add(V(0.5, -0.35, 2.3)), mid, 50, 2.3, 0.005); } },
@@ -356,18 +356,18 @@ const SHOTS = [
     look(p.clone().add(V(1.2, 0.85, 2.2 - u * 0.4)), face(you, 1.25), 42, 2.4); } },
   // ---- the bite ----
   { at: () => toVid(VTw(2, 'You')), env: SUNNY, label: 'SECOND *1*', f: (t, u) => { const p = G(2.6, -5.0); place(you, p, 'eat', 'chew', clamp(u * 1.6), { apple: 1 });
-    look(face(you, 1.0).add(V(0.35, 0, 1.8 - u * 0.2)), face(you, 0.95), 38, 1.8); } },
+    look(face(you, 1.0).add(V(0.35, 0, 2.5 - u * 0.2)), face(you, 0.9), 40, 2.4); } },
   { at: C.sweet, env: SUNNY, label: 'SECOND *3*', f: (t, u) => { const p = G(2.6, -5.0); place(you, p, 'eat', 'chew', 1 + t, { apple: 1, bitten: 1 });
-    look(face(you, 1.0).add(V(-0.9, 0.1, 1.6)), face(you, 0.95), 40, 1.8); } },
+    look(face(you, 1.0).add(V(-1.0, 0.1, 2.2)), face(you, 0.9), 40, 2.4); } },
   { at: C.turn, env: SUNNY, label: 'SECOND *10*', f: (t, u) => { const p = G(2.6, -5.0); place(you, p, 'idle', u < 0.9 ? 'chew' : 'worried', t, { apple: 1, bitten: 1 });
-    look(face(you, 1.0).add(V(0, 0.05, 2.4 - u * 0.7)), face(you, 0.95), 36, 2.4 - u * 0.7); } },
+    look(face(you, 1.0).add(V(0, 0.05, 3.0 - u * 0.7)), face(you, 0.92), 36, 3.0 - u * 0.7); } },
   // ---- pepper, fire, throat ----
   { at: C.pepper, env: SUNNY, label: 'SECOND *20*', f: (t, u) => { const p = G(2.6, -5.0); place(you, p, 'idle', 'hot', t, { apple: 1, bitten: 1 });
-    look(face(you, 1.0).add(V(0, 0.05, lerp(3.6, 1.8, ease(0, 0.25, u)))), face(you, 0.95), 38); shake = 0.012; } },
+    look(face(you, 1.0).add(V(0, 0.05, lerp(4.2, 2.3, ease(0, 0.25, u)))), face(you, 0.9), 40); shake = 0.012; } },
   { at: C.fire, env: SUNNY, label: '*MINUTE 1*', f: (t, u) => { const p = G(2.6, -5.0); place(you, p, 'flail', 'hot', t, { fire: 1 });
     look(p.clone().add(V(0.4, 0.35, 2.0)), face(you, 0.95), 52); shake = 0.025; } },
   { at: C.throat, env: SUNNY, label: '*HOUR* 1', f: (t, u) => { const p = G(-2.4, -5.2); place(you, p, 'clutch', 'choke', t, { throat: clamp(0.3 + u * 0.6) });
-    look(face(you, 0.85).add(V(0.5, -0.25, 1.4)), face(you, 0.95), 40, 1.5); ROLL = 0.18; } },
+    look(face(you, 0.85).add(V(0.5, -0.25, 2.0)), face(you, 0.9), 42, 2.1); ROLL = 0.18; } },
   { at: () => toVid(VTw(3, 'barely')), env: SUNNY, label: '*HOUR* 1', f: (t, u) => { const p = G(-4 + u * 0.4, -3.2); place(you, p, 'clutch', 'choke', t, { throat: 1 });
     look(V(-4 + 6, 16 - u * 1.5, 7), p.clone().add(V(0, 0.5, 0)), 40); } },
   // ---- storm ----
@@ -393,7 +393,7 @@ const SHOTS = [
   { at: C.blind, env: { storm: 0.55, fire: 1, smoke: 1 }, label: 'NEVER *BURN* IT', f: (t, u) => { const p = G(13.2, -3.9); place(you, p, 'eyes', 'blindr', t, { welts: 0.9 });
     look(face(you, 1.0).add(V(0.2, 0.0, 2.0 - u * 0.2)), face(you, 0.95), 38, 1.9); } },
   // ---- 1500s: the little apple of death ----
-  { at: C.spanish, env: { storm: 0, sepia: 1 }, label: '*1500s*', f: (t, u) => { const g = gal.position; look(V(g.x + 34 - u * 3, 2.5, g.z - 26 + u * 2), g.clone().add(V(0, 7, 0)), 42); } },
+  { at: C.spanish, env: { storm: 0, sepia: 1 }, label: '*1500s*', f: (t, u) => { const g = gal.position; look(V(g.x + 48 - u * 4, 3.5, g.z - 40 + u * 2), g.clone().add(V(0, 6, 0)), 40); } },
   { at: C.deathapple, env: { storm: 0, sepia: 1 }, label: 'LITTLE APPLE OF *DEATH*', f: (t, u) => { const a = HAPPLE.clone().add(TREE); look(a.clone().add(V(Math.sin(u) * 0.3, -0.1, 1.0 - u * 0.12)), a, 32, 1.0 - u * 0.12, 0.007); } },
   { at: C.legend, env: { storm: 0, sepia: 1 }, label: 'FLORIDA, *1521*', f: (t, u) => { place(conq, CONQ, 'idle', 'smug', t); place(conq2, G(28.4, 1.2), 'spear', 'watch', t); place(conq3, G(24.6, 1.6), 'idle', 'watch', t);
     look(CONQ.clone().add(V(-2.6 + u * 0.4, 0.5, 4.8)), CONQ.clone().add(V(0.8, 1.2, 0)), 42, 5.2); } },
