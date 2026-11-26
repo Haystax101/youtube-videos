@@ -241,12 +241,28 @@ const MACHINES = [];
   const bgScr = [0, 1, 2].map(i => textCanvas(512, 384, (x, w, hh, tt) => { x.save(); x.scale(0.5, 0.5); drawVP(x, 1024, 768, i === 1 ? 'lose' : 'attract', tt + i * 3, 1, { game: ['DOUBLE BONUS', 'DEUCES WILD', 'JACKS OR BETTER'][i] }); x.restore(); })); SCR.bg = bgScr;
   const heroTC = textCanvas(1024, 768, () => {}); SCR.vp = heroTC;
   const topTC = textCanvas(512, 200, (x, w, hh, on) => { x.fillStyle = '#14121a'; x.fillRect(0, 0, w, hh); x.fillStyle = on ? '#ffcf3f' : '#c9a43a'; x.font = '900 66px Poppins'; x.textAlign = 'center'; x.fillText('GAME KING', w / 2, 92); x.fillStyle = '#ff3b4a'; x.font = '900 40px Poppins'; x.fillText('VIDEO POKER', w / 2, 160); }); topTC.update(1);
+  const CAB_COL = [['#2a2f8a', '#141850'], ['#8a1f4a', '#40102a'], ['#1f6a6a', '#0c3030']];
+  const CAB_FRONT = CAB_COL.map(([a, b]) => canvasTex(300, 420, (x, w, h) => { const g = x.createLinearGradient(0, 0, w, 0); g.addColorStop(0, b); g.addColorStop(0.5, a); g.addColorStop(1, b); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    x.fillStyle = 'rgba(255,255,255,.08)'; x.fillRect(0, 0, w, 10); x.fillStyle = 'rgba(255,255,255,.12)'; for (let i = 0; i < 9; i++) { x.beginPath(); x.arc(40 + i * 28, 52, 5, 0, 7); x.fill(); } x.strokeStyle = '#d9a43a'; x.lineWidth = 6; x.strokeRect(18, 93, w - 36, 214); x.clearRect(21, 96, w - 42, 208);
+    for (const sx of [22, w - 62]) { x.fillStyle = '#0e0b16'; x.beginPath(); x.roundRect(sx, 318, 40, 84, 12); x.fill(); x.fillStyle = 'rgba(200,200,220,.35)'; for (let j = 0; j < 7; j++) for (let i = 0; i < 3; i++) { x.beginPath(); x.arc(sx + 9 + i * 11, 328 + j * 11, 3, 0, 7); x.fill(); } }
+    x.fillStyle = '#ff6a7a'; x.font = '900 24px Poppins'; x.textAlign = 'center'; x.fillText('MULTI-GAME', w / 2, 350); x.fillStyle = 'rgba(255,255,255,.6)'; x.font = '700 16px Poppins'; x.fillText('25¢ · $1 · $5 · $10', w / 2, 380); }));
+  const BELLY = CAB_COL.map(([a, b], ci) => canvasTex(320, 300, (x, w, h) => { const g = x.createRadialGradient(w / 2, h * 0.45, 10, w / 2, h / 2, w * 0.75); g.addColorStop(0, a); g.addColorStop(1, '#07050c'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    x.strokeStyle = '#d9a43a'; x.lineWidth = 6; x.strokeRect(6, 6, w - 12, h - 12);
+    const suits = ['♠', '♥', '♦', '♣', '♠']; for (let i = 0; i < 5; i++) { x.save(); x.translate(w / 2 + (i - 2) * 38, 175); x.rotate((i - 2) * 0.22); x.fillStyle = '#fbfaf6'; x.beginPath(); x.roundRect(-28, -92, 56, 84, 6); x.fill(); x.strokeStyle = '#14121a'; x.lineWidth = 2; x.stroke(); x.fillStyle = i % 3 === 1 ? '#d7263d' : '#14121a'; x.font = '900 26px serif'; x.textAlign = 'center'; x.fillText(['A', 'K', 'Q', 'J', '10'][i], 0, -60); x.fillText(suits[i], 0, -26); x.restore(); }
+    x.fillStyle = '#ffcf3f'; x.font = '900 30px Poppins'; x.textAlign = 'center'; x.fillText(['DOUBLE BONUS', 'DEUCES WILD', 'JACKS OR BETTER'][ci], w / 2, 230); x.fillStyle = '#ff3b4a'; x.font = '900 26px Poppins'; x.fillText('ROYAL FLUSH · 4,000', w / 2, 268); }));
+  const btnTex = (bg, fg, txt) => canvasTex(128, 96, (x, w, h) => { x.fillStyle = bg; x.fillRect(0, 0, w, h); x.fillStyle = 'rgba(255,255,255,.35)'; x.fillRect(0, 0, w, 14); x.fillStyle = fg; x.font = '900 26px Poppins'; x.textAlign = 'center'; x.textBaseline = 'middle'; const L = txt.split(' '); L.forEach((l, i) => x.fillText(l, w / 2, h / 2 + (i - (L.length - 1) / 2) * 28)); });
+  const BTN_T = { hold: btnTex('#ffcf3f', '#14121a', 'HOLD'), deal: btnTex('#3ff07a', '#0c2a14', 'DEAL DRAW'), bet: btnTex('#ff3b4a', '#ffffff', 'BET ONE'), max: btnTex('#2f6fe0', '#ffffff', 'MAX BET') };
+  const BILL_T = canvasTex(256, 112, (x, w, h) => { x.fillStyle = '#cfe0c0'; x.fillRect(0, 0, w, h); x.strokeStyle = '#3a6a3a'; x.lineWidth = 6; x.strokeRect(6, 6, w - 12, h - 12); x.fillStyle = '#3a6a3a'; x.beginPath(); x.ellipse(w / 2, h / 2, 30, 38, 0, 0, 7); x.fill(); x.font = '900 34px Poppins'; x.fillText('100', 18, 44); x.textAlign = 'right'; x.fillText('100', w - 18, h - 16); });
   function machine(px, pz, face, hero = false, idx = 0) { const g = new THREE.Group(); g.position.set(px, 0, pz); g.rotation.y = face > 0 ? 0 : Math.PI; G.add(g);
     mesh(rbox(0.62, 0.92, 0.55, 0.03), '#1d1a26', 0, 0.46, 0, g, 4); mesh(rbox(0.6, 0.06, 0.53, 0.02), '#d9a43a', 0, 0.94, 0, g, 2);
     const up = mesh(rbox(0.62, 0.86, 0.42, 0.04), hero ? '#2a2f6a' : ['#2a2f6a', '#5a1f3a', '#1f4a4a'][idx % 3], 0, 1.4, -0.06, g, 4);
-    const deck = mesh(rbox(0.62, 0.07, 0.3, 0.02), '#14121a', 0, 1.0, 0.33, g, 3); deck.rotation.x = 0.25;
-    const btn = []; for (let i = 0; i < 5; i++) btn.push(mesh(rbox(0.08, 0.03, 0.06, 0.01), basic('#ffcf3f'), -0.2 + i * 0.1, 1.05, 0.3, g, 1.5));
-    btn.push(mesh(rbox(0.1, 0.035, 0.07, 0.01), basic('#3ff07a'), 0.22, 1.04, 0.4, g, 1.5)); btn.push(mesh(rbox(0.1, 0.035, 0.07, 0.01), basic('#ff3b4a'), -0.22, 1.04, 0.4, g, 1.5));
+    { const col = hero ? 0 : idx % 3; const fp = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.84), basic('#ffffff', { map: CAB_FRONT[col], transparent: true, alphaTest: 0.5 })); fp.position.set(0, 1.4, 0.152); fp.userData.noOutline = true; g.add(fp);
+      const bp = new THREE.Mesh(new THREE.PlaneGeometry(0.56, 0.5), basic('#ffffff', { map: BELLY[col] })); bp.position.set(0, 0.5, 0.277); bp.userData.noOutline = true; g.add(bp);
+      for (const sx of [-1, 1]) { mesh(rbox(0.025, 0.86, 0.44, 0.01), '#c9ccd6', sx * 0.315, 1.4, -0.06, g, 2); mesh(rbox(0.025, 0.92, 0.57, 0.01), '#c9ccd6', sx * 0.315, 0.46, 0, g, 2); } }
+    const deck = mesh(rbox(0.62, 0.07, 0.3, 0.02), '#14121a', 0, 1.0, 0.33, g, 3); deck.rotation.x = 0.25; mesh(rbox(0.63, 0.02, 0.02, 0.005), '#d9a43a', 0, 0.99, 0.485, g, 1);
+    const btn = []; for (let i = 0; i < 5; i++) { const b = mesh(rbox(0.08, 0.03, 0.06, 0.01), basic('#ffffff', { map: BTN_T.hold }), -0.2 + i * 0.1, 1.05, 0.3, g, 1.5); b.rotation.x = 0.25; btn.push(b); }
+    for (const [k, bx] of [['deal', 0.22], ['bet', -0.22]]) { const b = mesh(rbox(0.1, 0.035, 0.07, 0.01), basic('#ffffff', { map: BTN_T[k] }), bx, 1.04, 0.4, g, 1.5); b.rotation.x = 0.25; btn.push(b); }
+    { const b = mesh(rbox(0.1, 0.035, 0.07, 0.01), basic('#ffffff', { map: BTN_T.max }), 0, 1.04, 0.4, g, 1.5); b.rotation.x = 0.25; }
     const scr = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.375), basic('#ffffff', { map: hero ? heroTC.t : bgScr[idx % 3].t })); scr.position.set(0, 1.42, 0.155); scr.rotation.x = -0.12; scr.userData.noOutline = true; g.add(scr);
     mesh(rbox(0.54, 0.42, 0.02, 0.01), '#0e0b16', 0, 1.42, 0.142, g, 0).rotation.x = -0.12;
     mesh(rbox(0.12, 0.05, 0.04, 0.01), '#0e0b16', 0.22, 1.12, 0.19, g, 1.5); // bill slot
@@ -254,7 +270,7 @@ const MACHINES = [];
     const candle = mesh(cyl(0.07, 0.07, 0.22, 12), basic(hero ? '#ff3b4a' : '#ffffff'), 0, 2.27, -0.08, g, 2); const cg = glow(g, 0, 2.3, -0.05, '#ff3b4a', 0.6, 0);
     const stool = new THREE.Group(); stool.position.set(0, 0, 0.85); g.add(stool); mesh(cyl(0.05, 0.05, 0.62, 8), '#d9a43a', 0, 0.31, 0, stool, 2); mesh(cyl(0.23, 0.23, 0.1, 16), '#7a1f3a', 0, 0.66, 0, stool, 3); mesh(cyl(0.2, 0.24, 0.04, 16), '#d9a43a', 0, 0.02, 0, stool, 2);
     const ticket = mesh(rbox(0.16, 0.005, 0.08, 0.002), '#f4efe4', 0.22, 1.2, 0.2, g, 1); ticket.visible = false;
-    const bill = mesh(rbox(0.16, 0.004, 0.07, 0.002), '#7fbf6a', 0.22, 1.14, 0.3, g, 1); bill.visible = false;
+    const bill = mesh(rbox(0.16, 0.004, 0.07, 0.002), basic('#ffffff', { map: BILL_T }), 0.22, 1.14, 0.3, g, 1); bill.visible = false;
     const M2 = { g, scr, candle, cg, ticket, bill, hero, btn, stool }; MACHINES.push(M2); return M2; }
   let n = 0; for (const [z, face] of [[0, 1], [-0.75, -1], [-5.2, 1], [-5.95, -1], [-10.4, 1], [-11.15, -1]]) for (let i = -5; i <= 5; i++) { const hero = z === 0 && i === 0; machine(i * 0.72, z, face, hero, n++); }
   G.userData.hero = MACHINES.find(m => m.hero);
@@ -310,7 +326,7 @@ const windowsTex = (base, lit, seed) => canvasTex(512, 512, (x, w, h) => { const
   // palms (Vegas) and pines (Pennsylvania), lamps
   for (let x = -34; x <= 22; x += 6.5) { palm(G, x, 8.6, 5.2 + (x % 3), 1); if (Math.abs((x + 6.5) % 13) < 1) palm(G, x + 3.2, 0.25, 4.6, 0.9); }
   for (const x of [26, 28.5, 46, 49, 52]) pine(G, x, 9.5 + (x % 2), 4);
-  for (let x = -32; x <= 52; x += 9) { mesh(cyl(0.06, 0.08, 5, 8), '#2a2a34', x, 2.5, 0.7, G, 2.5); mesh(rbox(0.9, 0.12, 0.3, 0.04), '#2a2a34', x, 5.0, 1.05, G, 2.5); mesh(rbox(0.5, 0.06, 0.22, 0.02), basic('#fff2c8'), x, 4.92, 1.2, G, 0); glow(G, x, 4.85, 1.25, '#ffd890', 2.4, 0.5); }
+  for (let x = -32; x <= 52; x += 9) { if (x === 40) continue; mesh(cyl(0.06, 0.08, 5, 8), '#2a2a34', x, 2.5, 0.7, G, 2.5); mesh(rbox(0.9, 0.12, 0.3, 0.04), '#2a2a34', x, 5.0, 1.05, G, 2.5); mesh(rbox(0.5, 0.06, 0.22, 0.02), basic('#fff2c8'), x, 4.92, 1.2, G, 0); glow(G, x, 4.85, 1.25, '#ffd890', 2.4, 0.5); }
   // taxis + a limo; pedestrians
   U.cars = [['#f2c13a', 2.6, 1, 0], ['#f2c13a', 5.4, -1, 0.35], ['#14121a', 2.6, 1, 0.62], ['#c9ccd6', 5.4, -1, 0.8]].map(([col, z, dir, ph]) => { const c = profileCar(G, [[-2.1, 0.25], [2.1, 0.25], [2.15, 0.75], [1.2, 0.85], [0.6, 1.35], [-0.9, 1.38], [-1.5, 0.9], [-2.15, 0.8]], 4.2, 1.7, col, { wheels: [[1.35, 0.8], [1.35, -0.8], [-1.35, 0.8], [-1.35, -0.8]], wr: 0.33 });
     if (col === '#f2c13a') { mesh(rbox(0.7, 0.18, 0.3, 0.04), '#ffffff', -0.15, 1.5, 0, c.root, 2); } glow(c.root, 2.2 * dir > 0 ? 2.2 : 2.2, 0.6, 0, '#fff2c8', 1.0, 0.6); c.z = z; c.dir = dir; c.ph = ph; return c; });
@@ -434,6 +450,7 @@ const panelTex = canvasTex(512, 512, (x, w, h) => { x.fillStyle = '#6a4228'; x.f
   for (let i = 0; i < 5; i++) mesh(rbox(0.8, 0.9, 0.04), '#6a4228', -2 + i, 1.15, -4.53, G, 2);
   mesh(rbox(0.9, 1.5, 0.15, 0.06), '#2a1420', 0, 1.6, -6.2, G, 4); // judge's chair back
   mesh(rbox(1.5, 1.0, 1.0, 0.03), '#7a4e30', 3.4, 0.75, -4.6, G, 4); mesh(rbox(1.6, 0.08, 1.1), '#4a2a18', 3.4, 1.28, -4.6, G, 3); // witness box
+  { const tc = textCanvas(512, 128, c => { c.fillStyle = '#2a1410'; c.fillRect(0, 0, 512, 128); c.strokeStyle = '#e8c35a'; c.lineWidth = 8; c.strokeRect(6, 6, 500, 116); c.fillStyle = '#e8c35a'; c.font = '900 52px serif'; c.textAlign = 'center'; c.fillText('THE HON. JUDGE', 256, 84); }); tc.update(); const p = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 0.275), basic('#ffffff', { map: tc.t })); p.position.set(0, 1.55, -4.49); p.userData.noOutline = true; G.add(p); }
   // seal + flags
   { const tc = textCanvas(768, 768, (x, w, hh) => { x.clearRect(0, 0, w, hh); x.fillStyle = '#1d2a4a'; x.beginPath(); x.arc(384, 384, 370, 0, 7); x.fill(); x.lineWidth = 20; x.strokeStyle = '#e8c35a'; x.stroke(); x.beginPath(); x.arc(384, 384, 280, 0, 7); x.lineWidth = 8; x.stroke();
       x.fillStyle = '#e8c35a'; x.font = '900 46px Poppins'; x.textAlign = 'center'; x.textBaseline = 'middle'; const txt = 'UNITED STATES DISTRICT COURT ·'; for (let i = 0; i < txt.length; i++) { const a = -Math.PI * 0.92 + i / txt.length * Math.PI * 1.84; x.save(); x.translate(384 + Math.cos(a) * 322, 384 + Math.sin(a) * 322); x.rotate(a + Math.PI / 2); x.fillText(txt[i], 0, 0); x.restore(); }
@@ -543,7 +560,7 @@ function casinoState(t) {
   Hm.stool.visible = false;
   // buttons light when pressed
   const press = [[WT(2, 'Switch'), 0], [WT(2, 'Switch') + 0.35, 1], [WT(2, 'play', 2), 2], [WT(2, 'Back'), 3], [WT(2, 'raise'), 4], [WT(2, 'raise') + 0.4, 4], [WT(2, 'Then'), 0], [WT(3, 'Hit') + 0.15, 5], [WT(8, 'pressed'), 1], [WT(8, 'pressed') + 0.45, 3], [WT(8, 'buttons'), 5], [WT(8, 'machine'), 2], [WT(8, 'gave'), 4], [WT(7, 'kept'), 5]];
-  Hm.btn.forEach((b, i) => { const on = press.some(([pt, bi]) => bi === i && t >= pt && t < pt + 0.28); b.material.color.set(on ? '#ffffff' : i === 5 ? '#3ff07a' : i === 6 ? '#ff3b4a' : '#ffcf3f'); b.position.y = (i < 5 ? 1.05 : 1.04) - (on ? 0.012 : 0); });
+  Hm.btn.forEach((b, i) => { const on = press.some(([pt, bi]) => bi === i && t >= pt && t < pt + 0.28); b.material.color.set(on ? '#ffffff' : '#c4c4c4'); b.position.y = (i < 5 ? 1.05 : 1.04) - (on ? 0.012 : 0); });
   // bill goes in, tickets come out
   const fe = WT(2, 'Feed'); Hm.bill.visible = t > fe - 0.4 && t < fe + 0.6; Hm.bill.position.z = lerp(0.36, 0.2, sstep(fe - 0.2, fe + 0.5, t));
   const tk = t < HOOK_END + RW ? 2.0 : inB(t, 3) ? WT(3, 'pays') : -1; Hm.ticket.visible = tk > 0 && t > tk; if (tk > 0) Hm.ticket.position.z = lerp(0.2, 0.32, sstep(tk, tk + 0.8, t));
@@ -614,7 +631,7 @@ function courtState(t) {
   const g1 = WT(9, 'thrown'), g2 = WT(9, 'dropped'); const strike = tt => t > tt - 0.25 && t < tt + 0.2 ? (t < tt ? sstep(tt - 0.25, tt - 0.08, t) * 0.8 - sstep(tt - 0.08, tt, t) * 1.3 : -0.5 * (1 - sstep(tt, tt + 0.2, t))) : 0;
   U.gavelArm.rotation.z = strike(g1) + strike(g2);
   const free = t > WT(9, 'Neither') - 0.2;
-  showCard(CTCARD.judge, V(0, 0.95, -5.75), { sit: 1, expr: t > g1 ? 'neutral' : 'annoyed', armR: Math.abs(U.gavelArm.rotation.z) > 0.05 ? [1.6, 0.6] : [1.0, 1.4], armL: [1.0, 1.4], blink: blinkAt(t) });
+  showCard(CTCARD.judge, V(0, 1.3, -5.75), { sit: 1, expr: t > g1 ? 'neutral' : 'annoyed', armR: Math.abs(U.gavelArm.rotation.z) > 0.05 ? [1.6, 0.6] : [1.0, 1.4], armL: [1.0, 1.4], blink: blinkAt(t) });
   showCard(CTCARD.kane, V(-2.35, 0, -0.95), { expr: free ? 'delighted' : t > g1 ? 'happy' : 'neutral', armR: free ? UP : DOWN, blink: blinkAt(t, 0.4) });
   showCard(CTCARD.lawyer, V(-3.1, 0, -1.0), { expr: t > g1 ? 'smug' : 'neutral', blink: blinkAt(t, 1.2) });
   showCard(CTCARD.nestor, V(-1.6, 0, -0.95), { expr: free ? 'delighted' : t > g1 ? 'happy' : 'neutral', armL: free ? UP : DOWN, blink: blinkAt(t, 2) });
@@ -630,7 +647,7 @@ const orbit = (set, c, r, y, a0, a1, ly, fov) => ({ set, f: k => { const a = ler
 const SCRN = V(0, 1.42, 0.155), BTNS = V(0, 1.04, 0.33);
 const SCR_L = V(0, 1.36, 0.15), BTN_L = V(0, 1.12, 0.25);
 const scr = (dx = 0.06) => ({ ...sh('casino', V(dx, 1.42, 1.2), SCR_L, 50, V(dx * 0.4, 1.4, 1.0), SCR_L, 48), pov: true });
-const btns = (dx = 0.35) => ({ ...sh('casino', V(dx, 1.55, 0.95), BTN_L, 50, V(dx * 0.6, 1.48, 0.8), BTN_L, 46), pov: true });
+const BTN_L2 = V(0, 1.05, 0.33); const btns = (dx = 0.35) => ({ ...sh('casino', V(dx, 1.42, 0.86), BTN_L2, 46, V(dx * 0.6, 1.36, 0.74), BTN_L2, 42), pov: true });
 const SHOTS = [];
 function buildShots() {
   const S = (t, s) => SHOTS.push({ t, ...s });
@@ -639,7 +656,7 @@ function buildShots() {
   S(WT(0, 'trick') - 0.05, scr(0.1));
   S(WT(0, 'casino') - 0.1, sh('casino', V(-2.0, 1.55, 2.2), V(0, 1.4, 0.3), 48, V(-3.6, 3.4, 4.6), V(0, 1.1, -2.5), 56));
   S(WT(0, 'ten') - 0.2, sh('casino', V(-1.1, 0.95, 2.4), V(-0.1, 1.45, 0.6), 46, V(-0.85, 1.0, 2.05), V(-0.1, 1.5, 0.6), 44));
-  S(WT(0, 'The') - 0.05, sh('hq', V(0, 1.9, 0.2), V(0, 1.95, -4), 52, V(0, 1.95, -0.9), V(0, 1.95, -4), 50));
+  S(WT(0, 'The') - 0.05, sh('hq', V(1.1, 2.15, 3.2), V(-0.1, 1.9, -4), 50, V(0.9, 2.1, 2.5), V(-0.1, 1.9, -4), 48));
   // ---- beat 1: Vegas 2009, Kane losing
   S(VB(1), sh('strip', V(-8, 15, 26), V(0, 4, -4), 54, V(-3, 6.5, 17), V(0, 4.5, -4), 52));
   S(WT(1, 'John') - 0.1, sh('casino', V(1.5, 1.6, 2.4), V(0, 1.3, 0.4), 46, V(1.1, 1.55, 1.9), V(0, 1.35, 0.4), 42));
@@ -670,8 +687,8 @@ function buildShots() {
   S(WT(4, 'small') - 0.2, sh('strip', V(-31, 7, 13), V(-24, 5, -2), 52, V(-22, 10, 15), V(-14, 5, -2), 54));
   S(WT(4, 'Rio') - 0.15, sh('strip', V(-24.4, 4.5, 10.5), V(-26, 6.2, -1.6), 46, V(-27.4, 5, 9.6), V(-26, 6.4, -1.6), 44));
   S(WT(4, 'Wynn') - 0.12, sh('strip', V(-11.4, 6.5, 11), V(-13, 9.2, -1.6), 46, V(-14.4, 7, 10), V(-13, 9.4, -1.6), 44));
-  S(WT(4, 'Golden') - 0.12, sh('strip', V(2.0, 4.2, 11.5), V(0, 5.6, -1.6), 50, V(-1.8, 4.6, 10.2), V(0, 5.8, -1.6), 48));
-  S(WT(4, 'Back') - 0.12, sh('strip', V(31, 2.8, 14), V(38, 3.5, -1.6), 50, V(36.5, 3.2, 12.5), V(40, 4.0, -1.6), 48));
+  S(WT(4, 'Golden') - 0.12, sh('strip', V(1.8, 4.6, 17.5), V(0, 5.8, -1.6), 56, V(1.2, 4.8, 16.0), V(0, 6.0, -1.6), 54));
+  S(WT(4, 'Back') - 0.12, sh('strip', V(41.6, 3.4, 16.5), V(40, 4.2, -1.6), 54, V(41.0, 3.6, 15.0), V(40, 4.2, -1.6), 52));
   S(WT(4, 'Nestor', 2) - 0.12, sh('casino', V(-1.0, 2.3, 3.0), V(0, 3.0, -17), 50, V(-0.6, 1.75, 2.1), V(0, 1.4, 0.4), 44));
   S(WT(4, 'four') - 0.1, sh('casino', V(0.95, 1.55, 3.1), V(-0.05, 1.3, 0.62), 42, V(0.75, 1.55, 2.65), V(-0.05, 1.32, 0.62), 40));
   // ---- beat 5: Silverton, five jackpots, security
@@ -694,25 +711,25 @@ function buildShots() {
   S(WT(7, 'door') - 0.35, { ...sh('house', V(2.7, 1.35, 2.1), V(-0.1, 1.1, 0.2), 50, V(2.5, 1.33, 1.8), V(-0.1, 1.1, 0.2), 48), shake: WT(7, 'door') + 0.05 });
   S(WT(7, 'battering') - 0.05, { ...sh('house', V(-2.6, 1.6, -4.1), V(-0.1, 1.15, -0.9), 52, V(-2.3, 1.58, -3.7), V(-0.1, 1.15, -1.0), 48), shake: WT(7, 'battering') });
   // ---- beat 8: the charges
-  S(VB(8), sh('hq', V(-2.7, 2.0, 3.3), V(0, 1.75, -4), 52, V(-1.7, 1.9, 2.5), V(0, 1.8, -4), 48));
-  S(WT(8, 'charged') - 0.15, sh('hq', V(0.3, 2.1, 3.6), V(0, 1.8, -4), 50, V(0.1, 2.0, 3.0), V(0, 1.8, -4), 48));
+  S(VB(8), sh('hq', V(1.5, 2.3, 3.8), V(-0.1, 1.8, -4), 50, V(1.1, 2.2, 3.1), V(-0.1, 1.8, -4), 48));
+  S(WT(8, 'charged') - 0.15, sh('hq', V(1.0, 2.1, 3.0), V(-0.1, 1.85, -4), 50, V(0.8, 2.0, 2.5), V(-0.1, 1.85, -4), 48));
   S(WT(8, 'FBI') - 0.1, sh('hq', V(1.6, 1.75, 1.4), V(3.96, 1.7, -0.4), 44, V(2.0, 1.72, 1.0), V(3.96, 1.7, -0.55), 42));
   S(WT(8, 'But') - 0.1, sh('casino', V(-1.6, 1.7, 2.6), V(0, 1.35, 0.2), 46, V(-1.1, 1.62, 2.0), V(0, 1.38, 0.2), 42));
   S(WT(8, 'They') - 0.1, btns(0.38));
   S(WT(8, 'machine') - 0.15, scr(0.05));
   // ---- beat 9: court
-  S(VB(9), sh('court', V(0.4, 1.95, 4.6), V(0, 1.6, -4), 54, V(0.2, 1.9, 3.5), V(0, 1.65, -4), 50));
-  S(WT(9, 'played') - 0.15, sh('court', V(0.9, 2.35, -2.2), V(0, 2.25, -5.7), 40, V(0.55, 2.35, -2.8), V(0, 2.25, -5.7), 36));
-  S(WT(9, 'The', 2) - 0.1, sh('court', V(2.6, 2.4, -3.0), V(1.2, 2.05, -4.95), 44, V(2.3, 2.35, -3.3), V(1.2, 2.05, -4.95), 40));
+  S(VB(9), sh('court', V(0.3, 1.9, 1.2), V(0, 2.5, -5.5), 52, V(0.1, 2.0, -0.8), V(0, 2.55, -5.5), 50));
+  S(WT(9, 'played') - 0.15, sh('court', V(0.25, 2.3, -2.4), V(0, 2.25, -6.0), 52, V(0.05, 2.3, -2.8), V(0, 2.25, -6.0), 50));
+  S(WT(9, 'The', 2) - 0.1, sh('court', V(-0.25, 2.3, -2.4), V(0, 2.25, -6.0), 52, V(-0.05, 2.3, -2.8), V(0, 2.25, -6.0), 50));
   S(WT(9, 'and') - 0.1, sh('court', V(-2.3, 1.6, -4.2), V(-2.3, 1.3, -0.95), 50, V(-1.9, 1.6, -3.9), V(-2.3, 1.32, -0.95), 46));
-  S(WT(9, 'dropped') - 0.2, sh('court', V(2.4, 2.5, -2.4), V(0.8, 2.1, -5.2), 46, V(2.1, 2.45, -2.8), V(0.8, 2.1, -5.2), 42));
+  S(WT(9, 'dropped') - 0.2, sh('court', V(2.4, 2.3, -2.4), V(0.8, 1.75, -5.2), 46, V(2.1, 2.25, -2.8), V(0.8, 1.75, -5.2), 42));
   S(WT(9, 'Neither') - 0.1, sh('court', V(-2.0, 1.6, -3.9), V(-2.0, 1.35, -0.95), 44, V(-2.0, 1.58, -3.5), V(-2.0, 1.38, -0.95), 40));
   // ---- beat 10: the fix and the lesson
   S(VB(10), scr(0.06));
   S(WT(10, 'But') - 0.1, orbit('casino', V(0, 0, -5), 7.2, 3.7, 0.6, -0.15, 1.0, 56));
   S(WT(10, 'nobody') - 0.1, sh('hq', V(0.55, 1.38, 1.45), V(0.98, 1.17, 0.62), 40, V(0.7, 1.3, 1.15), V(0.98, 1.17, 0.62), 32));
   S(WT(10, 'So') - 0.1, sh('casino', V(2.6, 1.6, 4.2), V(0, 1.4, -1), 52, V(2.0, 1.7, 3.4), V(0, 1.4, -1), 50));
-  S(WT(10, 'Follow') - 0.2, sh('strip', V(0.5, 3.4, 6.0), V(0, 4.5, -2), 54, V(0, 10, 18), V(0, 5, -4), 56));
+  S(WT(10, 'Follow') - 0.2, sh('strip', V(0.6, 4.2, 15.5), V(0, 5.2, -2), 56, V(0, 10, 22), V(0, 5, -4), 56));
 }
 
 // =====================================================================================================
