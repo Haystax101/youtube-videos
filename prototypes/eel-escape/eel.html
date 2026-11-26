@@ -225,7 +225,7 @@ function boulder(seed, s) { const g = new THREE.IcosahedronGeometry(1, 3), p = g
     const c = new THREE.Color('#9a93a8').lerp(new THREE.Color('#6f6a84'), fbm(p.getX(i) * 5, seed, p.getZ(i) * 5)).lerp(new THREE.Color('#5fae3a'), moss); col.push(c.r, c.g, c.b); }
   g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
   const m = new THREE.Mesh(g, uw('#ffffff', { vertexColors: true, roughness: 0.9, flatShading: false }, { caus: 0.6 })); m.scale.setScalar(s); m.castShadow = m.receiveShadow = true; ink(m, s > 2 ? 4.5 : 3.5); BOULDERS.push(m); return m; }
-const ROCKS = [[-3.2, -2.6, 1.7], [3.8, -3.5, 2.2], [-7.4, 5.6, 2.6], [7.5, 2.2, 1.6], [0.5, -7.5, 3.2], [-10, -6, 3.6], [11, -8, 3.1], [-1.5, 8.5, 1.9], [14, 6, 3.5], [-14, 5, 3.2], [5, 11, 2.6], [-6, -12, 2.8], [-2.6, -1.6, 0.7], [0.2, -3.2, 0.8], [6.5, -1.0, 0.9]];
+const ROCKS = [[-3.2, -2.6, 1.7], [3.8, -3.5, 2.2], [-9.8, 7.8, 2.6], [7.5, 2.2, 1.6], [0.5, -7.5, 3.2], [-10, -6, 3.6], [11, -8, 3.1], [-1.5, 8.5, 1.9], [14, 6, 3.5], [-14, 5, 3.2], [5, 11, 2.6], [-6, -12, 2.8], [-2.6, -1.6, 0.7], [0.2, -3.2, 0.8], [6.5, -1.0, 0.9]];
 ROCKS.forEach(([x, z, s], i) => { const b = boulder(i * 3.1, s); b.position.set(x, bedY(x, z) + s * 0.25, z); b.rotation.y = i; RIVER.add(b); });
 { const r = rng(91); for (let i = 0; i < 40; i++) { const a = r() * 6.283, d = 16 + r() * 40, x = Math.cos(a) * d, z = Math.sin(a) * d, s = 1.5 + r() * 4; const b = boulder(50 + i, s); b.position.set(x, bedY(x, z) + s * 0.2, z); RIVER.add(b); } }
 // sunken branches
@@ -253,7 +253,7 @@ const rayTex = canvasTex(64, 256, (x, w, h) => { const g = x.createLinearGradien
 const rays = []; { const r = rng(55); for (let i = 0; i < 46; i++) { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.8 + r() * 2.2, 16), new THREE.MeshBasicMaterial({ map: rayTex, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
   m.position.set((r() - 0.5) * 30, 5.5, (r() - 0.5) * 30); m.rotation.set(0.25, r() * 3, 0.12); m.userData.ph = r() * 6; m.userData.noOutline = true; RIVER.add(m); rays.push(m); } }
 // drifting specks
-const specks = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: '#d8f4ee', size: 0.035, transparent: true, opacity: 0.7, depthWrite: false }));
+const specks = new THREE.Points(new THREE.BufferGeometry(), new THREE.PointsMaterial({ color: '#e8fff8', size: 0.03, transparent: true, opacity: 0.75, depthWrite: false, alphaTest: 0.3, map: canvasTex(32, 32, (x) => { x.fillStyle = '#fff'; x.beginPath(); x.arc(16, 16, 13, 0, 7); x.fill(); }) }));
 { const r = rng(8), a = []; for (let i = 0; i < 9000; i++) a.push((r() - 0.5) * 30, r() * 12 - 1, (r() - 0.5) * 30); specks.geometry.setAttribute('position', new THREE.Float32BufferAttribute(a, 3)); } RIVER.add(specks);
 // a far school of little fish
 const school = new THREE.InstancedMesh(new THREE.SphereGeometry(0.1, 14, 10).scale(1.6, 0.7, 0.45), uw('#ffffff'), 60); { const c = new THREE.Color(); for (let i = 0; i < 60; i++) school.setColorAt(i, c.set(['#ffb03a', '#ff6a4a', '#ffd23a'][i % 3])); } RIVER.add(school); ink(school, 2.5);
@@ -309,7 +309,7 @@ function makeFish(o = {}) {
   const jg = new THREE.SphereGeometry(1, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2); jg.scale(0.3, 0.13, 0.27); jg.translate(0.26, 0, 0);
   { const jp = jg.attributes.position, jc = []; for (let i = 0; i < jp.count; i++) { const c = new THREE.Color('#d9c497').lerp(new THREE.Color('#7a6446'), ease(-0.04, 0.0, jp.getY(i)) * 0.6); jc.push(c.r, c.g, c.b); } jg.setAttribute('color', new THREE.Float32BufferAttribute(jc, 3)); }
   const jaw = new THREE.Mesh(jg, o.jawMat || uw('#ffffff', { vertexColors: true, roughness: 0.5, side: THREE.DoubleSide }, { caus: 0.4 })); jaw.castShadow = true; jawPiv.add(jaw); if (!o.mat) ink(jaw, 3.5);
-  const tongue = new THREE.Mesh(new THREE.CircleGeometry(1, 24).rotateX(-Math.PI / 2).scale(0.26, 1, 0.23).translate(0.27, -0.004, 0), o.inMat || std('#e0506e')); jawPiv.add(tongue);
+  const tongue = new THREE.Mesh(new THREE.CircleGeometry(1, 24).rotateX(-Math.PI / 2).scale(0.17, 1, 0.15).translate(0.2, -0.004, 0), o.inMat || std('#c23a5a')); jawPiv.add(tongue);
   const gullet = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 12).scale(0.25, 0.09, 0.19), o.inMat || std('#7a1a34')); gullet.position.set(1.0, -0.06, 0); grp.add(gullet);
   // eyes (dorsal, cartoon) with lids
   const eyes = [-1, 1].map(s => { const e = new THREE.Group(); e.position.set(1.0, 0.205, s * 0.15); grp.add(e);
@@ -628,7 +628,7 @@ function xmat(base, rim, k = 1, a0 = 0.1) { return new THREE.ShaderMaterial({ tr
   uniforms: { base: { value: new THREE.Color(base) }, rim: { value: new THREE.Color(rim) }, k: { value: k }, a0: { value: a0 } },
   vertexShader: 'varying vec3 vN; varying vec3 vV; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); vN = normalize(normalMatrix * normal); vV = normalize(-mv.xyz); gl_Position = projectionMatrix * mv; }',
   fragmentShader: 'uniform vec3 base; uniform vec3 rim; uniform float k; uniform float a0; varying vec3 vN; varying vec3 vV; void main(){ float f = pow(1.0 - abs(dot(normalize(vN), vV)), 1.7); vec3 c = mix(base, rim, f) * k; gl_FragColor = vec4(c * (a0 + f), 1.0); }' }); }
-const XM = { body: xmat('#0e1c28', '#7fb6e0', 0.42, 0.04), fin: xmat('#08121a', '#5a8db5', 0.3, 0.03), bone: xmat('#6f93b0', '#e8f4ff', 0.55, 0.35), gut: xmat('#12222e', '#6fa4cc', 0.35, 0.05) };
+const XM = { body: xmat('#0e1c28', '#7fb6e0', 0.42, 0.04), fin: xmat('#08121a', '#5a8db5', 0.3, 0.03), bone: xmat('#5f83a0', '#d8ecff', 0.45, 0.25), gut: xmat('#12222e', '#6fa4cc', 0.35, 0.05) };
 const xfish = makeFish({ mat: XM.body, finMat: XM.fin, jawMat: XM.body, inMat: XM.gut, lipMat: XM.fin, eyeMat: XM.bone, pupilMat: XM.bone, lidMat: XM.fin, browMat: XM.fin, slitMat: XM.fin, holeMat: XM.fin });
 xfish.grp.traverse(o => { if (o.material && o.material.type === 'MeshBasicMaterial') o.visible = false; });
 XR.add(xfish.grp);
@@ -640,7 +640,7 @@ const verts = [], ribs = [];
     if (i > 1 && i < 14) for (const s of [-1, 1]) { const rb = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.006, 0.3, 5).translate(0, -0.15, 0), XM.bone); xfish.grp.add(rb); ribs.push({ m: rb, x, s }); } } }
 const xstomach = new THREE.Mesh(new THREE.SphereGeometry(1, 24, 16).scale(0.42, 0.19, 0.2), XM.gut); xstomach.position.set(0.03, -0.12, 0); xfish.grp.add(xstomach);
 const xgut = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(LP([[1.05, -0.06, 0], [0.8, -0.06, 0], [0.45, -0.1, 0]])), 12, 0.05, 8), XM.gut); xfish.grp.add(xgut);
-const xeel = makeEel(); xeel.mesh.material = new THREE.MeshBasicMaterial({ color: '#f4fbff' }); xeel.mesh.remove(xeel.mesh.userData.hull); xeel.head.traverse(o => { if (o.userData.isHull) o.visible = false; });
+const xeel = makeEel(); xeel.mesh.material = new THREE.MeshBasicMaterial({ color: '#a8d4f0' }); xeel.mesh.remove(xeel.mesh.userData.hull); xeel.head.traverse(o => { if (o.userData.isHull) o.visible = false; });
 // dark backdrop with a soft centre
 const xbg = new THREE.Mesh(new THREE.SphereGeometry(40, 32, 16), new THREE.MeshBasicMaterial({ side: THREE.BackSide, fog: false, map: canvasTex(256, 256, (x) => { const g = x.createRadialGradient(128, 128, 10, 128, 128, 128); g.addColorStop(0, '#24384a'); g.addColorStop(1, '#03070c'); x.fillStyle = g; x.fillRect(0, 0, 256, 256); }) }));
 XR.add(xbg);
@@ -657,7 +657,7 @@ function setMode(m) { MODE = m;
   scene.fog = m === 'river' ? new THREE.FogExp2(WATER, 0.05) : m === 'stom' ? new THREE.FogExp2(new THREE.Color('#3a0a12'), 0.16) : null;
   scene.background = m === 'river' ? WATER : m === 'stom' ? new THREE.Color('#2a060c') : m === 'xray' ? new THREE.Color('#03070c') : new THREE.Color('#dfe8e2');
   FOGU.d.value = scene.fog ? scene.fog.density : 0; if (scene.fog) FOGU.col.value.copy(scene.fog.color); post.uniforms.inkFar.value = m === 'river' ? 40 : m === 'stom' ? 14 : 60;
-  U.caus.value = m === 'river' ? 1 : 0; renderer.toneMappingExposure = 1.05; bloom.strength = m === 'xray' ? 0.55 : m === 'stom' ? 0.45 : 0.35; }
+  U.caus.value = m === 'river' ? 1 : 0; renderer.toneMappingExposure = 1.05; bloom.strength = m === 'xray' ? 0.3 : 0.2; bloom.threshold = 0.9; }
 let SHAKE = 0;
 let ROLL = 0;
 function look(p, l, fov = 45, focus = null, ap = 0.004) { cam.up.set(Math.sin(ROLL), Math.cos(ROLL), 0); cam.position.copy(p); if (SHAKE > 0) cam.position.add(V(Math.sin(T * 91) * SHAKE, Math.sin(T * 77 + 1) * SHAKE, Math.sin(T * 63 + 2) * SHAKE)); cam.fov = fov; cam.updateProjectionMatrix(); cam.lookAt(l); }
@@ -787,7 +787,7 @@ let STATS = false;
 // payoff ----------------------------------------------------------------------
 shot(BS('payoff'), 'river', (t, u) => { riverFish(t, { lid: 0.7, look: V(0.5, 0.5, 0.5) }); const p0 = FISH_HOME.clone().add(V(-0.5, 0.4, 2.4)); const d = V(0.15, 0.55, 0.5).normalize();
   const h = p0.clone().addScaledVector(d, u * 1.0); eel.visible = true; eel.set(spineFree(h, d, t, 0.08), V(0, 0, 1).cross(d).normalize().cross(d).negate(), { expr: 'happy' });
-  look(h.clone().add(V(-0.9, -0.35 - u * 0.1, -1.4)), h.clone().add(V(0.1, 0.15, 0)), 48, 1.6); }, { label: 'THE ONLY ONE <b>EVER</b>' });
+  look(h.clone().add(V(-1.35 + u * 0.2, 0.15, 0.55)), h.clone().addScaledVector(d, -0.45), 50, 1.6); }, { label: 'THE ONLY ONE <b>EVER</b>' });
 shot(WT('payoff', 'Tail'), 'river', (t, u) => { riverFish(t, { lid: 0.75, look: V(1, 0.3, 0.5) }); const h = FISH_HOME.clone().add(V(1.8, 0.95, 2.1)); const a = u * 3.0; const d = V(Math.cos(a), 0.1, Math.sin(a)).normalize();
   eel.visible = true; eel.set(spineFree(h, d, t, 0.05, 0.45), V(0, 1, 0), { expr: 'happy', wink: u > 0.35, look: V(0.3, 0.2, -1), eyeScale: 1.2 });
   look(h.clone().add(V(0.35, 0.1, 0.95)), h.clone().add(V(0, -0.05, 0)), 40, 0.95); });
