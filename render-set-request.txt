@@ -1,2 +1,1 @@
-prototypes/archimedes-claw
-# rerun 2
+episodes/dark/002-video-poker

@@ -1,0 +1,139 @@
+{
+ "title": "The Video Poker Bug That Paid 10x Every Jackpot",
+ "channel": "dark-stories",
+ "style": "set",
+ "look": "noir-toon",
+ "noGary": true,
+ "voices": {
+  "narrator": "am_fenrir"
+ },
+ "speed": 1.1,
+ "tail": 1.2,
+ "pronounce": {
+  "2009": "two thousand nine",
+  "2011": "twenty-eleven",
+  "2013": "twenty-thirteen"
+ },
+ "experiment": {
+  "vars": {
+   "format": "dark_story",
+   "length": "long_short",
+   "voice": "am_fenrir",
+   "music": "orchestral_suspense",
+   "look": "noir-toon"
+  },
+  "hypothesis": "A heist told through one machine's bug, with a legal twist (not hacking) and a software-update takeaway.",
+  "facts": [
+   {
+    "claim": "April 2009 Kane found the bug in an IGT Game King; Nestor flew out to join him; exploited April-September 2009; July 3 2009 five jackpots in under an hour at the Silverton; Gaming Control Board engineers analysed the logic tray and EEPROM and found an unknown firmware bug; charged Jan 2011 with wire fraud conspiracy and CFAA; court held they did not exceed authorized access (Nosal)",
+    "source": "https://en.wikipedia.org/wiki/United_States_v._Kane"
+   },
+   {
+    "claim": "Mechanics: ask attendant to enable double-up; win on one game, switch game and win, insert more money, exit, raise denomination (e.g. $1 to $20), return and the win is re-evaluated at the higher denomination; Meadows says Nestor took almost $480,000 in May-June 2009 and the casino was made whole; CFAA counts dismissed July 2013, wire fraud Nov 25 2013; IGT updated its video-poker line",
+    "source": "https://archive.triblive.com/news/how-2-video-poker-players-hit-casinos-for-500000-plus/"
+   },
+   {
+    "claim": "$820 win at $1 re-awarded as $8,200 at $10 denomination (Silverton); Triple Double Bonus then Draw Poker; crew won at Texas Station, Harrah's, Rio, Wynn, Golden Nugget",
+    "source": "https://theweek.com/articles/464801/should-crime-exploit-poker-machines-bug (citing Kevin Poulsen, Wired, 2014)"
+   },
+   {
+    "claim": "Kane lost $500,000 at Boulder Station in a year; FBI estimated his winnings at $500,000; police battering ram at Nestor's door",
+    "source": "https://www.insidehook.com/culture/what-happens-when-you-cheat-a-casino-at-video-poker (citing Wired)"
+   }
+  ]
+ },
+ "beats": [
+  {
+   "label": "ONE BUTTON. *10X JACKPOT.*",
+   "hook": true,
+   "hold": 0.25,
+   "lines": [
+    {
+     "text": "This man found a button trick that made casino machines pay out ten times his jackpot. The FBI called it hacking."
+    }
+   ]
+  },
+  {
+   "label": "LAS VEGAS, *2009*",
+   "lines": [
+    {
+     "text": "Rewind to 2009. John Kane is a Las Vegas video poker addict. In one year, he lost half a million dollars at a single casino. Then, one night in April, playing a Game King machine, he noticed something strange."
+    }
+   ]
+  },
+  {
+   "label": "THE *BUG*",
+   "lines": [
+    {
+     "text": "Here's the trick. Play one game at a dollar a hand until you win big, say eight hundred and twenty dollars. Switch to a different poker game, and play until the machine offers its double-up bonus. Feed in more cash. Back out, and raise the bet to ten dollars a hand. Then go back to the first game."
+    }
+   ]
+  },
+  {
+   "label": "*$820* = *$8,200*",
+   "hold": 0.4,
+   "lines": [
+    {
+     "text": "Your old win is still on the screen. Hit cash out, and the machine pays it again, at the new price. Eight hundred and twenty dollars becomes eight thousand two hundred."
+    }
+   ]
+  },
+  {
+   "label": "THE *CREW*",
+   "lines": [
+    {
+     "text": "Kane called his friend Andre Nestor, who flew out to join him. They asked attendants to switch on the double-up feature, and a small crew worked the trick across Las Vegas: the Rio, the Wynn, the Golden Nugget. Back home near Pittsburgh, at the Meadows casino, Nestor took almost four hundred and eighty thousand dollars."
+    }
+   ]
+  },
+  {
+   "label": "SILVERTON, *JULY 3*",
+   "lines": [
+    {
+     "text": "Then Kane pushed his luck. At the Silverton casino, he hit five huge jackpots in under an hour. That should almost never happen. Security pulled him off the floor."
+    }
+   ]
+  },
+  {
+   "label": "THE *LAB*",
+   "lines": [
+    {
+     "text": "Nobody knew how he'd done it. Engineers from Nevada's Gaming Control Board opened the machine and pulled the code off its memory chip. Hidden inside was a bug nobody had ever found."
+    }
+   ]
+  },
+  {
+   "label": "THE *RAID*",
+   "hold": 0.4,
+   "lines": [
+    {
+     "text": "Kane warned Nestor to stop. Nestor kept playing, until police smashed through his door with a battering ram."
+    }
+   ]
+  },
+  {
+   "label": "*HACKERS?*",
+   "lines": [
+    {
+     "text": "In 2011, federal prosecutors charged both men with wire fraud and computer hacking. The FBI put Kane's winnings at about half a million dollars. But neither man ever touched the code. They only pressed the buttons the machine gave them."
+    }
+   ]
+  },
+  {
+   "label": "THE *VERDICT*",
+   "lines": [
+    {
+     "text": "The court agreed: they had played the game exactly as it was built. The hacking charges were thrown out in 2013, and that November, the rest were dropped too. Neither man was convicted."
+    }
+   ]
+  },
+  {
+   "label": "THE *LESSON*",
+   "lines": [
+    {
+     "text": "The maker fixed its machines. But every computer has bugs nobody has found yet, including yours. So when your phone asks to update, let it. Follow for more true stories of hackers and heists."
+    }
+   ]
+  }
+ ]
+}
