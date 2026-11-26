@@ -3,7 +3,14 @@
  "remakeOf": "014-never-get-out-of-bed",
  "style": "set",
  "noGary": false,
- "qwen_speakers": {"narrator": ["Ryan"], "doctor": "Uncle_Fu", "gary": "Aiden", "oldgary": "Aiden"},
+ "qwen_speakers": {
+  "narrator": [
+   "Ryan"
+  ],
+  "doctor": "Uncle_Fu",
+  "gary": "Aiden",
+  "oldgary": "Aiden"
+ },
  "qwen_instruct": {
   "narrator": "Punchy, dramatic storyteller, fast and confident, building suspense.",
   "doctor": "Calm, deep, slightly dry American hospital doctor.",
@@ -13,46 +20,169 @@
  "qwen_speed": 1.06,
  "tail": 1.0,
  "beats": [
-  {"label": "3 WEEKS IN BED > *30 YEARS*", "hook": true, "hold": 0.25, "lines": [
-   {"text": "Three weeks in bed will wreck your body worse than thirty years of getting old."}]},
-  {"label": "DAY 1", "lines": [
-   {"text": "Day one. No alarm. No stairs. Snacks in reach. Bliss."}]},
-  {"label": "DALLAS, 1966", "lines": [
-   {"text": "In 1966, scientists in Dallas did this to five fit twenty-year-olds."},
-   {"text": "Three weeks, flat on their backs."}]},
-  {"label": "WEEK 3", "lines": [
-   {"speaker": "doctor", "text": "Okay. Stand up, please."},
-   {"speaker": "gary", "text": "Easy!"},
-   {"text": "Your blood drops to your feet, and the room spins."}]},
-  {"label": "FITNESS *-27%*", "lines": [
-   {"text": "On the treadmill, their fitness had crashed by more than a quarter."}]},
-  {"label": "EVERY BEAT *-31%*", "lines": [
-   {"text": "Every heartbeat pushed out almost a third less blood."}]},
-  {"label": "MONTH 2", "lines": [
-   {"text": "Stay longer, and your bones thin by about one percent a month."}]},
-  {"label": "*$18,000* TO LIE DOWN", "lines": [
-   {"text": "NASA once offered eighteen thousand dollars to lie in bed for seventy days, just to study it."}]},
-  {"label": "30 YEARS LATER", "hold": 0.2, "lines": [
-   {"text": "Thirty years later, the same men came back."},
-   {"speaker": "oldgary", "text": "Not this bed again."},
-   {"text": "Three decades of ageing had hurt their fitness less than those three weeks in bed."}]},
-  {"label": "THE *TWIST*", "lines": [
-   {"text": "But here's the twist. Back in 1966, eight weeks of training made them fitter than before."}]},
-  {"label": "THE *FIX*", "lines": [
-   {"text": "That's why heart patients, once kept in bed for weeks, now get up within days."}]},
-  {"label": "GET *UP*", "lines": [
-   {"text": "So get up. Your heart is counting. Comment what you want to know next."}]}
+  {
+   "label": "3 WEEKS IN BED > *30 YEARS*",
+   "hook": true,
+   "hold": 0.25,
+   "lines": [
+    {
+     "text": "Three weeks in bed will wreck your body worse than thirty years of getting old."
+    }
+   ]
+  },
+  {
+   "label": "DAY 1",
+   "lines": [
+    {
+     "text": "Day one. No alarm. No stairs. Snacks in reach. Bliss."
+    }
+   ]
+  },
+  {
+   "label": "DALLAS, 1966",
+   "lines": [
+    {
+     "text": "In 1966, scientists in Dallas did this to five fit twenty-year-olds."
+    },
+    {
+     "text": "Three weeks, flat on their backs."
+    }
+   ]
+  },
+  {
+   "label": "WEEK 3",
+   "lines": [
+    {
+     "speaker": "doctor",
+     "text": "Okay. Stand up, please."
+    },
+    {
+     "speaker": "gary",
+     "text": "Easy!"
+    },
+    {
+     "text": "Your blood drops to your feet, and the room spins."
+    }
+   ]
+  },
+  {
+   "label": "FITNESS *-27%*",
+   "lines": [
+    {
+     "text": "On the treadmill, their fitness had crashed by more than a quarter."
+    }
+   ]
+  },
+  {
+   "label": "EVERY BEAT *-31%*",
+   "lines": [
+    {
+     "text": "Every heartbeat pushed out almost a third less blood."
+    }
+   ]
+  },
+  {
+   "label": "MONTH 2",
+   "lines": [
+    {
+     "text": "Stay longer, and your bones thin by about one percent a month."
+    }
+   ]
+  },
+  {
+   "label": "*$18,000* TO LIE DOWN",
+   "lines": [
+    {
+     "text": "NASA once offered eighteen thousand dollars to lie in bed for seventy days, just to study it."
+    }
+   ]
+  },
+  {
+   "label": "30 YEARS LATER",
+   "hold": 0.2,
+   "lines": [
+    {
+     "text": "Thirty years later, the same men came back."
+    },
+    {
+     "speaker": "oldgary",
+     "text": "Not this bed again."
+    },
+    {
+     "text": "Three decades of ageing had hurt their fitness less than those three weeks in bed."
+    }
+   ]
+  },
+  {
+   "label": "THE *TWIST*",
+   "lines": [
+    {
+     "text": "But here's the twist. Back in 1966, eight weeks of training made them fitter than before."
+    }
+   ]
+  },
+  {
+   "label": "THE *FIX*",
+   "lines": [
+    {
+     "text": "That's why heart patients, once kept in bed for weeks, now get up within days."
+    }
+   ]
+  },
+  {
+   "label": "GET *UP*",
+   "lines": [
+    {
+     "text": "So get up. Your heart is counting. Comment what you want to know next."
+    }
+   ]
+  }
  ],
  "experiment": {
   "note": "Remake of 014 in the new set-video style: several 3D sets (bedroom, 1966 Dallas lab, treadmill, heart/X-ray, NASA tilt bed, 1996 reunion, 1950s ward, morning street), a cut about every 2 s, character lines in other voices, recorded CC0 SFX. Hypothesis: fast cuts + a hard number hook hold retention better than 014's slow cel version.",
-  "vars": {"format": "gary_you", "premise": "life_change", "ending": "better", "style": "set", "look": "set_fastcut", "narrator": "qwen_ryan", "music": "orchestral", "ending_cta": "comment_next", "hook_form": "number_first", "source": "fish#443"},
+  "vars": {
+   "format": "gary_you",
+   "premise": "life_change",
+   "ending": "better",
+   "style": "set",
+   "look": "set_fastcut",
+   "narrator": "qwen_ryan",
+   "music": "orchestral",
+   "ending_cta": "comment_next",
+   "hook_form": "number_first",
+   "source": "fish#443"
+  },
   "facts": [
-   {"claim": "Dallas Bed Rest and Training Study (1966): five healthy 20-year-old men, 3 weeks strict bed rest; VO2max fell 27%, maximal stroke volume fell 31%; 8 weeks of training then raised VO2max 45% (above the pre-bed-rest level)", "source": "Mitchell, Levine & McGuire, Circulation 2019 https://pmc.ncbi.nlm.nih.gov/articles/PMC6814251/"},
-   {"claim": "30-year follow-up: the decline in VO2max from age 20 to 50 was smaller than after 3 weeks of bed rest at 20", "source": "McGuire et al., Circulation 2001 https://pmc.ncbi.nlm.nih.gov/articles/PMC6814251/ ; https://www.sciencedaily.com/releases/2001/09/010918134712.htm"},
-   {"claim": "The study helped end weeks of strict bed rest for heart-attack patients in favour of early mobilisation and cardiac rehab", "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6814251/"},
-   {"claim": "After bed rest, standing up often causes dizziness or fainting (orthostatic intolerance) as blood pools in the legs", "source": "NASA bedrest FAQ https://www.nasa.gov/hrp/bedrest-faqs/"},
-   {"claim": "Bed rest / unloading bone loss is roughly 1% (to 1.5%) per month", "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5440781"},
-   {"claim": "NASA's 70-day 6-degree head-down bed rest study (2013) offered $18,000", "source": "https://abcnews.go.com/blogs/technology/2013/09/want-18000-to-stay-in-bed-try-nasa ; https://www.nasa.gov/hrp/bedrest-faqs/"}
+   {
+    "claim": "Dallas Bed Rest and Training Study (1966): five healthy 20-year-old men, 3 weeks strict bed rest; VO2max fell 27%, maximal stroke volume fell 31%; 8 weeks of training then raised VO2max 45% (above the pre-bed-rest level)",
+    "source": "Mitchell, Levine & McGuire, Circulation 2019 https://pmc.ncbi.nlm.nih.gov/articles/PMC6814251/"
+   },
+   {
+    "claim": "30-year follow-up: the decline in VO2max from age 20 to 50 was smaller than after 3 weeks of bed rest at 20",
+    "source": "McGuire et al., Circulation 2001 https://pmc.ncbi.nlm.nih.gov/articles/PMC6814251/ ; https://www.sciencedaily.com/releases/2001/09/010918134712.htm"
+   },
+   {
+    "claim": "The study helped end weeks of strict bed rest for heart-attack patients in favour of early mobilisation and cardiac rehab",
+    "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6814251/"
+   },
+   {
+    "claim": "After bed rest, standing up often causes dizziness or fainting (orthostatic intolerance) as blood pools in the legs",
+    "source": "NASA bedrest FAQ https://www.nasa.gov/hrp/bedrest-faqs/"
+   },
+   {
+    "claim": "Bed rest / unloading bone loss is roughly 1% (to 1.5%) per month",
+    "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5440781"
+   },
+   {
+    "claim": "NASA's 70-day 6-degree head-down bed rest study (2013) offered $18,000",
+    "source": "https://abcnews.go.com/blogs/technology/2013/09/want-18000-to-stay-in-bed-try-nasa ; https://www.nasa.gov/hrp/bedrest-faqs/"
+   }
   ]
+ },
+ "voices": {
+  "narrator": "am_fenrir",
+  "doctor": "am_michael",
+  "gary": "am_puck",
+  "oldgary": "bm_george"
  }
 }
