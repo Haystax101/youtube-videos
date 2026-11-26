@@ -202,6 +202,15 @@
       ],
       "since": "2026-11-25",
       "why": "george: storybook Shorts (007, 010/011) got ~0 views and were deleted; keep one consistent low-poly look. Don't restart without asking george. 2026-11-25 17:20: george switched the lowpoly renderer to the cel look (toon + ink, full sets); still one consistent look, so no style test."
+    },
+    "qwen_voice": {
+      "var": "qwen_voice",
+      "arms": [
+        "qwen_ryan",
+        "qwen_aiden"
+      ],
+      "needs": "Qwen3-TTS voice job from branch claude/project-thread-lazv6b merged to main (.github/workflows/voice.yml, tools/retime_voice.py). Then: script.json \"qwen_speakers\": {\"narrator\": [\"Ryan\"]} (or Aiden), write the episode folder as line 1 of voice-request.txt and push; download voice_<Name>.wav + timeline_<Name>.json from the voice-<slug>-<run id> pre-release with curl (~10-15 min per voice); retime with tools/retime_voice.py IN.wav IN.json voice.wav timeline.json --tempo 1.3 --maxp 0.25; then mix.py as usual. Record experiment var voice.",
+      "why": "george 2026-11-26 10:30: stay free; Ryan vs Aiden (Dolce/Arthur are paid-API only, declined) | 2026-11-26 12:00: dropped, george wasn't impressed with Qwen; narration stays on Kokoro (Qwen only for short character lines if useful)."
     }
   }
 }

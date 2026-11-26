@@ -1,0 +1,571 @@
+{
+ "duration": 26.739,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 3.911,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Three",
+     "s": 0.15,
+     "e": 0.389,
+     "speaker": "narrator"
+    },
+    {
+     "w": "weeks",
+     "s": 0.389,
+     "e": 0.628,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 0.628,
+     "e": 0.844,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bed.",
+     "s": 0.844,
+     "e": 1.067,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Thirty",
+     "s": 1.207,
+     "e": 1.572,
+     "speaker": "narrator"
+    },
+    {
+     "w": "years",
+     "s": 1.572,
+     "e": 1.766,
+     "speaker": "narrator"
+    },
+    {
+     "w": "older.",
+     "s": 1.766,
+     "e": 2.125,
+     "speaker": "narrator"
+    },
+    {
+     "w": "What",
+     "s": 2.265,
+     "e": 2.425,
+     "speaker": "narrator"
+    },
+    {
+     "w": "happens",
+     "s": 2.425,
+     "e": 2.739,
+     "speaker": "narrator"
+    },
+    {
+     "w": "if",
+     "s": 2.739,
+     "e": 2.888,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 2.888,
+     "e": 3.043,
+     "speaker": "narrator"
+    },
+    {
+     "w": "never",
+     "s": 3.043,
+     "e": 3.347,
+     "speaker": "narrator"
+    },
+    {
+     "w": "get",
+     "s": 3.347,
+     "e": 3.502,
+     "speaker": "narrator"
+    },
+    {
+     "w": "up?",
+     "s": 3.502,
+     "e": 3.651,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 3.911,
+   "end": 6.253,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Day",
+     "s": 3.911,
+     "e": 4.123,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 4.123,
+     "e": 4.334,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 4.334,
+     "e": 4.539,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bliss.",
+     "s": 4.539,
+     "e": 4.765,
+     "speaker": "narrator"
+    },
+    {
+     "w": "No",
+     "s": 4.905,
+     "e": 5.094,
+     "speaker": "narrator"
+    },
+    {
+     "w": "alarm,",
+     "s": 5.094,
+     "e": 5.587,
+     "speaker": "narrator"
+    },
+    {
+     "w": "no",
+     "s": 5.587,
+     "e": 5.776,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stairs.",
+     "s": 5.776,
+     "e": 5.993,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 6.253,
+   "end": 11.099,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "In",
+     "s": 6.253,
+     "e": 6.472,
+     "speaker": "narrator"
+    },
+    {
+     "w": "1966,",
+     "s": 6.472,
+     "e": 7.822,
+     "speaker": "narrator"
+    },
+    {
+     "w": "five",
+     "s": 7.822,
+     "e": 8.057,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fit",
+     "s": 8.057,
+     "e": 8.284,
+     "speaker": "narrator"
+    },
+    {
+     "w": "young",
+     "s": 8.284,
+     "e": 8.527,
+     "speaker": "narrator"
+    },
+    {
+     "w": "men",
+     "s": 8.527,
+     "e": 8.754,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 8.754,
+     "e": 8.974,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Dallas",
+     "s": 8.974,
+     "e": 9.429,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stayed",
+     "s": 9.429,
+     "e": 9.679,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 9.679,
+     "e": 9.899,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bed",
+     "s": 9.899,
+     "e": 10.126,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 10.126,
+     "e": 10.354,
+     "speaker": "narrator"
+    },
+    {
+     "w": "three",
+     "s": 10.354,
+     "e": 10.597,
+     "speaker": "narrator"
+    },
+    {
+     "w": "weeks.",
+     "s": 10.597,
+     "e": 10.839,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 11.099,
+   "end": 14.282,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Their",
+     "s": 11.099,
+     "e": 11.292,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fitness",
+     "s": 11.292,
+     "e": 11.659,
+     "speaker": "narrator"
+    },
+    {
+     "w": "crashed",
+     "s": 11.659,
+     "e": 12.026,
+     "speaker": "narrator"
+    },
+    {
+     "w": "more",
+     "s": 12.026,
+     "e": 12.212,
+     "speaker": "narrator"
+    },
+    {
+     "w": "than",
+     "s": 12.212,
+     "e": 12.399,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thirty",
+     "s": 12.399,
+     "e": 12.759,
+     "speaker": "narrator"
+    },
+    {
+     "w": "years",
+     "s": 12.759,
+     "e": 12.952,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 12.952,
+     "e": 13.126,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ageing",
+     "s": 13.126,
+     "e": 13.487,
+     "speaker": "narrator"
+    },
+    {
+     "w": "later",
+     "s": 13.487,
+     "e": 13.842,
+     "speaker": "narrator"
+    },
+    {
+     "w": "did.",
+     "s": 13.842,
+     "e": 14.022,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 14.282,
+   "end": 17.422,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Stay",
+     "s": 14.282,
+     "e": 14.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "longer",
+     "s": 14.48,
+     "e": 14.862,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 14.862,
+     "e": 15.053,
+     "speaker": "narrator"
+    },
+    {
+     "w": "your",
+     "s": 15.053,
+     "e": 15.251,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bones",
+     "s": 15.251,
+     "e": 15.626,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lose",
+     "s": 15.626,
+     "e": 15.824,
+     "speaker": "narrator"
+    },
+    {
+     "w": "about",
+     "s": 15.824,
+     "e": 16.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 16.2,
+     "e": 16.391,
+     "speaker": "narrator"
+    },
+    {
+     "w": "percent",
+     "s": 16.391,
+     "e": 16.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 16.78,
+     "e": 16.958,
+     "speaker": "narrator"
+    },
+    {
+     "w": "month.",
+     "s": 16.958,
+     "e": 17.162,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 17.422,
+   "end": 21.257,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "But",
+     "s": 17.422,
+     "e": 17.579,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eight",
+     "s": 17.579,
+     "e": 17.747,
+     "speaker": "narrator"
+    },
+    {
+     "w": "weeks",
+     "s": 17.747,
+     "e": 17.914,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 17.914,
+     "e": 18.066,
+     "speaker": "narrator"
+    },
+    {
+     "w": "training",
+     "s": 18.066,
+     "e": 18.391,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fixed",
+     "s": 18.391,
+     "e": 18.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it.",
+     "s": 18.7,
+     "e": 18.851,
+     "speaker": "narrator"
+    },
+    {
+     "w": "That's",
+     "s": 18.991,
+     "e": 19.224,
+     "speaker": "narrator"
+    },
+    {
+     "w": "why",
+     "s": 19.224,
+     "e": 19.442,
+     "speaker": "narrator"
+    },
+    {
+     "w": "heart",
+     "s": 19.442,
+     "e": 19.674,
+     "speaker": "narrator"
+    },
+    {
+     "w": "patients",
+     "s": 19.674,
+     "e": 20.125,
+     "speaker": "narrator"
+    },
+    {
+     "w": "now",
+     "s": 20.125,
+     "e": 20.343,
+     "speaker": "narrator"
+    },
+    {
+     "w": "get",
+     "s": 20.343,
+     "e": 20.561,
+     "speaker": "narrator"
+    },
+    {
+     "w": "up",
+     "s": 20.561,
+     "e": 20.771,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fast.",
+     "s": 20.771,
+     "e": 20.997,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 21.257,
+   "end": 25.539,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You're",
+     "s": 21.257,
+     "e": 21.436,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stronger",
+     "s": 21.436,
+     "e": 21.783,
+     "speaker": "narrator"
+    },
+    {
+     "w": "than",
+     "s": 21.783,
+     "e": 21.956,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ever.",
+     "s": 21.956,
+     "e": 22.281,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Comment",
+     "s": 22.421,
+     "e": 22.783,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 22.783,
+     "e": 22.968,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stupid",
+     "s": 22.968,
+     "e": 23.324,
+     "speaker": "narrator"
+    },
+    {
+     "w": "shenanigans",
+     "s": 23.324,
+     "e": 24.031,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Gary",
+     "s": 24.031,
+     "e": 24.376,
+     "speaker": "narrator"
+    },
+    {
+     "w": "should",
+     "s": 24.376,
+     "e": 24.572,
+     "speaker": "narrator"
+    },
+    {
+     "w": "try",
+     "s": 24.572,
+     "e": 24.75,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tomorrow.",
+     "s": 24.75,
+     "e": 25.279,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}

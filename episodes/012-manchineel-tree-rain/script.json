@@ -1,0 +1,182 @@
+{
+ "title": "What happens if you shelter under a manchineel tree in the rain?",
+ "style": "lowpoly",
+ "look": "cel",
+ "speed": 1.28,
+ "character": {
+  "poly": "chunky"
+ },
+ "voices": {
+  "narrator": "bf_emma"
+ },
+ "music": {
+  "mood": "chiptune"
+ },
+ "keywords": [
+  "manchineel",
+  "sap",
+  "burns",
+  "blisters",
+  "apple",
+  "death",
+  "red",
+  "pepper",
+  "throat",
+  "recovered",
+  "survived"
+ ],
+ "beats": [
+  {
+   "label": "WOULD YOU SHELTER *HERE?*",
+   "hook": true,
+   "scene": "beach",
+   "gary": {
+    "pose": "scratch",
+    "expr": "shocked",
+    "welts": true
+   },
+   "fx": "rain",
+   "camera": "crane",
+   "lines": [
+    {
+     "text": "Would you shelter under this tree in a storm? It's the most dangerous tree on Earth."
+    }
+   ]
+  },
+  {
+   "label": "SECOND 1",
+   "scene": "beach",
+   "gary": {
+    "pose": "stand",
+    "expr": "happy"
+   },
+   "fx": "rain",
+   "camera": "dolly",
+   "lines": [
+    {
+     "text": "The manchineel is full of a milky sap that burns skin."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 5",
+   "scene": "beach",
+   "gary": {
+    "pose": "scratch",
+    "expr": "worried",
+    "welts": true
+   },
+   "fx": "rain",
+   "camera": "orbit",
+   "lines": [
+    {
+     "text": "Rain washes the sap off the leaves and onto you. Your skin blisters."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 10",
+   "scene": "beach",
+   "gary": {
+    "pose": "eat",
+    "expr": "happy",
+    "welts": true
+   },
+   "props": [
+    "apple"
+   ],
+   "camera": "push",
+   "lines": [
+    {
+     "text": "Then you eat one of its sweet little apples. A doctor really did."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 12",
+   "scene": "beach",
+   "gary": {
+    "pose": "clutch",
+    "expr": "sick",
+    "welts": true
+   },
+   "camera": "face",
+   "lines": [
+    {
+     "text": "Her mouth burned like pepper. Her throat swelled until she could barely swallow."
+    }
+   ]
+  },
+  {
+   "label": "THE NAME",
+   "scene": "beach",
+   "gary": {
+    "pose": "shrug",
+    "expr": "worried",
+    "welts": true
+   },
+   "camera": "truck",
+   "lines": [
+    {
+     "text": "Its Spanish name means little apple of death. Some trunks get a red warning band."
+    }
+   ]
+  },
+  {
+   "label": "YOU *SURVIVED*",
+   "scene": "beach",
+   "gary": {
+    "pose": "wave",
+    "expr": "happy"
+   },
+   "camera": "crane_up",
+   "lines": [
+    {
+     "text": "She recovered. You survived. Comment what you want to know next."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "note": "First beach set + manchineel tree, rain fx, apple prop. Hypothesis: a dare hook on a vivid 'deadliest tree' premise holds the first 3 s.",
+  "vars": {
+   "music": "chiptune",
+   "ending_cta": "comment_next",
+   "narrator": "bf_emma",
+   "speed": 1.28,
+   "hook_form": "dare",
+   "character_poly": "chunky",
+   "ending": "survives",
+   "premise": "absurd_event",
+   "style": "lowpoly",
+   "look": "cel",
+   "format": "gary_you",
+   "source": "fish#313"
+  },
+  "scores": {
+   "fact": 5,
+   "arc": 4,
+   "hook": 4,
+   "pace": 4,
+   "craft": 4
+  },
+  "facts": [
+   {
+    "claim": "Manchineel (Hippomane mancinella) sap blisters skin; standing under it in rain can blister you because rain carries the sap",
+    "source": "https://en.wikipedia.org/wiki/Manchineel ; https://www.sciencealert.com/do-not-stand-under-world-s-most-dangerous-tree-manchineel-tree"
+   },
+   {
+    "claim": "Guinness lists it as the world's most dangerous tree",
+    "source": "https://www.npr.org/2022/08/25/1119333236/worlds-most-dangerous-tree-manchineel-florida"
+   },
+   {
+    "claim": "Radiologist Nicola Strickland ate a manchineel 'beach apple' on holiday in Tobago: sweet at first, then peppery burning and a throat so tight she could hardly swallow; she recovered",
+    "source": "Strickland, BMJ 2000;321:428 https://pmc.ncbi.nlm.nih.gov/articles/PMC1127797"
+   },
+   {
+    "claim": "Spanish name manzanilla de la muerte ('little apple of death'); trees are often marked with a red band or X",
+    "source": "https://en.wikipedia.org/wiki/Manchineel"
+   }
+  ]
+ }
+}

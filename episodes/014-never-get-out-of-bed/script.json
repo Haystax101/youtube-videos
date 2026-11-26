@@ -1,0 +1,172 @@
+{
+ "title": "What happens if you never get out of bed?",
+ "style": "lowpoly",
+ "look": "cel",
+ "speed": 1.2,
+ "character": {
+  "poly": "low"
+ },
+ "voices": {
+  "narrator": "am_fenrir"
+ },
+ "music": {
+  "mood": "epic"
+ },
+ "keywords": [
+  "bed",
+  "three",
+  "weeks",
+  "thirty",
+  "years",
+  "bones",
+  "percent",
+  "1966",
+  "training",
+  "heart",
+  "fitness"
+ ],
+ "beats": [
+  {
+   "label": "3 WEEKS IN BED. *30 YEARS OLDER*",
+   "hook": true,
+   "scene": "bedroom",
+   "gary": {
+    "pose": "lie",
+    "expr": "tired"
+   },
+   "camera": "crane",
+   "lines": [
+    {
+     "text": "Three weeks in bed. Thirty years older. What happens if you never get up?"
+    }
+   ]
+  },
+  {
+   "label": "DAY 1",
+   "scene": "bedroom",
+   "gary": {
+    "pose": "lie",
+    "expr": "happy"
+   },
+   "camera": "dolly",
+   "lines": [
+    {
+     "text": "Day one is bliss. No alarm, no stairs."
+    }
+   ]
+  },
+  {
+   "label": "WEEK 3",
+   "scene": "bedroom",
+   "gary": {
+    "pose": "lie",
+    "expr": "tired"
+   },
+   "camera": "orbit",
+   "lines": [
+    {
+     "text": "In 1966, five fit young men in Dallas stayed in bed for three weeks."
+    }
+   ]
+  },
+  {
+   "label": "WEEK 3",
+   "scene": "bedroom",
+   "gary": {
+    "pose": "lie",
+    "expr": "sick"
+   },
+   "camera": "push",
+   "lines": [
+    {
+     "text": "Their fitness crashed more than thirty years of ageing later did."
+    }
+   ]
+  },
+  {
+   "label": "MONTH 2",
+   "scene": "bedroom",
+   "gary": {
+    "pose": "lie",
+    "expr": "sick",
+    "build": 0.4
+   },
+   "camera": "front",
+   "lines": [
+    {
+     "text": "Stay longer and your bones lose about one percent a month."
+    }
+   ]
+  },
+  {
+   "label": "THE FIX",
+   "scene": "street",
+   "gary": {
+    "pose": "jog",
+    "expr": "worried"
+   },
+   "camera": "truck",
+   "lines": [
+    {
+     "text": "But eight weeks of training fixed it. That's why heart patients now get up fast."
+    }
+   ]
+  },
+  {
+   "label": "YOU'RE *STRONGER*",
+   "scene": "street",
+   "gary": {
+    "pose": "wave",
+    "expr": "happy"
+   },
+   "camera": "crane_up",
+   "lines": [
+    {
+     "text": "You're stronger than ever. Comment what stupid shenanigans Gary should try tomorrow."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "note": "New bedroom set and lie pose; jog pose for the turn. Hypothesis: a number-first hook ('3 weeks in bed. 30 years older.') beats a question.",
+  "vars": {
+   "music": "epic",
+   "ending_cta": "shenanigans",
+   "narrator": "am_fenrir",
+   "speed": 1.2,
+   "hook_form": "number_first",
+   "character_poly": "low",
+   "ending": "better",
+   "premise": "life_change",
+   "style": "lowpoly",
+   "look": "cel",
+   "format": "gary_you",
+   "source": "fish#443"
+  },
+  "scores": {
+   "fact": 5,
+   "arc": 4,
+   "hook": 4,
+   "pace": 4,
+   "craft": 4
+  },
+  "facts": [
+   {
+    "claim": "Dallas Bed Rest and Training Study (1966): five healthy 20-year-old men, 3 weeks of strict bed rest; VO2max fell 27%, then rose 45% with 8 weeks of training",
+    "source": "McGuire et al. / Mitchell, Levine & McGuire, Circulation 2019 https://pmc.ncbi.nlm.nih.gov/articles/PMC6814251/"
+   },
+   {
+    "claim": "At the 30-year follow-up their fitness had fallen only ~12% with ageing: 3 weeks of bed rest at 20 did more harm than 30 years of ageing",
+    "source": "https://www.sciencedaily.com/releases/2001/09/010918134712.htm"
+   },
+   {
+    "claim": "The study helped replace bed rest with cardiac rehabilitation for heart-attack patients",
+    "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6814251/"
+   },
+   {
+    "claim": "Bed rest bone mineral loss averages about 1-1.5% per month",
+    "source": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5440781"
+   }
+  ]
+ }
+}

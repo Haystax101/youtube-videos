@@ -99,14 +99,18 @@ Preview any of these with `RENDER_QS='look=flat&poly=smooth' node pipeline/rende
 `pipeline/render.mjs` loads `web/<style>.html` when it exists, else `web/index.html`. No deaths counter.
 - `"noGary": true` (script) or `"gary": {"hide": true}` (beat) hides Gary for Shorts told without him.
 - scene: livingroom, office, car (convertible on a moving road), hospital, gaming, garden (lawn, fence, beehive), void,
-  kitchen (full kitchen, garden through the window), street (houses, road, lamp posts, hills), studio (blue cyclorama)
-- gary: `pose` (stand, sit, type, hunch, sofa, slouch, drive, bedsit, game, clipboard, ghost, hold, eat, shrug, wave),
+  kitchen (full kitchen, garden through the window), street (houses, road, lamp posts, hills), studio (blue cyclorama),
+  beach (sand, sea, manchineel tree with red warning band and green fruit), bedroom (bed, bedside lamp, snacks),
+  underwater (sand, rocks, swaying weed, bubbles; pair with noGary and the eel fx)
+- gary: `pose` (stand, sit, type, hunch, sofa, slouch, drive, bedsit, game, clipboard, ghost, hold, eat, shrug, wave, lie (in bed, on the bedroom bed), jog, scratch),
   `expr` (happy, neutral, worried, tired, shocked, sick, dead), `build` 0..1 (weight gain)
 - cast: `[{"who": "doctor", "pose": "clipboard"}]`; a line with `"speaker": "doctor"` moves the doctor's mouth
   (give the voice in `voices`, e.g. `"doctor": "bf_emma"`)
 - gary.welts: true (red sting bumps on the face); script `keywords`: extra caption words to highlight
 - props: pizza, can (energy drink in hand), cans (pile of empties at Gary's feet), magnets (pair in hand);
-  fx: clot, clot_move, bees (full swarm), bees_few, xray (lightbox X-ray beside Gary); camera: push, face, wide, side, low, front, two, legs,
+  apple (green manchineel fruit in hand);
+  fx: clot, clot_move, bees (full swarm), bees_few, xray (lightbox X-ray beside Gary);
+  rain (falling streaks), eel_swim / eel_inside (X-ray) / eel_tail / eel_escape / eel_free (predator fish + Japanese eel story); camera: push, face, wide, side, low, front, two, legs,
   and moving set cameras crane, crane_up, dolly, orbit, truck, back
 - death: clutches chest, then slumps; red pulse
 New rooms, people (PEOPLE) and poses (POSES) are plain data in web/lowpoly.js.

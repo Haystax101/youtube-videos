@@ -4,7 +4,7 @@
 // script.json has "style": "lowpoly".
 //
 // Script vocabulary for this style:
-//   scene: livingroom, office, car, hospital, gaming, garden (lawn, fence, beehive), void
+//   scene: livingroom, office, car, hospital, gaming, garden (lawn, fence, beehive), beach, bedroom, underwater, void
 //   gary: { pose, expr, build, welts }  welts: true -> red sting bumps on the face   pose: stand, sit, type, hunch, sofa, slouch, drive, bedsit, game, clipboard, ghost
 //                                 expr: happy, neutral, worried, tired, shocked, sick, dead
 //                                 build: 0 (default) .. 1 (much heavier), for weight-gain arcs
@@ -226,6 +226,9 @@ Object.assign(POSES, {
   eat: { shR: [-1.15, 0, 0.3], elR: [-2.25, 0, 0.1], haR: [-0.7, 0, 0], head: [-0.08, 0, 0] },
   shrug: { sh: [-0.25, 0, 0.45], el: [-1.35, 0.4, 0], ha: [0, 0, 0], chest: [0, 0, 0], neck: [-0.05, 0, 0], head: [-0.08, 0, 0.1] },
   wave: { shL: [-0.15, 0, 2.55], elL: [0, 0, 0.55], head: [0, 0.1, 0.05] },
+  lie: { sh: [-0.5, 0, 0.12], el: [-0.6, 0, -0.2], hip: [-0.12, 0, 0.04], kn: [0.25, 0, 0], neck: [-0.1, 0, 0] },
+  jog: { sh: [0, 0, 0.12], el: [-1.4, 0, 0], spine: [0.12, 0, 0] },
+  scratch: { shR: [-0.9, 0, -0.2], elR: [-2.3, 0, 0.6], shL: [-0.9, 0, 0.2], elL: [-2.0, 0, -0.5], head: [0.05, 0, 0] },
 });
 function resolvePose(name) {
   const p = { ...BASE, ...(POSES[name] || {}) }, out = { hipsY: p.hipsY, hipsZ: p.hipsZ };
@@ -650,6 +653,62 @@ const ROOMS = {
     g.add(at(hive, 1.35, 0, -0.9, 0, -0.4, 0));
     return { g, bg: ['#bde0fe', '#fff1c1'], spot: [0, 0, 0.2], sun: [3, 6, 4], hemi: ['#fffbe8', '#6b8f5a', 1.6] };
   },
+  beach() {
+    // tropical beach with a manchineel tree right over Gary (red warning band on the trunk, green "apples")
+    const g = new THREE.Group();
+    const sand = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), M('#f0d9a0')); sand.rotation.x = -Math.PI / 2; sand.receiveShadow = true; sand.userData.noOutline = true; g.add(sand);
+    const sea = new THREE.Mesh(new THREE.PlaneGeometry(120, 60), M('#2fb5c9')); sea.rotation.x = -Math.PI / 2; sea.position.set(0, 0.02, -36); sea.userData.noOutline = true; g.add(sea);
+    for (let i = 0; i < 6; i++) { const f = box(9 + i, 0.03, 0.12, '#e9fbff'); f.position.set(-20 + i * 8, 0.04, -6.2 - (i % 2) * 0.6); f.userData.noOutline = true; g.add(f); g.userData.foam = (g.userData.foam || []).concat(f); }
+    g.add(skyDome('#5d8fb0', '#a9c6d6', '#e8eef0'));
+    const tree = new THREE.Group();
+    const trunk = cyl(0.16, 0.26, 2.6, '#7a5a3e', 8, 0.02); trunk.position.set(0, 1.3, 0); trunk.rotation.z = 0.12; tree.add(trunk);
+    const band = cyl(0.238, 0.245, 0.22, '#e63946', 10); band.position.set(0.085, 0.6, 0); band.rotation.z = 0.12; tree.add(band);
+    for (const [x, y, z, rz] of [[-0.6, 2.4, 0.2, 0.9], [0.55, 2.5, -0.1, -0.8], [0.1, 2.6, 0.55, 0.2]]) { const br = cyl(0.06, 0.1, 1.3, '#7a5a3e', 6); br.position.set(x * 0.6, y, z * 0.6); br.rotation.set(z, 0, rz); tree.add(br); }
+    const r = rng(31); const leaf = ['#2f8f46', '#3aa356', '#27783b'];
+    for (let i = 0; i < 14; i++) { const c = ico(0.6 + r() * 0.35, leaf[i % 3], 1, 0.08, i + 5); c.position.set((r() - 0.3) * 3.2, 2.7 + r() * 0.7, (r() - 0.2) * 2.6); c.scale.y = 0.7; tree.add(c); }
+    for (let i = 0; i < 9; i++) { const a = sph(0.07, '#b5d334', 8, 6); a.position.set((r() - 0.5) * 2.2, 2.55 + r() * 0.3, (r() - 0.2) * 1.6); tree.add(a); }
+    for (let i = 0; i < 6; i++) { const a = sph(0.07, '#a8c93a', 8, 6); a.position.set((r() - 0.5) * 2.4, 0.06, 0.4 + r() * 1.2); tree.add(a); }
+    g.add(at(tree, -1.0, 0, -1.4));
+    for (let i = 0; i < 6; i++) { const pt = celTree(1.1 + (i % 3) * 0.2, 60 + i); pt.position.set((i % 2 ? 1 : -1) * (5 + i * 1.4), 0, -3.5 - i * 0.8); g.add(pt); }
+    const sign = new THREE.Group(); sign.add(at(cyl(0.035, 0.035, 1.3, '#6b4f3a', 5), 0, 0.65, 0)); sign.add(at(box(0.62, 0.36, 0.04, '#ffd166'), 0, 1.25, 0)); sign.add(at(box(0.5, 0.06, 0.05, '#e63946'), 0, 1.25, 0.005, 0, 0, 0.5)); sign.add(at(box(0.5, 0.06, 0.05, '#e63946'), 0, 1.25, 0.005, 0, 0, -0.5));
+    g.add(at(sign, 1.7, 0, -1.2, 0, -0.4, 0));
+    return { g, bg: ['#5d8fb0', '#e8eef0'], spot: [0, 0, 0.15], sun: [3, 7, 4], sunI: 1.9, hemi: ['#dceaf2', '#b59b70', 1.5], fog: ['#a9c6d6', 14, 60] };
+  },
+  bedroom() {
+    const g = diorama({ floor: '#c89f7a', edge: '#8a6a4f', back: '#bcd7f0', left: '#a9c8e6' });
+    const bed = new THREE.Group();
+    bed.add(at(box(2.2, 0.3, 1.2, '#7a5236', 0.004), 0, 0.2, 0));
+    bed.add(at(box(2.1, 0.2, 1.12, '#ffffff', 0.006), 0, 0.45, 0));
+    bed.add(at(box(0.1, 1.0, 1.22, '#7a5236'), -1.12, 0.55, 0));
+    bed.add(at(box(0.45, 0.14, 0.75, '#f7f3ea', 0.01), -0.78, 0.62, -0.05, 0, 0, 0.1));
+    const blanket = box(1.15, 0.34, 1.18, '#ef7f6a', 0.01); blanket.position.set(0.5, 0.72, 0); bed.add(blanket);
+    g.add(at(bed, 0, 0, -0.1)); g.userData.bed = bed;
+    const table = new THREE.Group(); table.add(at(box(0.45, 0.5, 0.4, '#8a5a3c'), 0, 0.25, 0)); table.add(at(mug('#ffd166'), 0.08, 0.5, 0.05));
+    const lamp = new THREE.Group(); lamp.add(at(cyl(0.02, 0.02, 0.3, '#2b2350', 5), 0, 0.15, 0)); lamp.add(at(cone(0.13, 0.16, '#fff1c4', 8), 0, 0.33, 0)); table.add(at(lamp, -0.1, 0.5, -0.05));
+    g.add(at(table, -1.55, 0, -0.55));
+    const snacks = new THREE.Group(); for (let i = 0; i < 5; i++) snacks.add(at(box(0.18, 0.04, 0.12, ['#ef476f', '#ffd166', '#06d6a0'][i % 3]), (i % 3) * 0.1, 0.02 + i * 0.04, (i % 2) * 0.05, 0, i * 0.5, 0));
+    g.add(at(snacks, 1.4, 0, 0.6));
+    g.add(at(windowPane(1.2, 1.1), 0.9, 1.8, -2.48));
+    g.add(at(frameArt(0.6, 0.45, ['#ffd166', '#118ab2', '#ef476f'], 4), -0.6, 1.9, -2.47));
+    const clock = new THREE.Group(); clock.add(at(cyl(0.22, 0.22, 0.05, '#ffffff', 12), 0, 0, 0, Math.PI / 2));
+    for (const [len, wd] of [[0.14, 0.02], [0.19, 0.012]]) { const hnd = new THREE.Group(); hnd.add(at(box(wd, len, 0.01, '#2b2350'), 0, len / 2, 0)); hnd.position.z = 0.04; clock.add(hnd); clockHands.push(hnd); }
+    g.add(at(clock, -2.66, 2.0, 0.3, 0, Math.PI / 2, 0));
+    return { g, bg: ['#ffe5c2', '#c9a7ff'], spot: [0, 0, -0.1], sun: [3, 6, 5], hemi: ['#fff6ea', '#9a8aa8', 1.6] };
+  },
+  underwater() {
+    // river/sea floor for the eel story: sand, rocks, swaying weed, rising bubbles
+    const g = new THREE.Group();
+    const floor = new THREE.Mesh(new THREE.PlaneGeometry(80, 80), M('#d9c48f')); floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; floor.userData.noOutline = true; g.add(floor);
+    const r = rng(9); g.userData.weed = []; g.userData.bubbles = [];
+    for (let i = 0; i < 14; i++) { const rk = ico(0.25 + r() * 0.5, ['#7b8a8f', '#5f6f75', '#8d9a8a'][i % 3], 0, 0.1, i); rk.position.set((r() - 0.5) * 9, 0.1, -1.5 - r() * 6); rk.scale.y = 0.6; g.add(rk); }
+    for (let i = 0; i < 16; i++) {
+      const wd = new THREE.Group(); const h = 1.2 + r() * 1.8, n = 6;
+      for (let k = 0; k < n; k++) { const s = box(0.09, h / n, 0.03, k % 2 ? '#2e9e5b' : '#3bb36a'); s.position.y = (k + 0.5) * h / n; wd.add(s); }
+      wd.position.set((r() - 0.5) * 8, 0, -0.8 - r() * 5); wd.userData.ph = r() * 6; g.add(wd); g.userData.weed.push(wd);
+    }
+    for (let i = 0; i < 26; i++) { const b = new THREE.Mesh(new THREE.SphereGeometry(0.025 + r() * 0.03, 8, 6), new THREE.MeshBasicMaterial({ color: '#e8fbff', transparent: true, opacity: 0.7 })); b.userData.noOutline = true; b.userData.x = (r() - 0.5) * 5; b.userData.z = -0.5 - r() * 3; b.userData.ph = r() * 5; g.add(b); g.userData.bubbles.push(b); }
+    return { g, bg: ['#3fc1d9', '#0b5f8a'], spot: [0, -0.2, 0], sun: [1, 8, 3], sunI: 2.0, hemi: ['#bff4ff', '#1d6f8f', 1.7], fog: ['#2a9fc4', 5, 16], noShadowFloor: true };
+  },
   void() {
     const g = new THREE.Group(); const r = rng(9);
     for (let i = 0; i < 22; i++) {
@@ -715,6 +774,63 @@ function drawEcg(t, bpm = 96) {
   ecg.needsUpdate = true;
 }
 
+// manchineel: green fruit in hand, rain streaks
+const apple = new THREE.Group(); apple.add(sph(0.05, '#b5d334', 10, 8)); apple.add(at(cyl(0.005, 0.005, 0.03, '#5a3a22', 4), 0, 0.055, 0));
+const RAIN_N = 1100; const rainPos = new Float32Array(RAIN_N * 6); const rainSeed = [];
+{ const r = rng(5); for (let i = 0; i < RAIN_N; i++) rainSeed.push([(r() - 0.5) * 6, r() * 6, (r() - 0.5) * 4 + 0.6]); }
+const rainGeo = new THREE.BufferGeometry(); rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+const rain = new THREE.LineSegments(rainGeo, new THREE.LineBasicMaterial({ color: '#f2faff', transparent: true, opacity: 0.95 }));
+rain.userData.noOutline = true; rain.frustumCulled = false; rain.visible = false; scene.add(rain);
+function updateRain(t, c) {
+  for (let i = 0; i < RAIN_N; i++) { const [x, y0, z] = rainSeed[i]; const y = ((y0 - t * 9) % 6 + 6) % 6; const o = i * 6;
+    rainPos[o] = c.x + x; rainPos[o + 1] = y; rainPos[o + 2] = c.z + z; rainPos[o + 3] = c.x + x + 0.02; rainPos[o + 4] = y + 0.45; rainPos[o + 5] = c.z + z; }
+  rainGeo.attributes.position.needsUpdate = true;
+}
+// predator fish (dark sleeper) facing +x, with an X-ray mode, and a segmented Japanese eel parented to it
+const fish = new THREE.Group(); fish.visible = false; scene.add(fish);
+const fishMat = LM({ color: '#6b5a44', transparent: true, opacity: 1 });
+const fishBelly = LM({ color: '#c9b48a', transparent: true, opacity: 1 });
+const fishBody = new THREE.Mesh(new THREE.SphereGeometry(0.5, 18, 12), fishMat); fishBody.scale.set(1.15, 0.5, 0.42); fishBody.castShadow = true; fish.add(fishBody);
+const belly = new THREE.Mesh(new THREE.SphereGeometry(0.45, 16, 10), fishBelly); belly.scale.set(1.0, 0.32, 0.36); belly.position.set(0.02, -0.08, 0); fish.add(belly);
+const fishTail = new THREE.Group(); { const tf = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.4, 4), fishMat); tf.rotation.z = Math.PI / 2; tf.scale.set(1, 1, 0.25); tf.position.x = -0.18; fishTail.add(tf); }
+fishTail.position.x = -0.55; fish.add(fishTail);
+for (const [x, y, rz] of [[0.0, 0.25, 0.3], [-0.25, 0.22, 0.5]]) { const fn = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.22, 3), fishMat); fn.position.set(x, y, 0); fn.rotation.z = rz; fn.scale.z = 0.2; fish.add(fn); }
+for (const z of [-1, 1]) { const ey = sph(0.06, '#ffffff', 10, 8); ey.position.set(0.38, 0.08, z * 0.13); fish.add(ey); const pu = sph(0.032, '#111111', 8, 6); pu.position.set(0.42, 0.09, z * 0.16); fish.add(pu); }
+const mouthM = new THREE.Mesh(new THREE.TorusGeometry(0.07, 0.022, 6, 12), M('#3e3224')); mouthM.position.set(0.56, -0.03, 0); mouthM.rotation.y = Math.PI / 2; fish.add(mouthM);
+const gill = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.014, 4, 12, Math.PI * 0.9), M('#3e3224')); gill.position.set(0.24, -0.01, 0.19); gill.rotation.set(0, 0.2, Math.PI * 0.55); fish.add(gill);
+const stomach = new THREE.Mesh(new THREE.SphereGeometry(0.2, 14, 10), new THREE.MeshBasicMaterial({ color: '#ff9fb0', transparent: true, opacity: 0.45 })); stomach.position.set(-0.08, -0.02, 0); stomach.userData.noOutline = true; fish.add(stomach);
+const EEL_N = 20, EEL_SEG = 0.062; const eel = [];
+for (let i = 0; i < EEL_N; i++) { const s = new THREE.Mesh(new THREE.SphereGeometry(0.066 * (i < 2 ? 1.0 : 1 - i / EEL_N * 0.6), 12, 10), M(i === 0 ? '#5a6b3a' : '#6f8247')); fish.add(s); eel.push(s); }
+const eelEye = sph(0.012, '#111111', 6, 4); eel[0].add(eelEye); eelEye.position.set(0.02, 0.02, 0.04); eelEye.scale.setScalar(1.6);
+const GILL = V3(0.24, -0.01, 0.21), OUT = V3(0.6, -0.15, 1).normalize(), MOUTH_X = 0.56;
+function V3(x, y, z) { return new THREE.Vector3(x, y, z); }
+function placeEel(fn) { for (let i = 0; i < EEL_N; i++) { const r = fn(i); eel[i].visible = !!r; if (r) eel[i].position.copy(r); } }
+function updateFish(fx, t, lt, k, anchor) {
+  const on = typeof fx === 'string' && fx.startsWith('eel');
+  fish.visible = on; if (!on) return;
+  fish.position.copy(anchor); fish.rotation.set(0, 0.25 + 0.06 * Math.sin(t * 0.7), 0.04 * Math.sin(t * 1.1));
+  fishTail.rotation.y = 0.35 * Math.sin(t * 5);
+  const xr = fx === 'eel_inside';
+  fishMat.opacity = xr ? 0.28 : 1; fishBelly.opacity = xr ? 0.2 : 1; fishMat.depthWrite = fishBelly.depthWrite = !xr; stomach.visible = xr;
+  fishBody.userData.noOutline = belly.userData.noOutline = xr;
+  const wig = (i, amp, sp = 9) => amp * Math.sin(t * sp - i * 0.7);
+  if (fx === 'eel_swim') {
+    const lunge = ease(clamp((k - 0.62) / 0.2)); fish.position.x += 0.25 * lunge;
+    const hx = lerp(1.7, 0.2, ease(clamp(k / 0.85)));
+    placeEel(i => { const x = hx + i * EEL_SEG; return x < MOUTH_X - 0.02 ? null : V3(x, -0.03 + wig(i, 0.04) * (i / EEL_N), wig(i, 0.06)); });
+  } else if (fx === 'eel_inside') {
+    const c = V3(-0.08, -0.02, 0).lerp(V3(0.12, 0.0, 0.05), ease(k));
+    placeEel(i => { const a = i * 0.38 + t * 2.2; const rr = 0.11 + 0.025 * Math.sin(t * 7 + i); return V3(c.x + Math.cos(a) * rr, c.y + Math.sin(a) * rr * 0.7, c.z + Math.sin(i * 0.9 + t * 5) * 0.03); });
+  } else if (fx === 'eel_tail' || fx === 'eel_escape') {
+    let m = fx === 'eel_tail' ? lerp(6, 11, ease(k)) : lerp(8, EEL_N, ease(clamp(k / 0.55)));
+    const away = fx === 'eel_escape' ? ease(clamp((k - 0.55) / 0.45)) * 0.9 : 0;
+    placeEel(i => { const j = EEL_N - 1 - i; if (j >= m && away === 0) return null; const d = (m - 1 - j) * EEL_SEG + away;
+      const side = V3(1, 0, -0.35).normalize(); return GILL.clone().addScaledVector(OUT, d).addScaledVector(side, Math.sin(t * 10 - j * 0.8) * 0.025 * Math.min(1, d * 4)).add(V3(0, away * 0.4, 0)); });
+  } else if (fx === 'eel_free') {
+    const base = V3(lerp(0.4, 1.1, k), 0.55, 0.55);
+    placeEel(i => V3(base.x + i * EEL_SEG * 0.95, base.y + wig(i, 0.05, 7), base.z + wig(i + 3, 0.04, 7)));
+  }
+}
 // ---------- captions ----------
 const $ = id => document.getElementById(id);
 const capEl = $('caption'), labelEl = $('label'), flashEl = $('flash'), redEl = $('redflash');
@@ -823,6 +939,7 @@ window.renderFrame = (t) => {
   pose.head = [pose.head[0] + 0.02 * Math.sin(t * 1.3), pose.head[1] + 0.05 * Math.sin(t * 0.7), pose.head[2]];
   if (gs.pose === 'type' || gs.pose === 'hunch') { pose.haL = [pose.haL[0] + 0.15 * Math.sin(t * 19), 0, 0]; pose.haR = [pose.haR[0] + 0.15 * Math.sin(t * 17 + 1), 0, 0]; }
   if (gs.pose === 'game' && b.deathAt == null) { pose.elL = [pose.elL[0] + 0.05 * Math.sin(t * 13), pose.elL[1], pose.elL[2]]; pose.spine = [pose.spine[0] + 0.03 * Math.sin(t * 3.1), pose.spine[1], pose.spine[2] + 0.04 * Math.sin(t * 1.9)]; }
+  if (gs.pose === 'jog') { const ph = Math.sin(t * 9); pose.hipL = [-0.6 * ph, 0, 0.02]; pose.hipR = [0.6 * ph, 0, -0.02]; pose.knL = [0.5 + 0.5 * ph, 0, 0]; pose.knR = [0.5 - 0.5 * ph, 0, 0]; pose.shL = [0.7 * ph, 0, 0.12]; pose.shR = [-0.7 * ph, 0, -0.12]; pose.hipsY = 0.93 + 0.03 * Math.abs(Math.cos(t * 9)); }
   if (gs.pose === 'drive') { pose.spine = [pose.spine[0], pose.spine[1], 0.03 * Math.sin(t * 1.4)]; }
   if (isGhost) { pose.shL = [pose.shL[0], 0, pose.shL[2] + 0.1 * Math.sin(t * 2)]; pose.shR = [pose.shR[0], 0, pose.shR[2] - 0.1 * Math.sin(t * 2)]; }
   applyPose(H, pose);
@@ -833,6 +950,7 @@ window.renderFrame = (t) => {
   H.root.position.set(sx, sy + (isGhost ? 0.25 + 0.12 * Math.sin(t * 2) : 0), sz);
   H.root.rotation.set(0, isGhost ? 0.15 * Math.sin(t * 0.8) : 0, 0);
   if (b.scene === 'car') { H.root.position.x = sx; }
+  if (gs.pose === 'lie') { H.root.position.set(sx + 0.95, 0.82, sz); H.root.rotation.set(0, 0, Math.PI / 2 + 0.03 * Math.sin(t * 1.1)); }
 
   // cast
   for (const k in CAST) CAST[k].root.visible = false;
@@ -846,7 +964,7 @@ window.renderFrame = (t) => {
     setFace(h, c.expr || 'neutral', { blink: ((t + 1.3) % 2.9) < 0.11, mouth: talking ? 0.35 + 0.35 * Math.abs(Math.sin(t * 16)) : 0, t });
   }
   // held items
-  controller.removeFromParent(); clipboard.removeFromParent(); slice.removeFromParent(); drinkCan.removeFromParent(); magnetPair.removeFromParent(); canPile.removeFromParent(); xray.removeFromParent();
+  controller.removeFromParent(); clipboard.removeFromParent(); slice.removeFromParent(); drinkCan.removeFromParent(); magnetPair.removeFromParent(); canPile.removeFromParent(); xray.removeFromParent(); apple.removeFromParent();
   if (gs.pose === 'game') { H.j.haR.add(controller); controller.position.set(0.075, -0.07, 0.03); controller.rotation.set(0.2, 0, 0); if (b.deathAt != null && t > b.deathAt) { scene.add(controller); controller.position.set(0.12, 0.05, 0.45); controller.rotation.set(0, 0.6, 0); } }
   if ((b.cast || []).some(c => c.pose === 'clipboard')) { doctor.j.haR.add(clipboard); clipboard.position.set(-0.06, -0.08, 0.05); clipboard.rotation.set(-1.2, 0, 0.3); }
   const props = b.props || [];
@@ -855,6 +973,7 @@ window.renderFrame = (t) => {
   if (props.includes('magnets')) { H.j.haR.add(magnetPair); magnetPair.position.set(0, -0.08, 0.06); }
   if (props.includes('cans')) { scene.add(canPile); canPile.position.set(H.root.position.x, R.spot[1], H.root.position.z); }
   if (b.fx === 'xray') { scene.add(xray); xray.position.set(H.root.position.x - 1.15, R.spot[1] + 1.75, H.root.position.z - 1.0); xray.rotation.set(0, 0.35, 0); }
+  if (props.includes('apple')) { H.j.haR.add(apple); apple.position.set(0, -0.09, 0.05); }
   if (props.includes('pizza')) { H.j.haR.add(slice); slice.position.set(0, -0.1, 0.05); slice.rotation.set(0.3, 0.5, 1.4); }
 
   // room animation
@@ -865,6 +984,10 @@ window.renderFrame = (t) => {
     R.g.userData.car.position.y = 0.01 * Math.sin(t * 11);
   }
   if (b.scene === 'hospital') drawEcg(t);
+  if (R.g.userData.weed) { R.g.userData.weed.forEach(w => w.children.forEach((c, i) => { c.rotation.z = 0.12 * i * Math.sin(t * 1.3 + w.userData.ph) / 6; c.position.x = 0.05 * i * i * Math.sin(t * 1.3 + w.userData.ph) / 6; }));
+    R.g.userData.bubbles.forEach(bb => { const y = ((t * 0.6 + bb.userData.ph) % 4); bb.position.set(bb.userData.x + 0.05 * Math.sin(t * 3 + bb.userData.ph), y, bb.userData.z); }); }
+  if (R.g.userData.foam) R.g.userData.foam.forEach((f, i) => { f.position.z = -6.2 - (i % 2) * 0.6 + 0.25 * Math.sin(t * 1.2 + i); });
+  rain.visible = b.fx === 'rain' || (b.fx2 === 'rain'); if (rain.visible) updateRain(t, H.root.position);
   rgbStrips.forEach((s, i) => s.material.color.setHSL(((t * 0.15) + i * 0.5) % 1, 0.9, 0.6));
   if (R.screen) { screenLight.position.set(0, 1.25, 1.7); screenLight.intensity = R.screen * (0.85 + 0.15 * Math.sin(t * 7) * Math.sin(t * 3.3)); screenLight.color.setHSL(0.55 + 0.08 * Math.sin(t * 0.9), 0.8, 0.65); }
 
@@ -905,6 +1028,8 @@ window.renderFrame = (t) => {
   // camera
   const P = H.root.position.clone(); P.y = R.spot[1];
   const Hd = H.j.head.localToWorld(V(0, 0.11, 0));
+  updateFish(b.fx, t, lt, ease(p), Hd.clone().add(V(0, -0.35, 0)));
+  if (gs.pose === 'lie') Hd.add(V(0.45, 0.45, 0)); // frame the body in bed, not the floor
   const k = ease(p);
   const MV = MOVES[b.camera] && MOVES[b.camera](k, P, Hd);
   const C = MV ? { from: () => MV.pos, to: () => MV.pos, look: () => MV.look, fov: MV.fov } : (CAMS[b.camera] || CAMS.push);
