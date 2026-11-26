@@ -55,8 +55,8 @@ export function drawChar(x, kind, P, t) {
   const K = { ...KINDS[kind], skin: '#f5efe4', skinS: '#e0d3c0' }, W = 512, cx = 256; x.clearRect(0, 0, W, 768);
   const sit = !!P.sit, lady = !!K.dress;
   const bob = P.walk ? Math.abs(Math.sin(P.walk * Math.PI)) * 10 : 0;
-  const hipY = sit ? 535 : 545 - bob, bodyCy = sit ? 440 : 440 - bob, bodyRy = 120, bodyRx = 108;
-  const bowK = P.bow || 0; const headCy = bodyCy - 205 + (P.bounce || 0) + bowK * 125, headR = 118;
+  const hipY = sit ? 535 : 600 - bob, TOP = hipY - (sit ? 215 : 292), bodyCy = (TOP + hipY + 8) / 2, bodyRy = (hipY + 8 - TOP) / 2, bodyRx = 100; // chunky pill torso (reference look)
+  const bowK = P.bow || 0; const headCy = hipY - (sit ? 312 : 398) + (P.bounce || 0) + bowK * 125, headR = 120;
   x.save(); x.translate(cx, 750); x.rotate(P.lean || 0); x.translate(-cx, -750);
   // ---------- legs ----------
   if (!lady) {
@@ -83,7 +83,7 @@ export function drawChar(x, kind, P, t) {
     x.beginPath(); x.moveTo(cx - 92, top + 40); x.quadraticCurveTo(cx, top + 150, cx + 92, top + 40); x.quadraticCurveTo(cx, top - 25, cx - 92, top + 40); x.fillStyle = K.shawl; x.fill(); x.lineWidth = 8; x.stroke();
   } else {
     const coat = K.coat;
-    const tun = () => { x.beginPath(); x.moveTo(cx - 84, bodyCy - 112); x.quadraticCurveTo(cx, bodyCy - 128, cx + 84, bodyCy - 112); x.lineTo(cx + 100, hipY + 8); x.quadraticCurveTo(cx, hipY + 22, cx - 100, hipY + 8); x.closePath(); };
+    const tun = () => { const w = 100, t0 = TOP, b0 = hipY + 8; x.beginPath(); x.moveTo(cx - w, t0 + 62); x.quadraticCurveTo(cx - w, t0, cx - w + 62, t0); x.lineTo(cx + w - 62, t0); x.quadraticCurveTo(cx + w, t0, cx + w, t0 + 62); x.lineTo(cx + w, b0 - 46); x.quadraticCurveTo(cx + w, b0, cx + w - 46, b0); x.lineTo(cx - w + 46, b0); x.quadraticCurveTo(cx - w, b0, cx - w, b0 - 46); x.closePath(); };
     tun(); x.fillStyle = coat; x.fill();
     x.save(); x.clip();
     if (K.vest) { x.fillStyle = K.vest; x.beginPath(); x.moveTo(cx - 40, bodyCy - 120); x.lineTo(cx + 40, bodyCy - 120); x.lineTo(cx + 34, bodyCy + 60); x.lineTo(cx, bodyCy + 80); x.lineTo(cx - 34, bodyCy + 60); x.fill();
@@ -100,8 +100,9 @@ export function drawChar(x, kind, P, t) {
       x.strokeStyle = 'rgba(0,0,0,.25)'; x.lineWidth = 4; for (let k = 0; k < 5; k++) { x.beginPath(); x.moveTo(cx - 80 + k * 40, bodyCy - 60); x.lineTo(cx - 70 + k * 40, bodyCy + 100); x.stroke(); } }
     x.fillStyle = 'rgba(20,10,40,.2)'; x.fillRect(cx + 46, bodyCy - 140, 80, 400); x.fillStyle = 'rgba(255,255,255,.16)'; x.fillRect(cx - 110, bodyCy - 140, 20, 400);
     x.restore();
-    tun(); x.lineWidth = 7; x.lineJoin = 'round'; x.strokeStyle = INK; x.stroke();
-    x.beginPath(); x.moveTo(cx - 44, bodyCy - 118); x.quadraticCurveTo(cx, bodyCy - 98, cx + 44, bodyCy - 118); x.lineWidth = 5; x.stroke();
+    if (K.neck === 'none' && !K.badge && !K.vest && !K.hood && !K.vestText && !K.stripe) { x.fillStyle = 'rgba(255,255,255,.85)'; for (const yy of [0.3, 0.5, 0.7]) { x.beginPath(); x.arc(cx, TOP + (hipY - TOP) * yy, 9, 0, 7); x.fill(); } }
+    x.save(); tun(); x.clip(); x.fillStyle = 'rgba(0,0,0,.12)'; x.beginPath(); x.ellipse(cx, TOP - 8, 150, 56, 0, 0, 7); x.fill(); x.restore();
+    tun(); x.lineWidth = 8; x.lineJoin = 'round'; x.strokeStyle = INK; x.stroke();
     if (sit && !lady) { // belt / waist line
       x.strokeStyle = 'rgba(0,0,0,.25)'; x.lineWidth = 5; x.beginPath(); x.ellipse(cx, bodyCy + 70, 90, 26, 0, 0.1, Math.PI - 0.1); x.stroke(); }
   }
@@ -114,15 +115,14 @@ export function drawChar(x, kind, P, t) {
   // ---------- arms ----------
   const armCol = K.shortSleeve ? K.skin : (lady ? K.dress : K.coat);
   for (const s of [-1, 1]) {
-    if (P.cuffed) { x.beginPath(); x.roundRect(cx + s * 84 - 20, bodyCy - 106, 40, 46, 12); x.fillStyle = s > 0 ? (K.coat2 || armCol) : armCol; x.fill(); x.lineWidth = 6; x.strokeStyle = INK; x.stroke(); stick(x, [[cx + s * 84, bodyCy - 70], [cx + s * 92, bodyCy - 10], [cx + s * 60, bodyCy + 40]], 13); continue; }
+    if (P.cuffed) { stick(x, [[cx + s * 94, TOP + 70], [cx + s * 112, TOP + 150], [cx + s * 70, TOP + 200]], 10); continue; }
     const a = (s < 0 ? P.armL : P.armR) || [0.25, 0.1];
-    const sh = [cx + s * (lady ? 66 : 84), bodyCy - (lady ? 70 : 84)];
+    const sh = [cx + s * (lady ? 66 : 94), lady ? bodyCy - 70 : TOP + 70];
     const a1 = a[0], a2 = a[0] + a[1], L1 = 84, L2 = 80;
     const el = [sh[0] + s * Math.sin(a1) * L1, sh[1] + Math.cos(a1) * L1];
     const hd = [el[0] + s * Math.sin(a2) * L2, el[1] + Math.cos(a2) * L2];
-    x.beginPath(); x.roundRect(sh[0] - 20, sh[1] - 22, 40, 46, 12); x.fillStyle = s > 0 ? (K.coat2 || armCol) : armCol; x.fill(); x.lineWidth = 6; x.strokeStyle = INK; x.stroke();
-    stick(x, [[sh[0], sh[1] + 18], el, hd], 13);
-    oval(x, hd[0], hd[1], 14, 14, K.skin, 5);
+    stick(x, [sh, el, hd], 10);
+    oval(x, hd[0], hd[1], 22, 22, K.skin, 6);
     if (P.holdHat && s > 0 && K.hat) P._hatHand = hd;
   }
   // ---------- head ----------
@@ -196,7 +196,7 @@ export function drawChar(x, kind, P, t) {
   if (K.shades) { x.fillStyle = '#0d0b14'; for (const sg of [-1, 1]) { x.beginPath(); x.roundRect(hx + sg * ex - 30, ey - 20, 60, 38, 12); x.fill(); x.lineWidth = 6; x.strokeStyle = INK; x.stroke(); x.fillStyle = 'rgba(255,255,255,.35)'; x.fillRect(hx + sg * ex - 20, ey - 12, 14, 6); x.fillStyle = '#0d0b14'; } x.lineWidth = 7; x.beginPath(); x.moveTo(hx - 10, ey - 6); x.lineTo(hx + 10, ey - 6); x.stroke(); }
   if (P.back) { x.save(); x.beginPath(); x.ellipse(hx, hy, headR, headR * 1.03, 0, 0, 7); x.clip(); x.fillStyle = K.hood ? K.coat : K.skin; x.fillRect(hx - headR - 4, hy - headR - 8, headR * 2 + 8, headR * 2 + 16);
     if (!K.hood) { x.fillStyle = K.skinS; x.beginPath(); x.ellipse(hx + headR * 0.92, hy + 20, headR * 0.57, headR * 1.08, 0, 0, 7); x.fill(); }
-    if (!K.hood && K.hairStyle !== 'none') { x.fillStyle = K.hair; x.beginPath(); x.ellipse(hx, hy - headR * (K.hairStyle === 'bun' || K.hairStyle === 'parted' ? 0.1 : 0.35), headR * 1.1, headR * (K.hairStyle === 'bun' || K.hairStyle === 'parted' ? 0.95 : 0.75), 0, 0, 7); x.fill(); x.strokeStyle = 'rgba(255,255,255,.2)'; x.lineWidth = 6; x.beginPath(); x.arc(hx - 30, hy - 50, 46, Math.PI * 1.1, Math.PI * 1.5); x.stroke(); }
+    if (!K.hood && K.hairStyle !== 'none') { x.fillStyle = K.hair; x.beginPath(); x.ellipse(hx, hy - headR * (K.hairStyle === 'bun' || K.hairStyle === 'parted' ? 0.25 : 0.6), headR * 1.1, headR * (K.hairStyle === 'bun' || K.hairStyle === 'parted' ? 0.8 : 0.6), 0, 0, 7); x.fill(); x.strokeStyle = 'rgba(255,255,255,.2)'; x.lineWidth = 6; x.beginPath(); x.arc(hx - 30, hy - 50, 46, Math.PI * 1.1, Math.PI * 1.5); x.stroke(); }
     x.restore(); oval(x, hx, hy, headR, headR * 1.03, null, 8); }
   if (bowK > 0.35) { x.save(); x.beginPath(); x.ellipse(hx, hy, headR, headR * 0.98, 0, 0, 7); x.clip(); x.fillStyle = K.hair; x.beginPath(); x.ellipse(hx, hy - headR * 0.15 - (1 - bowK) * 60, headR * 1.05, headR * (0.45 + bowK * 0.35), 0, 0, 7); x.fill(); x.restore(); oval(x, hx, hy, headR, headR * 0.98, null, 11); }
   // ---------- hats / bonnet front ----------

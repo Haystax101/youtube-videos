@@ -1,2 +1,2 @@
 episodes/dark/002-mt-gox
-# rerun: Syracuse-style characters
+# rerun: reference look (pill characters, smooth shading)
