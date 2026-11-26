@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- "toon2d" style (long-form, landscape): outlined 2D TV-cartoon scenes drawn on a canvas, with
+     parallax camera moves, an expressive 2D Gary, and the flat infographic inserts from
+     web/diorama-inserts.js. Renderer: web/toon2d.js -->
+<style>
+  @font-face { font-family: "Poppins"; font-weight: 600; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Poppins"; font-weight: 800; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2"); }
+  @font-face { font-family: "Fredoka"; font-weight: 600; src: url("/node_modules/@fontsource/fredoka/files/fredoka-latin-600-normal.woff2") format("woff2"); }
+  html, body { margin: 0; padding: 0; background: #000; overflow: hidden; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; font-family: "Poppins", sans-serif; background: #1d1a2b; }
+  #c, #ins { position: absolute; inset: 0; }
+  #ins { opacity: 0; }
+  #vignette { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 50% 50%, rgba(0,0,0,0) 65%, rgba(20,10,30,0.28) 100%); }
+  #fade { position: absolute; inset: 0; background: #1d1a2b; opacity: 0; pointer-events: none; }
+  #label { position: absolute; left: 80px; top: 64px; font: 600 44px Fredoka; color: #fff; background: #1d1a2b; padding: 6px 28px 8px;
+    border-radius: 18px; border: 5px solid #fff; box-shadow: 0 8px 0 rgba(29,26,43,.35); transform-origin: 0 50%; letter-spacing: 1px; }
+  #label .hot { color: #ff6a4a; }
+  #sub { position: absolute; left: 0; right: 0; bottom: 56px; text-align: center; }
+  #sub span { display: inline-block; max-width: 1600px; font: 800 46px Poppins; line-height: 1.25; color: #fff; letter-spacing: 2px; word-spacing: 6px;
+    -webkit-text-stroke: 9px #1d1a2b; paint-order: stroke fill; }
+  #card { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0;
+    background: rgba(29,26,43,0.45); }
+  #card .t { font: 800 40px Poppins; letter-spacing: 10px; color: #ffd35a; -webkit-text-stroke: 8px #1d1a2b; paint-order: stroke fill; }
+  #card .s { font: 600 140px Fredoka; color: #fff; margin-top: 4px; -webkit-text-stroke: 16px #1d1a2b; paint-order: stroke fill; }
+  #card .bar { width: 160px; height: 14px; border-radius: 7px; background: #ffd35a; border: 5px solid #1d1a2b; margin-top: 18px; transform-origin: 50% 50%; }
+  #title { position: absolute; left: 0; right: 0; top: 360px; text-align: center; font: 600 120px Fredoka; color: #fff; opacity: 0;
+    -webkit-text-stroke: 18px #1d1a2b; paint-order: stroke fill; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <canvas id="c" width="1920" height="1080"></canvas>
+  <div id="vignette"></div>
+  <canvas id="ins" width="1920" height="1080"></canvas>
+  <div id="card"><div class="t"></div><div class="s"></div><div class="bar"></div></div>
+  <div id="title"></div>
+  <div id="label"></div>
+  <div id="sub"><span></span></div>
+  <div id="fade"></div>
+</div>
+<script type="module" src="/web/toon2d.js"></script>
+</body>
+</html>

@@ -1,0 +1,1319 @@
+{
+ "duration": 71.835,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 5.521,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You're",
+     "s": 0.15,
+     "e": 0.375,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 0.375,
+     "e": 0.572,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Roman",
+     "s": 0.572,
+     "e": 0.987,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sailor.",
+     "s": 0.987,
+     "e": 1.409,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 1.549,
+     "e": 1.767,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 1.767,
+     "e": 1.985,
+     "speaker": "narrator"
+    },
+    {
+     "w": "old",
+     "s": 1.985,
+     "e": 2.202,
+     "speaker": "narrator"
+    },
+    {
+     "w": "man",
+     "s": 2.202,
+     "e": 2.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 2.42,
+     "e": 2.631,
+     "speaker": "narrator"
+    },
+    {
+     "w": "about",
+     "s": 2.631,
+     "e": 3.059,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 3.059,
+     "e": 3.27,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lift",
+     "s": 3.27,
+     "e": 3.495,
+     "speaker": "narrator"
+    },
+    {
+     "w": "your",
+     "s": 3.495,
+     "e": 3.721,
+     "speaker": "narrator"
+    },
+    {
+     "w": "warship",
+     "s": 3.721,
+     "e": 4.164,
+     "speaker": "narrator"
+    },
+    {
+     "w": "clean",
+     "s": 4.164,
+     "e": 4.396,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out",
+     "s": 4.396,
+     "e": 4.614,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 4.614,
+     "e": 4.825,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 4.825,
+     "e": 5.043,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sea.",
+     "s": 5.043,
+     "e": 5.261,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 5.521,
+   "end": 11.126,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Syracuse,",
+     "s": 5.521,
+     "e": 6.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "two",
+     "s": 6.32,
+     "e": 6.548,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thousand",
+     "s": 6.548,
+     "e": 7.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "years",
+     "s": 7.02,
+     "e": 7.264,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ago.",
+     "s": 7.264,
+     "e": 7.697,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Rome",
+     "s": 7.837,
+     "e": 8.095,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sends",
+     "s": 8.095,
+     "e": 8.361,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sixty",
+     "s": 8.361,
+     "e": 8.852,
+     "speaker": "narrator"
+    },
+    {
+     "w": "warships",
+     "s": 8.852,
+     "e": 9.368,
+     "speaker": "narrator"
+    },
+    {
+     "w": "at",
+     "s": 9.368,
+     "e": 9.609,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 9.609,
+     "e": 9.859,
+     "speaker": "narrator"
+    },
+    {
+     "w": "city's",
+     "s": 9.859,
+     "e": 10.35,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sea",
+     "s": 10.35,
+     "e": 10.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "walls.",
+     "s": 10.6,
+     "e": 10.866,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 11.126,
+   "end": 15.631,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Some",
+     "s": 11.126,
+     "e": 11.359,
+     "speaker": "narrator"
+    },
+    {
+     "w": "are",
+     "s": 11.359,
+     "e": 11.584,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lashed",
+     "s": 11.584,
+     "e": 12.035,
+     "speaker": "narrator"
+    },
+    {
+     "w": "together",
+     "s": 12.035,
+     "e": 12.703,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 12.703,
+     "e": 12.921,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pairs,",
+     "s": 12.921,
+     "e": 13.283,
+     "speaker": "narrator"
+    },
+    {
+     "w": "carrying",
+     "s": 13.283,
+     "e": 13.749,
+     "speaker": "narrator"
+    },
+    {
+     "w": "giant",
+     "s": 13.749,
+     "e": 13.989,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ladders",
+     "s": 13.989,
+     "e": 14.447,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 14.447,
+     "e": 14.665,
+     "speaker": "narrator"
+    },
+    {
+     "w": "climb",
+     "s": 14.665,
+     "e": 14.906,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 14.906,
+     "e": 15.131,
+     "speaker": "narrator"
+    },
+    {
+     "w": "walls.",
+     "s": 15.131,
+     "e": 15.371,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 15.631,
+   "end": 22.218,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "But",
+     "s": 15.631,
+     "e": 15.878,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Syracuse",
+     "s": 15.878,
+     "e": 16.611,
+     "speaker": "narrator"
+    },
+    {
+     "w": "has",
+     "s": 16.611,
+     "e": 16.858,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Archimedes.",
+     "s": 16.858,
+     "e": 17.829,
+     "speaker": "narrator"
+    },
+    {
+     "w": "The",
+     "s": 17.969,
+     "e": 18.179,
+     "speaker": "narrator"
+    },
+    {
+     "w": "greatest",
+     "s": 18.179,
+     "e": 18.614,
+     "speaker": "narrator"
+    },
+    {
+     "w": "mathematician",
+     "s": 18.614,
+     "e": 19.651,
+     "speaker": "narrator"
+    },
+    {
+     "w": "alive",
+     "s": 19.651,
+     "e": 20.065,
+     "speaker": "narrator"
+    },
+    {
+     "w": "has",
+     "s": 20.065,
+     "e": 20.275,
+     "speaker": "narrator"
+    },
+    {
+     "w": "had",
+     "s": 20.275,
+     "e": 20.486,
+     "speaker": "narrator"
+    },
+    {
+     "w": "years",
+     "s": 20.486,
+     "e": 20.71,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 20.71,
+     "e": 20.913,
+     "speaker": "narrator"
+    },
+    {
+     "w": "get",
+     "s": 20.913,
+     "e": 21.124,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ready",
+     "s": 21.124,
+     "e": 21.537,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 21.537,
+     "e": 21.748,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you.",
+     "s": 21.748,
+     "e": 21.958,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 22.218,
+   "end": 27.866,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Far",
+     "s": 22.218,
+     "e": 22.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out,",
+     "s": 22.44,
+     "e": 22.783,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 22.783,
+     "e": 23.005,
+     "speaker": "narrator"
+    },
+    {
+     "w": "catapults",
+     "s": 23.005,
+     "e": 23.672,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hit",
+     "s": 23.672,
+     "e": 23.894,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you.",
+     "s": 23.894,
+     "e": 24.117,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Row",
+     "s": 24.257,
+     "e": 24.47,
+     "speaker": "narrator"
+    },
+    {
+     "w": "closer,",
+     "s": 24.47,
+     "e": 25.013,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 25.013,
+     "e": 25.227,
+     "speaker": "narrator"
+    },
+    {
+     "w": "smaller",
+     "s": 25.227,
+     "e": 25.661,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ones",
+     "s": 25.661,
+     "e": 26.074,
+     "speaker": "narrator"
+    },
+    {
+     "w": "shoot",
+     "s": 26.074,
+     "e": 26.302,
+     "speaker": "narrator"
+    },
+    {
+     "w": "through",
+     "s": 26.302,
+     "e": 26.545,
+     "speaker": "narrator"
+    },
+    {
+     "w": "holes",
+     "s": 26.545,
+     "e": 26.965,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 26.965,
+     "e": 27.171,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 27.171,
+     "e": 27.385,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wall.",
+     "s": 27.385,
+     "e": 27.606,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 27.866,
+   "end": 33.237,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Then",
+     "s": 27.866,
+     "e": 28.092,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 28.092,
+     "e": 28.297,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wooden",
+     "s": 28.297,
+     "e": 28.735,
+     "speaker": "narrator"
+    },
+    {
+     "w": "beam",
+     "s": 28.735,
+     "e": 28.961,
+     "speaker": "narrator"
+    },
+    {
+     "w": "swings",
+     "s": 28.961,
+     "e": 29.203,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out",
+     "s": 29.203,
+     "e": 29.422,
+     "speaker": "narrator"
+    },
+    {
+     "w": "over",
+     "s": 29.422,
+     "e": 29.845,
+     "speaker": "narrator"
+    },
+    {
+     "w": "your",
+     "s": 29.845,
+     "e": 30.072,
+     "speaker": "narrator"
+    },
+    {
+     "w": "head.",
+     "s": 30.072,
+     "e": 30.298,
+     "speaker": "narrator"
+    },
+    {
+     "w": "An",
+     "s": 30.438,
+     "e": 30.683,
+     "speaker": "narrator"
+    },
+    {
+     "w": "iron",
+     "s": 30.683,
+     "e": 31.174,
+     "speaker": "narrator"
+    },
+    {
+     "w": "claw",
+     "s": 31.174,
+     "e": 31.436,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 31.436,
+     "e": 31.682,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 31.682,
+     "e": 31.918,
+     "speaker": "narrator"
+    },
+    {
+     "w": "chain",
+     "s": 31.918,
+     "e": 32.189,
+     "speaker": "narrator"
+    },
+    {
+     "w": "grabs",
+     "s": 32.189,
+     "e": 32.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "your",
+     "s": 32.46,
+     "e": 32.723,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bow.",
+     "s": 32.723,
+     "e": 32.977,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 33.237,
+   "end": 37.425,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "And",
+     "s": 33.237,
+     "e": 33.618,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lifts.",
+     "s": 33.618,
+     "e": 34.026,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Your",
+     "s": 34.166,
+     "e": 34.454,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ship",
+     "s": 34.454,
+     "e": 34.741,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stands",
+     "s": 34.741,
+     "e": 35.047,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 35.047,
+     "e": 35.316,
+     "speaker": "narrator"
+    },
+    {
+     "w": "its",
+     "s": 35.316,
+     "e": 35.594,
+     "speaker": "narrator"
+    },
+    {
+     "w": "end.",
+     "s": 35.594,
+     "e": 35.873,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Then",
+     "s": 36.013,
+     "e": 36.31,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 36.31,
+     "e": 36.589,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lets",
+     "s": 36.589,
+     "e": 36.886,
+     "speaker": "narrator"
+    },
+    {
+     "w": "go.",
+     "s": 36.886,
+     "e": 37.165,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 7,
+   "start": 37.425,
+   "end": 44.267,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Sounds",
+     "s": 37.425,
+     "e": 37.698,
+     "speaker": "narrator"
+    },
+    {
+     "w": "like",
+     "s": 37.698,
+     "e": 37.955,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 37.955,
+     "e": 38.187,
+     "speaker": "narrator"
+    },
+    {
+     "w": "legend?",
+     "s": 38.187,
+     "e": 38.683,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Three",
+     "s": 38.823,
+     "e": 39.075,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ancient",
+     "s": 39.075,
+     "e": 39.556,
+     "speaker": "narrator"
+    },
+    {
+     "w": "historians",
+     "s": 39.556,
+     "e": 40.273,
+     "speaker": "narrator"
+    },
+    {
+     "w": "describe",
+     "s": 40.273,
+     "e": 40.761,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it,",
+     "s": 40.761,
+     "e": 41.117,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 41.117,
+     "e": 41.353,
+     "speaker": "narrator"
+    },
+    {
+     "w": "modern",
+     "s": 41.353,
+     "e": 41.825,
+     "speaker": "narrator"
+    },
+    {
+     "w": "engineers",
+     "s": 41.825,
+     "e": 42.534,
+     "speaker": "narrator"
+    },
+    {
+     "w": "have",
+     "s": 42.534,
+     "e": 42.778,
+     "speaker": "narrator"
+    },
+    {
+     "w": "built",
+     "s": 42.778,
+     "e": 43.031,
+     "speaker": "narrator"
+    },
+    {
+     "w": "versions",
+     "s": 43.031,
+     "e": 43.519,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 43.519,
+     "e": 43.763,
+     "speaker": "narrator"
+    },
+    {
+     "w": "work.",
+     "s": 43.763,
+     "e": 44.007,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 8,
+   "start": 44.267,
+   "end": 49.818,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Soon",
+     "s": 44.267,
+     "e": 44.485,
+     "speaker": "narrator"
+    },
+    {
+     "w": "your",
+     "s": 44.485,
+     "e": 44.702,
+     "speaker": "narrator"
+    },
+    {
+     "w": "crewmates",
+     "s": 44.702,
+     "e": 45.332,
+     "speaker": "narrator"
+    },
+    {
+     "w": "are",
+     "s": 45.332,
+     "e": 45.542,
+     "speaker": "narrator"
+    },
+    {
+     "w": "so",
+     "s": 45.542,
+     "e": 45.745,
+     "speaker": "narrator"
+    },
+    {
+     "w": "scared,",
+     "s": 45.745,
+     "e": 46.279,
+     "speaker": "narrator"
+    },
+    {
+     "w": "if",
+     "s": 46.279,
+     "e": 46.482,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 46.482,
+     "e": 46.699,
+     "speaker": "narrator"
+    },
+    {
+     "w": "see",
+     "s": 46.699,
+     "e": 46.909,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 46.909,
+     "e": 47.105,
+     "speaker": "narrator"
+    },
+    {
+     "w": "rope",
+     "s": 47.105,
+     "e": 47.322,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dangling",
+     "s": 47.322,
+     "e": 47.757,
+     "speaker": "narrator"
+    },
+    {
+     "w": "over",
+     "s": 47.757,
+     "e": 48.163,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 48.163,
+     "e": 48.373,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wall,",
+     "s": 48.373,
+     "e": 48.703,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 48.703,
+     "e": 48.921,
+     "speaker": "narrator"
+    },
+    {
+     "w": "turn",
+     "s": 48.921,
+     "e": 49.138,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 49.138,
+     "e": 49.348,
+     "speaker": "narrator"
+    },
+    {
+     "w": "run.",
+     "s": 49.348,
+     "e": 49.558,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 9,
+   "start": 49.818,
+   "end": 54.921,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Your",
+     "s": 49.818,
+     "e": 50.031,
+     "speaker": "narrator"
+    },
+    {
+     "w": "commander",
+     "s": 50.031,
+     "e": 50.649,
+     "speaker": "narrator"
+    },
+    {
+     "w": "jokes",
+     "s": 50.649,
+     "e": 51.054,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 51.054,
+     "e": 51.267,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Archimedes",
+     "s": 51.267,
+     "e": 52.077,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 52.077,
+     "e": 52.276,
+     "speaker": "narrator"
+    },
+    {
+     "w": "using",
+     "s": 52.276,
+     "e": 52.681,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 52.681,
+     "e": 52.887,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ships",
+     "s": 52.887,
+     "e": 53.107,
+     "speaker": "narrator"
+    },
+    {
+     "w": "as",
+     "s": 53.107,
+     "e": 53.306,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cups,",
+     "s": 53.306,
+     "e": 53.631,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 53.631,
+     "e": 53.83,
+     "speaker": "narrator"
+    },
+    {
+     "w": "scoop",
+     "s": 53.83,
+     "e": 54.05,
+     "speaker": "narrator"
+    },
+    {
+     "w": "up",
+     "s": 54.05,
+     "e": 54.249,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 54.249,
+     "e": 54.455,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sea.",
+     "s": 54.455,
+     "e": 54.661,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 10,
+   "start": 54.921,
+   "end": 65.829,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 54.921,
+     "e": 55.182,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Rome",
+     "s": 55.182,
+     "e": 55.461,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stops",
+     "s": 55.461,
+     "e": 55.749,
+     "speaker": "narrator"
+    },
+    {
+     "w": "attacking",
+     "s": 55.749,
+     "e": 56.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 56.56,
+     "e": 56.83,
+     "speaker": "narrator"
+    },
+    {
+     "w": "waits.",
+     "s": 56.83,
+     "e": 57.118,
+     "speaker": "narrator"
+    },
+    {
+     "w": "When",
+     "s": 57.258,
+     "e": 57.477,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 57.477,
+     "e": 57.69,
+     "speaker": "narrator"
+    },
+    {
+     "w": "city",
+     "s": 57.69,
+     "e": 58.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "finally",
+     "s": 58.1,
+     "e": 58.722,
+     "speaker": "narrator"
+    },
+    {
+     "w": "falls,",
+     "s": 58.722,
+     "e": 59.063,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 59.063,
+     "e": 59.261,
+     "speaker": "narrator"
+    },
+    {
+     "w": "soldier",
+     "s": 59.261,
+     "e": 59.693,
+     "speaker": "narrator"
+    },
+    {
+     "w": "finds",
+     "s": 59.693,
+     "e": 59.919,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Archimedes",
+     "s": 59.919,
+     "e": 60.754,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 60.754,
+     "e": 60.959,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 60.959,
+     "e": 61.171,
+     "speaker": "narrator"
+    },
+    {
+     "w": "middle",
+     "s": 61.171,
+     "e": 61.405,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 61.405,
+     "e": 61.61,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 61.61,
+     "e": 61.808,
+     "speaker": "narrator"
+    },
+    {
+     "w": "maths",
+     "s": 61.808,
+     "e": 62.034,
+     "speaker": "narrator"
+    },
+    {
+     "w": "problem,",
+     "s": 62.034,
+     "e": 62.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 62.58,
+     "e": 62.793,
+     "speaker": "narrator"
+    },
+    {
+     "w": "kills",
+     "s": 62.793,
+     "e": 63.019,
+     "speaker": "narrator"
+    },
+    {
+     "w": "him.",
+     "s": 63.019,
+     "e": 63.231,
+     "speaker": "narrator"
+    },
+    {
+     "w": "His",
+     "s": 63.371,
+     "e": 63.572,
+     "speaker": "narrator"
+    },
+    {
+     "w": "commander",
+     "s": 63.572,
+     "e": 64.175,
+     "speaker": "narrator"
+    },
+    {
+     "w": "had",
+     "s": 64.175,
+     "e": 64.376,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ordered",
+     "s": 64.376,
+     "e": 64.966,
+     "speaker": "narrator"
+    },
+    {
+     "w": "him",
+     "s": 64.966,
+     "e": 65.167,
+     "speaker": "narrator"
+    },
+    {
+     "w": "spared.",
+     "s": 65.167,
+     "e": 65.569,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 11,
+   "start": 65.829,
+   "end": 70.635,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You",
+     "s": 65.829,
+     "e": 66.076,
+     "speaker": "narrator"
+    },
+    {
+     "w": "survived.",
+     "s": 66.076,
+     "e": 66.81,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Archimedes",
+     "s": 66.95,
+     "e": 68.091,
+     "speaker": "narrator"
+    },
+    {
+     "w": "didn't.",
+     "s": 68.091,
+     "e": 68.401,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Comment",
+     "s": 68.541,
+     "e": 68.999,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 68.999,
+     "e": 69.232,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 69.232,
+     "e": 69.458,
+     "speaker": "narrator"
+    },
+    {
+     "w": "want",
+     "s": 69.458,
+     "e": 69.691,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 69.691,
+     "e": 69.909,
+     "speaker": "narrator"
+    },
+    {
+     "w": "know",
+     "s": 69.909,
+     "e": 70.142,
+     "speaker": "narrator"
+    },
+    {
+     "w": "next.",
+     "s": 70.142,
+     "e": 70.375,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}

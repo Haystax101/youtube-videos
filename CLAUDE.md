@@ -131,6 +131,12 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    line "Fact rabbit-hole inspired by No Such Thing As A Fish (episode #N). Sources: ..." with
    the sources from `experiment.facts`. Never put the podcast's name in the title.
 
+## Set videos (one-camera 3D sets)
+
+For a video told inside one big three.js set (approved template: `prototypes/archimedes-claw`,
+george 2026-11-25), follow the `make-set-video` skill (`.claude/skills/make-set-video/SKILL.md`).
+Full renders go to 8 GitHub runners at once via `render-set-request.txt` (free on this public repo).
+
 ## Weekly long-form procedure
 
 Format (from the long-form research doc https://claude.ai/artifact/JfZqN3nrHeE5yjaG4FtqZX):

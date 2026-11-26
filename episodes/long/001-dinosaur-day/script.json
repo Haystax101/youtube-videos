@@ -1,0 +1,627 @@
+{
+ "title": "What If You Were There the Day the Dinosaurs Died?",
+ "format": "landscape",
+ "style": "toon2d",
+ "speed": 1.0,
+ "voices": {
+  "narrator": "am_michael"
+ },
+ "music": {
+  "mood": "suspense"
+ },
+ "captions": true,
+ "tail": 2.0,
+ "beats": [
+  {
+   "hook": true,
+   "label": "66 MILLION YEARS AGO",
+   "scene": "tanis",
+   "phase": "glassrain",
+   "gary": {
+    "pose": "lookup",
+    "expr": "shocked"
+   },
+   "camera": "push",
+   "lines": [
+    {
+     "text": "Sixty-six million years ago, you're standing beside a river in what will one day be North Dakota. Within the hour, the ground will shake, the river will run backwards, and the sky will rain glass. Could you survive the day the dinosaurs died?"
+    }
+   ]
+  },
+  {
+   "label": "66 MILLION YEARS AGO",
+   "scene": "tanis",
+   "phase": "glow",
+   "gary": {
+    "pose": "shelter",
+    "expr": "worried"
+   },
+   "camera": "crane_up",
+   "lines": [
+    {
+     "text": "Stay to the end, because the answer is the reason you exist at all."
+    }
+   ]
+  },
+  {
+   "card": {
+    "title": "CHAPTER 1",
+    "subtitle": "A Spring Morning"
+   },
+   "scene": "tanis",
+   "phase": "calm",
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Chapter one. A spring morning."
+    }
+   ]
+  },
+  {
+   "label": "MORNING",
+   "scene": "tanis",
+   "phase": "calm",
+   "gary": {
+    "pose": "stand",
+    "expr": "happy"
+   },
+   "camera": "wide",
+   "dinos": true,
+   "lines": [
+    {
+     "text": "It's warm and humid. The air smells of mud and flowers, and flowering plants are a fairly new thing on Earth."
+    }
+   ]
+  },
+  {
+   "label": "MORNING",
+   "scene": "tanis",
+   "phase": "calm",
+   "gary": {
+    "pose": "point",
+    "expr": "happy"
+   },
+   "camera": "truck",
+   "dinos": true,
+   "lines": [
+    {
+     "text": "On the far bank, a family of Triceratops is grazing. A duck-billed Edmontosaurus wades through the shallows. And somewhere in the trees, a Tyrannosaurus is listening."
+    }
+   ]
+  },
+  {
+   "label": "MORNING",
+   "insert": "spring",
+   "lines": [
+    {
+     "text": "How do we know it's spring? Fish that died at this exact spot have growth layers in their bones, like the rings in a tree. Their last layer stops halfway through a growth spurt. And that happens in spring."
+    }
+   ]
+  },
+  {
+   "label": "MORNING",
+   "scene": "tanis",
+   "phase": "calm",
+   "gary": {
+    "pose": "stand",
+    "expr": "happy"
+   },
+   "camera": "face",
+   "lines": [
+    {
+     "text": "So far, it's a lovely day out. Enjoy it. Three thousand kilometres to the south, something is arriving."
+    }
+   ]
+  },
+  {
+   "card": {
+    "title": "CHAPTER 2",
+    "subtitle": "Impact"
+   },
+   "scene": "tanis",
+   "phase": "calm",
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Chapter two. Impact."
+    }
+   ]
+  },
+  {
+   "label": "SECOND 1",
+   "insert": "map",
+   "lines": [
+    {
+     "text": "At second one, a rock about ten kilometres wide slams into the coast of what is now Mexico, at around twenty kilometres per second. That's fast enough to cross the whole of Britain in under a minute."
+    }
+   ],
+   "sfx": "boom"
+  },
+  {
+   "label": "SECOND 1",
+   "insert": "scale",
+   "lines": [
+    {
+     "text": "Ten kilometres is taller than Mount Everest. It blasts a crater about a hundred and eighty kilometres wide, and releases something like a billion times the energy of the bomb dropped on Hiroshima."
+    }
+   ]
+  },
+  {
+   "label": "SECOND 2",
+   "scene": "tanis",
+   "phase": "calm",
+   "gary": {
+    "pose": "stand",
+    "expr": "neutral"
+   },
+   "camera": "low",
+   "lines": [
+    {
+     "text": "And here, three thousand kilometres away? Nothing. The Earth is curved, and the blast is far below your horizon. For the next few minutes, you have no idea."
+    }
+   ]
+  },
+  {
+   "card": {
+    "title": "CHAPTER 3",
+    "subtitle": "The Shaking"
+   },
+   "scene": "tanis",
+   "phase": "calm",
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Chapter three. The shaking."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 10",
+   "scene": "tanis",
+   "phase": "shake",
+   "gary": {
+    "pose": "wobble",
+    "expr": "shocked"
+   },
+   "camera": "orbit",
+   "sfx": "rumble",
+   "lines": [
+    {
+     "text": "Around ten minutes later, the ground starts to move. Waves of energy are racing through the rock, and the shaking may be stronger than any earthquake humans have ever measured."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 13",
+   "scene": "tanis",
+   "phase": "surge",
+   "gary": {
+    "pose": "run",
+    "expr": "shocked"
+   },
+   "camera": "truck",
+   "sfx": "rumble",
+   "lines": [
+    {
+     "text": "Then the river does something rivers don't do. The shaking sloshes it back and forth, like water in a bath, and a surge pours upstream, over the banks, towards you."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 14",
+   "scene": "tanis",
+   "phase": "surge",
+   "gary": {
+    "pose": "shelter",
+    "expr": "worried"
+   },
+   "camera": "crane_up",
+   "lines": [
+    {
+     "text": "Get to higher ground. The surge dumps fish, branches and animals in a tangled layer of mud. Sixty-six million years later, scientists will dig that exact layer up."
+    }
+   ]
+  },
+  {
+   "card": {
+    "title": "CHAPTER 4",
+    "subtitle": "Glass Rain"
+   },
+   "scene": "tanis",
+   "phase": "glassrain",
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Chapter four. Glass rain."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 15",
+   "scene": "tanis",
+   "phase": "glassrain",
+   "gary": {
+    "pose": "lookup",
+    "expr": "shocked"
+   },
+   "camera": "push",
+   "lines": [
+    {
+     "text": "Now look up. Rock that was blasted out of the crater melted on the way up and froze into tiny beads of glass. And now it's falling back down, all around you."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 20",
+   "insert": "gills",
+   "lines": [
+    {
+     "text": "The fish in the river breathe them in. Fossil fish from this very spot have these glass beads stuck in their gills. They were alive and breathing when the glass arrived."
+    }
+   ]
+  },
+  {
+   "label": "MINUTE 30",
+   "scene": "tanis",
+   "phase": "glassrain",
+   "gary": {
+    "pose": "shelter",
+    "expr": "worried"
+   },
+   "camera": "push",
+   "lines": [
+    {
+     "text": "Most beads are smaller than a peppercorn, but they're falling hard and fast. Get under something. A fallen log, a riverbank, anything."
+    }
+   ]
+  },
+  {
+   "card": {
+    "title": "CHAPTER 5",
+    "subtitle": "Were They Cooked?"
+   },
+   "scene": "tanis",
+   "phase": "glow",
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Chapter five. Were they cooked?"
+    }
+   ]
+  },
+  {
+   "label": "HOUR 1",
+   "scene": "tanis",
+   "phase": "glow",
+   "gary": {
+    "pose": "shelter",
+    "expr": "worried"
+   },
+   "camera": "crane_up",
+   "lines": [
+    {
+     "text": "As trillions of these beads plunge back through the air, they heat it. The whole sky begins to glow, like the grill of an oven turned towards the ground."
+    }
+   ]
+  },
+  {
+   "label": "HOUR 1",
+   "insert": "debate",
+   "step": 1,
+   "lines": [
+    {
+     "text": "This is where a famous claim comes from: that the heat cooked dinosaurs where they stood. In 2013, one team calculated that the sky would roast the ground for hours and set the whole world's forests on fire."
+    }
+   ]
+  },
+  {
+   "label": "HOUR 1",
+   "insert": "debate",
+   "step": 2,
+   "lines": [
+    {
+     "text": "But other scientists ran the numbers again. The first beads to fall shade the ground from the ones behind them, like a parasol. They found the worst heat lasts around twenty-five minutes, and that living plants are surprisingly hard to set alight."
+    }
+   ]
+  },
+  {
+   "label": "HOUR 1",
+   "scene": "tanis",
+   "phase": "glow",
+   "gary": {
+    "pose": "shelter",
+    "expr": "worried"
+   },
+   "camera": "crane",
+   "lines": [
+    {
+     "text": "So were they cooked? Close to the crater, almost certainly. Out here, the verdict is still open. But scientists agree on one rule: out in the open, you're in trouble. Underground or underwater, you've got a chance."
+    }
+   ]
+  },
+  {
+   "card": {
+    "title": "CHAPTER 6",
+    "subtitle": "The Long Dark"
+   },
+   "scene": "tanis",
+   "phase": "dark",
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Chapter six. The long dark."
+    }
+   ]
+  },
+  {
+   "label": "DAY 1",
+   "scene": "tanis",
+   "phase": "fires",
+   "gary": {
+    "pose": "stand",
+    "expr": "worried"
+   },
+   "camera": "orbit",
+   "lines": [
+    {
+     "text": "By the end of the first day, fires are burning in places across the continent. Smoke, rock dust and sulfur are rising high into the sky, far above the clouds."
+    }
+   ]
+  },
+  {
+   "label": "MONTH 1",
+   "scene": "tanis",
+   "phase": "dark",
+   "gary": {
+    "pose": "cold",
+    "expr": "worried"
+   },
+   "camera": "dolly",
+   "lines": [
+    {
+     "text": "Then the Sun fades. The sky turns a dirty grey and stays that way for months. Some models say it stayed too dark for plants to grow for a year or more."
+    }
+   ]
+  },
+  {
+   "label": "MONTH 3",
+   "insert": "foodchain",
+   "lines": [
+    {
+     "text": "No sunlight means no growing plants. The animals that eat plants starve. Then the animals that eat them starve too. The food chain is collapsing from the bottom up."
+    }
+   ]
+  },
+  {
+   "label": "MONTH 6",
+   "scene": "tanis",
+   "phase": "cold",
+   "gary": {
+    "pose": "cold",
+    "expr": "sick"
+   },
+   "camera": "push",
+   "lines": [
+    {
+     "text": "And it gets cold, quickly, in a world that was used to being warm."
+    }
+   ]
+  },
+  {
+   "card": {
+    "title": "CHAPTER 7",
+    "subtitle": "Who Survives?"
+   },
+   "scene": "burrow",
+   "phase": "dark",
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Chapter seven. Who survives?"
+    }
+   ]
+  },
+  {
+   "label": "YEAR 1",
+   "insert": "extinction",
+   "lines": [
+    {
+     "text": "About three quarters of all species on Earth die out. Almost no land animal heavier than about twenty-five kilograms makes it. Every Tyrannosaurus, every Triceratops, gone."
+    }
+   ]
+  },
+  {
+   "label": "YEAR 1",
+   "scene": "burrow",
+   "phase": "dark",
+   "gary": {
+    "pose": "critter",
+    "expr": "worried"
+   },
+   "camera": "dolly",
+   "lines": [
+    {
+     "text": "So who makes it? Mostly the animals that sheltered on that first day: in burrows, in the water, in holes in the ground. Crocodiles. Turtles. Frogs. Some birds. And small, furry mammals."
+    }
+   ]
+  },
+  {
+   "label": "YEAR 2",
+   "scene": "burrow",
+   "phase": "dark",
+   "gary": {
+    "pose": "critter",
+    "expr": "happy"
+   },
+   "camera": "orbit",
+   "lines": [
+    {
+     "text": "Then they live off whatever is left: seeds, insects, worms and rotting plants. When the world runs out of food, being small and eating almost anything is the best thing you can be."
+    }
+   ]
+  },
+  {
+   "card": {
+    "title": "CHAPTER 8",
+    "subtitle": "The World After"
+   },
+   "scene": "tanis",
+   "phase": "recovery",
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "Chapter eight. The world after."
+    }
+   ]
+  },
+  {
+   "label": "YEAR 1,000",
+   "scene": "tanis",
+   "phase": "recovery",
+   "gary": {
+    "pose": "critter",
+    "expr": "happy"
+   },
+   "camera": "crane",
+   "lines": [
+    {
+     "text": "When the light comes back, ferns arrive first. They carpet the burnt land so thickly that their spores leave a layer in the rocks you can still find today."
+    }
+   ]
+  },
+  {
+   "label": "YEAR 10,000",
+   "scene": "tanis",
+   "phase": "recovery",
+   "gary": {
+    "pose": "critter",
+    "expr": "happy"
+   },
+   "camera": "truck",
+   "lines": [
+    {
+     "text": "Within a few thousand years, worms are tunnelling through the soil again. Scientists have found their burrows right above the layer of impact dust."
+    }
+   ]
+  },
+  {
+   "label": "700,000 YEARS",
+   "insert": "timeline",
+   "lines": [
+    {
+     "text": "And with the dinosaurs gone, the mammals start to grow. Within a million years, some of them are as heavy as a large dog. They spread into every empty space the dinosaurs left behind."
+    }
+   ]
+  },
+  {
+   "label": "TODAY",
+   "scene": "today",
+   "phase": "today",
+   "gary": {
+    "pose": "stand",
+    "expr": "neutral"
+   },
+   "camera": "wide",
+   "lines": [
+    {
+     "text": "So, could you survive the day the dinosaurs died? Only if you were small, got underground or underwater, and could eat almost anything."
+    }
+   ]
+  },
+  {
+   "label": "TODAY",
+   "scene": "today",
+   "phase": "today",
+   "gary": {
+    "pose": "stand",
+    "expr": "happy"
+   },
+   "camera": "push",
+   "lines": [
+    {
+     "text": "And here's the strange part. Some of those little survivors were your ancestors. You're only here because, sixty-six million years ago, something small hid in a hole and waited for the sky to clear."
+    }
+   ]
+  },
+  {
+   "label": "TODAY",
+   "scene": "today",
+   "phase": "today",
+   "gary": {
+    "pose": "wave",
+    "expr": "happy"
+   },
+   "camera": "face",
+   "lines": [
+    {
+     "text": "You survived. Subscribe, and comment what Gary should try next."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "vars": {
+   "format": "what_if_chapters",
+   "style": "toon2d",
+   "inserts": "flat",
+   "voice": "kokoro_am_michael",
+   "music": "suspense",
+   "captions": "subtitles",
+   "cold_open": "glass_rain",
+   "ending": "survives",
+   "chapters": 8
+  },
+  "fish": "#520 (the impact's heat burst 'would have cooked some dinosaurs')",
+  "hypothesis": "First long-form, in an outlined 2D cartoon look (george rejected the diorama Gary) with flat explainer inserts. A minute-by-minute clock with a myth-bust in the middle and a payoff about the viewer's ancestry should hold average view % above 40%.",
+  "facts": [
+   {
+    "claim": "Tanis (North Dakota) records the impact day: a river surge (seiche) and impact spherules in the gills of fossil fish, tens of minutes after impact, ~3,000 km from Chicxulub",
+    "source": "DePalma et al., PNAS 2019, doi:10.1073/pnas.1817407116"
+   },
+   {
+    "claim": "Fish bone growth layers show the impact happened in northern spring",
+    "source": "During et al., Nature 2022, doi:10.1038/s41586-022-04446-1; Uppsala University release 2022-02-23"
+   },
+   {
+    "claim": "Impactor ~10 km wide at ~20 km/s; crater ~180-200 km; ~a billion times Hiroshima",
+    "source": "Schulte et al., Science 2010 (UT Austin Jackson School summary 2010-03)"
+   },
+   {
+    "claim": "Shaking possibly magnitude 9.4-11.3, larger than any measured earthquake (largest measured: 9.5, Chile 1960)",
+    "source": "Bermudez et al., GSA 2021 abstract (Live Science coverage)"
+   },
+   {
+    "claim": "Re-entering ejecta heated the sky; 2013 study argued hours of heating and global fires",
+    "source": "Robertson et al., J. Geophys. Res. Biogeosci. 2013 (CU Boulder release 2013-03-27)"
+   },
+   {
+    "claim": "Later work: early spherules shield later ones; above-sunlight heating ~25 minutes; live fuel hard to ignite; fires regional",
+    "source": "Goldin & Melosh, Geology 2009; Belcher et al., J. Geol. Soc. 2015"
+   },
+   {
+    "claim": "Sheltering underground or in water was the key to surviving the first hours",
+    "source": "Robertson et al., GSA Bulletin 2004, 116:760-768"
+   },
+   {
+    "claim": "Soot/dust darkness may have stopped photosynthesis for a year or more",
+    "source": "Bardeen et al., PNAS 2017 (CU Boulder/NCAR release 2017-08-21); Senel et al., Nature Geoscience 2023"
+   },
+   {
+    "claim": "~75% of species extinct; most land animals over ~25 kg died",
+    "source": "Schulte et al. 2010; Longrich et al. 2016 (Univ. of Bath)"
+   },
+   {
+    "claim": "Fern spike right above the boundary layer",
+    "source": "Vajda et al., Science 2001; Denver Basin pollen records"
+   },
+   {
+    "claim": "Worm burrows within a few thousand years above the boundary in North Dakota",
+    "source": "Chin et al., PLOS ONE 2013"
+   },
+   {
+    "claim": "By ~700,000 years after, some mammals weighed ~45 kg (100 lb)",
+    "source": "Lyson et al., Science 2019 (Corral Bluffs; PBS NOVA coverage)"
+   }
+  ]
+ }
+}

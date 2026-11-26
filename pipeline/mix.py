@@ -190,6 +190,19 @@ def sting():
     return (np.sin(2 * np.pi * 587 * t) + 0.7 * np.sin(2 * np.pi * 880 * t)) * np.exp(-t * 5) * 0.5
 
 
+def rumble(sec=4.0):
+    """low earthquake rumble: brown-ish noise through a slow swell"""
+    n = int(sec * SR); t = np.arange(n) / SR
+    x = np.cumsum(rng.normal(0, 1, n)); x -= np.convolve(x, np.ones(4000) / 4000, 'same'); x /= np.abs(x).max() + 1e-9
+    return x * np.sin(np.pi * t / t[-1]) ** 0.7 * (0.7 + 0.3 * np.sin(2 * np.pi * 3.1 * t))
+
+
+def boom():
+    """distant impact: a deep falling thump with a long tail"""
+    n = int(2.5 * SR); t = np.arange(n) / SR
+    return (np.sin(2 * np.pi * (55 * t - 8 * t * t)) * np.exp(-t * 1.8) + rumble(2.5) * 0.5 * np.exp(-t * 1.2)) * 1.2
+
+
 def place(buf, clip, at, gain):
     s = int(at * SR); e = min(len(buf), s + len(clip))
     if s < len(buf): buf[s:e] += clip[: e - s] * gain
@@ -224,6 +237,11 @@ def main(ep_dir):
         if style == "noir":
             for k, w in enumerate(b["words"]):  # a key clack as each caption group types out
                 if k % 2 == 0: place(sfx, clack(), w["s"], 0.12)
+        elif style in ("diorama", "toon2d"):  # long-form: no per-beat pops; whooshes on chapter cards and inserts only
+            sb = script["beats"][i]
+            if i and (sb.get("card") or sb.get("insert")): place(sfx, whoosh(), b["start"] - 0.08, 0.2)
+            if sb.get("sfx") == "rumble": place(sfx, rumble(min(6.0, b["end"] - b["start"])), b["start"], 0.35)
+            if sb.get("sfx") == "boom": place(sfx, boom(), b["start"] + 1.6, 0.5)
         elif style == "news":
             if i: place(sfx, whoosh(), b["start"] - 0.08, 0.25)
             place(sfx, sting() if i in (0, 1) else pop(), b["start"] + 0.05, 0.35)

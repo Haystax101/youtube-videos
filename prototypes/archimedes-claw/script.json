@@ -1,0 +1,148 @@
+{
+ "title": "What if you attacked the city Archimedes was defending?",
+ "style": "set3d",
+ "format": "portrait",
+ "speed": 1.2,
+ "voices": {
+  "narrator": "bm_george"
+ },
+ "experiment": {
+  "vars": {
+   "style": "set3d",
+   "ending": "history_payoff",
+   "premise": "true_history",
+   "camera": "one continuous move",
+   "music": "mood-follows-scene"
+  },
+  "hypothesis": "One continuous camera through a single big 3D set (MiloQ-style) holds attention better than cut-based scenes.",
+  "facts": [
+   "Polybius, Histories 8.3-8.7: Marcellus attacked Syracuse's sea walls with 60 quinqueremes; some ships lashed in pairs carried 'sambuca' ladders; Archimedes' engines hit ships at long and short range, small catapults shot through loopholes; a beam with an iron hand on a chain lifted ships by the bow until they stood on their sterns, then dropped them; Marcellus joked Archimedes used his ships to ladle sea water into his cups.",
+   "Plutarch, Life of Marcellus 14-19: Romans so terrified that if they saw a rope or piece of wood over the wall they fled; Marcellus called Archimedes a geometrical Briareus using Roman ships like cups; Archimedes killed by a soldier while absorbed in a diagram, against Marcellus' orders.",
+   "Livy 24.34 also describes the iron grapnel on a chain.",
+   "Rorres & Harris (2001) and the 1999 BBC 'Secrets of Lost Empires' rebuilt working versions; the siege ran 213-212 BC."
+  ]
+ },
+ "beats": [
+  {
+   "id": "hook",
+   "hook": true,
+   "label": "ONE OLD MAN VS *ROME*",
+   "lines": [
+    {
+     "text": "You're a Roman sailor. And one old man is about to lift your warship clean out of the sea."
+    }
+   ]
+  },
+  {
+   "id": "fleet",
+   "label": "SYRACUSE, 213 BC",
+   "lines": [
+    {
+     "text": "Syracuse, two thousand years ago. Rome sends sixty warships at the city's sea walls."
+    }
+   ]
+  },
+  {
+   "id": "sambuca",
+   "label": "SIEGE LADDERS",
+   "lines": [
+    {
+     "text": "Some are lashed together in pairs, carrying giant ladders to climb the walls."
+    }
+   ]
+  },
+  {
+   "id": "archimedes",
+   "label": "THE DEFENDER",
+   "lines": [
+    {
+     "text": "But Syracuse has Archimedes. The greatest mathematician alive has had years to get ready for you."
+    }
+   ]
+  },
+  {
+   "id": "catapults",
+   "label": "RANGE: EVERYWHERE",
+   "lines": [
+    {
+     "text": "Far out, his catapults hit you. Row closer, and smaller ones shoot through holes in the wall."
+    }
+   ]
+  },
+  {
+   "id": "claw",
+   "label": "THE *CLAW*",
+   "lines": [
+    {
+     "text": "Then a wooden beam swings out over your head. An iron claw on a chain grabs your bow."
+    }
+   ]
+  },
+  {
+   "id": "lift",
+   "label": "THE *CLAW*",
+   "lines": [
+    {
+     "text": "And lifts. Your ship stands on its end. Then he lets go."
+    }
+   ]
+  },
+  {
+   "id": "proof",
+   "label": "REAL OR MYTH?",
+   "lines": [
+    {
+     "text": "Sounds like a legend? Three ancient historians describe it, and modern engineers have built versions that work."
+    }
+   ]
+  },
+  {
+   "id": "rope",
+   "label": "MONTH 2",
+   "lines": [
+    {
+     "text": "Soon your crewmates are so scared, if they see a rope dangling over the wall, they turn and run."
+    }
+   ]
+  },
+  {
+   "id": "cups",
+   "label": "THE COMMANDER",
+   "lines": [
+    {
+     "text": "Your commander jokes that Archimedes is using his ships as cups, to scoop up the sea."
+    }
+   ]
+  },
+  {
+   "id": "wait",
+   "label": "MONTHS LATER",
+   "lines": [
+    {
+     "text": "So Rome stops attacking, and waits."
+    }
+   ]
+  },
+  {
+   "id": "fall",
+   "label": "212 BC",
+   "lines": [
+    {
+     "text": "When the city finally falls, a soldier finds Archimedes in the middle of a maths problem, and kills him. His commander had ordered him spared."
+    }
+   ]
+  },
+  {
+   "id": "end",
+   "label": "ONE MAN VS *ROME*",
+   "lines": [
+    {
+     "text": "One old man held off the Roman army with maths. Comment what you want to know next."
+    }
+   ]
+  }
+ ],
+ "pronounce": {
+  "bow": "bough"
+ }
+}
