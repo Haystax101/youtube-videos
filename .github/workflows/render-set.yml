@@ -26,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       ep: ${{ steps.ep.outputs.ep }}
+      total: ${{ steps.ep.outputs.total }}
+      local: ${{ steps.ep.outputs.local }}
     steps:
       - uses: actions/checkout@v4
       - id: ep
@@ -37,13 +39,17 @@ jobs:
           case "$EP" in *..*) echo "bad episode path: $EP"; exit 1 ;; esac
           test -f "$EP/timeline.json" && test -f "$EP/audio.sh"
           echo "ep=$EP" >> "$GITHUB_OUTPUT"
+          # optional "local: L" line: a Claude session renders L extra parts on its own machine, so the
+          # video is split 8+L ways; each runner publishes its chunks and the session joins everything
+          L=$(grep -oP '^local:\s*\K[0-9]+' render-set-request.txt || echo 0); [ -n "$INPUT_EP" ] && L=0
+          echo "local=$L" >> "$GITHUB_OUTPUT"; echo "total=$(( PARTS + L ))" >> "$GITHUB_OUTPUT"
 
   render:
     needs: plan
     runs-on: ubuntu-latest
     timeout-minutes: 120
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         part: [0, 1, 2, 3, 4, 5, 6, 7]
     steps:
@@ -57,10 +63,32 @@ jobs:
           npm ci
           npm install --no-save playwright@1.63.0
           npx playwright install --with-deps chromium
+      - name: Fetch release assets
+        env:
+          EP: ${{ needs.plan.outputs.ep }}
+        # EP/assets.txt lists "TAG FILE.tar" lines (e.g. "assets-v1 assets.tar", "sfx-v1 sfx.tar"); each is untarred at the repo root
+        run: |
+          test -f "$EP/assets.txt" || exit 0
+          grep -v '^#' "$EP/assets.txt" | while read -r tag file; do
+            [ -n "$tag" ] || continue
+            curl -sSLf -o "/tmp/$file" "https://github.com/${{ github.repository }}/releases/download/$tag/$file" || { echo "missing $tag/$file"; continue; }
+            tar -xf "/tmp/$file" && rm "/tmp/$file"
+          done
+          du -sh assets || true
       - name: Render my chunks
         env:
           EP: ${{ needs.plan.outputs.ep }}
-        run: node pipeline/render_set.cjs "$EP" --part ${{ matrix.part }}/$PARTS --workers 4
+        run: node pipeline/render_set.cjs "$EP" --part ${{ matrix.part }}/${{ needs.plan.outputs.total }} --workers 4
+      - name: Publish my chunks (split with a local machine)
+        if: needs.plan.outputs.local != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EP: ${{ needs.plan.outputs.ep }}
+        run: |
+          TAG="chunks-$(basename "$EP")-${{ github.run_id }}"
+          gh release create "$TAG" --prerelease --title "Chunks $TAG" --notes "partial render chunks" --target "${{ github.event.repository.default_branch }}" 2>/dev/null || true
+          tar -cf "part${{ matrix.part }}.tar" -C "$EP" chunks
+          for k in 1 2 3; do gh release upload "$TAG" "part${{ matrix.part }}.tar" --clobber && break; sleep 5; done
       - uses: actions/upload-artifact@v4
         with:
           name: chunks-${{ matrix.part }}
@@ -69,6 +97,7 @@ jobs:
 
   join:
     needs: [plan, render]
+    if: needs.plan.outputs.local == '0'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     env:
@@ -97,8 +126,22 @@ jobs:
           pattern: chunks-*
           merge-multiple: true
           path: ${{ needs.plan.outputs.ep }}/chunks
+      - name: Fetch release assets
+        env:
+          EP: ${{ needs.plan.outputs.ep }}
+        # EP/assets.txt lists "TAG FILE.tar" lines (e.g. "assets-v1 assets.tar", "sfx-v1 sfx.tar"); each is untarred at the repo root
+        run: |
+          test -f "$EP/assets.txt" || exit 0
+          grep -v '^#' "$EP/assets.txt" | while read -r tag file; do
+            [ -n "$tag" ] || continue
+            curl -sSLf -o "/tmp/$file" "https://github.com/${{ github.repository }}/releases/download/$tag/$file" || { echo "missing $tag/$file"; continue; }
+            tar -xf "/tmp/$file" && rm "/tmp/$file"
+          done
+          du -sh assets || true
       - name: Join video
         run: node pipeline/render_set.cjs "$EP" --join-only && test -f "$EP/silent.mp4"
+      - name: Check for black patches (see log; deliver only if clean)
+        run: python3 tools/check_frames.py "$EP/silent.mp4" || echo "::warning::dark patches found, see list above"
       - name: Audio
         run: bash "$EP/audio.sh" "$EP"
       - name: Mux
@@ -110,7 +153,7 @@ jobs:
         run: |
           NAME="$(basename "$EP")"; TAG="render-$NAME-${{ github.run_id }}"
           gh release create "$TAG" "$EP/video.mp4" --prerelease \
-            --title "Render: $NAME" --notes "Rendered by run ${{ github.run_id }} on $PARTS machines" --target "${{ github.sha }}"
+            --title "Render: $NAME" --notes "Rendered by run ${{ github.run_id }} on $PARTS machines" --target "${{ github.event.repository.default_branch }}"
           gh release list --limit 100 --json tagName,isPrerelease,createdAt \
             --jq '[.[] | select(.isPrerelease and (.tagName|startswith("render-")))] | sort_by(.createdAt) | reverse | .[3:][] | .tagName' |
             while read -r old; do gh release delete "$old" --cleanup-tag --yes; done

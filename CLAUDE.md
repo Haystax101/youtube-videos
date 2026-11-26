@@ -116,6 +116,9 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      voice, pacing, endings, rooms, props, cameras). Prefer the full sets (kitchen, street,
      studio) and moving cameras (crane, crane_up, dolly, orbit, truck, back) for at least a
      couple of beats per Short. Record `look` in `experiment.vars`.
+   - **Faces and sets (george, 2026-11-26):** give characters pearly-white stylised faces where
+     possible (they tend to do well), and make scenes super detailed with angular environments
+     (strong shapes and hard edges, layered detail at every distance). See the `make-set-video` skill.
    - **Character poly level** (active test `character_poly`, george 2026-11-25: "a/b different
      characters"): set `"character": {"poly": ARM}` (chunky, low, smooth) as assigned.
 5. If the idea needs new props, rooms, accessories or fx, add them to the style's renderer

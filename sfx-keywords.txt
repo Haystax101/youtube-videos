@@ -1,0 +1,43 @@
+# folder: search words | more words   (tools/fetch_sfx.py; CC0/public-domain recordings only)
+# Add lines for your video and push; .github/workflows/sfx.yml republishes release sfx-v1.
+footsteps_forest: footsteps leaves | footsteps forest | walking gravel | footsteps grass
+footsteps_hard: footsteps wood | footsteps stone
+fire: campfire | fire crackling | fireplace
+forest: forest ambience | forest birds | woodland
+birds: birdsong | blackbird | robin song | crow
+wind: wind | wind trees | wind howling
+whoosh: whoosh | swoosh | swish
+impact: thud | punch | hit wood | slam
+cartoon: boing | slide whistle | pop | squeak
+rain: rain | rain on leaves | heavy rain
+thunder: thunder | thunderclap | storm
+surf: waves beach | surf | ocean waves
+sea: sea | harbour | ship creaking | splash
+palms: palm trees wind | rustling leaves
+sizzle: sizzle | frying | hiss
+scream: scream | yell | gasp
+crowd: crowd cheer | crowd | applause | laughter
+water: water splash | bubbles | underwater | river
+eel: slime | squelch | wet
+bed: bed creak | yawn | snoring | alarm clock
+squirrel: squirrel | chipmunk
+camera: camera shutter | beep | gps
+underwater: underwater ambience | underwater | hydrophone | underwater bubbles
+bubbles: bubbles | bubble | bubbling water | aquarium
+gulp: gulp | swallow | slurp | gulping
+stomach: stomach growl | stomach rumble | digestion | heartbeat
+lab: laboratory | electrical hum | machine hum | x-ray | buzzer | power up
+heart: heartbeat | heart monitor | ecg beep | hospital monitor
+hospital: hospital ambience | hospital corridor | hospital ward
+treadmill: treadmill | running machine | jogging
+clock: clock ticking | alarm clock ring | wind-up alarm
+cash: cash register | coins | ka-ching
+bones: bone crack | crunch | snap twig
+snack: crisp packet | chips crunch | munching
+projector: typewriter | slide projector | film projector
+fall: body fall | falling down | thump floor
+street: city street ambience | traffic | park ambience
+sheets: bed sheets rustle | cloth rustle | blanket
+# freesound CC0 previews (run 2)
+# run 3 (freesound debug)
+# run 4 (6 shards)

@@ -1,0 +1,34 @@
+name: Fetch CC0 assets
+
+# Downloads free CC0 assets (Poly Haven skies, textures and plant models; Kenney and OpenGameArt
+# sound effects) with tools/fetch_assets.py and publishes them as one archive on the release
+# "assets-v1", which setup.sh can download (Claude sessions can't reach those sites directly).
+# Start it by changing assets-request.txt and pushing (any branch).
+on:
+  push:
+    paths: [assets-request.txt]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch
+        run: python3 tools/fetch_assets.py assets
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tar -cf assets.tar assets
+          ls -la assets.tar
+          TAG="assets-v1"
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --prerelease --title "CC0 assets" --notes "CC0 assets fetched by tools/fetch_assets.py; see manifest.json for sources." --target "${{ github.event.repository.default_branch }}"
+          gh release upload "$TAG" assets.tar assets/manifest.json --clobber

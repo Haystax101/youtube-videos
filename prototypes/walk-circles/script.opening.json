@@ -1,0 +1,21 @@
+{
+ "title": "Why lost people walk in circles (opening test)",
+ "style": "set3d",
+ "noGary": true,
+ "voices": {"narrator": "am_michael"},
+ "speed": 1.25,
+ "tail": 0.6,
+ "beats": [
+  {"lines": [{"text": "This hiker is walking in a perfectly straight line. At least, that's what he thinks."}], "hold": 0.05},
+  {"lines": [{"text": "He's lost in a German forest, so he picks a direction and commits. No turning. No stopping."}], "hold": 0.05},
+  {"lines": [{"text": "An hour later, he finds a campfire. Someone's been here! Help is close!"}], "hold": 0.05},
+  {"lines": [{"text": "He marches on, dead straight. Another hour. Another campfire. Same log. Same sad sausage."}], "hold": 0.05},
+  {"lines": [{"text": "It's his campfire. He's been walking in circles."}], "hold": 0.25},
+  {"lines": [{"text": "And scientists say you would too."}], "hold": 0.1}
+ ],
+ "experiment": {
+  "hypothesis": "Ricks Clips structure: a comic escalating story with the science reveal later, a cut every ~2 s across several small sets, face close-ups, near-continuous narration.",
+  "facts": ["Souman, Frissen, Sreenivasa & Ernst, 'Walking straight into circles', Current Biology 19:1538 (2009): GPS-tracked walkers in the Bienwald forest (Germany) and the Sahara walked in circles when the sun was hidden, repeatedly crossing their own path without noticing; with the sun or moon visible they kept fairly straight; blindfolded walkers made circles as small as 20 m across. https://www.mpg.de/596269/pressrelease200908171"],
+  "vars": {"format": "no_gary", "style": "set3d", "edit": "fast_cuts", "fish_ep": 589}
+ }
+}
