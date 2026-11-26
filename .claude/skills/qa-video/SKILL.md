@@ -34,8 +34,11 @@ Set-video renders on GitHub run it in the join job and attach `qa.json`, `contac
 | hiss | find the SFX or Qwen line at those times; swap noise-based SFX for a recorded CC0 one, low-pass Qwen lines at 6 kHz |
 | balance | music/SFX too loud under narration: duck harder or lower the bed |
 | continuity | move the walk path / seat anchor, re-run until 0 on-screen problems |
+| flicker | a big one-frame pop = a surface vanishing (z-fighting) or a character jumping: apply "No glitching in motion" in make-set-video (MSAA composer target, near >= 0.05 / tighter far or log depth, texel-snapped shadow camera, slower shake and wheel spin) and re-render those chunks |
 
-**Every WARN gets a look**: a `dark` stretch must be a dark shot on purpose (not the camera inside a
+**Every WARN gets a look**: open `EP_DIR/qa/flicker.jpg` (before / pop / after, pops in magenta) and decide
+each one: a blink, snow or sparks are fine; a flashing facade, ground vanishing, shadow swimming or a prop
+jumping is a FAIL. Also: a `dark` stretch must be a dark shot on purpose (not the camera inside a
 wall); a `freeze` must be a held end card; `guard` frames are ones the renderer could not get clean.
 Check those times with frames from `ffmpeg -ss T -i video.mp4 -frames:v 1 -update 1 f.jpg`.
 

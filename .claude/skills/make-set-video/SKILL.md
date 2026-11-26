@@ -84,6 +84,22 @@ Use it for every new set video on both channels (darker stories can lower `sat` 
   dungarees, thin ink arms, round hands) under the same pearly-white head; `drawPerson()` (Syracuse stick limbs)
   still works. The card material uses `toneMapped: false` so the ink and whites stay pure.
 
+### No glitching in motion (george rejected the beet-juice Short for "environment glitching throughout", 26 Nov)
+
+Stills can look perfect while the moving video shimmers, so every set page needs these:
+- **MSAA through the composer.** `antialias: true` does nothing once an EffectComposer is used; pass it a
+  multisampled target: `new EffectComposer(renderer, new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType }))`.
+  Leaf/grass cards with `alphaTest` also get `alphaToCoverage: true`.
+- **`logarithmicDepthBuffer: true`** on the renderer and near >= 0.05. With near 0.03 / far 3000 the layered
+  ground planes (soil over grass, a cm apart) and distant facades z-fought: whole fields vanished for a frame
+  and window stripes flashed in the sky.
+- **Shadow camera that follows the action moves in whole texels** (snap the focus in light space to
+  `2*half/mapSize`), or shadow edges swim every frame.
+- **No per-frame jitter.** Camera shake and bobbing under ~20 rad/s; anything faster aliases into noise at 30 fps.
+  Spinning wheels with repeated bolts/lugs stay under ~0.25 rad per frame or they strobe.
+- **Check motion, not just stills:** run `python3 tools/check_flicker.py VIDEO` (one-frame pops) and look at
+  6 consecutive frames from a few shots before delivering.
+
 ## Story and script
 
 - **Length is whatever fits.** Archimedes is 1:17 and george was happy with that. Don't pad, and
