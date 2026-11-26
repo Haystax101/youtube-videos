@@ -26,10 +26,10 @@ Copy that folder as the starting point. Don't start from an empty page.
   - Use your own designs: thick outline, big readable expressions, period outfits. Never copy
     another creator's characters.
   - Add new kinds and poses there. Cards more than 35 m from the camera redraw at 8 fps.
-  - **Pearly-white stylised faces** wherever the story allows (george, 26 Nov: "these always tend
-    to do well in videos"): smooth, bright white heads with simple bold features, like Klaus in
-    walk-circles. Keep skin tones for real historical figures or crowds where white faces would
-    read wrong, and say so in the experiment notes.
+  - **Keep the pearly-white faces we already use** (george, 26 Nov: they "always tend to do well").
+    This is not a new style: reuse the existing designs in `people2d.js` from Archimedes/Syracuse
+    (`prototypes/archimedes-claw`) and walk-in-circles (Klaus and the hikers) as the reference for
+    every new character.
 - **Super-detailed, angular environments** (george, 26 Nov: "if we get our scene design super
   detailed and choose quite angular environments, i think that's how we will thrive"). Choose
   settings with strong shapes and hard edges (cliffs, castles, canyons, rooftops, ships, labs,
@@ -147,7 +147,7 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
 ## Pre-delivery checklist (every note george has given)
 
 - [ ] `python3 tools/check_frames.py video.mp4` reports no dark patches. It catches the camera inside grass or trunks and one-frame black glitch rectangles; george spotted one at 13 s. Move cameras that sit inside geometry and re-render with `--redo`; for one-frame black tiles (a swiftshader glitch that can recur on re-render) use `--fix OUT.mp4`, which swaps in the previous frame.
-- [ ] Characters have pearly-white stylised faces where possible, and the set is detailed and angular.
+- [ ] Characters use the same pearly-white faces as Syracuse and walk-in-circles, and the set is detailed and angular.
 
 - [ ] The rewind appears once, after the hook, and nowhere else.
 - [ ] The ending is a payoff and a CTA, with no carried-over "you survived".
