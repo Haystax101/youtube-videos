@@ -143,11 +143,9 @@
  },
  "qwen_speakers": {
   "narrator": [
-   "Ryan",
-   "Dolce",
-   "Arthur"
+   "Aiden"
   ],
-  "hiker": "Aiden"
+  "hiker": "Ryan"
  },
  "qwen_instruct": {
   "narrator": "Lively, amused storytelling with punchy comic timing, brisk pace.",
