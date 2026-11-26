@@ -1,0 +1,4 @@
+<!doctype html><html><body style="margin:0;background:#8fc3e8"><canvas id=c width=2700 height=800></canvas>
+<script type=module>import {drawPill} from './people2d.js'; const c=document.getElementById('c'),x=c.getContext('2d');
+const o=document.createElement('canvas');o.width=448;o.height=800;const ox=o.getContext('2d');
+[['point','talk'],['pointdown','smug'],['thumb','smug'],['shock','shocked'],['shiver','worried'],['carry','deadpan']].forEach(([p,e],i)=>{drawPill(ox,448,800,'farmer',p,e,0.4,0,{stand:true});x.drawImage(o,i*450,0);});window.DONE=1;</script></body></html>

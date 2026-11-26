@@ -44,6 +44,11 @@ def silence(sec):
 
 
 def main(ep_dir: str):
+    import os, subprocess
+    if os.environ.get("VOICE_LINT") != "0":  # george (26 Nov): spell out exactly what is spoken ("Mt. Gox" broke the sentence)
+        lint = Path(__file__).resolve().parent.parent / "tools" / "lint_voice.py"
+        if subprocess.run([sys.executable, str(lint), ep_dir]).returncode:
+            sys.exit("tts: fix the narration text above (or VOICE_LINT=0 to override)")
     from kokoro_onnx import Kokoro  # imported here so other voice engines can reuse the helpers
     ep = Path(ep_dir)
     script = json.loads((ep / "script.json").read_text())

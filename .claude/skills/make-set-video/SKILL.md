@@ -64,12 +64,67 @@ rebuild it; george would rather post fewer videos than weaker ones.
   scene (wrecks, debris, oars, swimmers) sinks or fades away during the label change. v2's
   leftover floating oars at the end "looked a little silly".
 
+## The vivid look (george approved 26 Nov 18:57: "yeah that's nice")
+
+Reference: `prototypes/ref-look/` (tractor cab, stills via `node shot.cjs cab.html out.png 1080 1920 "?shot=A"`).
+Comparison with the reference frame: `/mnt/project-files/gary-tries-it/ref-look/comparison.jpg`.
+Use it for every new set video on both channels (darker stories can lower `sat` and exposure, but keep the rest).
+
+- **Tone mapping:** `THREE.NeutralToneMapping`, exposure ~1.05. ACES greyed every colour.
+- **Grade pass:** saturation ×1.18, contrast ×1.06, a light vignette, **no grain**. The reference is crisp.
+- **Smooth shading** (`MeshStandardMaterial`, roughness 0.4-0.8, no `flatShading`) with rounded boxes
+  (`RoundedBoxGeometry`) for man-made things. Painted canvas textures for fabric, leaves, wood and dials.
+- **Interiors get fill light:** one or two `PointLight`s inside every room or cab, so the inside never goes black
+  under the sun's shadow.
+- **Plants are painted leaf cards**, never spheres: crossed alpha planes (`alphaTest`) with a leaf rosette or grass
+  blades. Sphere crops read as "lumpy blobs" and fail the quality bar. Round tree canopies are fine if they carry a
+  leaf texture.
+- **Sky:** bright gradient dome, crisp puffy cloud sprites far away (1-1.7 km), two layers of blue hills on the horizon.
+- **Characters:** `drawPill()` in `prototypes/ref-look/people2d.js` adds a chunky capsule body (buttons, plaid,
+  dungarees, thin ink arms, round hands) under the same pearly-white head; `drawPerson()` (Syracuse stick limbs)
+  still works. The card material uses `toneMapped: false` so the ink and whites stay pure.
+
+### No glitching in motion (george rejected the beet-juice Short for "environment glitching throughout", 26 Nov)
+
+Stills can look perfect while the moving video shimmers, so every set page needs these:
+- **MSAA through the composer.** `antialias: true` does nothing once an EffectComposer is used; pass it a
+  multisampled target: `new EffectComposer(renderer, new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType }))`.
+  Leaf/grass cards with `alphaTest` also get `alphaToCoverage: true`.
+- **`logarithmicDepthBuffer: true`** on the renderer and near >= 0.05. With near 0.03 / far 3000 the layered
+  ground planes (soil over grass, a cm apart) and distant facades z-fought: whole fields vanished for a frame
+  and window stripes flashed in the sky.
+- **Shadow camera that follows the action moves in whole texels** (snap the focus in light space to
+  `2*half/mapSize`), or shadow edges swim every frame.
+- **No per-frame jitter.** Camera shake and bobbing under ~20 rad/s; anything faster aliases into noise at 30 fps.
+  Spinning wheels with repeated bolts/lugs stay under ~0.25 rad per frame or they strobe.
+- **Check motion, not just stills:** run `python3 tools/check_flicker.py VIDEO` (one-frame pops) and look at
+  6 consecutive frames from a few shots before delivering.
+
+### Characters move like 3D (george, 26 Nov: "even though the characters are technically 2d... they should still act like they're 3d")
+
+Use `web/lib/stage2d.js` in every set page (import it; don't copy it):
+- **Walking:** `walkAlong(route, k, step)` gives the position and `walk` = steps taken, driven by distance, so
+  feet don't slide when the walk eases in or out and the legs stop when the card stops. Pass it as `pose.walk`.
+  Route walks round furniture; never a straight line through it.
+- **Sitting:** `anchorSeat(chair, { seatY, front })` once per chair, then `seatOn(card, chair, camera)` with
+  `pose.sit = 1` (bent legs over the seat edge) and `chair.rotation.y = faceCam(chair, camera, wobble)`: a flat
+  card can't be seen from behind, so the chair faces the camera. Get up to the front of the seat first, then walk.
+- **Self-check:** `window.SETCHECK = makeSetCheck({ sets, cards, movers, camera, render, shotSet })`, then
+  `python3 tools/qa.py EP --page EP/page.html` (or `node tools/set_check.cjs EP/page.html 0.05`) must report 0
+  on-screen problems: cards inside furniture, chairs seen from behind with someone in them, props hitting
+  things, teleports. `tools/tests/stage2d.html` is a worked example that shows each failure once.
+- Every character and camera starts inside the room's walls; entrances come through an opened door.
+
 ## Story and script
 
 - **Length is whatever fits.** Archimedes is 1:17 and george was happy with that. Don't pad, and
   don't cut a real arc to hit 30 s.
+- **Hook strength (george, 26 Nov):** our facts are the edge, and the visuals and hook must be
+  strong enough to carry them. Use a bold claim to "you" that states the surprising fact or stakes,
+  not a soft question; Darwin's "Did Darwin invent the office chair?" was too weak. See the rules
+  in the `write-short-script` skill, under "Hook strength".
 - **Cold open:**
-  - Show the most extreme moment while the hook question is asked.
+  - Show the most striking moment while the hook claim is spoken.
   - Then play exactly **one** rewind: a `◀◀ REWIND` overlay, a scanline effect and the camera flying back along its path for 1 s.
   - george loved it. It must never appear again later.
     - Pauses in the voice are **not** rewinds. v2 showed the overlay in the story pauses and it read as "going back in time" when time was going forward.
@@ -153,9 +208,11 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
 
 ## Pre-delivery checklist (every note george has given)
 
+- [ ] `python3 tools/lint_voice.py EP` passes before any voicing (Kokoro or Qwen): no "Mt."-style abbreviations, digits, symbols or unexplained acronyms; names have phonetic spellings in `pronounce`.
+
 - [ ] Quality bar: high fidelity and vibrant, and no asset anywhere looks unrealistic or unfinished, only stylised. Otherwise fix or cut it before delivery.
 
-- [ ] `python3 tools/check_frames.py video.mp4` reports no dark patches. It catches the camera inside grass or trunks and one-frame black glitch rectangles; george spotted one at 13 s. Move cameras that sit inside geometry and re-render with `--redo`; for one-frame black tiles (a swiftshader glitch that can recur on re-render) use `--fix OUT.mp4`, which swaps in the previous frame.
+- [ ] `python3 tools/qa.py EP --page EP/page.html --fix` has no FAIL and every WARN is explained, and the contact-sheet review passed (the `qa-video` skill). It covers dark patches and one-frame black tiles (george spotted one at 13 s; the renderers now retry those frames as they render, and `--fix` patches any left), loudness, clipping, static, dead air, voice-over-music balance and continuity. Move cameras that sit inside geometry and re-render with `--redo`.
 - [ ] Characters use the same pearly-white faces as Syracuse and walk-in-circles, and the set is detailed and angular.
 
 - [ ] The rewind appears once, after the hook, and nowhere else.

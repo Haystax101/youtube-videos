@@ -520,7 +520,8 @@ function applyPhase(name) {
 // ======================================================================
 // post: depth of field (miniature feel) + bloom
 // ======================================================================
-const composer = new EffectComposer(renderer);
+// MSAA through the composer: renderer antialias does nothing once post passes run (make-set-video: No glitching in motion)
+const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType }));
 composer.addPass(new RenderPass(scene, camera));
 const bokeh = new BokehPass(scene, camera, { focus: 8, aperture: 0.001, maxblur: 0.006 }); composer.addPass(bokeh);
 const bloom = new UnrealBloomPass(new THREE.Vector2(W, H), 0.45, 0.55, 0.9); composer.addPass(bloom);

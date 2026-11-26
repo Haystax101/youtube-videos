@@ -12,6 +12,8 @@ import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
 const { chromium } = createRequire(import.meta.url)('playwright');
+const makeGuard = createRequire(import.meta.url)('./frame_guard.cjs');
+const gl = createRequire(import.meta.url)('./browser.cjs'); gl.reexecUnderXvfb();   // fast llvmpipe GL on Linux
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const args = process.argv.slice(2);
@@ -36,7 +38,7 @@ const server = http.createServer((req, res) => {
 const port = server.address().port;
 
 async function openPage() {
-  const browser = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  const browser = await gl.launch(chromium);
   const page = await browser.newPage({ viewport: { width: VW, height: VH }, deviceScaleFactor: 1 });
   page.on('console', m => { if (m.type() === 'error') console.error('[page]', m.text()); });
   page.on('pageerror', e => console.error('[page error]', e.message));
@@ -55,9 +57,9 @@ async function renderRange(w, from, n, out, label) {
   const ff = ffmpeg(['-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-',
     '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', '-maxrate', '12M', '-bufsize', '24M', '-pix_fmt', 'yuv420p', '-r', String(FPS), out]);
   const t0 = Date.now();
+  const guard = makeGuard(w.page, () => w.stage.screenshot({ type: 'jpeg', quality: 92 })); w.guard = guard.log;
   for (let i = 0; i < n; i++) {
-    await w.page.evaluate(t => window.renderFrame(t), (from + i) / FPS);
-    const buf = await w.stage.screenshot({ type: 'jpeg', quality: 92 });
+    const buf = await guard.frame((from + i) / FPS);   // renders, screenshots, retries black-tile glitches
     if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r));
     if (i % 300 === 0) console.log(`${label} frame ${i}/${n} (${((Date.now() - t0) / 1000).toFixed(0)}s)`);
   }
@@ -96,6 +98,10 @@ if (stills) {
   await ffmpeg(['-f', 'concat', '-safe', '0', '-i', path.join(tmp, 'list.txt'), '-i', path.join(epDir, audio),
     '-map', '0:v', '-map', '1:a', '-c:v', 'copy', '-c:a', 'aac', '-b:a', '192k', '-shortest', '-movflags', '+faststart', out]).done;
   fs.rmSync(tmp, { recursive: true, force: true });
+  const g = { frames: 0, retried: 0, unresolved: [] };
+  for (const w of pages) { g.frames += w.guard.frames; g.retried += w.guard.retried; g.unresolved.push(...w.guard.unresolved); }
+  fs.writeFileSync(path.join(epDir, 'frame_guard.json'), JSON.stringify(g, null, 1));
+  console.log(`frame guard: ${g.retried} glitch frame(s) retried, ${g.unresolved.length} still dark (see tools/qa.py)`);
   console.log(`wrote ${out} (${total} frames, ${workers} workers) in ${((Date.now() - t0) / 1000).toFixed(0)}s`);
 }
 server.close();
