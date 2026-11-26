@@ -1,0 +1,70 @@
+{
+ "video": "episodes/dark/002-video-poker/deliver2.mp4",
+ "duration": 124.6,
+ "result": "FAIL",
+ "checks": [
+  {
+   "check": "black",
+   "status": "FAIL",
+   "detail": "one-frame black glitch at 1.40-1.47s (69% dark), 2.00-2.07s (63% dark), 5.27-5.27s (58% dark), 49.43-49.43s (59% dark), 50.00-50.00s (60% dark), 63.83-63.83s (44% dark), 66.97-67.00s (60% dark), 67.07-67.10s (60% dark), 67.33-67.37s (60% dark), 71.80-71.80s (60% dark), 73.00-73.00s (60% dark), 78.13-78.20s (26% dark), 83.20-83.20s (50% dark), 89.27-89.27s (37% dark), 98.03-98.03s (55% dark), 120.13-120.13s (58% dark) -> rerun with --fix, or re-render those chunks"
+  },
+  {
+   "check": "dark",
+   "status": "WARN",
+   "detail": "dark stretch at 0.00-0.93s (65% dark), 1.67-1.80s (65% dark), 3.67-3.80s (63% dark), 4.00-4.13s (63% dark), 4.33-4.47s (63% dark), 4.67-4.80s (63% dark), 5.00-5.13s (63% dark), 8.23-8.47s (64% dark), 11.20-12.80s (71% dark), 17.63-19.23s (69% dark), 21.10-26.87s (74% dark), 27.33-31.57s (71% dark), 31.83-32.60s (61% dark), 32.77-35.33s (75% dark), 37.17-38.73s (70% dark), 38.93-40.17s (64% dark), 41.67-41.80s (62% dark), 49.53-49.73s (60% dark), 52.83-54.73s (64% dark), 56.00-56.10s (72% dark), 60.37-61.13s (68% dark), 69.47-70.13s (92% dark), 70.33-70.47s (93% dark), 70.67-70.80s (93% dark), 71.03-71.20s (62% dark), 71.33-71.47s (61% dark), 80.27-80.27s (55% dark), 81.23-81.30s (61% dark), 85.03-86.97s (71% dark), 100.47-106.97s (91% dark), 108.70-110.40s (75% dark), 111.10-112.03s (64% dark), 112.77-114.97s (80% dark), 117.70-118.13s (63% dark): fine if the shot is meant to be dark, a bug if the camera is inside a wall or prop"
+  },
+  {
+   "check": "guard",
+   "status": "WARN",
+   "detail": "161 frame(s) still flagged after retries at 1.43s, 2.07s, 3.70s, 8.23s, 9.70s, 11.20s, 12.63s, 12.67s, 12.70s, 12.73s (genuine dark shot, or a glitch: check them)"
+  },
+  {
+   "check": "freeze",
+   "status": "PASS",
+   "detail": "picture keeps moving"
+  },
+  {
+   "check": "loudness",
+   "status": "WARN",
+   "detail": "-15.7 LUFS, true peak -4.2 dBTP (want -14 +/- 1.5, <= -1) -> fix: ffmpeg loudnorm=I=-14:TP=-1.5 two-pass on the mix"
+  },
+  {
+   "check": "clipping",
+   "status": "PASS",
+   "detail": "AUDIO OK"
+  },
+  {
+   "check": "hiss",
+   "status": "PASS",
+   "detail": "no broadband static"
+  },
+  {
+   "check": "silence",
+   "status": "PASS",
+   "detail": "no dead air"
+  },
+  {
+   "check": "balance",
+   "status": "WARN",
+   "detail": "voice.wav does not line up with the final mix (corr 0.05); skipped"
+  },
+  {
+   "check": "flicker",
+   "status": "WARN",
+   "detail": "17 one-frame pop(s), worst at 87.50s, 87.93s, 15.50s, 14.43s, 118.27s, 15.37s, 14.00s, 14.73s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
+  },
+  {
+   "check": "vanish",
+   "status": "PASS",
+   "detail": "nothing blinks out for a frame"
+  },
+  {
+   "check": "length",
+   "status": "PASS",
+   "detail": "124.6 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
+  }
+ ],
+ "contact_sheet": "episodes/dark/002-video-poker/qa/contact.jpg",
+ "review": null,
+ "review_mtime": 1795736205.2230697
+}

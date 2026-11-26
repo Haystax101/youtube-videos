@@ -1,0 +1,70 @@
+{
+ "video": "episodes/dark/004-stuxnet/deliver.mp4",
+ "duration": 153.0,
+ "result": "FAIL",
+ "checks": [
+  {
+   "check": "black",
+   "status": "FAIL",
+   "detail": "one-frame black glitch at 48.40-48.40s (36% dark), 50.37-50.37s (50% dark), 52.87-52.87s (48% dark), 56.77-56.77s (45% dark), 59.60-59.60s (54% dark), 61.47-61.47s (35% dark), 80.80-80.80s (27% dark), 81.97-81.97s (34% dark), 118.40-118.40s (36% dark), 120.97-120.97s (37% dark), 124.83-124.83s (33% dark), 126.87-126.87s (29% dark), 134.33-134.33s (44% dark), 142.63-142.63s (23% dark), 144.07-144.07s (26% dark) -> rerun with --fix, or re-render those chunks"
+  },
+  {
+   "check": "dark",
+   "status": "WARN",
+   "detail": "dark stretch at 136.30-137.77s (77% dark): fine if the shot is meant to be dark, a bug if the camera is inside a wall or prop"
+  },
+  {
+   "check": "guard",
+   "status": "WARN",
+   "detail": "1 frame(s) still flagged after retries at 72.67s (genuine dark shot, or a glitch: check them)"
+  },
+  {
+   "check": "freeze",
+   "status": "PASS",
+   "detail": "picture keeps moving"
+  },
+  {
+   "check": "loudness",
+   "status": "PASS",
+   "detail": "-14.8 LUFS, true peak -4.3 dBTP (want -14 +/- 1.5, <= -1)"
+  },
+  {
+   "check": "clipping",
+   "status": "PASS",
+   "detail": "AUDIO OK"
+  },
+  {
+   "check": "hiss",
+   "status": "PASS",
+   "detail": "no broadband static"
+  },
+  {
+   "check": "silence",
+   "status": "PASS",
+   "detail": "no dead air"
+  },
+  {
+   "check": "balance",
+   "status": "WARN",
+   "detail": "voice.wav does not line up with the final mix (corr 0.07); skipped"
+  },
+  {
+   "check": "flicker",
+   "status": "WARN",
+   "detail": "27 one-frame pop(s), worst at 18.67s, 18.77s, 18.30s, 17.93s, 18.40s, 18.20s, 17.57s, 18.03s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
+  },
+  {
+   "check": "vanish",
+   "status": "WARN",
+   "detail": "2 small blink(s) at 52.4s, 52.8s -> qa/vanish.jpg: an eye blink or a light is fine, a label or prop is not"
+  },
+  {
+   "check": "length",
+   "status": "PASS",
+   "detail": "153.0 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
+  }
+ ],
+ "contact_sheet": "episodes/dark/004-stuxnet/qa/contact.jpg",
+ "review": null,
+ "review_mtime": 1795733505.386909
+}
