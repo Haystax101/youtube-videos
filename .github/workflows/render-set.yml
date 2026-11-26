@@ -155,5 +155,5 @@ jobs:
           gh release create "$TAG" "$EP/video.mp4" --prerelease \
             --title "Render: $NAME" --notes "Rendered by run ${{ github.run_id }} on $PARTS machines" --target "${{ github.event.repository.default_branch }}"
           gh release list --limit 100 --json tagName,isPrerelease,createdAt \
-            --jq '[.[] | select(.isPrerelease and (.tagName|startswith("render-")))] | sort_by(.createdAt) | reverse | .[3:][] | .tagName' |
+            --jq '[.[] | select(.isPrerelease and (.tagName|startswith("render-")))] | sort_by(.createdAt) | reverse | .[12:][] | select(now - (.createdAt | fromdateiso8601) > 86400) | .tagName' |
             while read -r old; do gh release delete "$old" --cleanup-tag --yes; done

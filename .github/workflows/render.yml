@@ -88,7 +88,7 @@ jobs:
           TAG="render-${{ steps.name.outputs.name }}-${{ github.run_id }}"
           gh release create "$TAG" "$EP/video.mp4" "$EP/timeline.json" --prerelease \
             --title "Render: ${{ steps.name.outputs.name }}" --notes "Rendered by run ${{ github.run_id }}" --target "${{ github.event.repository.default_branch }}"
-          # keep only the 3 newest render pre-releases
+          # prune render pre-releases, but keep the 12 newest and anything under 24 h old (several threads render at once)
           gh release list --limit 100 --json tagName,isPrerelease,createdAt \
-            --jq '[.[] | select(.isPrerelease and (.tagName|startswith("render-")))] | sort_by(.createdAt) | reverse | .[3:][] | .tagName' |
+            --jq '[.[] | select(.isPrerelease and (.tagName|startswith("render-")))] | sort_by(.createdAt) | reverse | .[12:][] | select(now - (.createdAt | fromdateiso8601) > 86400) | .tagName' |
             while read -r old; do gh release delete "$old" --cleanup-tag --yes; done
