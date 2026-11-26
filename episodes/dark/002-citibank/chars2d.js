@@ -52,10 +52,8 @@ function oval(x, cx, cy, rx, ry, fill, lw = 10) { x.beginPath(); x.ellipse(cx, c
 function limb(x, pts, w, col) { x.lineCap = 'round'; x.lineJoin = 'round'; x.beginPath(); x.moveTo(pts[0][0], pts[0][1]); for (const p of pts.slice(1)) x.lineTo(p[0], p[1]); x.strokeStyle = INK; x.lineWidth = w + 14; x.stroke(); x.strokeStyle = col; x.lineWidth = w; x.stroke(); }
 function shade(x, path, col) { x.save(); path(); x.clip(); x.fillStyle = col; x.beginPath(); x.ellipse(...arguments[3]); x.fill(); x.restore(); }
 
-// george (26 Nov): stylised pearly-white faces for everyone (set PEARL = false for natural skin tones)
-export let PEARL = true; const PEARL_SKIN = '#f6f3ef';
 export function drawChar(x, kind, P, t) {
-  const K = PEARL ? { ...KINDS[kind], skin: PEARL_SKIN } : KINDS[kind], W = 512, cx = 256; x.clearRect(0, 0, W, 768);
+  const K = KINDS[kind], W = 512, cx = 256; x.clearRect(0, 0, W, 768);
   const sit = !!P.sit, lady = !!K.dress;
   const bob = P.walk ? Math.abs(Math.sin(P.walk * Math.PI)) * 10 : 0;
   const hipY = sit ? 535 : 545 - bob, bodyCy = sit ? 440 : 440 - bob, bodyRy = 120, bodyRx = 108;
