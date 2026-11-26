@@ -421,7 +421,7 @@ const SHOTS = [
   [T_COLD, (w, u) => ({ p: V(-6.3 + u * 0.15, 1.45, -35.3 - u * 0.15), l: V(-2.9, 1.05, -37.0), fov: 50 })],
   [T_GENTLE, (w, u) => ({ p: V(-4.9 + u * 0.3, 1.05, -37.0), l: V(-1.36, 0.95, -37.0), fov: 56 })],
   [T_PAY - 0.05, (w, u) => { const a = 0.75 - u * 0.2; return { p: V(Math.cos(a) * 12.5, 3.0, tp().z + 2 + Math.sin(a) * 12.5), l: V(0, 1.6, tp().z + 2.2), fov: 52 }; }],
-  [WT(7, 'technically') - 0.3, (w, u) => ({ p: V(0.55, 2.88, tp().z + 1.0 - u * 0.05), l: V(-0.05, 2.58, tp().z - 0.45), fov: 62 })],
+  [WT(7, 'technically') - 0.3, (w, u) => ({ p: V(0.55, 2.88 + tp().y, tp().z + 1.0 - u * 0.05), l: V(-0.05, 2.58 + tp().y, tp().z - 0.45), fov: 62 })],
 ];
 function shotAt(w) { let i = 0; for (let k = 1; k < SHOTS.length; k++) if (w >= SHOTS[k][0]) i = k; if (w >= HOOK_W0 - 1 && w < HOOK_W0 + HOOK_END + 0.01 && hookMode) i = 0; return i; }
 let hookMode = false;
@@ -456,9 +456,9 @@ window.renderFrame = (t) => {
   flakes.material.opacity = s.snow > 0.3 ? 0.95 : 0;
   // tractor
   T.position.set(0, 0, s.tz); TILT.rotation.x = s.tip * 0.2;
-  const dist = s.tz - (-48), spinA = 6.5 * clamp(w - T_SPIN, 0, T_TIP - 0.1 - T_SPIN);
-  wheels.forEach((wh) => { wh.spin.rotation.x = dist / wh.r + (wh.rear ? spinA : 0) + 0.6; });
-  T.position.y = s.drive ? Math.abs(Math.sin(w * 7)) * 0.015 : 0;
+  const DPARK = PARK.z + 0.35 + 48, dist = s.tz - (-48), spinA = 6.5 * clamp(w - T_SPIN, 0, T_TIP - 0.1 - T_SPIN);
+  wheels.forEach((wh) => { wh.spin.rotation.x = (DPARK + (dist - DPARK) * 0.3) / wh.r + (wh.rear ? spinA : 0) + 0.6; });
+  T.position.y = s.drive ? (1 - Math.cos(w * 14)) * 0.0075 : 0;   // smooth bob: abs(sin) had a kink that jolted the cab camera
   LOADER.visible = s.loader; ARMS.rotation.x = 0.3 - 0.48 * s.loaderUp; SPEAR.rotation.x = -ARMS.rotation.x;
   mud.visible = w > BS(1) && w < T_FILL; mudBits.visible = s.spin;
   if (s.spin) { mudSeeds.forEach(([a, b, c, d], i) => { const u = ((w - T_SPIN) * 2.2 + a) % 1, side = i % 2 ? 1 : -1; const vx = (b - 0.5) * 1.5, vz = -3.5 - c * 3, vy = 3 + d * 3;

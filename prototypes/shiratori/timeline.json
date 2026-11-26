@@ -1,0 +1,947 @@
+{
+ "duration": 48.139,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 4.413,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "This",
+     "s": 0.15,
+     "e": 0.393,
+     "speaker": "narrator"
+    },
+    {
+     "w": "man",
+     "s": 0.393,
+     "e": 0.628,
+     "speaker": "narrator"
+    },
+    {
+     "w": "escaped",
+     "s": 0.628,
+     "e": 1.318,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 1.318,
+     "e": 1.562,
+     "speaker": "narrator"
+    },
+    {
+     "w": "four",
+     "s": 1.562,
+     "e": 1.805,
+     "speaker": "narrator"
+    },
+    {
+     "w": "prisons.",
+     "s": 1.805,
+     "e": 2.283,
+     "speaker": "narrator"
+    },
+    {
+     "w": "One",
+     "s": 2.423,
+     "e": 2.63,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 2.63,
+     "e": 2.829,
+     "speaker": "narrator"
+    },
+    {
+     "w": "them,",
+     "s": 2.829,
+     "e": 3.154,
+     "speaker": "narrator"
+    },
+    {
+     "w": "using",
+     "s": 3.154,
+     "e": 3.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "miso",
+     "s": 3.56,
+     "e": 3.959,
+     "speaker": "narrator"
+    },
+    {
+     "w": "soup.",
+     "s": 3.959,
+     "e": 4.173,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 4.413,
+   "end": 11.257,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Yoshie",
+     "s": 4.413,
+     "e": 4.655,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Shiratori",
+     "s": 4.655,
+     "e": 5.513,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 5.513,
+     "e": 5.733,
+     "speaker": "narrator"
+    },
+    {
+     "w": "locked",
+     "s": 5.733,
+     "e": 6.173,
+     "speaker": "narrator"
+    },
+    {
+     "w": "up",
+     "s": 6.173,
+     "e": 6.386,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 6.386,
+     "e": 6.598,
+     "speaker": "narrator"
+    },
+    {
+     "w": "nineteen",
+     "s": 6.598,
+     "e": 7.251,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thirty-six.",
+     "s": 7.251,
+     "e": 7.911,
+     "speaker": "narrator"
+    },
+    {
+     "w": "He",
+     "s": 8.051,
+     "e": 8.231,
+     "speaker": "narrator"
+    },
+    {
+     "w": "picked",
+     "s": 8.231,
+     "e": 8.602,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 8.602,
+     "e": 8.788,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lock",
+     "s": 8.788,
+     "e": 8.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "with",
+     "s": 8.98,
+     "e": 9.172,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 9.172,
+     "e": 9.345,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wire",
+     "s": 9.345,
+     "e": 9.537,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 9.537,
+     "e": 9.717,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pulled",
+     "s": 9.717,
+     "e": 10.088,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 10.088,
+     "e": 10.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 10.28,
+     "e": 10.453,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bath",
+     "s": 10.453,
+     "e": 10.645,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bucket.",
+     "s": 10.645,
+     "e": 11.017,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 11.257,
+   "end": 17.759,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Caught",
+     "s": 11.257,
+     "e": 11.468,
+     "speaker": "narrator"
+    },
+    {
+     "w": "again,",
+     "s": 11.468,
+     "e": 11.948,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 11.948,
+     "e": 12.134,
+     "speaker": "narrator"
+    },
+    {
+     "w": "got",
+     "s": 12.134,
+     "e": 12.326,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 12.326,
+     "e": 12.504,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cell",
+     "s": 12.504,
+     "e": 12.703,
+     "speaker": "narrator"
+    },
+    {
+     "w": "with",
+     "s": 12.703,
+     "e": 12.901,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 12.901,
+     "e": 13.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ceiling",
+     "s": 13.08,
+     "e": 13.47,
+     "speaker": "narrator"
+    },
+    {
+     "w": "nobody",
+     "s": 13.47,
+     "e": 14.026,
+     "speaker": "narrator"
+    },
+    {
+     "w": "could",
+     "s": 14.026,
+     "e": 14.231,
+     "speaker": "narrator"
+    },
+    {
+     "w": "reach.",
+     "s": 14.231,
+     "e": 14.435,
+     "speaker": "narrator"
+    },
+    {
+     "w": "He",
+     "s": 14.575,
+     "e": 14.781,
+     "speaker": "narrator"
+    },
+    {
+     "w": "climbed",
+     "s": 14.781,
+     "e": 15.213,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 15.213,
+     "e": 15.426,
+     "speaker": "narrator"
+    },
+    {
+     "w": "walls,",
+     "s": 15.426,
+     "e": 15.768,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 15.768,
+     "e": 15.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "slipped",
+     "s": 15.98,
+     "e": 16.413,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out",
+     "s": 16.413,
+     "e": 16.626,
+     "speaker": "narrator"
+    },
+    {
+     "w": "through",
+     "s": 16.626,
+     "e": 16.867,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 16.867,
+     "e": 17.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "skylight.",
+     "s": 17.08,
+     "e": 17.519,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 17.759,
+   "end": 22.842,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 17.759,
+     "e": 17.955,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 17.955,
+     "e": 18.165,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sent",
+     "s": 18.165,
+     "e": 18.375,
+     "speaker": "narrator"
+    },
+    {
+     "w": "him",
+     "s": 18.375,
+     "e": 18.577,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 18.577,
+     "e": 18.773,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Abashiri,",
+     "s": 18.773,
+     "e": 19.667,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 19.667,
+     "e": 19.87,
+     "speaker": "narrator"
+    },
+    {
+     "w": "coldest",
+     "s": 19.87,
+     "e": 20.282,
+     "speaker": "narrator"
+    },
+    {
+     "w": "prison",
+     "s": 20.282,
+     "e": 20.688,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 20.688,
+     "e": 20.884,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Japan,",
+     "s": 20.884,
+     "e": 21.392,
+     "speaker": "narrator"
+    },
+    {
+     "w": "locked",
+     "s": 21.392,
+     "e": 21.798,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 21.798,
+     "e": 21.994,
+     "speaker": "narrator"
+    },
+    {
+     "w": "iron",
+     "s": 21.994,
+     "e": 22.386,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cuffs.",
+     "s": 22.386,
+     "e": 22.602,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 22.842,
+   "end": 31.201,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Every",
+     "s": 22.842,
+     "e": 23.413,
+     "speaker": "narrator"
+    },
+    {
+     "w": "day,",
+     "s": 23.413,
+     "e": 23.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 23.72,
+     "e": 23.912,
+     "speaker": "narrator"
+    },
+    {
+     "w": "poured",
+     "s": 23.912,
+     "e": 24.311,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 24.311,
+     "e": 24.51,
+     "speaker": "narrator"
+    },
+    {
+     "w": "miso",
+     "s": 24.51,
+     "e": 24.895,
+     "speaker": "narrator"
+    },
+    {
+     "w": "soup",
+     "s": 24.895,
+     "e": 25.101,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 25.101,
+     "e": 25.294,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 25.294,
+     "e": 25.493,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bolts",
+     "s": 25.493,
+     "e": 25.706,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 25.706,
+     "e": 25.899,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 25.899,
+     "e": 26.098,
+     "speaker": "narrator"
+    },
+    {
+     "w": "food",
+     "s": 26.098,
+     "e": 26.304,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hatch,",
+     "s": 26.304,
+     "e": 26.624,
+     "speaker": "narrator"
+    },
+    {
+     "w": "until",
+     "s": 26.624,
+     "e": 27.016,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 27.016,
+     "e": 27.215,
+     "speaker": "narrator"
+    },
+    {
+     "w": "salt",
+     "s": 27.215,
+     "e": 27.421,
+     "speaker": "narrator"
+    },
+    {
+     "w": "rusted",
+     "s": 27.421,
+     "e": 27.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "them.",
+     "s": 27.82,
+     "e": 28.026,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Then",
+     "s": 28.166,
+     "e": 28.378,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 28.378,
+     "e": 28.576,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dislocated",
+     "s": 28.576,
+     "e": 29.381,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 29.381,
+     "e": 29.586,
+     "speaker": "narrator"
+    },
+    {
+     "w": "shoulders,",
+     "s": 29.586,
+     "e": 30.127,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 30.127,
+     "e": 30.332,
+     "speaker": "narrator"
+    },
+    {
+     "w": "squeezed",
+     "s": 30.332,
+     "e": 30.756,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out.",
+     "s": 30.756,
+     "e": 30.961,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 31.201,
+   "end": 34.513,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "In",
+     "s": 31.201,
+     "e": 31.405,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Sapporo,",
+     "s": 31.405,
+     "e": 32.138,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 32.138,
+     "e": 32.343,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dug",
+     "s": 32.343,
+     "e": 32.554,
+     "speaker": "narrator"
+    },
+    {
+     "w": "under",
+     "s": 32.554,
+     "e": 32.969,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 32.969,
+     "e": 33.181,
+     "speaker": "narrator"
+    },
+    {
+     "w": "floor",
+     "s": 33.181,
+     "e": 33.406,
+     "speaker": "narrator"
+    },
+    {
+     "w": "with",
+     "s": 33.406,
+     "e": 33.625,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 33.625,
+     "e": 33.836,
+     "speaker": "narrator"
+    },
+    {
+     "w": "soup",
+     "s": 33.836,
+     "e": 34.054,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bowl.",
+     "s": 34.054,
+     "e": 34.273,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 34.513,
+   "end": 38.47,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Nothing",
+     "s": 34.513,
+     "e": 35.062,
+     "speaker": "narrator"
+    },
+    {
+     "w": "could",
+     "s": 35.062,
+     "e": 35.35,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hold",
+     "s": 35.35,
+     "e": 35.629,
+     "speaker": "narrator"
+    },
+    {
+     "w": "him.",
+     "s": 35.629,
+     "e": 35.899,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Until",
+     "s": 36.039,
+     "e": 36.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 36.32,
+     "e": 36.453,
+     "speaker": "narrator"
+    },
+    {
+     "w": "policeman",
+     "s": 36.453,
+     "e": 37.009,
+     "speaker": "narrator"
+    },
+    {
+     "w": "offered",
+     "s": 37.009,
+     "e": 37.427,
+     "speaker": "narrator"
+    },
+    {
+     "w": "him",
+     "s": 37.427,
+     "e": 37.569,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 37.569,
+     "e": 37.702,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cigarette.",
+     "s": 37.702,
+     "e": 38.13,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 7,
+   "start": 38.47,
+   "end": 45.051,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "That",
+     "s": 38.47,
+     "e": 38.709,
+     "speaker": "narrator"
+    },
+    {
+     "w": "small",
+     "s": 38.709,
+     "e": 38.956,
+     "speaker": "narrator"
+    },
+    {
+     "w": "kindness",
+     "s": 38.956,
+     "e": 39.434,
+     "speaker": "narrator"
+    },
+    {
+     "w": "made",
+     "s": 39.434,
+     "e": 39.673,
+     "speaker": "narrator"
+    },
+    {
+     "w": "him",
+     "s": 39.673,
+     "e": 39.905,
+     "speaker": "narrator"
+    },
+    {
+     "w": "turn",
+     "s": 39.905,
+     "e": 40.144,
+     "speaker": "narrator"
+    },
+    {
+     "w": "himself",
+     "s": 40.144,
+     "e": 40.614,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in.",
+     "s": 40.614,
+     "e": 40.838,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 40.978,
+     "e": 41.161,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 41.161,
+     "e": 41.338,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 41.338,
+     "e": 41.508,
+     "speaker": "narrator"
+    },
+    {
+     "w": "prison",
+     "s": 41.508,
+     "e": 41.874,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 41.874,
+     "e": 42.063,
+     "speaker": "narrator"
+    },
+    {
+     "w": "treated",
+     "s": 42.063,
+     "e": 42.436,
+     "speaker": "narrator"
+    },
+    {
+     "w": "him",
+     "s": 42.436,
+     "e": 42.619,
+     "speaker": "narrator"
+    },
+    {
+     "w": "with",
+     "s": 42.619,
+     "e": 42.808,
+     "speaker": "narrator"
+    },
+    {
+     "w": "respect,",
+     "s": 42.808,
+     "e": 43.278,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 43.278,
+     "e": 43.455,
+     "speaker": "narrator"
+    },
+    {
+     "w": "never",
+     "s": 43.455,
+     "e": 43.815,
+     "speaker": "narrator"
+    },
+    {
+     "w": "escaped",
+     "s": 43.815,
+     "e": 44.352,
+     "speaker": "narrator"
+    },
+    {
+     "w": "again.",
+     "s": 44.352,
+     "e": 44.711,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 8,
+   "start": 45.051,
+   "end": 47.339,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Follow",
+     "s": 45.051,
+     "e": 45.458,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 45.458,
+     "e": 45.662,
+     "speaker": "narrator"
+    },
+    {
+     "w": "more",
+     "s": 45.662,
+     "e": 45.872,
+     "speaker": "narrator"
+    },
+    {
+     "w": "interesting",
+     "s": 45.872,
+     "e": 46.679,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cartoons.",
+     "s": 46.679,
+     "e": 47.099,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}

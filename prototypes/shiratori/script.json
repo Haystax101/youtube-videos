@@ -1,0 +1,31 @@
+{
+ "title": "The man no prison could hold",
+ "style": "set3d",
+ "look": "smol",
+ "noGary": true,
+ "voices": { "narrator": "am_michael" },
+ "speed": 1.2,
+ "tail": 0.8,
+ "pronounce": { "Shiratori": "sheerah-toree", "Yoshie": "yoh-shee-eh", "Abashiri": "ahbah-sheeree", "Sapporo": "sah-poro", "Akita": "ah-keeta" },
+ "beats": [
+  { "id": "hook", "hook": true, "lines": [ { "text": "This man escaped from four prisons. One of them, using miso soup." } ], "hold": 0.1 },
+  { "id": "aomori", "lines": [ { "text": "Yoshie Shiratori was locked up in nineteen thirty-six. He picked the lock with a wire he pulled from a bath bucket." } ], "hold": 0.1 },
+  { "id": "akita", "lines": [ { "text": "Caught again, he got a cell with a ceiling nobody could reach. He climbed the walls, and slipped out through the skylight." } ], "hold": 0.1 },
+  { "id": "abashiri", "lines": [ { "text": "So they sent him to Abashiri, the coldest prison in Japan, locked in iron cuffs." } ], "hold": 0.1 },
+  { "id": "soup", "lines": [ { "text": "Every day, he poured his miso soup on the bolts of the food hatch, until the salt rusted them. Then he dislocated his shoulders, and squeezed out." } ], "hold": 0.1 },
+  { "id": "sapporo", "lines": [ { "text": "In Sapporo, he dug under the floor with his soup bowl." } ], "hold": 0.1 },
+  { "id": "cigarette", "lines": [ { "text": "Nothing could hold him. Until a policeman offered him a cigarette." } ], "hold": 0.2 },
+  { "id": "payoff", "lines": [ { "text": "That small kindness made him turn himself in. And in a prison that treated him with respect, he never escaped again." } ], "hold": 0.2 },
+  { "id": "cta", "lines": [ { "text": "Follow for more interesting cartoons." } ], "hold": 0.1 }
+ ],
+ "experiment": {
+  "vars": { "format": "no_gary", "premise": "true_history", "ending": "better", "cta": "follow", "look": "smol", "voices.narrator": "am_michael", "speed": 1.2, "character": "bighead", "length": "long_50s" },
+  "hypothesis": "george's reference (Smolrax-style history Short, 65 s): big-head 2.5D characters, clean warm sets, depth of field, whip pans, one-word captions, a told-straight human story with a twist ending. First World of How Short in that format.",
+  "fish": "#608 (Japan's greatest ever prison escape artist escaped four times, twice by using his own miso soup)",
+  "facts": [
+   { "claim": "Yoshie Shiratori (1907-1979) escaped four Japanese prisons: Aomori (1936, lock picked with wire from a bath bucket), Akita (1942, climbed the walls of a high-ceilinged cell and out of the skylight), Abashiri (1944, miso soup rusted the bolts of the food hatch; dislocated his shoulders to squeeze out) and Sapporo (1947, dug out under the floor with a soup bowl).", "sources": ["https://en.wikipedia.org/wiki/Yoshie_Shiratori", "https://allthatsinteresting.com/yoshie-shiratori", "https://grunge.com/885614/how-a-japanese-prisoner-once-used-miso-soup-to-escape-jail"] },
+   { "claim": "A police officer offered him a cigarette; moved by the kindness he admitted he was an escaped convict and turned himself in. He served the rest of his sentence in Tokyo (Fuchu) where he was treated well, never escaped again and was released in 1961.", "sources": ["https://en.wikipedia.org/wiki/Yoshie_Shiratori", "https://www.tokyoweekender.com/art_and_culture/history/yoshie-shiratori/", "https://www.amusingplanet.com/2025/10/yoshie-shiratoris-remarkable-prison.html"] }
+  ],
+  "notes": "Several popular accounts embellish details and dates vary by a year between sources (Abashiri 1943/1944). The script avoids exact dates except 1936 and keeps to the details shared by Wikipedia and multiple outlets. The Abashiri Prison Museum displays a figure of him escaping."
+ }
+}
