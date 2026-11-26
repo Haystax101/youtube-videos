@@ -15,6 +15,7 @@
 | 012 | 2026-11-26 | Sheltering under a manchineel tree in the rain (Fish #313) | - | new beach set + manchineel tree, rain fx, apple; dare hook, chiptune, bf_emma, speed 1.28, chunky Gary | | survives / comment_next |
 | 013 | 2026-11-26 | A fish swallows an eel and it escapes through the gills (Fish #574) | - | FIRST no-Gary Short: underwater set, predator fish with X-ray, segmented eel; question hook, hype, af_bella, speed 1.12 | | survives / follow |
 | 014 | 2026-11-26 | Never getting out of bed (Dallas bed-rest study; Fish #443 lead) | - | new bedroom set, lie + jog poses; number-first hook, epic, am_fenrir, speed 1.2, low poly | | better / shenanigans |
+| 015 | 2026-11-26 | Never getting out of bed, REMADE in the fast-cut set style (Fish #443 lead) | - | 7 three.js sets, ~33 cuts in 65 s, 2D cards, 1966 sepia grade, orchestral cue per scene; Kokoro am_michael narrator 1.2 + Qwen3-TTS character lines (Uncle_Fu doctor, Aiden Gary); number-first hook + cold open + rewind | | better / comment_next |
 
 ## Style locked to low-poly (george, 2026-11-25)
 
