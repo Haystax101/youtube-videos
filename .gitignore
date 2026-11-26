@@ -7,3 +7,5 @@ episodes/*/*/still_*.jpg
 .render_tmp/
 __pycache__/
 assets/
+prototypes/*/stills/
+prototypes/*/chunks/

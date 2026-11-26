@@ -1,0 +1,10 @@
+<!doctype html><html><body style="margin:0;background:#8bc"><canvas id="c" width="2240" height="1300"></canvas>
+<script type="module">
+import { drawPerson, drawIguana } from './people2d.js';
+const c = document.getElementById('c').getContext('2d');
+const list = [['tourist','walk','happy',{}],['tourist','eat','chew',{apple:1}],['tourist','clutch','choke',{throat:1}],['tourist','idle','hot',{fire:1}],['tourist','scratch','pain',{welts:1,wet:1,steam:1}],['tourist','eyes','blindr',{}],['tourist','cower','sick',{welts:.6}],
+ ['ranger','yell','shout',{hood:1}],['ranger','point','talk',{}],['doctor','eat','happy',{apple:1,bitten:1}],['friend','clutch','choke',{throat:.7}],['conquistador','hurt','pain',{}],['conquistador','idle','smug',{}],['tourist','toss','worried',{}]];
+list.forEach(([k,p,e,o],i)=>{ const cv=document.createElement('canvas'); cv.width=320; cv.height=457; drawPerson(cv.getContext('2d'),320,457,k,p,e,0.6,0,o); c.drawImage(cv,(i%7)*320,Math.floor(i/7)*460); });
+const iv=document.createElement('canvas'); iv.width=500; iv.height=360; drawIguana(iv.getContext('2d'),500,360,'chew',0.3,{apple:1}); c.drawImage(iv,1700,930);
+window.DONE=1;
+</script></body></html>

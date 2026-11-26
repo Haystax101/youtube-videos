@@ -1,0 +1,1200 @@
+{
+ "duration": 77.44,
+ "sr": 24000,
+ "engine": "qwen3-tts",
+ "voice": "ryan",
+ "cast": {
+  "narrator": "ryan",
+  "you": "aiden",
+  "ranger": "serena",
+  "iguana": "uncle_fu"
+ },
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 4.21,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "This",
+     "s": 0.15,
+     "e": 0.374,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 0.374,
+     "e": 0.583,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 0.583,
+     "e": 0.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "most",
+     "s": 0.8,
+     "e": 1.024,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dangerous",
+     "s": 1.024,
+     "e": 1.673,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tree",
+     "s": 1.673,
+     "e": 1.897,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 1.897,
+     "e": 2.106,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Earth.",
+     "s": 2.106,
+     "e": 2.338,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 2.418,
+     "e": 2.649,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 2.649,
+     "e": 2.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "just",
+     "s": 2.88,
+     "e": 3.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hid",
+     "s": 3.12,
+     "e": 3.351,
+     "speaker": "narrator"
+    },
+    {
+     "w": "under",
+     "s": 3.351,
+     "e": 3.806,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it.",
+     "s": 3.806,
+     "e": 4.03,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 4.21,
+   "end": 11.909,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You're",
+     "s": 4.21,
+     "e": 4.426,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 4.426,
+     "e": 4.622,
+     "speaker": "narrator"
+    },
+    {
+     "w": "holiday",
+     "s": 4.622,
+     "e": 5.216,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 5.216,
+     "e": 5.412,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 5.412,
+     "e": 5.615,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Caribbean.",
+     "s": 5.615,
+     "e": 6.223,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Perfect",
+     "s": 6.303,
+     "e": 6.892,
+     "speaker": "narrator"
+    },
+    {
+     "w": "beach.",
+     "s": 6.892,
+     "e": 7.202,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 7.282,
+     "e": 7.538,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 7.538,
+     "e": 7.777,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tree",
+     "s": 7.777,
+     "e": 8.042,
+     "speaker": "narrator"
+    },
+    {
+     "w": "full",
+     "s": 8.042,
+     "e": 8.307,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 8.307,
+     "e": 8.555,
+     "speaker": "narrator"
+    },
+    {
+     "w": "little",
+     "s": 8.555,
+     "e": 8.837,
+     "speaker": "narrator"
+    },
+    {
+     "w": "green",
+     "s": 8.837,
+     "e": 9.111,
+     "speaker": "narrator"
+    },
+    {
+     "w": "apples.",
+     "s": 9.111,
+     "e": 9.624,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Ooh!",
+     "s": 9.704,
+     "e": 10.526,
+     "speaker": "you"
+    },
+    {
+     "w": "Free",
+     "s": 10.606,
+     "e": 11.16,
+     "speaker": "you"
+    },
+    {
+     "w": "snacks!",
+     "s": 11.16,
+     "e": 11.749,
+     "speaker": "you"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 11.909,
+   "end": 18.695,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "You",
+     "s": 11.909,
+     "e": 12.197,
+     "speaker": "narrator"
+    },
+    {
+     "w": "take",
+     "s": 12.197,
+     "e": 12.494,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 12.494,
+     "e": 12.762,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bite.",
+     "s": 12.762,
+     "e": 13.059,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It's",
+     "s": 13.139,
+     "e": 15.048,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sweet...",
+     "s": 15.048,
+     "e": 17.085,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 17.165,
+     "e": 17.394,
+     "speaker": "narrator"
+    },
+    {
+     "w": "about",
+     "s": 17.394,
+     "e": 17.843,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ten",
+     "s": 17.843,
+     "e": 18.071,
+     "speaker": "narrator"
+    },
+    {
+     "w": "seconds.",
+     "s": 18.071,
+     "e": 18.535,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 18.695,
+   "end": 27.52,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Then",
+     "s": 18.695,
+     "e": 19.728,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it's",
+     "s": 19.728,
+     "e": 20.726,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pepper.",
+     "s": 20.726,
+     "e": 22.724,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Then",
+     "s": 22.804,
+     "e": 23.191,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it's",
+     "s": 23.191,
+     "e": 23.565,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fire.",
+     "s": 23.565,
+     "e": 23.952,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Your",
+     "s": 24.032,
+     "e": 24.312,
+     "speaker": "narrator"
+    },
+    {
+     "w": "throat",
+     "s": 24.312,
+     "e": 24.611,
+     "speaker": "narrator"
+    },
+    {
+     "w": "swells",
+     "s": 24.611,
+     "e": 24.909,
+     "speaker": "narrator"
+    },
+    {
+     "w": "so",
+     "s": 24.909,
+     "e": 25.171,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tight",
+     "s": 25.171,
+     "e": 25.461,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 25.461,
+     "e": 25.732,
+     "speaker": "narrator"
+    },
+    {
+     "w": "can",
+     "s": 25.732,
+     "e": 26.003,
+     "speaker": "narrator"
+    },
+    {
+     "w": "barely",
+     "s": 26.003,
+     "e": 26.789,
+     "speaker": "narrator"
+    },
+    {
+     "w": "swallow.",
+     "s": 26.789,
+     "e": 27.34,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 27.52,
+   "end": 33.176,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Then",
+     "s": 27.52,
+     "e": 27.914,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 27.914,
+     "e": 28.269,
+     "speaker": "narrator"
+    },
+    {
+     "w": "storm",
+     "s": 28.269,
+     "e": 28.675,
+     "speaker": "narrator"
+    },
+    {
+     "w": "rolls",
+     "s": 28.675,
+     "e": 29.081,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in.",
+     "s": 29.081,
+     "e": 29.448,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 29.528,
+     "e": 29.779,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 29.779,
+     "e": 30.03,
+     "speaker": "narrator"
+    },
+    {
+     "w": "only",
+     "s": 30.03,
+     "e": 30.515,
+     "speaker": "narrator"
+    },
+    {
+     "w": "shelter",
+     "s": 30.515,
+     "e": 31.025,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 31.025,
+     "e": 31.267,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 31.267,
+     "e": 31.518,
+     "speaker": "narrator"
+    },
+    {
+     "w": "beach",
+     "s": 31.518,
+     "e": 31.785,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is...",
+     "s": 31.785,
+     "e": 32.028,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 32.108,
+     "e": 32.404,
+     "speaker": "narrator"
+    },
+    {
+     "w": "same",
+     "s": 32.404,
+     "e": 32.71,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tree.",
+     "s": 32.71,
+     "e": 33.016,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 33.176,
+   "end": 40.419,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Every",
+     "s": 33.176,
+     "e": 33.731,
+     "speaker": "narrator"
+    },
+    {
+     "w": "raindrop",
+     "s": 33.731,
+     "e": 34.132,
+     "speaker": "narrator"
+    },
+    {
+     "w": "washes",
+     "s": 34.132,
+     "e": 34.519,
+     "speaker": "narrator"
+    },
+    {
+     "w": "milky",
+     "s": 34.519,
+     "e": 34.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sap",
+     "s": 34.9,
+     "e": 35.094,
+     "speaker": "narrator"
+    },
+    {
+     "w": "off",
+     "s": 35.094,
+     "e": 35.288,
+     "speaker": "narrator"
+    },
+    {
+     "w": "its",
+     "s": 35.288,
+     "e": 35.482,
+     "speaker": "narrator"
+    },
+    {
+     "w": "leaves",
+     "s": 35.482,
+     "e": 35.869,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 35.869,
+     "e": 36.063,
+     "speaker": "narrator"
+    },
+    {
+     "w": "onto",
+     "s": 36.063,
+     "e": 36.437,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you.",
+     "s": 36.437,
+     "e": 36.631,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Wherever",
+     "s": 36.711,
+     "e": 37.799,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 37.799,
+     "e": 38.153,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lands,",
+     "s": 38.153,
+     "e": 38.743,
+     "speaker": "narrator"
+    },
+    {
+     "w": "your",
+     "s": 38.743,
+     "e": 39.122,
+     "speaker": "narrator"
+    },
+    {
+     "w": "skin",
+     "s": 39.122,
+     "e": 39.501,
+     "speaker": "narrator"
+    },
+    {
+     "w": "blisters.",
+     "s": 39.501,
+     "e": 40.259,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 40.419,
+   "end": 44.27,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Hey!",
+     "s": 40.419,
+     "e": 40.927,
+     "speaker": "ranger"
+    },
+    {
+     "w": "Not",
+     "s": 41.007,
+     "e": 41.423,
+     "speaker": "ranger"
+    },
+    {
+     "w": "that",
+     "s": 41.423,
+     "e": 41.853,
+     "speaker": "ranger"
+    },
+    {
+     "w": "tree!",
+     "s": 41.853,
+     "e": 42.282,
+     "speaker": "ranger"
+    },
+    {
+     "w": "Didn't",
+     "s": 42.362,
+     "e": 42.668,
+     "speaker": "ranger"
+    },
+    {
+     "w": "you",
+     "s": 42.668,
+     "e": 42.954,
+     "speaker": "ranger"
+    },
+    {
+     "w": "see",
+     "s": 42.954,
+     "e": 43.241,
+     "speaker": "ranger"
+    },
+    {
+     "w": "the",
+     "s": 43.241,
+     "e": 43.527,
+     "speaker": "ranger"
+    },
+    {
+     "w": "red",
+     "s": 43.527,
+     "e": 43.814,
+     "speaker": "ranger"
+    },
+    {
+     "w": "band?",
+     "s": 43.814,
+     "e": 44.11,
+     "speaker": "ranger"
+    }
+   ]
+  },
+  {
+   "i": 7,
+   "start": 44.27,
+   "end": 48.818,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Locals",
+     "s": 44.27,
+     "e": 44.913,
+     "speaker": "narrator"
+    },
+    {
+     "w": "paint",
+     "s": 44.913,
+     "e": 45.257,
+     "speaker": "narrator"
+    },
+    {
+     "w": "red",
+     "s": 45.257,
+     "e": 45.579,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bands",
+     "s": 45.579,
+     "e": 45.923,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 45.923,
+     "e": 46.234,
+     "speaker": "narrator"
+    },
+    {
+     "w": "these",
+     "s": 46.234,
+     "e": 46.577,
+     "speaker": "narrator"
+    },
+    {
+     "w": "trunks.",
+     "s": 46.577,
+     "e": 46.932,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Even",
+     "s": 47.012,
+     "e": 47.457,
+     "speaker": "narrator"
+    },
+    {
+     "w": "its",
+     "s": 47.457,
+     "e": 47.687,
+     "speaker": "narrator"
+    },
+    {
+     "w": "smoke",
+     "s": 47.687,
+     "e": 47.932,
+     "speaker": "narrator"
+    },
+    {
+     "w": "can",
+     "s": 47.932,
+     "e": 48.162,
+     "speaker": "narrator"
+    },
+    {
+     "w": "blind",
+     "s": 48.162,
+     "e": 48.408,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you.",
+     "s": 48.408,
+     "e": 48.638,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 8,
+   "start": 48.818,
+   "end": 55.855,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Spanish",
+     "s": 48.818,
+     "e": 49.248,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sailors",
+     "s": 49.248,
+     "e": 49.679,
+     "speaker": "narrator"
+    },
+    {
+     "w": "called",
+     "s": 49.679,
+     "e": 50.102,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 50.102,
+     "e": 50.306,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 50.306,
+     "e": 50.518,
+     "speaker": "narrator"
+    },
+    {
+     "w": "little",
+     "s": 50.518,
+     "e": 50.751,
+     "speaker": "narrator"
+    },
+    {
+     "w": "apple",
+     "s": 50.751,
+     "e": 50.977,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 50.977,
+     "e": 51.181,
+     "speaker": "narrator"
+    },
+    {
+     "w": "death.",
+     "s": 51.181,
+     "e": 51.407,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Legend",
+     "s": 51.487,
+     "e": 51.906,
+     "speaker": "narrator"
+    },
+    {
+     "w": "says",
+     "s": 51.906,
+     "e": 52.123,
+     "speaker": "narrator"
+    },
+    {
+     "w": "an",
+     "s": 52.123,
+     "e": 52.326,
+     "speaker": "narrator"
+    },
+    {
+     "w": "arrow",
+     "s": 52.326,
+     "e": 52.738,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dipped",
+     "s": 52.738,
+     "e": 53.158,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 53.158,
+     "e": 53.361,
+     "speaker": "narrator"
+    },
+    {
+     "w": "its",
+     "s": 53.361,
+     "e": 53.57,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sap",
+     "s": 53.57,
+     "e": 53.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "killed",
+     "s": 53.78,
+     "e": 54.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 54.2,
+     "e": 54.41,
+     "speaker": "narrator"
+    },
+    {
+     "w": "explorer",
+     "s": 54.41,
+     "e": 55.032,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Ponce",
+     "s": 55.032,
+     "e": 55.256,
+     "speaker": "narrator"
+    },
+    {
+     "w": "de",
+     "s": 55.256,
+     "e": 55.458,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Leon.",
+     "s": 55.458,
+     "e": 55.675,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 9,
+   "start": 55.855,
+   "end": 68.084,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "And",
+     "s": 55.855,
+     "e": 56.164,
+     "speaker": "narrator"
+    },
+    {
+     "w": "yet",
+     "s": 56.164,
+     "e": 56.472,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 56.472,
+     "e": 56.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "animal",
+     "s": 56.78,
+     "e": 57.674,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eats",
+     "s": 57.674,
+     "e": 57.993,
+     "speaker": "narrator"
+    },
+    {
+     "w": "them",
+     "s": 57.993,
+     "e": 58.312,
+     "speaker": "narrator"
+    },
+    {
+     "w": "like",
+     "s": 58.312,
+     "e": 58.63,
+     "speaker": "narrator"
+    },
+    {
+     "w": "candy.",
+     "s": 58.63,
+     "e": 59.237,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Mmm.",
+     "s": 59.317,
+     "e": 60.59,
+     "speaker": "iguana"
+    },
+    {
+     "w": "Crunchy.",
+     "s": 60.67,
+     "e": 63.575,
+     "speaker": "iguana"
+    },
+    {
+     "w": "The",
+     "s": 63.655,
+     "e": 63.907,
+     "speaker": "narrator"
+    },
+    {
+     "w": "black",
+     "s": 63.907,
+     "e": 64.175,
+     "speaker": "narrator"
+    },
+    {
+     "w": "spiny-tailed",
+     "s": 64.175,
+     "e": 65.175,
+     "speaker": "narrator"
+    },
+    {
+     "w": "iguana",
+     "s": 65.175,
+     "e": 65.905,
+     "speaker": "narrator"
+    },
+    {
+     "w": "even",
+     "s": 65.905,
+     "e": 66.392,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lives",
+     "s": 66.392,
+     "e": 66.888,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 66.888,
+     "e": 67.131,
+     "speaker": "narrator"
+    },
+    {
+     "w": "its",
+     "s": 67.131,
+     "e": 67.383,
+     "speaker": "narrator"
+    },
+    {
+     "w": "branches.",
+     "s": 67.383,
+     "e": 67.904,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 10,
+   "start": 68.084,
+   "end": 76.74,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "That",
+     "s": 68.084,
+     "e": 68.285,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bite",
+     "s": 68.285,
+     "e": 68.487,
+     "speaker": "narrator"
+    },
+    {
+     "w": "really",
+     "s": 68.487,
+     "e": 68.877,
+     "speaker": "narrator"
+    },
+    {
+     "w": "happened,",
+     "s": 68.877,
+     "e": 69.561,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 69.561,
+     "e": 69.749,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 69.749,
+     "e": 69.931,
+     "speaker": "narrator"
+    },
+    {
+     "w": "British",
+     "s": 69.931,
+     "e": 70.328,
+     "speaker": "narrator"
+    },
+    {
+     "w": "doctor",
+     "s": 70.328,
+     "e": 70.718,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 70.718,
+     "e": 70.906,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Tobago.",
+     "s": 70.906,
+     "e": 71.471,
+     "speaker": "narrator"
+    },
+    {
+     "w": "She",
+     "s": 71.551,
+     "e": 71.748,
+     "speaker": "narrator"
+    },
+    {
+     "w": "survived,",
+     "s": 71.748,
+     "e": 72.436,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 72.436,
+     "e": 72.633,
+     "speaker": "narrator"
+    },
+    {
+     "w": "warned",
+     "s": 72.633,
+     "e": 73.026,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 73.026,
+     "e": 73.222,
+     "speaker": "narrator"
+    },
+    {
+     "w": "world",
+     "s": 73.222,
+     "e": 73.432,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 73.432,
+     "e": 73.621,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 73.621,
+     "e": 73.805,
+     "speaker": "narrator"
+    },
+    {
+     "w": "medical",
+     "s": 73.805,
+     "e": 74.381,
+     "speaker": "narrator"
+    },
+    {
+     "w": "journal.",
+     "s": 74.381,
+     "e": 74.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Comment",
+     "s": 74.86,
+     "e": 75.285,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 75.285,
+     "e": 75.501,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 75.501,
+     "e": 75.71,
+     "speaker": "narrator"
+    },
+    {
+     "w": "want",
+     "s": 75.71,
+     "e": 75.926,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 75.926,
+     "e": 76.128,
+     "speaker": "narrator"
+    },
+    {
+     "w": "know",
+     "s": 76.128,
+     "e": 76.344,
+     "speaker": "narrator"
+    },
+    {
+     "w": "next.",
+     "s": 76.344,
+     "e": 76.56,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}
