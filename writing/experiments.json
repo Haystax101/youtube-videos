@@ -110,6 +110,16 @@
   "decided": {},
   "backlog": [
     {
+      "var": "qwen_voice",
+      "arms": [
+        "qwen:Ryan",
+        "qwen:Dolce",
+        "qwen:Arthur"
+      ],
+      "needs": "Qwen3-TTS library voices running (being set up on GitHub jobs by the 'Match MiloQ-style 3D animation' thread). When it lands, add these three as narrator arms (or start this as its own A/B/C test) and voice those Shorts with Qwen instead of Kokoro.",
+      "why": "george 2026-11-26: use Qwen3 library voices rather than cloning; A/B/C test Ryan, Dolce and Arthur"
+    },
+    {
       "var": "captions",
       "arms": [
         "word_pop",
