@@ -63,7 +63,7 @@ const scene = new THREE.Scene();
 const FOG_DAY = new THREE.Color('#a9c3b0'), FOG_GREY = new THREE.Color('#8d969a');
 scene.fog = new THREE.FogExp2(FOG_DAY.clone(), 0.012);
 const cam = new THREE.PerspectiveCamera(45, W / H, 0.05, 1500);
-const composer = new EffectComposer(renderer);
+const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType }));   // MSAA through the composer
 composer.addPass(new RenderPass(scene, cam));
 const bokeh = new BokehPass(scene, cam, { focus: 3, aperture: 0.002, maxblur: 0.008 }); composer.addPass(bokeh);
 const bloom = new UnrealBloomPass(new THREE.Vector2(W / 2, H / 2), 0.3, 0.5, 0.86); composer.addPass(bloom);
@@ -140,7 +140,7 @@ if (barkP) for (const k of ['map', 'normalMap', 'roughnessMap']) if (barkP[k]) b
 // leaf clusters: alpha-cut leaf cards in clumps, so the canopy reads as foliage rather than blobs
 const leafCard = canvasTex(256, 256, (x, w, h) => { const r = rng(9); for (let i = 0; i < 260; i++) { const cx = w / 2 + (r() - 0.5) * w * 0.85, cy = h / 2 + (r() - 0.5) * h * 0.85; if (Math.hypot(cx - w / 2, cy - h / 2) > w * 0.46) continue;
   x.save(); x.translate(cx, cy); x.rotate(r() * 6.28); x.fillStyle = ['#2f6a27', '#3f8530', '#5a9e3a', '#2a5a22', '#77b04c', '#4a8a2e'][Math.floor(r() * 6)]; x.beginPath(); x.ellipse(0, 0, 13 + r() * 6, 6 + r() * 3, 0, 0, 7); x.fill(); x.strokeStyle = 'rgba(20,50,15,.5)'; x.lineWidth = 1; x.beginPath(); x.moveTo(-12, 0); x.lineTo(12, 0); x.stroke(); x.restore(); } });
-const leafMat = new THREE.MeshStandardMaterial({ map: leafCard, alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.8 });
+const leafMat = new THREE.MeshStandardMaterial({ map: leafCard, alphaTest: 0.5, alphaToCoverage: true, side: THREE.DoubleSide, roughness: 0.8 });
 const clumpGeo = (() => { const g = []; for (let i = 0; i < 3; i++) { const p = new THREE.PlaneGeometry(5.2, 5.2); p.rotateY(i * Math.PI / 3); g.push(p); } const p2 = new THREE.PlaneGeometry(5.2, 5.2).rotateX(-Math.PI / 2); g.push(p2);
   const out = new THREE.BufferGeometry(); const pos = [], uv = [], nor = [], idx = []; let o = 0; for (const q of g) { pos.push(...q.attributes.position.array); uv.push(...q.attributes.uv.array); nor.push(...q.attributes.normal.array); idx.push(...Array.from(q.index.array, v => v + o)); o += q.attributes.position.count; }
   out.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); out.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); out.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); out.setIndex(idx); return out; })();
@@ -160,7 +160,7 @@ for (const [k, dy, s2] of [[0, 6.5, 1.2], [1, 9.2, 1.0], [2, 11.8, 0.8], [3, 14.
 const fernTex = canvasTex(256, 256, (x, w, h) => { x.translate(w / 2, h); const r = rng(5);
   for (let f = 0; f < 7; f++) { x.save(); x.rotate((f - 3) * 0.32); x.strokeStyle = '#3d7a2c'; x.lineWidth = 4; x.beginPath(); x.moveTo(0, 0); x.quadraticCurveTo(10, -120, 0, -230); x.stroke();
     for (let y = -20; y > -220; y -= 12) { const L = 46 * (1 - Math.abs(y + 110) / 140); x.fillStyle = r() < 0.5 ? '#4d9136' : '#3f8030'; for (const s of [-1, 1]) { x.beginPath(); x.ellipse(s * L / 2, y, L / 2, 5, s * 0.3, 0, 7); x.fill(); } } x.restore(); } });
-const fernMat = new THREE.MeshStandardMaterial({ map: fernTex, alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.9 });
+const fernMat = new THREE.MeshStandardMaterial({ map: fernTex, alphaTest: 0.5, alphaToCoverage: true, side: THREE.DoubleSide, roughness: 0.9 });
 const fernGeo = new THREE.PlaneGeometry(1.6, 1.6).translate(0, 0.8, 0), fernGeo2 = fernGeo.clone().rotateY(Math.PI / 2);
 const ferns = []; { const r = rng(33); for (let i = 0; i < 9000; i++) { const x = -150 + r() * 320, z = (r() - 0.5) * 300; if (!inForest(x, z) || nearLoop(x, z, 3.6) || Math.hypot(x - FIRE.x, z) < 9 || Math.hypot(x - CAMP.x, z - CAMP.z) < 10) continue; ferns.push({ x, z, s: 0.5 + r() * 0.9, rot: r() * 6 }); } }
 for (const gg of [fernGeo, fernGeo2]) inst(gg, fernMat, ferns, (d, t) => { d.position.set(t.x, 0, t.z); d.rotation.set(0, t.rot, 0); d.scale.setScalar(t.s); }, false);
