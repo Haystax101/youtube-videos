@@ -13,6 +13,7 @@
 //   options: --page claw.html (default: the only .html in EP_DIR), --workers 4, --join-only
 // Then mux: ffmpeg -i EP/silent.mp4 -i EP/audio.norm.wav -c:v copy -c:a aac -b:a 192k -shortest EP/video.mp4
 const { chromium } = require('playwright'); const makeGuard = require('./frame_guard.cjs');
+const gl = require('./browser.cjs'); gl.reexecUnderXvfb();   // fast llvmpipe GL on Linux
 const http = require('http'), fs = require('fs'), path = require('path'), { spawn, spawnSync } = require('child_process');
 const REPO = path.resolve(__dirname, '..'), FPS = 30, CHUNK = 2;
 const args = process.argv.slice(2), EP = path.resolve(args[0]);
@@ -31,7 +32,7 @@ const server = http.createServer((req, res) => { const p = path.join(REPO, decod
   res.writeHead(200, { 'Content-Type': TYPES[path.extname(p)] || 'application/octet-stream' }); fs.createReadStream(p).pipe(res); }).listen(0);
 const port = server.address().port;
 async function open() {
-  const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+  const b = await gl.launch(chromium);
   const p = await b.newPage({ viewport: { width: 1080, height: 1920 } });
   p.setDefaultTimeout(600000); p.on('pageerror', e => console.log('ERR', e.message)); p.on('console', m => { if (m.type() === 'error') console.log('[c]', m.text()); });
   await p.goto(`http://localhost:${port}${PAGE}`); await p.waitForFunction('window.READY', null, { timeout: 180000 });

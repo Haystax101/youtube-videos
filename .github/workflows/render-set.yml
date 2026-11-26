@@ -59,7 +59,7 @@ jobs:
           node-version: 22
       - name: Install
         run: |
-          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg xvfb libgl1-mesa-dri
           npm ci
           npm install --no-save playwright@1.63.0
           npx playwright install --with-deps chromium

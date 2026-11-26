@@ -9,6 +9,7 @@ res=[]
 for i in range(1,len(F)-1):
     a,b,c=F[i-1],F[i],F[i+1]
     d1=np.abs(b-a); d2=np.abs(b-c); d0=np.abs(a-c)
+    if d0.mean()>12: continue          # a cut between i-1 and i+1: different shots, not a pop
     m=(d1>25)&(d2>25)&(d0<10)          # pixel pops for one frame then returns
     m[int(H*0.62):int(H*0.75)]=False    # captions band
     m[:int(H*0.12)]=False

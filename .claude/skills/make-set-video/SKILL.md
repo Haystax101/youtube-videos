@@ -100,6 +100,32 @@ Stills can look perfect while the moving video shimmers, so every set page needs
 - **Check motion, not just stills:** run `python3 tools/check_flicker.py VIDEO` (one-frame pops) and look at
   6 consecutive frames from a few shots before delivering.
 
+### Characters move like 3D (george, 26 Nov: "even though the characters are technically 2d... they should still act like they're 3d")
+
+Use `web/lib/stage2d.js` in every set page (import it; don't copy it):
+- **Walking:** `walkAlong(route, k, step)` gives the position and `walk` = steps taken, driven by distance, so
+  feet don't slide when the walk eases in or out and the legs stop when the card stops. Pass it as `pose.walk`.
+  Route walks round furniture; never a straight line through it.
+- **Sitting:** `anchorSeat(chair, { seatY, front })` once per chair, then `seatOn(card, chair, camera)` with
+  `pose.sit = 1` (bent legs over the seat edge) and `chair.rotation.y = faceCam(chair, camera, wobble)`: a flat
+  card can't be seen from behind, so the chair faces the camera. Get up to the front of the seat first, then walk.
+- **Self-check:** `window.SETCHECK = makeSetCheck({ sets, cards, movers, camera, render, shotSet })`, then
+  `python3 tools/qa.py EP --page EP/page.html` (or `node tools/set_check.cjs EP/page.html 0.05`) must report 0
+  on-screen problems: cards inside furniture, chairs seen from behind with someone in them, props hitting
+  things, teleports. `tools/tests/stage2d.html` is a worked example that shows each failure once.
+- Every character and camera starts inside the room's walls; entrances come through an opened door.
+- **Overlap check for 3D characters (george, 26 Nov, on Xbox Underground: "quite a few inconsistencies with
+  the objects overlapping"):** every set page with 3D characters (smol-look big heads included) sets
+  `window.QA = { scene, camera, actors: () => [{ name, root, head, seat }] }` (seat = the chair someone sits
+  on right now) and adds `if (window.NODRAW) return` before drawing. `tools/check_overlap.cjs PAGE` (also run
+  by `tools/qa.py`, which now finds the page itself) tests a head sphere and three body spheres per character
+  against each other and against every prop's own rotated box, for whatever the camera films. It runs a
+  2-minute video in about 10 s. It must report 0 before the full render. What it caught on Xbox Underground
+  that stills and the frame checks missed: two walkers' heads merged while walking side by side, heads through
+  a door edge and a glass mullion, a head inside a desk top, a judge's head inside his chair back, defendants'
+  bodies through their table, an officer's head inside a canopy pillar, a man standing half inside a car, and
+  two people "talking" with their heads 20 cm inside each other. Big heads need about 1 m between two people.
+
 ## Story and script
 
 - **Length is whatever fits.** Archimedes is 1:17 and george was happy with that. Don't pad, and
