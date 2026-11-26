@@ -64,6 +64,26 @@ rebuild it; george would rather post fewer videos than weaker ones.
   scene (wrecks, debris, oars, swimmers) sinks or fades away during the label change. v2's
   leftover floating oars at the end "looked a little silly".
 
+## The vivid look (george approved 26 Nov 18:57: "yeah that's nice")
+
+Reference: `prototypes/ref-look/` (tractor cab, stills via `node shot.cjs cab.html out.png 1080 1920 "?shot=A"`).
+Comparison with the reference frame: `/mnt/project-files/gary-tries-it/ref-look/comparison.jpg`.
+Use it for every new set video on both channels (darker stories can lower `sat` and exposure, but keep the rest).
+
+- **Tone mapping:** `THREE.NeutralToneMapping`, exposure ~1.05. ACES greyed every colour.
+- **Grade pass:** saturation ×1.18, contrast ×1.06, a light vignette, **no grain**. The reference is crisp.
+- **Smooth shading** (`MeshStandardMaterial`, roughness 0.4-0.8, no `flatShading`) with rounded boxes
+  (`RoundedBoxGeometry`) for man-made things. Painted canvas textures for fabric, leaves, wood and dials.
+- **Interiors get fill light:** one or two `PointLight`s inside every room or cab, so the inside never goes black
+  under the sun's shadow.
+- **Plants are painted leaf cards**, never spheres: crossed alpha planes (`alphaTest`) with a leaf rosette or grass
+  blades. Sphere crops read as "lumpy blobs" and fail the quality bar. Round tree canopies are fine if they carry a
+  leaf texture.
+- **Sky:** bright gradient dome, crisp puffy cloud sprites far away (1-1.7 km), two layers of blue hills on the horizon.
+- **Characters:** `drawPill()` in `prototypes/ref-look/people2d.js` adds a chunky capsule body (buttons, plaid,
+  dungarees, thin ink arms, round hands) under the same pearly-white head; `drawPerson()` (Syracuse stick limbs)
+  still works. The card material uses `toneMapped: false` so the ink and whites stay pure.
+
 ## Story and script
 
 - **Length is whatever fits.** Archimedes is 1:17 and george was happy with that. Don't pad, and
