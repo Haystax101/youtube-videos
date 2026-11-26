@@ -209,7 +209,7 @@ function chair(G, x, z, ry = 0, col = '#1d1a26') { const c = new THREE.Group(); 
   // Mt. Gox's building (centre): glass ground floor, logo sign
   const gox = bld(0, 7, 14, '#3a3e52', 41);
   mesh(rbox(6.4, 2.8, 0.1, 0.02), basic('#1a2a3a'), 0, 1.45, 3.0, gox, 3);
-  { const lob = canvasTex(512, 256, (x, w, h) => { x.fillStyle = '#ffe9b8'; x.fillRect(0, 0, w, h); x.fillStyle = '#c9b48e'; x.fillRect(0, h * 0.75, w, h * 0.25); x.fillStyle = '#7a6a52'; x.fillRect(w * 0.35, h * 0.3, w * 0.3, h * 0.45); x.fillStyle = '#ffffff'; x.font = '900 40px Poppins'; x.textAlign = 'center'; x.fillText('LOBBY', w / 2, h * 0.24); });
+  { const lob = canvasTex(512, 256, (x, w, h) => { x.fillStyle = '#ffe9b8'; x.fillRect(0, 0, w, h); x.fillStyle = '#c9b48e'; x.fillRect(0, h * 0.75, w, h * 0.25); x.fillStyle = '#7a6a52'; x.fillRect(w * 0.35, h * 0.3, w * 0.3, h * 0.45); });
     const p = plane(gox, 6.2, 2.6, basic('#ffffff', { map: lob }), 0, 1.4, 3.06); p.userData.noOutline = true; G.userData.lobby = p; }
   for (const gx of [-3.1, -1.0, 1.0, 3.1]) mesh(rbox(0.1, 2.8, 0.12), '#14121a', gx, 1.45, 3.08, gox, 2.5);
   mesh(rbox(7.2, 0.3, 1.2, 0.03), '#2a2e40', 0, 3.05, 3.5, gox, 4);
@@ -286,7 +286,7 @@ const SCARD = { kolin: makeCard(STREET, 'kolin'), karp: makeCard(STREET, 'karpel
   const glass = new THREE.Mesh(cyl(0.9, 0.9, 2.05, 28, true), new THREE.MeshBasicMaterial({ color: '#bfe6ff', transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false })); glass.position.y = 1.375; glass.userData.noOutline = true; vault.add(glass);
   glow(vault, 0, 1.2, 0.6, '#ffcf3f', 3.2, 0.25);
   { const t = canvasTex(512, 128, (x, w, hh) => { x.fillStyle = '#14121a'; x.fillRect(0, 0, w, hh); x.strokeStyle = '#ffcf3f'; x.lineWidth = 8; x.strokeRect(6, 6, w - 12, hh - 12); x.fillStyle = '#ffcf3f'; x.font = '900 70px Poppins'; x.textAlign = 'center'; x.fillText('HOT WALLET', w / 2, 92); });
-    const p = plane(vault, 1.4, 0.35, basic('#ffffff', { map: t }), 0, 2.95, 0.3); p.userData.noOutline = true; mesh(rbox(0.05, 0.3, 0.05), '#5a6070', 0, 2.72, 0.3, vault, 2); }
+    const p = plane(vault, 1.15, 0.29, basic('#ffffff', { map: t }), 0, 2.12, 0.93); p.userData.noOutline = true; }
   // leak pipe from the plinth to the right wall, a dark hole in the wall
   const P0 = V(VX + 0.95, 0.22, VZ), P1 = V(x1 - 0.02, 0.22, VZ); mesh(cyl(0.11, 0.11, P1.x - P0.x, 12).rotateZ(Math.PI / 2), '#6a7080', (P0.x + P1.x) / 2, 0.22, VZ, G, 3);
   const hole = new THREE.Mesh(new THREE.CircleGeometry(0.22, 20), basic('#05030a')); hole.position.set(x1 - 0.01, 0.3, VZ); hole.rotation.y = -Math.PI / 2; hole.userData.noOutline = true; G.add(hole);

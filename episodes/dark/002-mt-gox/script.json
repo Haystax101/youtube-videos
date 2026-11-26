@@ -10,9 +10,6 @@
  "speed": 1.1,
  "tail": 1.2,
  "pronounce": {
-  "Mt": "Mount",
-  "Gox": "Gocks",
-  "Gox's": "Gocks's",
   "Karpelès": "Karpuh-less",
   "McCaleb": "Muh-kayleb",
   "Vinnik": "Vinnick",
@@ -26,7 +23,9 @@
   "2017": "twenty-seventeen",
   "2023": "twenty-twenty-three",
   "2024": "twenty-twenty-four",
-  "2025": "twenty-twenty-five"
+  "2025": "twenty-twenty-five",
+  "MtGox": "Mount Gocks",
+  "MtGox's": "Mount Gocks's"
  },
  "beats": [
   {
@@ -43,7 +42,7 @@
    "label": "THE *CARD GAME*",
    "lines": [
     {
-     "text": "Rewind. Mt. Gox stands for Magic: The Gathering Online eXchange. It started as a website for trading fantasy game cards."
+     "text": "Rewind. MtGox stands for Magic: The Gathering Online eXchange. It started as a website for trading fantasy game cards."
     }
    ]
   },
@@ -59,7 +58,7 @@
    "label": "TOKYO, *2011*",
    "lines": [
     {
-     "text": "Karpelès had never run a bank. But bitcoin was booming, and at its peak, Mt. Gox handled around seventy percent of the world's bitcoin trades."
+     "text": "Karpelès had never run a bank. But bitcoin was booming, and at its peak, MtGox handled around seventy percent of the world's bitcoin trades."
     }
    ]
   },
@@ -75,7 +74,7 @@
    "label": "THE *REAL* HEIST",
    "lines": [
     {
-     "text": "But the real heist was silent. In September 2011, someone copied the file that held the keys to Mt. Gox's main bitcoin wallet. Whoever had that file could spend its coins."
+     "text": "But the real heist was silent. In September 2011, someone copied the file that held the keys to MtGox's main bitcoin wallet. Whoever had that file could spend its coins."
     }
    ]
   },
@@ -91,7 +90,7 @@
    "label": "FEBRUARY 7, *2014*",
    "lines": [
     {
-     "text": "Then customers tried to take their money out. Withdrawals froze. Mt. Gox blamed a flaw in bitcoin itself, called transaction malleability."
+     "text": "Then customers tried to take their money out. Withdrawals froze. MtGox blamed a flaw in bitcoin itself, called transaction malleability."
     }
    ]
   },
@@ -108,7 +107,7 @@
    "hold": 0.4,
    "lines": [
     {
-     "text": "Four days later, Karpelès bowed before the cameras and apologized for weaknesses in the system. Eight hundred and fifty thousand bitcoins were missing. Mt. Gox was bankrupt."
+     "text": "Four days later, Karpelès bowed before the cameras and apologized for weaknesses in the system. Eight hundred and fifty thousand bitcoins were missing. MtGox was bankrupt."
     }
    ]
   },
@@ -116,7 +115,7 @@
    "label": "*OOPS*",
    "lines": [
     {
-     "text": "Then, a twist. Mt. Gox found two hundred thousand bitcoins in an old wallet it had forgotten about. That still left about six hundred and fifty thousand gone."
+     "text": "Then, a twist. MtGox found two hundred thousand bitcoins in an old wallet it had forgotten about. That still left about six hundred and fifty thousand gone."
     }
    ]
   },

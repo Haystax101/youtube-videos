@@ -1,2 +1,2 @@
 episodes/dark/002-mt-gox
-# rerun 3: overlay canvas fix (stale cards in chunk renders)
+# rerun: MtGox pronunciation, HOT WALLET plate, LOBBY text
