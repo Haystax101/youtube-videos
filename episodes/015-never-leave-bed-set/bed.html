@@ -503,10 +503,10 @@ const SHOTS = [
   { at: B(5).start, f: (v, u) => { useSet('HRT', 'red'); const beat = Math.pow(Math.max(0, Math.sin(v * 7.5)), 6); heart.scale.setScalar(1 + beat * 0.07); heartCells(v, 0.69);
     const a = 0.4 + u * 0.5; look(at(HRT, Math.sin(a) * 7.5, 2.8 + u * 0.2, Math.cos(a) * 7.5), at(HRT, 0.6, 2.2, 0), 50); } },
   { at: WT(5, 'third'), f: (v, u) => { useSet('HRT', 'red'); heartCells(v, 0.69); jugs.forEach((j, i) => { const f = j.userData.fill * ease(0, 0.8, u); j.scale.y = Math.max(0.01, f * 1.3); j.position.y = 0.3 + f * 0.65; });
-    look(at(HRT, -0.3 + u * 0.6, 1.8, 9.4), at(HRT, 0, 1.1, 5.6), 42); } },
+    look(at(HRT, -0.3 + u * 0.6, 1.9, 10.6), at(HRT, 0, 1.2, 5.6), 46); } },
   // ===== MONTH 2: you stay longer — bones thin
   { at: B(6).start, f: (v, u) => { useSet('BED'); bedMood('month2'); curtains(0.1); calendar('2', 'MONTH'); garyInBed(v, 'idle', 'glum', { stubble: true, pale: true });
-    const k = ease(0, 2, u); look(at(BED, lerp(1.9, 1.2, k), lerp(0.25, 1.6, k), lerp(1.9, 0.9, k)), at(BED, BEDC.x, 0.6, BEDC.z - 0.3), 58, { roll: 0.12 }); } },
+    const k = ease(0, 2, u); const hd = garyHead(); look(hd.clone().add(V(lerp(1.6, 0.9, k), lerp(1.3, 0.7, k), lerp(1.6, 0.9, k))), hd, 50, { roll: 0.12 }); } },
   { at: WT(6, 'bones'), f: (v, u) => { useSet('NAS'); drawXray(ease(0.1, 1.4, u)); const c = at(NAS, -NB.w / 2 + 0.12, 1.75, 0.4); look(c.clone().add(V(2.6 - u * 0.4, -0.1, 0.35)), c, 44, { roll: 0.04 }); } },
   // ===== NASA: $18,000 to lie down for 70 days
   { at: B(7).start, f: (v, u) => { useSet('NAS'); const top = tbed.userData.top; const p = at(NAS, 0, 0.78, -0.6); place(gary, p.clone().add(V(0, 0.08, 1.0)), 'idle', 'smug', v, { lie: V(0, Math.sin(TILT) * -1, -1), blanket: '#8fb5e8' });
@@ -523,18 +523,18 @@ const SHOTS = [
     look(g.clone().add(V(-0.3, 0.8, 2.1 - u * 0.2)), g.clone().add(V(0, 1.0, 0)), 38, { focus: 2.1 }); } },
   { at: WT(8, 'Three'), f: (v, u) => { useSet('LAB', 'cool'); labMood('1996'); drawChart('crash', 1, '3 WEEKS IN BED'); compareBars(u);
     olds.forEach((P, i) => place(P, at(LAB, -3.6 + i * 0.7, 0, 1.4 + (i % 2) * 0.3), 'idle', 'shocked', v + i)); place(gary, at(LAB, 2.0, 0, 1.6), 'idle', 'shocked', v, { kind: 'garyold' });
-    easel.visible = false; const k = ease(0, 3.5, u); look(at(LAB, lerp(-1.2, 0.4, k), lerp(0.8, 1.4, k), 3.4), at(LAB, -0.2, 1.3, -0.6), 56); } },
+    easel.visible = false; const k = ease(0, 3.5, u); look(at(LAB, lerp(-0.6, 0.3, k), lerp(1.3, 1.7, k), 3.0), at(LAB, -0.1, 1.4, -0.6), 64); } },
   // ===== THE TWIST: 8 weeks of training made them fitter than before (1966 track)
   { at: B(9).start, f: (v, u) => { useSet('TRK', 'sepia'); const ps = [gary, ...subs]; ps.forEach((P, i) => { const th = -0.3 + v * 0.18 + i * 0.07; const r = TRR - 2 + (i % 3) * 1.6; place(P, at(TRK, Math.cos(th) * r, 0, Math.sin(th) * r), 'run', i ? 'smug' : 'joy', v + i, { vel: V(-Math.sin(th), 0, Math.cos(th)) }); });
     TRK.userData.crowd.forEach((c, i) => c.position.y = 0.9 + Math.round((c.position.y - 0.9) / 0.5) * 0.5 + Math.abs(Math.sin(v * 9 + i)) * 0.12);
     const th = -0.3 + v * 0.18 + 0.05; const p = at(TRK, Math.cos(th) * (TRR + 1.5), 0.35, Math.sin(th) * (TRR + 1.5)); look(p.clone().add(V(0, 0.4, 0)), at(TRK, Math.cos(th + 0.12) * (TRR - 1), 0.8, Math.sin(th + 0.12) * (TRR - 1)), 56); } },
   { at: WT(9, 'eight'), f: (v, u) => { useSet('LAB', 'sepia'); labMood('1966'); place(gary, at(LAB, TM.x, 0.19, TM.z + 0.1), 'run', 'joy', v * 1.4, { vel: V(0, 0, -1), flip: true, lines: true }); belt.offset.y = -v * 3;
-    place(doc, at(LAB, TM.x + 1.1, 0, TM.z + 0.9), 'pump', 'joy', v); drawChart('rise', 0.4, 'FITNESS'); const p = at(LAB, TM.x, 0, TM.z); const a = 1.2 - u * 0.9; look(p.clone().add(V(Math.sin(a) * 2.4, 0.4, Math.cos(a) * 2.4)), p.clone().add(V(0, 1.0, 0)), 50, { roll: -0.15 }); } },
+    place(doc, at(LAB, TM.x - 1.6, 0, TM.z - 1.2), 'pump', 'joy', v); drawChart('rise', 0.4, 'FITNESS'); const p = at(LAB, TM.x, 0, TM.z); const a = 1.2 - u * 0.9; look(p.clone().add(V(Math.sin(a) * 2.4, 0.4, Math.cos(a) * 2.4)), p.clone().add(V(0, 1.0, 0)), 50, { roll: -0.15 }); } },
   { at: WT(9, 'fitter'), f: (v, u) => { useSet('LAB', 'sepia'); labMood('1966'); drawChart('rise', ease(0, 1.0, u), 'FITNESS'); const c = at(LAB, 0, 0, 0).add(easel.position).add(V(0, 1.33, 0)); const n = V(Math.sin(0.5), 0, Math.cos(0.5));
     place(gary, c.clone().add(V(1.5, -1.33, 0.4)), 'flex', 'joy', v, { lines: true }); look(c.clone().add(n.clone().multiplyScalar(2.4 - u * 0.4)).add(V(0.4, -0.2, 0.3)), c.clone().add(V(0.35, -0.25, 0.3)), 44); } },
   // ===== THE FIX: heart patients once kept in bed for weeks -> now up within days
   { at: B(10).start, f: (v, u) => { useSet('LAB', 'sepia'); labMood('1950'); wardPats.forEach((P, i) => subInBed(P, i, v + i, 'idle', i % 2 ? 'glum' : 'sleep', { blanket: '#e8e2d2' })); place(extra[4], at(LAB, -1.0 + u * 0.6, 0, -0.5), 'clip', 'watch', v, { vel: V(1, 0, 0) });
-    easel.visible = false; const k = ease(0, 2.5, u); look(at(LAB, lerp(-6.0, -4.4, k), lerp(2.2, 1.5, k), 1.4), at(LAB, -2.6, 0.6, -2.4), 50, { roll: 0.05 }); } },
+    easel.visible = false; const x = -6.0 + u * 2.2; look(at(LAB, x, 2.5, 0.2), at(LAB, x + 0.8, 0.5, -2.3), 54, { roll: 0.05 }); } },
   { at: WT(10, 'now'), f: (v, u) => { useSet('COR'); const z = 6 - v * 0.5 + 25; const zz = 4 - u * 1.1; place(extra[3], at(COR, -0.35, 0, zz), 'walk', 'happy', v, { vel: V(0, 0, -1) }); place(extra[2], at(COR, 0.45, 0, zz + 0.2), 'walk', 'joy', v + 1, { vel: V(0, 0, -1) });
     drip.position.set(-0.9, 0, zz - 0.05); look(at(COR, 0.15, 0.6, zz - 3.0), at(COR, 0, 1.2, zz), 48, { focus: 3.0 }); } },
   // ===== GET UP: he leaps out of bed, throws open the curtains, runs out into the morning
@@ -549,9 +549,9 @@ const SHOTS = [
 ];
 function heartCells(v, amt) { let c = 0; cellSeed.forEach(([ph, a, b, sp], i) => { if (i / NCELL > amt) return; const k = (ph + v * 0.35) % 1; const p = AORTA.getPointAt(k); dum.position.set(p.x - HRT.position.x + a * 0.5, p.y + b * 0.3, p.z - HRT.position.z + b * 0.4); dum.rotation.set(sp + v, sp * 2, 0); dum.scale.setScalar(1); dum.updateMatrix(); cells.setMatrixAt(c++, dum.matrix); }); cells.count = c; cells.instanceMatrix.needsUpdate = true; }
 // two bar columns for the 1996 comparison
-const bars = []; for (const [i, txt, col, val] of [[0, '30 YEARS OF AGEING', '#2f5aa8', 0.45], [1, '3 WEEKS IN BED', '#d23b2e', 1.0]]) { const g = new THREE.Group(); g.position.set(-1.2 + i * 2.0, 0, -0.6); LAB.add(g); g.visible = false;
-  const b = add(g, new THREE.BoxGeometry(0.9, 1, 0.5).translate(0, 0.5, 0), std(col, { roughness: 0.5 }), 0, 0, 0); b.userData.val = val; add(g, new THREE.PlaneGeometry(1.4, 0.5), basic('#fff', { map: textTex(txt.split(' ').length > 3 ? ['30 YEARS', 'OF AGEING'] : ['3 WEEKS', 'IN BED'], { w: 512, h: 190, size: 70, bg: '#111', fg: '#fff' }) }), 0, 0.1, 0.4, false).name = 'lbl'; bars.push(g); }
-function compareBars(u) { bars.forEach((g, i) => { g.visible = true; const b = g.children[0]; const h = 0.05 + b.userData.val * 2.4 * ease(i * 0.6, i * 0.6 + 1.2, u); b.scale.y = h; g.children[1].position.y = h + 0.3; }); }
+const bars = []; for (const [i, txt, col, val] of [[0, '30 YEARS OF AGEING', '#2f5aa8', 0.45], [1, '3 WEEKS IN BED', '#d23b2e', 1.0]]) { const g = new THREE.Group(); g.position.set(-0.7 + i * 1.2, 0, -0.6); LAB.add(g); g.visible = false;
+  const b = add(g, new THREE.BoxGeometry(0.9, 1, 0.5).translate(0, 0.5, 0), std(col, { roughness: 0.5 }), 0, 0, 0); b.userData.val = val; add(g, new THREE.PlaneGeometry(1.05, 0.4), basic('#fff', { map: textTex(txt.startsWith('30') ? ['30 YEARS', 'OF AGEING'] : ['3 WEEKS', 'IN BED'], { w: 512, h: 190, size: 70, bg: '#111', fg: '#fff' }) }), 0, 0.1, 0.4, false).name = 'lbl'; bars.push(g); }
+function compareBars(u) { bars.forEach((g, i) => { g.visible = true; const b = g.children[0]; const h = 0.05 + b.userData.val * 1.9 * ease(i * 0.6, i * 0.6 + 1.2, u); b.scale.y = h; g.children[1].position.y = h + 0.3; }); }
 const shotAt = v => { let i = 0; for (let k = 0; k < SHOTS.length; k++) if (v >= SHOTS[k].at) i = k; return i; };
 
 // ---------- labels + captions ----------
