@@ -1,2 +1,2 @@
 episodes/dark/002-citibank
-# rerun: new faces
+# rerun: Syracuse-style characters
