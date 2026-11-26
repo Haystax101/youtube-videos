@@ -213,15 +213,6 @@ put(None, WT(16, 'Repayments'), 0.5, fallback=lambda: coins(0.8, 8))
 bed(None, B[17], END, 0.12, fallback=lambda d: hum(d, 120))
 for w in ['If', 'Keep', 'twofactor']: put(None, WT(17, w) - 0.1, 0.55, fallback=ding)
 put(None, WT(17, 'Follow') - 0.2, 0.7, fallback=swish)
-# PLUG PULLED: power-down, then a cascade of beeps for the addresses
-put('whoosh', B[12] - 0.15, 0.6, k=10, fallback=swish)
-put(None, WT(12, 'plug') - 0.1, 0.9, fallback=powerdown)
-for k in range(16): put(None, WT(12, 'ten') + k * 0.09, 0.35, fallback=lambda: beep(1100 + (k % 4) * 110))
-# THE LESSON: room tone, a mail ding, a whoosh into the end card
-bed(None, B[13], END, 0.15, fallback=lambda d: hum(d, 120))
-put(None, WT(13, 'email') - 0.1, 0.6, fallback=ding)
-put('whoosh', WT(13, 'Follow') - 0.2, 0.7, k=11, fallback=swish)
-
 venv = np.convolve(np.abs(pad(voice)), np.ones(2400) / 2400, 'same'); duck = 1 - 0.55 * np.clip(venv / (venv.max() * 0.25), 0, 1)
 mix = pad(voice) + pad(m) * 0.36 * duck + 0.15 * np.tanh(fx[:N] * 0.18 / 0.15)
 # insert the rewind after the hook: reversed, pitched-up slice of the music + tape squeal

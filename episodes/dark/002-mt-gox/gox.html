@@ -546,7 +546,7 @@ function streetState(t) {
   // beat 8: Kolin walks in with his sign and plants himself by the door
   if (inB(t, 8)) { const w = walkAlong([V(-6, 0, 0.1), V(-1.6, 0, -0.2)], VB(8) - 0.6, t, 1.5); const sw = Math.sin(t * 2.2) * 0.04;
     showCard(SCARD.kolin, w.p, { walk: w.walking ? t * 3.2 : 0, expr: t > WT(8, 'blank') ? 'shocked' : 'angry', armR: [2.4, 0.5], armL: [2.2, 0.7], blink: blinkAt(t) });
-    U.sign.position.set(w.p.x + 0.05, 0.55, w.p.z + 0.12); U.sign.rotation.z = sw; }
+    U.sign.position.set(w.p.x + 0.05, 0.7, w.p.z - 0.1); U.sign.rotation.z = sw; }
   // beat 15: police lead Karpelès out to the car
   if (inB(t, 15)) { pc.root.position.set(-1.6, 0, 2.3); pc.root.rotation.y = 0; const fl = Math.floor(t * 6) % 2; pc.light.material.opacity = fl ? 0.95 : 0.2; pc.lr.material.color.set(fl ? '#ff2a3a' : '#5a1018');
     const t0 = WT(15, 'Tokyo') - 0.4, pts = [V(0.3, 0, -1.0), V(0.3, 0, 0.6), V(-0.6, 0, 1.25)];

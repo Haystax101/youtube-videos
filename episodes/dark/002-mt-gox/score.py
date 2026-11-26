@@ -31,6 +31,10 @@ def ostinato(t0, t1, bpm, notes, prog=STR, vel=95, g=0.45, step=0.5, bass=None, 
     b = 60 / bpm; t = t0; i = 0
     while t < t1 - 0.05:
         n(t, prog, notes[i % len(notes)], vel - (0 if i % 4 == 0 else 12), b * step * 0.9, g)
+        if bass and i % int(round(2 / step)) == 0: n(t, CBASS, bass[(i // int(round(8 / step))) % len(bass)], 100, b * 2, bassg)
+        if pulse and i % int(round(1 / step)) == 0: n(t, pulse[0], pulse[1], 80 + (25 if i % int(round(4 / step)) == 0 else 0), 0.25, pulse[2])
+        t += b * step; i += 1
+
 
 def arp(t0, t1, bpm, prog, inst=PIANO, g=0.35, pad=SLOW, padg=0.25, bass=CELLO, bassg=0.3, up=12, vel=70):
     b = 60 / bpm; t = t0; i = 0
