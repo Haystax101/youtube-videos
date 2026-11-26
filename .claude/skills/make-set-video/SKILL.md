@@ -177,6 +177,8 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
 
 ## Pre-delivery checklist (every note george has given)
 
+- [ ] `python3 tools/lint_voice.py EP` passes before any voicing (Kokoro or Qwen): no "Mt."-style abbreviations, digits, symbols or unexplained acronyms; names have phonetic spellings in `pronounce`.
+
 - [ ] Quality bar: high fidelity and vibrant, and no asset anywhere looks unrealistic or unfinished, only stylised. Otherwise fix or cut it before delivery.
 
 - [ ] `python3 tools/qa.py EP --page EP/page.html --fix` has no FAIL and every WARN is explained, and the contact-sheet review passed (the `qa-video` skill). It covers dark patches and one-frame black tiles (george spotted one at 13 s; the renderers now retry those frames as they render, and `--fix` patches any left), loudness, clipping, static, dead air, voice-over-music balance and continuity. Move cameras that sit inside geometry and re-render with `--redo`.
