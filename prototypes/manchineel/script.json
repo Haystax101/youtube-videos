@@ -1,0 +1,182 @@
+{
+ "title": "What happens if you shelter under a manchineel tree in the rain?",
+ "style": "set3d",
+ "noGary": false,
+ "voices": {
+  "narrator": "am_michael",
+  "you": "am_puck",
+  "ranger": "af_heart",
+  "iguana": "bm_george"
+ },
+ "speed": 1.3,
+ "tail": 0.7,
+ "beats": [
+  {
+   "id": "hook",
+   "lines": [
+    {
+     "text": "This is the most dangerous tree on Earth. And you just hid under it."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "beach",
+   "lines": [
+    {
+     "text": "You're on holiday in the Caribbean. Perfect beach. And a tree full of little green apples."
+    },
+    {
+     "speaker": "you",
+     "text": "Ooh! Free snacks!"
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "bite",
+   "lines": [
+    {
+     "text": "You take a bite. It's sweet... for about ten seconds."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "fire",
+   "lines": [
+    {
+     "text": "Then it's pepper. Then it's fire. Your throat swells so tight you can barely swallow."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "storm",
+   "lines": [
+    {
+     "text": "Then a storm rolls in. And the only shelter on the beach is... the same tree."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "sap",
+   "lines": [
+    {
+     "text": "Every raindrop washes milky sap off its leaves and onto you. Wherever it lands, your skin blisters."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "ranger",
+   "lines": [
+    {
+     "speaker": "ranger",
+     "text": "Hey! Not that tree! Didn't you see the red band?"
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "band",
+   "lines": [
+    {
+     "text": "Locals paint red bands on these trunks. Even its smoke can blind you."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "history",
+   "lines": [
+    {
+     "text": "Spanish sailors called it the little apple of death. Legend says an arrow dipped in its sap killed the explorer Ponce de Leon."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "iguana",
+   "lines": [
+    {
+     "text": "And yet one animal eats them like candy."
+    },
+    {
+     "speaker": "iguana",
+     "text": "Mmm. Crunchy."
+    },
+    {
+     "text": "The black spiny-tailed iguana even lives in its branches."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "payoff",
+   "lines": [
+    {
+     "text": "That bite really happened, to a British doctor in Tobago. She survived, and warned the world in a medical journal."
+    },
+    {
+     "text": "Comment what you want to know next."
+    }
+   ],
+   "hold": 0.1
+  }
+ ],
+ "experiment": {
+  "note": "Remake of 012 in the new fast-cut 3D set style (Ricks Clips direction): storm beach set, detailed animated sea, cut every ~2 s, dramatic cameras, character lines in other voices, Qwen3-TTS voices.",
+  "vars": {
+   "format": "gary_you",
+   "style": "set3d",
+   "ending": "survives",
+   "premise": "absurd_event",
+   "ending_cta": "comment_next",
+   "narrator": "qwen:Ryan",
+   "source": "fish#313"
+  },
+  "facts": [
+   {
+    "claim": "Guinness World Records lists the manchineel as the world's most dangerous tree",
+    "source": "https://www.npr.org/2022/08/25/1119333236/worlds-most-dangerous-tree-manchineel-florida"
+   },
+   {
+    "claim": "Radiologist Nicola Strickland ate a manchineel 'beach apple' on Tobago: pleasantly sweet, then peppery, then burning and a throat so tight she could barely swallow; she recovered and reported it in the BMJ",
+    "source": "Strickland, BMJ 2000;321:428 https://pmc.ncbi.nlm.nih.gov/articles/PMC1127797"
+   },
+   {
+    "claim": "Standing under the tree in rain blisters skin because rain carries the milky sap; burning it can injure eyes; trees are often marked with a red band or X",
+    "source": "https://en.wikipedia.org/wiki/Manchineel ; https://edis.ifas.ufl.edu/publication/FR370"
+   },
+   {
+    "claim": "Spanish name manzanilla de la muerte, 'little apple of death'",
+    "source": "https://en.wikipedia.org/wiki/Manchineel"
+   },
+   {
+    "claim": "Popular accounts say Ponce de Leon died in 1521 from a Calusa arrow tipped with manchineel sap (belief, not documented fact: told as 'legend says')",
+    "source": "https://www.earthdate.org/episodes/death-apples-in-paradise ; https://en.wikipedia.org/wiki/Manchineel"
+   },
+   {
+    "claim": "The black spiny-tailed iguana (Ctenosaura similis) eats manchineel fruit and lives among its limbs",
+    "source": "https://en.wikipedia.org/wiki/Ctenosaura_similis ; https://edis.ifas.ufl.edu/publication/FR370"
+   }
+  ]
+ },
+ "qwen_speakers": {
+  "narrator": "Ryan",
+  "you": "Aiden",
+  "ranger": "Serena",
+  "iguana": "Uncle_Fu"
+ },
+ "qwen_instruct": {
+  "narrator": "Energetic, punchy viral storyteller, fast and dramatic with a hint of amusement.",
+  "you": "Cheerful, excited holiday tourist.",
+  "ranger": "Shouting in alarm from a distance, urgent and loud.",
+  "iguana": "Very slow, deep and smug, savouring the word."
+ },
+ "pronounce": {
+  "Leon": "Lay-own"
+ }
+}
