@@ -34,7 +34,7 @@ Set-video renders on GitHub run it in the join job and attach `qa.json`, `contac
 | hiss | find the SFX or Qwen line at those times; swap noise-based SFX for a recorded CC0 one, low-pass Qwen lines at 6 kHz |
 | balance | music/SFX too loud under narration: duck harder or lower the bed |
 | continuity | move the walk path / seat anchor, re-run until 0 on-screen problems |
-| vanish | a label, card or prop blinks out for a frame (often every other frame): look at `qa/vanish.jpg`; usually two overlays on the same plane fighting (give labels `depthTest: false` and a `renderOrder`), a label toggled by a rounding test on the frame time, or a DOM overlay redrawn late; fix and re-render those seconds |
+| vanish | a label, card or prop blinks out for a frame (often every other frame): look at `qa/vanish.jpg`; often a GPU-accelerated 2D overlay canvas that fails to present a cleared frame in headless chunk renders, leaving a stale card on every other frame (use `getContext('2d', { willReadFrequently: true })` and a tiny pixel fill after `clearRect`, as dark-story 004 does); otherwise two overlays on the same plane fighting (give labels `depthTest: false` and a `renderOrder`), a label toggled by a rounding test on the frame time, or a DOM overlay redrawn late; fix and re-render those seconds |
 | flicker | a big one-frame pop = a surface vanishing (z-fighting) or a character jumping: apply "No glitching in motion" in make-set-video (MSAA composer target, near >= 0.05 / tighter far or log depth, texel-snapped shadow camera, slower shake and wheel spin) and re-render those chunks |
 
 **Every WARN gets a look**: open `EP_DIR/qa/flicker.jpg` (before / pop / after, pops in magenta) and decide

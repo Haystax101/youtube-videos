@@ -6,7 +6,9 @@ and after, and the edge is gone in this frame: something was there, blinked out,
 don't count (before and after differ), and neither do cuts. Works when the flicker alternates every other frame.
 Usage: python3 tools/check_vanish.py VIDEO [--strip OUT.jpg]
 Prints time ranges with the worst frame and its vanished-edge pixel count (at 540x960); exit 1 if any frame has
-more than 1500 (a label or card). 800-1500 is often a blink or a small light: look at the strip."""
+more than 1500 (a label or card). 800-1500 is often a blink or a small light: look at the strip.
+Usual cause (002): a GPU-accelerated 2D overlay canvas not presenting its cleared frame in headless renders; fix with
+getContext('2d', { willReadFrequently: true }) plus a tiny pixel fill after clearRect."""
 import subprocess, sys, numpy as np
 
 W, H, FAIL, WARN = 540, 960, 1500, 800
