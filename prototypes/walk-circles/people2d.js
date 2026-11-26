@@ -2,7 +2,7 @@
 // thin black stick limbs, detailed costumes. Drawn into a canvas each frame (pose + expression + time),
 // then shown as camera-facing cards in the three.js set.
 const INK = '#16121a', LW = 7;
-let g, BLIND = false;
+let g, BLIND = false, BACK = false;
 function P(path, fill, lw = LW) { g.beginPath(); path(); if (fill) { g.fillStyle = fill; g.fill(); } if (lw) { g.lineWidth = lw; g.strokeStyle = INK; g.lineJoin = 'round'; g.lineCap = 'round'; g.stroke(); } }
 function clipShade(path, fn) { g.save(); g.beginPath(); path(); g.clip(); fn(); g.restore(); }
 function stick(a, m, b, w = 13) { g.lineCap = 'round'; g.lineJoin = 'round'; g.strokeStyle = INK; g.lineWidth = w; g.beginPath(); g.moveTo(...a); g.quadraticCurveTo(...m, ...b); g.stroke(); }
@@ -10,6 +10,8 @@ const lerp = (a, b, k) => a + (b - a) * k;
 const L2 = (p, q, k) => [lerp(p[0], q[0], k), lerp(p[1], q[1], k)];
 
 export const KINDS = {
+  scientist: { head: '#f5efe4', headS: '#e0d3c0', cloth: '#f4f4f2', clothS: '#cfd3d8', trim: '#3c6fb4', emblem: 'none', hat: 'bald', tache: 'none', glasses: true, coat: true },
+  scientist2: { head: '#f5efe4', headS: '#e0d3c0', cloth: '#f4f4f2', clothS: '#cfd3d8', trim: '#c0392b', emblem: 'none', hat: 'none', tache: 'brush', glasses: true, coat: true },
   hiker: { head: '#f5efe4', headS: '#e0d3c0', cloth: '#3f7d4e', clothS: '#2c5a37', trim: '#e8a33a', emblem: 'none', hat: 'beanie', tache: 'none', pack: true },
   walker: { head: '#f5efe4', headS: '#e0d3c0', cloth: '#d7dde6', clothS: '#a9b2c0', trim: '#3c6fb4', emblem: 'none', hat: 'none', tache: 'none' },
   walker2: { head: '#f5efe4', headS: '#e0d3c0', cloth: '#e0a33f', clothS: '#b57f27', trim: '#3c6fb4', emblem: 'none', hat: 'none', tache: 'brush' },
@@ -30,6 +32,8 @@ export const KINDS = {
 };
 
 const FACES = {
+  talk: { lid: 0.15, brows: [[-62, -62, -20, -70], [20, -70, 62, -62]], mouth: 'shout', look: [4, -2] },
+  talksmug: { lid: 0.45, brows: [[-62, -52, -20, -60], [20, -66, 62, -54]], mouth: 'shout', look: [3, 2] },
   smug: { lid: 0.5, brows: [[-62, -52, -20, -60], [20, -66, 62, -54]], mouth: 'smirk', look: [3, 2] },
   shout: { lid: 0.2, brows: [[-62, -70, -20, -58], [20, -58, 62, -70]], mouth: 'shout', look: [4, 0] },
   watch: { lid: 0.3, brows: [[-62, -58, -20, -64], [20, -64, 62, -58]], mouth: 'flat', look: [0, -10] },
@@ -46,6 +50,7 @@ function head(K, expr, t, turn, blink) {
   const F = FACES[expr] || FACES.smug;
   const h = () => g.ellipse(0, 0, 122, 126, 0, 0, 7);
   P(h, K.head); clipShade(h, () => { g.fillStyle = K.headS; g.beginPath(); g.ellipse(-turn * 2 + 112, 22, 70, 132, 0, 0, 7); g.fill(); }); P(h, null, 8);
+  if (BACK) { P(() => g.ellipse(-118, 6, 16, 26, 0, 0, 7), K.head, 6); P(() => g.ellipse(118, 6, 16, 26, 0, 0, 7), K.head, 6); return; } // back of the head: just ears
   g.save(); g.translate(turn, 0);
   for (const d of [-1, 1]) { const ex = d * 40;
     if (F.happy) { P(() => { g.moveTo(ex - 22, -4); g.quadraticCurveTo(ex, -34, ex + 22, -4); }, null, 8); continue; }
@@ -192,9 +197,9 @@ function pose(name, t, seed) {
 }
 
 export function drawPerson(ctx, W, H, kindName, poseName, expr, t, seed = 0, opts = {}) {
-  g = ctx; const K = KINDS[kindName]; BLIND = !!opts.blind;
+  g = ctx; const K = KINDS[kindName]; BLIND = !!opts.blind; BACK = !!opts.back;
   g.clearRect(0, 0, W, H);
-  const p = pose(poseName, t, seed);
+  const p = pose(poseName, t, seed); if (opts.turn != null) p.turn = opts.turn;
   const S = H / 1000;
   g.save(); g.translate(W / 2, H - 14 * S); g.scale(S * (opts.flip ? -1 : 1), S);
   // speed lines / joy marks behind a celebrating figure
@@ -205,9 +210,10 @@ export function drawPerson(ctx, W, H, kindName, poseName, expr, t, seed = 0, opt
   boot(-42, -1, p.lf); boot(42, 1, p.rf);
   g.save(); g.translate(0, p.bob); g.rotate(p.lean);
   if (p.spear) { g.strokeStyle = INK; g.lineWidth = 18; g.beginPath(); g.moveTo(150, 40); g.lineTo(150, -860); g.stroke(); g.strokeStyle = '#8f5e36'; g.lineWidth = 9; g.stroke(); P(() => { g.moveTo(150, -950); g.lineTo(176, -860); g.lineTo(124, -860); g.closePath(); }, '#c9ced6', 5); }
-  if (K.pack) P(() => g.roundRect(-150, -400, 300, 280, 40), '#8a5a2e', 7);
+  if (K.pack && !BACK) P(() => g.roundRect(-150, -400, 300, 280, 40), '#8a5a2e', 7);
   bodyBlock(K);
-  if (K.pack) { P(() => g.roundRect(-74, -372, 22, 220, 8), '#6b4422', 5); P(() => g.roundRect(52, -372, 22, 220, 8), '#6b4422', 5); }
+  if (K.pack && BACK) { P(() => g.roundRect(-128, -420, 256, 300, 44), '#8a5a2e', 7); P(() => g.roundRect(-96, -300, 192, 120, 26), '#6b4422', 6); P(() => { g.moveTo(-60, -240); g.lineTo(60, -240); }, null, 6); P(() => g.roundRect(-112, -150, 224, 46, 20), '#3f6b8a', 6); }
+  if (K.pack && !BACK) { P(() => g.roundRect(-74, -372, 22, 220, 8), '#6b4422', 5); P(() => g.roundRect(52, -372, 22, 220, 8), '#6b4422', 5); }
   if (p.cup) { P(() => { g.moveTo(170, -520 - 40); g.lineTo(230, -560); g.quadraticCurveTo(226, -500, 200, -490); g.lineTo(200, -460); g.lineTo(220, -450); g.lineTo(180, -450); g.lineTo(200, -460); g.lineTo(200, -490); g.quadraticCurveTo(174, -500, 170, -560); g.closePath(); }, '#e0b04a', 5); }
   if (p.stick) { g.strokeStyle = INK; g.lineWidth = 12; g.beginPath(); g.moveTo(200, -150); g.lineTo(260, 0); g.stroke(); g.strokeStyle = '#8f5e36'; g.lineWidth = 6; g.stroke(); }
   // arms
@@ -225,7 +231,9 @@ export function drawPerson(ctx, W, H, kindName, poseName, expr, t, seed = 0, opt
   // head + hat
   const blink = ((t + seed * 0.71) % 3.1) < 0.12;
   g.save(); g.translate(0, -520 + p.bob * 1.2); g.rotate(p.lean * 2 + Math.sin(t * 1.7 + seed) * 0.03);
-  head(K, expr, t, p.turn, blink); g.translate(0, -22); hat(K, t);
+  head(K, expr, t, p.turn, blink);
+  if (K.glasses && !BACK) { g.save(); g.translate(p.turn, 0); P(() => { g.arc(-40, -8, 34, 0, 7); }, 'rgba(220,240,255,.35)', 7); P(() => { g.arc(40, -8, 34, 0, 7); }, 'rgba(220,240,255,.35)', 7); P(() => { g.moveTo(-6, -10); g.quadraticCurveTo(0, -18, 6, -10); }, null, 6); g.restore(); }
+  g.translate(0, -22); hat(K, t);
   g.restore();
   g.restore();
 }

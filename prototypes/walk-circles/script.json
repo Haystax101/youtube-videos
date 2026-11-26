@@ -8,15 +8,6 @@
  },
  "speed": 1.25,
  "tail": 0.6,
- "qwen": {
-  "narrator": "A warm, confident American male narrator in his thirties with a friendly, slightly amused storytelling tone. Clear diction, brisk and lively pace, expressive like a popular YouTube explainer telling a funny true story.",
-  "hiker": "A cheerful, slightly goofy middle-aged German man speaking English with a light German accent. Overconfident and enthusiastic, a bit loud."
- },
- "qwen_candidates": {
-  "A_deep": "A deep, rich American male voice with a dramatic, cinematic storytelling style, confident and punchy, medium-fast pace.",
-  "B_playful": "A playful, high-energy young American male narrator, fast-paced and expressive with comic timing, like a viral short-video storyteller.",
-  "C_british": "A dry, witty British male narrator in his forties, calm but amused, crisp diction, like a clever documentary host."
- },
  "beats": [
   {
    "id": "hook",
@@ -138,7 +129,7 @@
   }
  ],
  "experiment": {
-  "hypothesis": "Ricks Clips structure: a comic escalating story with the science reveal later, a cut every ~2 s across several small sets, face close-ups, near-continuous narration.",
+  "hypothesis": "Ricks Clips structure: a comic escalating story with the science reveal later, a cut every ~2 s across several small sets, face close-ups, near-continuous narration. Voice A/B/C: Qwen3-TTS library speakers Ryan vs Dolce vs Arthur (george, 26 Nov).",
   "facts": [
    "Souman, Frissen, Sreenivasa & Ernst, 'Walking straight into circles', Current Biology 19:1538 (2009): GPS-tracked walkers in the Bienwald forest (Germany) and the Sahara walked in circles when the sun was hidden, repeatedly crossing their own path without noticing; with the sun or moon visible they kept fairly straight; blindfolded walkers made circles as small as 20 m across. https://www.mpg.de/596269/pressrelease200908171"
   ],
@@ -147,7 +138,19 @@
    "style": "set3d",
    "edit": "fast_cuts",
    "fish_ep": 589,
-   "voice": "qwen_designed"
+   "voice": "qwen_library"
   }
+ },
+ "qwen_speakers": {
+  "narrator": [
+   "Ryan",
+   "Dolce",
+   "Arthur"
+  ],
+  "hiker": "Aiden"
+ },
+ "qwen_instruct": {
+  "narrator": "Lively, amused storytelling with punchy comic timing, brisk pace.",
+  "hiker": "Cheerful, overconfident and a bit loud."
  }
 }
