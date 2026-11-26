@@ -41,11 +41,31 @@ Endings: death keeps the void ghost and "You died. <CTA>"; otherwise end on Gary
 the last scene with "You survived. <CTA>" or "You're stronger than ever. <CTA>". The CTA is the
 one CLAUDE.md's ending A/B test assigns to this Short; record it in `experiment.ending_cta`.
 
+**Hook strength (george, 26 Nov 20:20): our facts are the edge, so the hook must be strong enough to carry them.**
+"Did Darwin invent the office chair?" was too weak. A soft yes/no question about a fact gives the
+viewer nothing at stake. Instead:
+- Open on the most striking image in the video, together with a bold claim aimed at the viewer
+  ("you"): what happens to you, what you have been getting wrong, or what is in your house right now.
+  Examples: "You're sitting on Charles Darwin's laziest invention." or "Get lost in a forest and you
+  WILL walk in circles."
+- The claim states the surprising fact or its stakes in under 2 s and 12 words, with a number,
+  a danger or a contradiction where possible. Never a vague "did you know" or "what if".
+- If a question is used, it challenges the viewer ("How long until YOU die?"), and it is never a
+  soft yes/no about a historical person or object.
+- Test: would a stranger scrolling past feel they must know the answer? If not, rewrite it.
+
+**Write exactly what is spoken (george, 26 Nov 20:46):** "Mt. Gox" was read as the end of a sentence.
+Narration text is TTS input, not prose: no abbreviations with periods ("Mount Gox", "Doctor"), no
+digits ("nineteen sixty-six", "three point five percent"), no symbols, acronyms either spelled as
+spoken or given a phonetic entry in script.json `pronounce` ({"Gox": "gocks"}), and phonetic spellings
+for every unusual name. `python3 tools/lint_voice.py EP` checks this, and `pipeline/tts.py` refuses to
+voice a script that fails it. Captions show the same text, so pick wording that reads well too.
+
 ## 3. Arc: five moves in ~78 words
 
 | Move | Beats | Job |
 |---|---|---|
-| Hook (cold open) | 1 | The most extreme image + the plain question. ≤ 12 words. |
+| Hook (cold open) | 1 | The most extreme image + a bold claim to "you" (see Hook strength). ≤ 12 words. |
 | Setup | 1 | Why you're doing it / what triggers it. One line. Skip if the hook says it. |
 | Escalation | 2-3 | Each beat is worse (or better) AND teaches the mechanism. A number per beat if possible. |
 | Turn | 1 | The myth-bust, reversal, irony or twist. The moment a viewer says "huh". |

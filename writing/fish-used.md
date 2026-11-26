@@ -10,3 +10,4 @@ repeats. One row per lead, used or rejected.
 | 2026-11-26 | #313 | Manchineel tree so toxic its rain drips burn | 012-manchineel-tree-rain | used (re-sourced: Strickland BMJ 2000, Wikipedia, NPR) |
 | 2026-11-26 | #574 | Swallowed eels escape out through a predator's gills | 013-eel-escapes-fish | used (Hasegawa et al., Current Biology 2024) |
 | 2026-11-26 | #443 | Man stayed in bed for 30 years (John Tallis) | 014-never-get-out-of-bed | lead only: Tallis story is poorly sourced (one blog), so the script uses the 1966 Dallas bed-rest study instead |
+| 2026-11-26 | #600 | Farmers fill tractor tyres with beet juice | prototypes/beet-tyres (vivid look test) | used (Rim Guard, Yanmar, Monarch, Kubota manual) |

@@ -41,3 +41,9 @@ sheets: bed sheets rustle | cloth rustle | blanket
 # freesound CC0 previews (run 2)
 # run 3 (freesound debug)
 # run 4 (6 shards)
+tractor: tractor engine | diesel engine idle | tractor | farm machinery
+pour: pouring liquid | liquid pump | glug | filling tank
+ice: ice crack | ice cracking | frozen lake crack | ice creak
+metal: metal creak | metal groan | rusty hinge | metal squeak
+farm: farm ambience | countryside birds | rooster | cows mooing
+tyre: tire squeal | wheel spin mud | mud squelch | tire inflate

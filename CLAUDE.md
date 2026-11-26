@@ -69,6 +69,10 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    - Beat 1 is a hook beat (`"hook": true`): a clickbait question to the VIEWER in the first
      2 seconds, e.g. "If you wore a face mask every single day, how long would it take for
      you to die?" On-screen label like `HOW LONG UNTIL YOU *DIE?*` (`*word*` turns red).
+     **Hooks must carry the content (george, 2026-11-26 20:20):** our facts are the edge, so the
+     hook is a bold claim or challenge to "you" over the most striking image, never a soft yes/no
+     question about a fact ("Did Darwin invent the office chair?" was too weak). Follow the rules
+     under "Hook strength" in the `write-short-script` skill.
    - Narrate in second person ("you") throughout. Gary is the on-screen avatar of "you".
      **Exception (george, 2026-11-25): Shorts don't have to be the Gary/"you" format.** When a
      fact isn't about something "you" do (an animal, a place, a historical event, an object),
@@ -130,7 +134,10 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
 5. If the idea needs new props, rooms, accessories or fx, add them to the style's renderer
    (`web/lowpoly.js` for lowpoly, `web/scene.js` for cartoon) and list them in README's
    vocabulary. Build what the idea needs; don't force reuse of the same rooms every video.
-6. `python3 pipeline/tts.py EP && python3 pipeline/mix.py EP`, then render stills
+6. Narration must spell out exactly what is spoken (george, 2026-11-26: "Mt. Gox" was read as a
+   sentence end): no abbreviations with periods, digits, symbols or bare acronyms, and phonetic
+   `pronounce` entries for names. `tts.py` runs `tools/lint_voice.py` first and stops on errors.
+   `python3 pipeline/tts.py EP && python3 pipeline/mix.py EP`, then render stills
    (`NODE_PATH=$(npm root -g) node pipeline/render.mjs EP --stills 1,8,15,...`) and look
    at them. Fix anything broken (overlaps, missing props, text off screen) before the
    full render. **Quality bar** (george, 2026-11-26): the successful channels look high
@@ -140,9 +147,11 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    placeholder boxes, mismatched photoreal pieces, broken proportions). If anything fails,
    improve it or drop the Short. Then the
    full render: `NODE_PATH=$(npm root -g) node pipeline/render.mjs EP` (~8 min).
+   Then the **quality gate** (`qa-video` skill): `python3 tools/qa.py EP --fix` must have no FAIL, and
+   you review its contact sheet (`EP/qa/contact.jpg`) against this bar before delivery.
 7. Append a row to `episodes/LOG.md`, commit the script and any code changes to `main`
    (never commit .mp4/.wav), push.
-8. Deliver: copy the video to `/mnt/project-files/gary-tries-it/NNN-slug.mp4` and post it
+8. Deliver (only after the quality gate passed): copy the video to `/mnt/project-files/gary-tries-it/NNN-slug.mp4` and post it
    to george with a suggested YouTube title, description and 3-5 hashtags (and the
    YouTube link plus publish time if it was uploaded). The description ends with the credit
    line "Fact rabbit-hole inspired by No Such Thing As A Fish (episode #N). Sources: ..." with
@@ -188,6 +197,6 @@ Length is flexible, roughly 6-12 minutes; stop when the idea runs out, don't pad
    Measured speed on Actions: about 16 s of render per second of 1080p video.
    (`gh workflow run` and GraphQL are not available from Claude sessions.)
    If Actions fails, render locally with `--workers 4` instead.
-5. Log a row in `episodes/long/LOG.md`, deliver to `/mnt/project-files/gary-tries-it/long/`
+5. Run the quality gate (`qa-video` skill) on the downloaded video. Log a row in `episodes/long/LOG.md`, deliver to `/mnt/project-files/gary-tries-it/long/`
    and post to george with title, description (with chapter timestamps from
    `timeline.json` card beats) and tags; upload if enabled.

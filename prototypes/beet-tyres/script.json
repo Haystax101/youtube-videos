@@ -1,0 +1,31 @@
+{
+ "title": "Why farmers fill tractor tyres with beet juice",
+ "style": "set3d",
+ "look": "vivid",
+ "noGary": true,
+ "voices": { "narrator": "am_michael" },
+ "speed": 1.27,
+ "tail": 0.8,
+ "beats": [
+  { "id": "hook", "hook": true, "lines": [ { "text": "Why is this farmer pumping vegetable juice into his tractor tyres?" } ], "hold": 0.1 },
+  { "id": "weight", "lines": [ { "text": "A tractor needs heavy back wheels. Too light, and they spin in the mud, or the whole thing tips up when it lifts a bale." } ], "hold": 0.1 },
+  { "id": "fill", "lines": [ { "text": "So farmers fill the tyres about three quarters full of liquid." } ], "hold": 0.1 },
+  { "id": "water", "lines": [ { "text": "Water is cheap. But in winter, it freezes solid." } ], "hold": 0.1 },
+  { "id": "salt", "lines": [ { "text": "So they added salt, calcium chloride. It stops the freezing, but it eats the steel wheels from the inside." } ], "hold": 0.1 },
+  { "id": "factory", "lines": [ { "text": "Then someone tried the leftovers from sugar factories." } ], "hold": 0.1 },
+  { "id": "beet", "lines": [ { "text": "Sugar beet juice. It's heavier than water, it doesn't freeze until about minus thirty seven, and it's gentle on steel." } ], "hold": 0.1 },
+  { "id": "payoff", "lines": [ { "text": "So the heaviest part of that tractor is, technically, a vegetable." } ], "hold": 0.2 },
+  { "id": "cta", "lines": [ { "text": "Comment what you want to know next." } ], "hold": 0.1 }
+ ],
+ "experiment": {
+  "vars": { "format": "no_gary", "premise": "true_history", "ending": "better", "cta": "comment_next", "look": "vivid", "voices.narrator": "am_michael", "speed": 1.27, "character": "pill" },
+  "hypothesis": "First Short in george's approved vivid look (Neutral tone mapping, saturated grade, pill-bodied character). An everyday object with a weird secret plus a useful 'why' arc.",
+  "fish": "#600 (In Canada, tractor tires are filled up with vegetable juice)",
+  "facts": [
+   { "claim": "Liquid ballast is added to tractor rear tyres for weight; fill only to about 75%; never plain water (it freezes).", "sources": ["https://www.monarchtractor.com/en/kb/liquid-ballast-in-rear-tires", "https://www.manualslib.com/manual/914189/Kubota-B3300su.html?page=52"] },
+   { "claim": "Calcium chloride stops the water freezing but is very corrosive; steel wheels corrode without tubes.", "sources": ["https://yanmartractor.com/resources/tractor-tips/liquid-ballast", "https://www.iamcountryside.com/tractors-farm-equipment/tractor-tire-fluids-rundown/"] },
+   { "claim": "Beet juice ballast (Rim Guard) is a sugar beet processing by-product, about 10.7-11 lb per US gallon (water 8.3), freeze-resistant to about -35 F (-37 C), and sold as non-corrosive and non-toxic.", "sources": ["https://www.rimguardsolutions.com/post/why-beet-juice-is-better", "https://www.rimguardsolutions.com/post/best-ballast", "https://www.goodworkstractors.com/product/rim-guard-liquid-ballast/"] }
+  ],
+  "notes": "Freeze point and non-corrosive claims are the maker's; script says 'about' and 'gentle on steel' rather than 'never rusts'. Tyre-tipping with a loaded front loader is why rear ballast is used (manuals)."
+ }
+}
