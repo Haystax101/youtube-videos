@@ -699,7 +699,7 @@ function overlays(t) {
   capEl.className = KEYW.test(w.replace(/['"]/g, '')) ? 'k' : '';
   const a = clamp((t + 0.14 - wd.s) / 0.06); capEl.style.transform = `scale(${0.8 + 0.2 * a + 0.06 * Math.sin(a * Math.PI)})`;
 }
-const OV = document.getElementById('ov').getContext('2d');
+const OV = document.getElementById('ov').getContext('2d', { willReadFrequently: true }); // software canvas: avoids stale overlay frames in headless renders
 function card2d(x, cx, cy, w, h, rot, sc, draw) { x.save(); x.translate(cx, cy); x.rotate(rot); x.scale(sc, sc); x.fillStyle = 'rgba(0,0,0,.35)'; x.beginPath(); x.roundRect(-w / 2 + 10, -h / 2 + 14, w, h, 22); x.fill(); draw(x, w, h); x.restore(); }
 const pop = (t, t0) => { const a = clamp((t - t0) / 0.22); return a <= 0 ? 0 : 1 + 0.12 * Math.sin(a * Math.PI); };
 const money = v => '$' + Math.round(v).toLocaleString('en-US');
@@ -713,7 +713,7 @@ function bill(x, t, t0, y = 720) { const s = pop(t, t0); if (!s) return; card2d(
   c.fillStyle = '#2f6fe0'; c.fillRect(-cw / 2 + 4, -ch / 2 + 4, cw - 8, 100); c.fillStyle = '#fff'; c.font = '900 50px Poppins'; c.textAlign = 'center'; c.fillText('PHONE BILL', 0, -ch / 2 + 72);
   c.textAlign = 'left'; c.font = '700 28px monospace'; const L = [['+39 ITALY', '4,812 min'], ['+39 ITALY', '3,977 min'], ['+63 PHIL.', '2,203 min'], ['+92 PAK.', '1,986 min'], ['+39 ITALY', '5,140 min']]; L.forEach(([a, b], i) => { c.fillStyle = '#3a3e48'; c.fillText(a, -cw / 2 + 40, -ch / 2 + 170 + i * 52); c.textAlign = 'right'; c.fillText(b, cw / 2 - 40, -ch / 2 + 170 + i * 52); c.textAlign = 'left'; });
   c.fillStyle = '#d7263d'; c.fillRect(-cw / 2 + 30, ch / 2 - 200, cw - 60, 150); c.fillStyle = '#fff'; c.font = '800 34px Poppins'; c.textAlign = 'center'; c.fillText('TOTAL DUE', 0, ch / 2 - 150); c.font = '900 74px Poppins'; c.fillText('$120,450', 0, ch / 2 - 76); }); }
-function overlays2d(t) { const x = OV; x.clearRect(0, 0, W, H);
+function overlays2d(t) { const x = OV; x.clearRect(0, 0, W, H); x.fillStyle = 'rgba(0,0,0,0.004)'; x.fillRect(0, 0, 2, 2);
   if (HOOK(t) && t > WT(0, 'fiftyfive') - 0.1) counter(x, t, WT(0, 'fiftyfive') - 0.1, WT(0, 'calls'), 0, 55000000, 'IN STOLEN PHONE CALLS', '#d7263d', 640);
   if (inB(t, 1) && t > WT(1, 'dials') - 0.1 && t < WT(1, 'one') - 0.1) chip(x, t, WT(1, 'dials') - 0.1, 'DIALLING THE USA', '#2f6fe0', 380);
   if (inB(t, 2)) { const st = [['Staff', 'STEP 1 · DIAL IN'], ['punch', 'STEP 2 · ENTER CODE'], ['call', 'STEP 3 · CALL ANYWHERE'], ["company's", 'BILL → THE COMPANY']]; let cur = null; for (const [w, s] of st) if (t > WT(2, w) - 0.15) cur = [w, s]; if (cur && t < WT(2, 'that') - 0.1) chip(x, t, WT(2, cur[0]) - 0.15, cur[1], cur[0] === "company's" ? '#d7263d' : '#2f6fe0', 380); }

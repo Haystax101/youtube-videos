@@ -750,7 +750,7 @@ function overlays(t) {
   capEl.className = KEYW.test(w.replace(/['"]/g, '')) ? 'k' : '';
   const a = clamp((t + 0.14 - wd.s) / 0.06); capEl.style.transform = `scale(${0.8 + 0.2 * a + 0.06 * Math.sin(a * Math.PI)})`;
 }
-const OV = document.getElementById('ov').getContext('2d');
+const OV = document.getElementById('ov').getContext('2d', { willReadFrequently: true }); // software canvas: an accelerated one can skip presenting a cleared frame on headless swiftshader (stale cards flashed every other frame)
 function card2d(x, cx, cy, w, h, rot, sc, draw) { x.save(); x.translate(cx, cy); x.rotate(rot); x.scale(sc, sc); x.fillStyle = 'rgba(0,0,0,.35)'; x.beginPath(); x.roundRect(-w / 2 + 10, -h / 2 + 14, w, h, 22); x.fill(); draw(x, w, h); x.restore(); }
 const pop = (t, t0) => { const a = clamp((t - t0) / 0.22); return a <= 0 ? 0 : 1 + 0.12 * Math.sin(a * Math.PI); };
 const money = v => '$' + Math.round(v).toLocaleString('en-US');
@@ -760,7 +760,7 @@ function counter(x, t, t0, t1, v0, v1, top, col, y = 640) { const s = pop(t, t0)
 function stamp(x, t, t0, l1, l2, y) { const a = clamp((t - t0) / 0.18); if (a <= 0) return; const sc = 1.8 - 0.8 * sstep(0, 1, a); x.save(); x.globalAlpha = Math.min(1, a * 1.5); x.translate(540, y); x.rotate(-0.12); x.scale(sc, sc);
   x.lineWidth = 14; x.strokeStyle = '#d7263d'; x.beginPath(); x.roundRect(-400, -110, 800, 220, 20); x.stroke(); x.fillStyle = 'rgba(244,239,228,.88)'; x.fill(); x.stroke(); x.fillStyle = '#d7263d'; x.textAlign = 'center'; x.font = '900 58px Poppins'; x.fillText(l1, 0, -18); x.font = '900 84px Poppins'; x.fillText(l2, 0, 74); x.restore(); }
 function phone(x, t, t0, draw, y = 760, cx = 540, sc0 = 1) { const s = pop(t, t0) * sc0; if (!s) return; card2d(x, cx, y, 520, 880, -0.03, s, (c, cw, ch) => { c.fillStyle = '#14121a'; c.beginPath(); c.roundRect(-cw / 2, -ch / 2, cw, ch, 60); c.fill(); c.lineWidth = 8; c.strokeStyle = '#0e0b16'; c.stroke(); c.fillStyle = '#f4f6fb'; c.beginPath(); c.roundRect(-cw / 2 + 24, -ch / 2 + 70, cw - 48, ch - 140, 30); c.fill(); c.fillStyle = '#14121a'; c.beginPath(); c.roundRect(-50, -ch / 2 + 28, 100, 22, 11); c.fill(); draw(c, cw, ch); }); }
-function overlays2d(t) { const x = OV; x.clearRect(0, 0, W, H);
+function overlays2d(t) { const x = OV; x.clearRect(0, 0, W, H); x.fillStyle = 'rgba(0,0,0,0.004)'; x.fillRect(0, 0, 2, 2);
   if (inB(t, 1) && t > WT(1, 'lost') - 0.1) counter(x, t, WT(1, 'lost') - 0.1, WT(1, 'casino'), 0, 500000, 'LOST IN ONE YEAR', '#d7263d', 640);
   if (inB(t, 2)) { const st = [['Play', 'STEP 1 · WIN BIG AT $1'], ['Switch', 'STEP 2 · SWITCH GAMES'], ['Feed', 'STEP 3 · FEED IN CASH'], ['raise', 'STEP 4 · BET $10 A HAND'], ['first', 'STEP 5 · BACK TO GAME 1']]; let cur = null; for (const [w, s] of st) if (t > WT(2, w) - 0.15) cur = [w, s]; if (cur) chip(x, t, WT(2, cur[0]) - 0.15, cur[1], '#2f6fe0', 380); }
   if (inB(t, 3) && t > WT(3, 'Hit') - 0.15 && t < WT(3, 'Eight') - 0.2) chip(x, t, WT(3, 'Hit') - 0.15, 'STEP 6 · CASH OUT', '#2f6fe0', 380);

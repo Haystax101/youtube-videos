@@ -1,0 +1,181 @@
+{
+ "title": "The Computer Virus That Destroyed Nuclear Centrifuges",
+ "channel": "dark-stories",
+ "style": "set",
+ "look": "vivid",
+ "noGary": true,
+ "voices": {
+  "narrator": "am_fenrir"
+ },
+ "speed": 1.1,
+ "tail": 1.2,
+ "pronounce": {
+  "Ulasen": "Oolahsen",
+  "Sergey": "Sair-gay",
+  "Natanz": "Nah-tahnz",
+  "Stuxnet": "Stucks-net"
+ },
+ "experiment": {
+  "vars": {
+   "format": "dark_story",
+   "length": "long_short",
+   "voice": "am_fenrir",
+   "music": "orchestral_suspense",
+   "look": "vivid"
+  },
+  "hypothesis": "A cyberweapon story with a physical payoff (machines tearing apart) and a reveal mid-way (what it was hunting) holds viewers in the new vivid look.",
+  "darknet_diaries": "Episode 29: Stuxnet (darknetdiaries.com/episode/29)",
+  "facts": [
+   {
+    "claim": "VirusBlokAda (Minsk) researcher Sergey Ulasen found the worm in June 2010 after a client's computers in Iran kept rebooting; it was published 12 July 2010",
+    "source": "https://eugene.kaspersky.com/2011/11/02/the-man-who-found-stuxnet-sergey-ulasen-in-the-spotlight/"
+   },
+   {
+    "claim": "Four zero-day Windows exploits; spread via removable USB drives (LNK flaw triggered by viewing the drive); drivers signed with stolen Realtek and JMicron certificates (both Taiwan)",
+    "source": "Symantec W32.Stuxnet Dossier v1.4, Feb 2011 (https://www.cs.umd.edu/class/spring2011/cmsc818b/papers/w32_stuxnet_dossier.pdf)"
+   },
+   {
+    "claim": "About 100,000 infected hosts by 29 September 2010, about 60% in Iran",
+    "source": "Symantec W32.Stuxnet Dossier v1.4"
+   },
+   {
+    "claim": "Payload only activates on Siemens S7-315 PLCs with frequency converter drives from Vacon (Finland) or Fararo Paya (Iran) running at 807-1210 Hz; sets 1410 Hz for 15 minutes, then after 27 days drops to 2 Hz, repeating",
+    "source": "Symantec W32.Stuxnet Dossier v1.4"
+   },
+   {
+    "claim": "Recorded 21 seconds of the protection system's sensor values and replayed them in a loop during the attack, so operators saw normal readings",
+    "source": "Ralph Langner, To Kill a Centrifuge (2013), https://www.langner.com/wp-content/uploads/2017/03/to-kill-a-centrifuge.pdf"
+   },
+   {
+    "claim": "About 1,000 IR-1 centrifuges out of about 9,000 at Natanz were decommissioned/replaced in late 2009 or early 2010 (an estimate)",
+    "source": "ISIS (Albright, Brannan, Walrond), Did Stuxnet Take Out 1,000 Centrifuges at the Natanz Enrichment Plant?, 22 Dec 2010"
+   },
+   {
+    "claim": "NYT (Sanger, 1 June 2012): joint US-Israeli operation code-named Olympic Games, begun under Bush and accelerated under Obama; a programming error let it escape when an engineer's computer connected to the centrifuges later connected to the internet; neither government has officially acknowledged it",
+    "source": "https://www.nytimes.com/2012/06/01/world/middleeast/obama-ordered-wave-of-cyberattacks-against-iran.html"
+   },
+   {
+    "claim": "IR-1 centrifuge nominal rotor frequency 1064 Hz; rotor about 10 cm across, so the wall moves about 330 m/s, near the speed of sound (343 m/s)",
+    "source": "Langner, To Kill a Centrifuge; Glaser, Characteristics of the Gas Centrifuge for Uranium Enrichment (Science & Global Security, 2008)"
+   }
+  ]
+ },
+ "beats": [
+  {
+   "label": "THE FIRST *CYBER WEAPON*",
+   "lines": [
+    {
+     "text": "The first cyber weapon in history didn't steal a single thing. It broke machines. Deep under the desert in Iran, it spun nuclear centrifuges until they tore themselves apart, while the screens said everything was fine."
+    }
+   ],
+   "hook": true,
+   "hold": 0.25
+  },
+  {
+   "label": "MINSK, *JUNE 2010*",
+   "lines": [
+    {
+     "text": "Rewind to June, twenty-ten. In Minsk, Belarus, a tiny antivirus company gets a strange report. Computers in Iran keep crashing and rebooting, over and over, and nobody knows why."
+    }
+   ]
+  },
+  {
+   "label": "THE *WORM*",
+   "lines": [
+    {
+     "text": "A researcher named Sergey Ulasen digs in, and finds a worm unlike anything he has ever seen. It spreads on U S B sticks. Just opening one on a computer is enough."
+    }
+   ]
+  },
+  {
+   "label": "*4* ZERO-DAYS",
+   "lines": [
+    {
+     "text": "It used four zero-days: secret holes in Windows that nobody had patched yet. Criminals guard even one. This worm spent four. And it was signed with stolen certificates from two companies in Taiwan, so Windows trusted it."
+    }
+   ]
+  },
+  {
+   "label": "*100,000* COMPUTERS",
+   "lines": [
+    {
+     "text": "Security firms raced to pull it apart. By that September, it had infected around a hundred thousand computers. Almost sixty percent of them were in Iran."
+    }
+   ]
+  },
+  {
+   "label": "WHAT IS IT *HUNTING?*",
+   "lines": [
+    {
+     "text": "But on almost every one, it did nothing at all. It was hunting for one exact setup: Siemens factory controllers, wired to high speed motor drives from just two makers. One in Finland. One in Iran."
+    }
+   ]
+  },
+  {
+   "label": "NATANZ, *IRAN*",
+   "lines": [
+    {
+     "text": "Experts realised there was one place that fit. Natanz. Iran's underground uranium plant, where thousands of centrifuges spin so fast, their edges move at almost the speed of sound."
+    }
+   ],
+   "hold": 0.3
+  },
+  {
+   "label": "THE *ATTACK*",
+   "lines": [
+    {
+     "text": "Once inside, it waited. Then, about once a month, it quietly pushed the rotors far past their safe speed. Weeks later, it dropped them almost to a stop. Then it did it again."
+    }
+   ]
+  },
+  {
+   "label": "*21* SECONDS",
+   "lines": [
+    {
+     "text": "And the cleverest part? It had recorded twenty-one seconds of normal sensor readings. During every attack, it played them back on a loop. In the control room, everything looked fine."
+    }
+   ]
+  },
+  {
+   "label": "*1,000* OUT OF *9,000*",
+   "lines": [
+    {
+     "text": "Inspectors watched Iran pull out broken centrifuges at an unusual rate. One think tank estimated about a thousand were taken out of service, out of roughly nine thousand."
+    }
+   ]
+  },
+  {
+   "label": "WHO MADE *IT?*",
+   "lines": [
+    {
+     "text": "So who built it? In twenty-twelve, The New York Times reported a joint American and Israeli operation, code-named Olympic Games. Neither country has ever officially admitted it."
+    }
+   ]
+  },
+  {
+   "label": "THE *ESCAPE*",
+   "lines": [
+    {
+     "text": "It was never meant to be found. According to that report, a programming error let it slip out of Natanz on an engineer's laptop, and copy itself across the world."
+    }
+   ]
+  },
+  {
+   "label": "A *NEW* KIND OF WAR",
+   "lines": [
+    {
+     "text": "Stuxnet proved that code could do what used to take bombs. And because it escaped, its code is now out there, for anyone to study."
+    }
+   ],
+   "hold": 0.3
+  },
+  {
+   "label": "DON'T PLUG IT *IN*",
+   "lines": [
+    {
+     "text": "It was built to cross into a plant with no internet, one U S B stick at a time. So if you ever find a stick lying around, don't plug it in. And install your updates. That's how holes like these get closed. Follow for more true stories of internet crime."
+    }
+   ]
+  }
+ ]
+}

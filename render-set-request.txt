@@ -1,2 +1,2 @@
-episodes/dark/002-video-poker
-# v3b: wait for Poppins before drawing build-time canvases
+episodes/dark/004-stuxnet
+# v4: Stuxnet
