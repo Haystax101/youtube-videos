@@ -22,3 +22,19 @@ eel: slime | squelch | wet
 bed: bed creak | yawn | snoring | alarm clock
 squirrel: squirrel | chipmunk
 camera: camera shutter | beep | gps
+underwater: underwater ambience | underwater | hydrophone | underwater bubbles
+bubbles: bubbles | bubble | bubbling water | aquarium
+gulp: gulp | swallow | slurp | gulping
+stomach: stomach growl | stomach rumble | digestion | heartbeat
+lab: laboratory | electrical hum | machine hum | x-ray | buzzer | power up
+heart: heartbeat | heart monitor | ecg beep | hospital monitor
+hospital: hospital ambience | hospital corridor | hospital ward
+treadmill: treadmill | running machine | jogging
+clock: clock ticking | alarm clock ring | wind-up alarm
+cash: cash register | coins | ka-ching
+bones: bone crack | crunch | snap twig
+snack: crisp packet | chips crunch | munching
+projector: typewriter | slide projector | film projector
+fall: body fall | falling down | thump floor
+street: city street ambience | traffic | park ambience
+sheets: bed sheets rustle | cloth rustle | blanket
