@@ -97,6 +97,11 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
   - Then `loudnorm I=-14 TP=-1.5`.
   - Ambience (waves, crickets at night) stays quiet.
 - **The rewind** gets a reversed, pitched slice of the music plus a tape squeal, and nothing else.
+- **No noise in stand-in sounds.** When a recorded SFX folder is missing, the fallback must be tonal (swept
+  sines, hums, clicks). george heard static from filtered-noise stand-ins on the eel Short (26 Nov).
+  Before delivery run `python3 tools/hiss_scan.py EP/audio.norm.wav` (flags noise lasting 1 s or more;
+  short speech sibilants are ignored) and `python3 tools/hiss_scan.py --run 1 EP/sfx.wav` on the SFX
+  stem. Both must report 0.
 
 ## Workflow
 
@@ -152,6 +157,7 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
 - [ ] The rewind appears once, after the hook, and nowhere else.
 - [ ] The ending is a payoff and a CTA, with no carried-over "you survived".
 - [ ] The narration is clearly on top. No sound effect is louder than the voice.
+- [ ] `tools/hiss_scan.py` reports 0 on the final mix and the SFX stem (no static).
 - [ ] The music is all orchestral, with a cue per scene.
 - [ ] Captions are on time or slightly early.
 - [ ] Nothing clips through or floats. Every machine is mounted.

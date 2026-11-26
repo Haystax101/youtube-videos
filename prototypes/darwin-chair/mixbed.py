@@ -5,7 +5,7 @@ music 0.36 ducked 55% under the voice, SFX x0.18 through a 0.15*tanh soft limit.
 Usage: python3 mixbed.py EP_DIR -> EP_DIR/audio.mix.wav (video time)"""
 import sys, os, json, glob, subprocess, numpy as np, soundfile as sf
 REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')); sys.path.insert(0, f'{REPO}/pipeline')
-from mix import SR, place as _place, thud, whoosh
+from mix import SR, place as _place, thud
 EP = sys.argv[1]; rng = np.random.default_rng(5); RW = 1.0
 tl = json.load(open(f'{EP}/timeline.json')); B = [b['start'] for b in tl['beats']]
 words = [(b['i'], w) for b in tl['beats'] for w in b['words']]
@@ -46,11 +46,17 @@ def bed(folder, a, b, g, k=0):  # an ambience under a stretch of time (looped, f
     L = int((b - a) * SR); y = np.tile(x, L // len(x) + 1)[:L]; f = min(L // 4, int(0.3 * SR)); env = np.ones(L); env[:f] = np.linspace(0, 1, f); env[-f:] = np.linspace(1, 0, f); _place(fx, y * env, a, g)
 def tt(d): return np.arange(int(SR * d)) / SR
 def beep(): t = tt(0.12); return np.sin(2 * np.pi * 1000 * t) * np.exp(-t * 20) * 0.6
-def tick(): t = tt(0.03); return rng.normal(0, 1, len(t)) * np.exp(-t * 300) * 0.5
 def hb(): t = tt(0.25); return np.sin(2 * np.pi * 55 * t) * np.exp(-t * 18) * 1.2
 
-def creak(): t = tt(0.35); f = 180 + 60 * np.sin(t * 40); return np.sign(np.sin(2 * np.pi * np.cumsum(f) / SR)) * np.exp(-t * 6) * 0.25 * (rng.random(len(t)) > 0.3)
-def roll(d=1.0): t = tt(d); return (rng.normal(0, 1, len(t)) * (0.5 + 0.5 * np.sin(2 * np.pi * 14 * t)) * 0.25) * np.minimum(1, np.minimum(t, d - t) * 10)
+# Fallbacks are tonal only: george heard static from noise-based stand-ins (26 Nov), so no rng noise here.
+def whoosh():  # a swept sine "swish" instead of filtered noise
+    t = tt(0.3); f = 300 + 900 * np.sin(np.pi * t / 0.3); return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * t / 0.3) ** 2 * 0.25
+def creak(): t = tt(0.35); f = 180 + 60 * np.sin(t * 40); return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 6) * 0.3
+def roll(d=1.0):  # castors: a low wheel hum plus soft periodic clicks, no noise
+    t = tt(d); hum = np.sin(2 * np.pi * 70 * t) * (0.6 + 0.4 * np.sin(2 * np.pi * 9 * t)) * 0.18
+    clk = np.zeros_like(t); ct = tt(0.02); c = np.sin(2 * np.pi * 1200 * ct) * np.exp(-ct * 250) * 0.12
+    for s0 in range(0, len(t) - len(c), int(SR / 11)): clk[s0:s0 + len(c)] += c
+    return (hum + clk) * np.minimum(1, np.minimum(t, d - t) * 10)
 def boing(): t = tt(0.5); return np.sin(2 * np.pi * np.cumsum(220 + 180 * np.sin(t * 50) * np.exp(-t * 5)) / SR) * np.exp(-t * 6) * 0.6
 def clink(): t = tt(0.3); return (np.sin(2 * np.pi * 2400 * t) + 0.5 * np.sin(2 * np.pi * 3700 * t)) * np.exp(-t * 18) * 0.4
 V1 = WT(9, 'remember') - 0.4
@@ -96,6 +102,7 @@ put('crowd', WT(9, 'first') + 0.1, 0.35, k=3, maxlen=1.8)
 
 venv = np.convolve(np.abs(pad(voice)), np.ones(2400) / 2400, 'same'); duck = 1 - 0.55 * np.clip(venv / (venv.max() * 0.25), 0, 1)
 mix = pad(voice) + pad(m) * 0.36 * duck + 0.15 * np.tanh(fx[:N] * 0.18 / 0.15)
+sf.write(f'{EP}/sfx.wav', (0.15 * np.tanh(fx[:N] * 0.18 / 0.15)).astype(np.float32), SR)   # stem for tools/hiss_scan.py --run 1
 # insert the rewind after the hook: reversed, pitched-up slice of the music + tape squeal
 H = int((B[1] - 0.05) * SR); R = int(RW * SR)
 src = pad(m)[max(0, H - 2 * R):H][::-1]; idx = np.linspace(0, len(src) - 1, R).astype(int); rw = src[idx] * 0.5
