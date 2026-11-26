@@ -138,6 +138,10 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
 For a video told inside one big three.js set (approved template: `prototypes/archimedes-claw`,
 george 2026-11-25), follow the `make-set-video` skill (`.claude/skills/make-set-video/SKILL.md`).
 Full renders go to 8 GitHub runners at once via `render-set-request.txt` (free on this public repo).
+Before any full render and before posting, run the continuity self-check from that skill
+(`tools/set_check.cjs` must report 0 on-screen problems, plus contact sheets of every walk, sit and stand)
+and fix what it finds. george expects clipping, popping and characters walking through furniture to be
+caught by us, not by him (2026-11-26).
 
 ## Weekly long-form procedure
 

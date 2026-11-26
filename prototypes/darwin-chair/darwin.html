@@ -455,7 +455,7 @@ function updateCard(c, t) {
   c.blob.position.set(c.pos.x, 0.012 + c.pos.y * 0, c.pos.z); c.blob.visible = c.m.visible && c.pos.y < 0.1;
 }
 // seat a card on a chair: just in front of the seat, toward the camera so the legs hang over the seat edge
-function seatOn(c, chair, fwd = 0.3) { const p = chair.root.getWorldPosition(V(0, 0, 0)), d = camera.position.clone().sub(p); d.y = 0; d.normalize();
+function seatOn(c, chair, fwd = 0.3) { c.seatedOn = chair.root; const p = chair.root.getWorldPosition(V(0, 0, 0)), d = camera.position.clone().sub(p); d.y = 0; d.normalize();
   c.pos.copy(chair.root.position).addScaledVector(d, fwd); c.pos.y = (chair.lift || 0); }
 
 // ---------- painted textures for the Victorian sets ----------
@@ -809,9 +809,11 @@ function race(u) { // u 0..1 ; guy cruises, Darwin overtakes
   const gx = lerp(-2.4, 1.2, u), dx = lerp(-3.4, 2.1, Math.pow(u, 0.8) * (1 + 0.0));
   return { gx, dx, spinD: u * Math.PI * 2 * 1.0 };
 }
+// yaw that turns a chair's front (+z) toward the camera, plus a wobble; a seated flat character can't be seen from behind
+const faceCam = (G, root, wob = 0) => { const c = camera.position.clone().sub(G.position); return Math.atan2(c.x - root.position.x, c.z - root.position.z) + wob; };
 function officeState(t) {
   // defaults: everyone at their desks
-  OC.root.position.set(0.2, 0, -1.4); OC.root.rotation.y = Math.PI; OC.sw.rotation.y = 0; guy.spin = 0; guy.pose = { sit: 1, expr: 'neutral', blink: blinkAt(t) };
+  OC.root.position.set(0.2, 0, -1.4); OC.root.rotation.y = faceCam(OFFICE, OC.root, 0.25 * Math.sin(t * 1.3)); OC.sw.rotation.y = 0; guy.spin = 0; guy.pose = { sit: 1, expr: 'neutral', blink: blinkAt(t) };
   DC.root.position.set(-6, 0, 2); dO.on = false; cw1.on = cw2.on = false; CW1.root.position.set(-6, 0, 0); CW2.root.position.set(-6, 0, 0);
   let raceU = null;
   if (t < HOOK_END) raceU = t / HOOK_END;
@@ -822,60 +824,73 @@ function officeState(t) {
   if (raceU !== null) { const r = race(raceU); OC.root.position.set(r.gx, 0, RACE.z1); OC.root.rotation.y = 0; DC.root.position.set(r.dx, 0, RACE.z2); DC.root.rotation.y = Math.sin(t * 3) * 0.3; dO.on = true;
     const passed = r.dx > r.gx + 0.2; guy.pose = { sit: 1, expr: passed ? 'shocked' : 'smug', blink: blinkAt(t), armL: passed ? [2.4, 0.6] : [2.6, 0.3], armR: passed ? [2.4, 0.6] : [2.6, 0.3], sweat: passed ? 1 : 0 };
     dO.pose = { sit: 1, expr: passed ? 'delighted' : 'happy', armR: [2.6, 0.2], armL: [1.2, 0.4], blink: blinkAt(t, 1) }; }
-  if (t >= R2) { const k = sstep(R2, R2 + 0.7, t); OC.root.position.set(1.2, 0, RACE.z1); OC.root.rotation.y = 0; DC.root.position.set(lerp(2.1, 1.75, k), 0, RACE.z2); DC.root.rotation.y = (1 - k) * Math.PI * 2; dO.on = true; dO.spin = (1 - k) * Math.PI * 2;
+  if (t >= R2) { const k = sstep(R2, R2 + 0.7, t); OC.root.position.set(1.2, 0, RACE.z1); OC.root.rotation.y = 0; DC.root.position.set(lerp(2.1, 1.75, k), 0, RACE.z2); DC.root.rotation.y = faceCam(OFFICE, DC.root, (1 - k) * 0.9 * Math.sin(t * 14)); dO.on = true; dO.spin = (1 - k) * 0.9 * Math.sin(t * 14);
     guy.pose = { sit: 1, expr: 'happy', blink: blinkAt(t), armL: [0.6, 0.6], armR: [0.6, 0.6] }; dO.pose = { sit: 1, expr: t > R2 + 0.8 ? 'smug' : 'delighted', armR: [2.8 + Math.sin(t * 9) * 0.25, 0.3], blink: blinkAt(t, 1) }; }
   else dO.spin = 0;
   // beat 8: co-workers zoom past, everyone spinning
   const O1 = WT(8, 'Offices') - 0.3;
   if (t >= VB(8) && t < VB(9)) { const k = clamp((t - O1) / (VB(9) - O1)); cw1.on = cw2.on = true;
-    CW1.root.position.set(lerp(-3.4, 3.4, k), 0, 0.55); CW1.root.rotation.y = k * Math.PI * 4; cw1.spin = k * Math.PI * 4; cw1.pose = { sit: 1, expr: 'delighted', armL: [2.7, 0.2], armR: [2.7, 0.2] };
-    CW2.root.position.set(lerp(3.8, -3.4, clamp(k * 1.1 - 0.05)), 0, 1.55); CW2.root.rotation.y = -k * Math.PI * 3; cw2.spin = -k * Math.PI * 3; cw2.pose = { sit: 1, expr: 'happy', armR: [2.4, 0.3], blink: blinkAt(t) };
-    OC.sw.rotation.y = 0; guy.spin = sstep(VB(8) + 0.4, VB(8) + 1.4, t) * Math.PI * 2; OC.root.rotation.y = Math.PI + guy.spin; guy.pose = { sit: 1, expr: 'happy', blink: blinkAt(t) }; }
+    CW1.root.position.set(lerp(-2.3, 2.3, k), 0, 0.2); CW1.root.rotation.y = faceCam(OFFICE, CW1.root, 0.9 * Math.sin(k * 25)); cw1.spin = 0.9 * Math.sin(k * 25); cw1.pose = { sit: 1, expr: 'delighted', armL: [2.7, 0.2], armR: [2.7, 0.2] };
+    CW2.root.position.set(lerp(2.3, -2.3, clamp(k * 1.1 - 0.05)), 0, 1.45); CW2.root.rotation.y = faceCam(OFFICE, CW2.root, -0.9 * Math.sin(k * 21)); cw2.spin = -0.9 * Math.sin(k * 21); cw2.pose = { sit: 1, expr: 'happy', armR: [2.4, 0.3], blink: blinkAt(t) };
+    OC.sw.rotation.y = 0; const kk = sstep(VB(8) + 0.3, VB(8) + 1.6, t); guy.spin = 0.85 * Math.sin(kk * Math.PI * 3) * (1 - kk * 0.5); OC.root.rotation.y = faceCam(OFFICE, OC.root, guy.spin); guy.pose = { sit: 1, expr: 'happy', blink: blinkAt(t) }; }
   for (const [ch, cd] of [[OC, guy], [DC, dO], [CW1, cw1], [CW2, cw2]]) seatOn(cd, ch, 0.28);
   if (OC.wheels) for (const w of [...OC.wheels, ...CW1.wheels, ...CW2.wheels]) w.rotation.y = t * 12;
 }
 
 // ---------- study ----------
 const J_POS = V(-0.45, 0, -0.45); // in front of the specimen table
+const STAND_P = V(0.64, 0, 1.3);    // just in front of the armchair (it faces (-0.48, 0.88))
+// position along a polyline at fraction k of its length (constant walking speed)
+function along(pts, k) { const L = []; let tot = 0; for (let i = 1; i < pts.length; i++) { L.push(pts[i].distanceTo(pts[i - 1])); tot += L[i - 1]; }
+  let d = clamp(k) * tot; for (let i = 0; i < L.length; i++) { if (d <= L[i] || i === L.length - 1) return lerpV(pts[i], pts[i + 1], L[i] ? clamp(d / L[i]) : 0); d -= L[i]; } return pts[0].clone(); }
 function studyState(t) {
   dS.on = true; dS.spin = 0; AC.root.position.copy(A_POS); AC.root.rotation.y = -0.5; AC.castors.forEach(c => c.scale.setScalar(0.001)); AC.body.position.y = 0;
-  let p = V(2.3, 0, -2.4), pose = { expr: 'neutral', blink: blinkAt(t) }, seated = false;
+  let p = V(2.3, 0, -2.4), pose = { expr: 'neutral', blink: blinkAt(t) }, seated = false, tween = null;
   const b1 = VB(1), dW = WT(1, 'Darwin'), fW = WT(1, 'filled');
-  if (t < dW) { p = V(2.25, 0, -2.3); pose.expr = 'happy'; }
-  else if (t < fW) { const k = ease(dW, fW, t); p = lerpV(V(2.25, 0, -2.3), V(0.35, 0, -0.2), k); pose = { expr: 'happy', walk: k < 0.98 ? t * 3.2 : 0, blink: blinkAt(t) }; }
+  const ENTRY = [V(2.5, 0, -2.72), V(2.45, 0, -1.75), V(1.55, 0, -1.2), V(0.35, 0, -0.2)];
+  if (t < dW) { p = ENTRY[0].clone(); pose.expr = 'happy'; }
+  else if (t < fW) { const k = ease(dW, fW, t); p = along(ENTRY, k); pose = { expr: 'happy', walk: k < 0.98 ? t * 3.2 : 0, blink: blinkAt(t) }; }
   else if (t < VB(2)) { p = V(0.35, 0, -0.2); pose = { expr: 'delighted', armL: [2.3, 0.3], armR: [2.3, 0.3] }; }
   // beat 2: at the microscope, paper pile grows
   const heW = WT(2, 'He', 1);
-  if (t >= VB(2) && t < VB(3)) { p = V(-1.85, 0, -0.15); pose = { expr: t > heW ? 'smug' : 'neutral', lean: -0.12, armL: [1.1, 0.6], blink: blinkAt(t) }; }
+  if (t >= VB(2) && t < VB(3)) { p = V(-1.72, 0, -0.25); pose = { expr: t > heW ? 'smug' : 'neutral', lean: -0.12, armL: [1.1, 0.6], blink: blinkAt(t) }; }
   paperStack.scale.y = 1 + 2.5 * sstep(heW, VB(3), t);
   // beat 3: up, walk, sit, again (no wheels yet)
   if (t >= VB(3) && t < VB(4)) {
     const a0 = VB(3), aW = WT(3, 'walking'), sW = WT(3, 'sitting'), ag = WT(3, 'Again');
-    const chairP = A_POS.clone().add(V(0, 0, 0.0)), jarP = J_POS;
-    const cyc = (k, fast) => { // one up-walk-grab-walk-sit cycle, k 0..1
-      if (k < 0.12) return { p: chairP, pose: { sit: k < 0.06 ? 1 : 0, expr: fast ? 'annoyed' : 'neutral', sweat: fast ? 1 : 0 }, seated: k < 0.06 };
-      if (k < 0.45) { const q = (k - 0.12) / 0.33; return { p: lerpV(chairP, jarP, sstep(0, 1, q)), pose: { walk: q * 6, expr: fast ? 'annoyed' : 'neutral', sweat: fast ? 1 : 0 } }; }
-      if (k < 0.55) return { p: jarP, pose: { armR: [2.5, 0.4], expr: fast ? 'annoyed' : 'happy', sweat: fast ? 1 : 0 } };
-      if (k < 0.9) { const q = (k - 0.55) / 0.35; return { p: lerpV(jarP, chairP, sstep(0, 1, q)), pose: { walk: q * 6, expr: fast ? 'annoyed' : 'neutral', sweat: fast ? 1 : 0 } }; }
-      return { p: chairP, pose: { sit: 1, expr: fast ? 'annoyed' : 'neutral', sweat: fast ? 1 : 0 }, seated: true }; };
+    const standP = STAND_P, route = [STAND_P, V(0.15, 0, 1.25), J_POS], jarP = J_POS;
+    const cyc = (k, fast) => { // one cycle, k 0..1: seated, rise to the front of the chair, walk round it to the jar, grab, back, turn and sit
+      const ex = fast ? 'annoyed' : 'neutral', sw = fast ? 1 : 0;
+      if (k < 0.06) return { p: standP, pose: { sit: 1, expr: ex, sweat: sw }, seated: true };
+      if (k < 0.14) return { p: standP, pose: { expr: ex, sweat: sw }, rise: (k - 0.06) / 0.08 };
+      if (k < 0.45) { const q = (k - 0.14) / 0.31; return { p: along(route, sstep(0, 1, q)), pose: { walk: q * 6, expr: ex, sweat: sw } }; }
+      if (k < 0.55) return { p: jarP, pose: { armR: [2.5, 0.4], expr: fast ? 'annoyed' : 'happy', sweat: sw } };
+      if (k < 0.84) { const q = (k - 0.55) / 0.29; return { p: along(route, 1 - sstep(0, 1, q)), pose: { walk: q * 6, expr: ex, sweat: sw } }; }
+      if (k < 0.94) return { p: standP, pose: { sit: 1, expr: ex, sweat: sw }, lower: (k - 0.84) / 0.1 };
+      return { p: standP, pose: { sit: 1, expr: ex, sweat: sw }, seated: true }; };
     let r;
-    if (t < aW) r = { p: chairP, pose: { sit: t < a0 + 0.5 ? 1 : 0, expr: 'neutral' }, seated: t < a0 + 0.5 };
-    else if (t < ag) r = cyc(0.12 + 0.88 * (t - aW) / (ag - aW), false);
-    else { const k = ((t - ag) / (VB(4) - ag)) * 2.2; r = cyc(k % 1, true); }
-    p = r.p; pose = { ...r.pose, blink: blinkAt(t) }; seated = !!r.seated; }
+    const c0 = a0 + 0.35;   // one full trip from "getting up" to "sitting back down", then up-down-up-down in place for "again and again"
+    if (t < c0) r = { p: standP, pose: { sit: 1, expr: 'neutral' }, seated: true };
+    else if (t < ag) r = cyc(0.06 + 0.94 * (t - c0) / (ag - c0), false);
+    else { const k = clamp((t - ag) / (VB(4) - ag - 0.1)), ph = (k * 2) % 1, ex = { expr: 'annoyed', sweat: 1 };
+      r = k >= 1 ? { p: standP, pose: { sit: 1, ...ex }, seated: true } : ph < 0.5 ? { p: standP, pose: ex, rise: ph / 0.5 } : { p: standP, pose: { sit: 1, ...ex }, lower: (ph - 0.5) / 0.5 }; }
+    p = r.p; pose = { ...r.pose, blink: blinkAt(t) }; seated = !!r.seated; tween = r.rise !== undefined ? 1 - sstep(0, 1, r.rise) : r.lower !== undefined ? sstep(0, 1, r.lower) : null; }
   // beat 4: castors, then scooting
   const wW = WT(4, 'wheels'), scW = WT(4, 'scooted');
   if (t >= VB(4)) AC.castors.forEach((c, i) => { const k = clamp((t - (wW + i * 0.12)) / 0.18); c.scale.setScalar(k > 0 ? 0.001 + Math.min(1.25, k * 1.25) - Math.max(0, k - 0.8) * 1.25 : 0.001); });
   if (t >= VB(4)) AC.body.position.y = 0.065 * clamp((t - wW) / 0.5);
-  const PATH = new THREE.CatmullRomCurve3([A_POS, V(-0.2, 0, -0.35), V(-1.6, 0, -0.2), V(-1.4, 0, -1.95), V(-0.2, 0, 0.6), V(0.0, 0, 1.0)]);
+  const PATH = new THREE.CatmullRomCurve3([A_POS, V(0.3, 0, 0.05), V(-0.9, 0, -0.05), V(-1.4, 0, 0.45), V(-0.6, 0, 1.05), V(0.0, 0, 1.0)]);
   if (t >= VB(4) && t < VB(5)) { seated = true; pose = { sit: 1, expr: t < wW ? 'neutral' : 'smug', blink: blinkAt(t) };
-    if (t >= scW) { const k = sstep(scW, DL.s - 0.1, t); AC.root.position.copy(PATH.getPoint(k)); AC.root.rotation.y = -0.5 + k * Math.PI * 4; dS.spin = k * Math.PI * 4; pose = { sit: 1, expr: 'delighted', armL: [2.5, 0.3], armR: [2.5, 0.3] }; }
-    if (t >= DL.s - 0.1) { AC.root.position.copy(PATH.getPoint(1)); AC.root.rotation.y = 0; dS.spin = 0; pose = { sit: 1, expr: 'delighted', talk: talkOf('darwin', t), armL: [2.7, 0.2], armR: [2.7, 0.2] }; } }
-  if (t >= VB(5)) { seated = true; const k = sstep(VB(5), VB(5) + 0.8, t); AC.root.position.copy(lerpV(PATH.getPoint(1), V(0.25, 0, 1.75), k)); AC.root.rotation.y = 0; AC.body.position.y = 0.065;
+    if (t >= scW) { const lk = clamp((t - scW) / (DL.s - 0.1 - scW)), k = 0.6 * lk + 0.4 * sstep(0, 1, lk); AC.root.position.copy(PATH.getPointAt(k)); const wob = 0.9 * Math.sin(k * 30); AC.root.rotation.y = faceCam(STUDY, AC.root, wob); dS.spin = wob; pose = { sit: 1, expr: 'delighted', armL: [2.5, 0.3], armR: [2.5, 0.3] }; }
+    if (t >= DL.s - 0.1) { AC.root.position.copy(PATH.getPoint(1)); AC.root.rotation.y = faceCam(STUDY, AC.root); dS.spin = 0; pose = { sit: 1, expr: 'delighted', talk: talkOf('darwin', t), armL: [2.7, 0.2], armR: [2.7, 0.2] }; } }
+  if (t >= VB(5)) { seated = true; const k = sstep(VB(5), VB(5) + 0.8, t); AC.root.position.copy(lerpV(PATH.getPoint(1), V(0.25, 0, 1.75), k)); AC.root.rotation.y = faceCam(STUDY, AC.root, 0); AC.body.position.y = 0.065;
     const nq = WT(5, 'Not'); pose = { sit: 1, expr: t < nq ? 'smug' : 'annoyed', armL: t > nq ? [1.6, 1.2] : [0.3, 0.2], armR: t > nq ? [1.6, 1.2] : [0.3, 0.2], blink: blinkAt(t) };
     AC.castors.forEach(c => c.scale.setScalar(1)); }
   dS.pose = pose;
-  if (seated) seatOn(dS, AC, 0.3); else dS.pos.copy(p);
+  if (seated) seatOn(dS, AC, 0.3);
+  else if (tween !== null) { seatOn(dS, AC, 0.3); const seatP = dS.pos.clone(); dS.pos.copy(lerpV(p, seatP, tween)); dS.pos.y = seatP.y * tween;
+    if (tween < 0.5) dS.pose = { ...pose, sit: 0 }; }   // stands up / sits down in front of the seat, never through it
+  else dS.pos.copy(p);
   // tea table nudged across the floor on its castors
   const fu = WT(5, 'Furniture'); teaTable.position.x = TEA.x - 0.3 * sstep(fu + 0.2, fu + 1.4, t); teaTable.rotation.y = 0.3 * sstep(fu + 0.2, fu + 1.4, t);
   // fire + candles
@@ -896,7 +911,7 @@ function hallState(t) {
   critic.pose = { expr: angry ? 'angry' : 'neutral', blink: blinkAt(t, 2), armL: [0.5, 0.3], armR: t >= CL.s ? [1.7 + Math.sin(t * 8) * 0.08, 0.2] : [0.5, 0.3], talk: talkOf('critic', t), monoclePop: sstep(CL.s + 0.5, CL.s + 0.8, t) };
   lady.pose = { expr: angry ? 'annoyed' : (t > ro ? 'shocked' : 'happy'), blink: blinkAt(t, 1.3) }; lady2.pose = { expr: angry ? 'smug' : 'happy', blink: blinkAt(t, 0.7) };
   sleeper.on = t >= VB(7); sleeper.pose = { sit: 1, expr: t >= WT(7, 'too') - 0.4 ? 'sleep' : 'happy', zzz: t >= WT(7, 'too') ? 1 : 0, lean: 0.06 };
-  if (sleeper.on) { sleeper.pos.copy(WC.root.position); const d = camera.position.clone().sub(HALL.position).sub(WC.root.position); d.y = 0; d.normalize(); sleeper.pos.addScaledVector(d, 0.2); sleeper.pos.y = 0.25 + 0.02; }
+  if (sleeper.on) { sleeper.pos.copy(WC.root.position); const d = camera.position.clone().sub(HALL.position).sub(WC.root.position); d.y = 0; d.normalize(); sleeper.pos.addScaledVector(d, 0.2); sleeper.pos.y = 0.25 + 0.02; sleeper.seatedOn = WC.root; }
   crowd.forEach((c, i) => { c.pose = { expr: angry && c.pos.y < 1 ? (i % 2 ? 'annoyed' : 'smug') : (t > ro && t < VB(7) ? 'shocked' : c.base.expr), blink: blinkAt(t, c.base.ph), armR: i % 3 === 0 ? [0.6 + Math.sin(t * 2 + c.base.ph) * 0.2, 0.4] : undefined }; });
   fountainDrops.forEach(d => { const k = (t * 0.8 + d.userData.k) % 1, a = d.userData.a; d.position.set(Math.cos(a) * k * 1.4, 4.2 + k * 0.6 - k * k * 4.2, Math.sin(a) * k * 1.4); d.visible = d.position.y > 0.45; });
 }
@@ -979,9 +994,11 @@ function overlays(t) {
 // =====================================================================================================
 let lastSet = null;
 function renderFrame(t) {
+  for (const c of cards) c.seatedOn = null;
   // camera (rewind plays the hook shots backwards)
   let ct = t; if (t >= HOOK_END && t < HOOK_END + RW) ct = HOOK_END * (1 - sstep(HOOK_END, HOOK_END + RW, t)) - 0.0001;
   let si = 0; for (let i = 0; i < SHOTS.length; i++) if (ct >= SHOTS[i].t) si = i;
+  window.__shot = si;
   const s = SHOTS[si], tEnd = SHOTS[si + 1] ? SHOTS[si + 1].t : DUR, k = clamp((ct - s.t) / Math.max(0.01, tEnd - s.t));
   for (const [n, G] of Object.entries(SETS)) G.visible = n === s.set; const G = SETS[s.set];
   // world states (office uses real t so the rewind runs the race backwards)
@@ -998,10 +1015,44 @@ function renderFrame(t) {
   handS.rotation.z = -Math.floor(t) / 60 * Math.PI * 2; handM.rotation.z = -(32 / 60) * Math.PI * 2; handH.rotation.z = -(2.5 / 12) * Math.PI * 2;
   drawScreen(3);
   overlays(t);
-  draw();
+  if (!renderFrame.__noDraw) draw();
 }
 buildShots(); await document.fonts.ready;
 window.renderFrame = renderFrame; window.DURATION = DUR; renderFrame(0.5); window.READY = true;
-window.DBG = { V, camera, SETS, SHOTS, VB, WT, B };
+window.DBG = { V, camera, SETS, SHOTS, VB, WT, B, get WC() { return WC; }, get AC() { return AC; }, get THREE() { return THREE; }, get dS() { return dS; } };
+// ---------- self-check: characters and moving props passing through furniture (tools/set_check.cjs) ----------
+// A card's feet are a circle of radius CARD_R; obstacles are each set's top-level children (walls, rugs and
+// things above head height are skipped). A card may overlap the chair it is seated on.
+const CARD_R = 0.17, MOVERS = [AC.root, OC.root, DC.root, CW1.root, CW2.root, WC.root, teaTable];
+WC.root.userData.fwdObj = WC.top;
+['study armchair', 'office chair', 'office armchair', 'coworker chair 1', 'coworker chair 2', 'Warren chair', 'tea table'].forEach((n, i) => MOVERS[i].name = n);
+window.SETCHECK = (t) => {
+  renderFrame.__noDraw = true; renderFrame(t); renderFrame.__noDraw = false;
+  const hits = [], shotSet = Object.entries(SETS).find(([n, G]) => G.visible)[0], bb = new THREE.Box3();
+  for (const [name, G] of Object.entries(SETS)) {
+    const obs = [];
+    const lbl = (b, o) => o && o.name ? o.name : `${new THREE.Box3().setFromObject(o || G).getCenter(V(0, 0, 0)).sub(G.position).toArray().map(v => v.toFixed(1)).join(',')}`;
+    const parked = b => { const c = b.getCenter(V(0, 0, 0)).sub(G.position); return Math.abs(c.x) > 4.5 || Math.abs(c.z) > 4.5; };
+    G.updateMatrixWorld(true);
+    G.traverse(m => { if (!m.isMesh || m.userData.isHull || m.userData.casterOnly || m.userData.noOutline || cards.some(c => c.m === m || c.blob === m)) return;
+      for (let a = m; a && a !== G; a = a.parent) if (!a.visible) return;
+      let o = m; while (o.parent !== G) o = o.parent;   // the set-level object it belongs to (a chair, a table...)
+      bb.setFromObject(m); if (bb.isEmpty()) return; const sz = bb.getSize(V(0, 0, 0));
+      if (bb.max.y < 0.07 || bb.min.y > 1.5 || sz.x > 3.2 || sz.z > 3.2 || (parked(bb) && name !== 'hall')) return; obs.push({ o, box: bb.clone() }); });
+    for (const c of cards) { if (c.G !== G || !c.on) continue; const wp = c.pos.clone().add(G.position);
+      for (const { o, box } of obs) { if (o === c.seatedOn) continue;
+        const dx = Math.max(box.min.x - wp.x, 0, wp.x - box.max.x), dz = Math.max(box.min.z - wp.z, 0, wp.z - box.max.z);
+        if (dx * dx + dz * dz < CARD_R * CARD_R && box.min.y < wp.y + 1.2 && box.max.y > wp.y + 0.05) hits.push(`${name}: card ${c.kind} in [${lbl(box, o)}]`); } }
+    // a seated flat character always faces the camera, so the chair must too: if the camera sees the chair's back,
+    // the character's face shows through the backrest (chairs face local +z unless userData.fwdObj says otherwise)
+    if (name === shotSet) for (const c of cards) { if (c.G !== G || !c.on || !c.seatedOn) continue; const ch = c.seatedOn, fo = ch.userData.fwdObj || ch;
+      const f = V(0, 0, 1).applyQuaternion(fo.getWorldQuaternion(new THREE.Quaternion())); f.y = 0; f.normalize();
+      const d = camera.position.clone().sub(ch.getWorldPosition(V(0, 0, 0))); d.y = 0; d.normalize();
+      if (f.dot(d) < 0.25) hits.push(`${name}: camera sees the back of ${ch.name || 'a chair'} while ${c.kind} sits in it`); }
+    for (const m of MOVERS) { if (!G.children.includes(m)) continue; if (parked(new THREE.Box3().setFromObject(m)) && name !== 'hall') continue; const mb = new THREE.Box3().setFromObject(m).expandByScalar(-0.04);
+      for (const { o, box } of obs) { if (o === m) continue; if (mb.intersectsBox(box) && Math.min(mb.max.y, box.max.y) - Math.max(mb.min.y, box.min.y) > 0.06) hits.push(`${name}: ${lbl(mb, m)} hits [${lbl(box, o)}]`); } }
+  }
+  return { set: shotSet, fastOK: t >= HOOK_END && t < HOOK_END + RW + 0.1, shot: window.__shot, hits: [...new Set(hits)], cards: cards.filter(c => c.on && c.G === SETS[shotSet]).map((c, i) => [c.kind + '#' + cards.indexOf(c), c.pos.x, c.pos.y, c.pos.z]) };
+};
 
 </script></body></html>

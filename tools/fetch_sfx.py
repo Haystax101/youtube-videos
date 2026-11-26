@@ -103,7 +103,7 @@ def oga(folder, q, n):
 
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
-    kw = [l.split(':', 1) for l in open('sfx-keywords.txt') if ':' in l and not l.startswith('#')]
+    kw = [l.split(':', 1) for l in open(os.environ.get('SFX_KEYWORDS', 'sfx-keywords.txt')) if ':' in l and not l.startswith('#')]
     for folder, qs in kw:
         folder = slug(folder)
         for q in [x.strip() for x in qs.split('|') if x.strip()]:

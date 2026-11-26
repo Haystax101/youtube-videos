@@ -1,6 +1,6 @@
 ---
 name: make-set-video
-description: Make a "set" video in the one-continuous-camera three.js style (Archimedes claw is the approved template). Use for any Short or long-form told inside one big 3D set with 2D card characters, a moving camera and no cuts.
+description: Make a "set" video in three.js with 2D card characters (Archimedes claw = one-camera template; Darwin's chair = multi-room cut template with the toon look). Use for any Short or long-form told inside 3D sets with flat characters, including the continuity self-check before delivery.
 ---
 
 # Making a set video
@@ -105,8 +105,33 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
    `node rend.cjs stills 1,5,9,...` (about 1 s each).
    - Look for the camera inside walls or houses, behind sails, or too close to ships.
    - Look for floating or clipping props, empty areas, and text off screen.
-3. Run `python3 score.py EP && python3 mixclaw.py EP`, then loudnorm.
-4. Render with the chunked, cached renderer:
+3. **Self-check for continuity, before any full render and before george sees anything.**
+   george (26 Nov, Darwin's chair): "this is the sort of thing you'll need to spot going forward so i
+   needn't bring it up" (Darwin walked through the door, his chair and the table). Two passes:
+   - **Automatic:** give the page a `window.SETCHECK(t)` (copy it from `prototypes/darwin-chair/darwin.html`)
+     and run `NODE_PATH=$(npm root -g) node tools/set_check.cjs EP/page.html 0.05`. It steps through
+     the whole timeline and flags:
+     - a character card's feet (r 0.17 m) inside furniture, except the chair it is seated in (`seatOn`
+       records that);
+     - a moving prop (chairs, tables) overlapping furniture;
+     - a camera that sees the *back* of a chair while a flat character sits in it, because the face
+       shows through the backrest;
+     - a character moving faster than 5 m/s inside one shot (a pop or teleport). The rewind is exempt.
+     It must print `0 on-screen problem(s)`. Fix the motion, never the check's thresholds.
+   - **By eye:** render a contact sheet every 0.35 s through each piece of choreography (entrances,
+     sitting, standing, walking, chases), not only one still per shot. Look for:
+     - characters walking through doors, door leaves, furniture or each other;
+     - sitting and standing: walk to the **front** of the seat, then lower into it (`tween` in
+       `studyState`), and rise back to the same spot. Never pop from standing into the seat;
+     - spinning chairs: a flat card can't be seen from behind, so keep a seated chair facing the
+       camera (`faceCam(G, root, wobble)`) and sell the spin with a wobble plus the card's squash;
+     - paths: plan walking routes as polylines (`along(pts, k)`, constant speed) around the
+       furniture footprints. Print the set's footprints first (top-level children's Box3 in x/z);
+     - walking speed: ~1-1.5 m/s for a walk; give a trip enough narration time or shorten it;
+     - characters swapping places or props jumping between consecutive shots of the same moment;
+     - parked or off-stage objects that drift into view; things passing through walls on their way in.
+4. Run `python3 score.py EP && python3 mixclaw.py EP`, then loudnorm.
+5. Render with the chunked, cached renderer:
    `NODE_PATH=$(npm root -g) node pipeline/render_set.cjs EP --page claw.html --workers 4`
    - It renders 2 s chunks into `EP/chunks/` and joins them into `EP/silent.mp4`.
    - After a fix, re-render only what changed with `--redo 54-80` (seconds).
@@ -119,7 +144,7 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
    - Find the run with `gh api repos/Haystax101/youtube-videos/actions/runs --jq '.workflow_runs[0]'`.
    - Download with `curl -sSL -o EP/video.mp4 https://github.com/Haystax101/youtube-videos/releases/download/TAG/video.mp4`.
    - Use local `--redo` for small fixes and the workflow for full renders.
-5. Mux (local renders): `ffmpeg -i silent.mp4 -i audio.norm.wav -c:v copy -c:a aac -b:a 192k -shortest video.mp4`.
+6. Mux (local renders): `ffmpeg -i silent.mp4 -i audio.norm.wav -c:v copy -c:a aac -b:a 192k -shortest video.mp4`.
    Deliver to `/mnt/project-files/gary-tries-it/<slug>/`.
 
 ## Pre-delivery checklist (every note george has given)
@@ -130,6 +155,8 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
 - [ ] The music is all orchestral, with a cue per scene.
 - [ ] Captions are on time or slightly early.
 - [ ] Nothing clips through or floats. Every machine is mounted.
+- [ ] `tools/set_check.cjs` reports 0 on-screen problems, and the 0.35 s contact sheets of every
+      walk, sit and stand look right (characters go round furniture and sit from the front of the seat).
 - [ ] Earlier-scene debris is gone after a time jump.
 - [ ] Odd words are pronounced right (listen for ship/period terms).
 - [ ] The set is busy in every shot, and the camera is never still.
