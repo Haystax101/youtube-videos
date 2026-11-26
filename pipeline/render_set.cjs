@@ -12,7 +12,7 @@
 //   node pipeline/render_set.cjs EP_DIR --seed old.mp4 --keep 0-54   # cut chunks from an earlier full render
 //   options: --page claw.html (default: the only .html in EP_DIR), --workers 4, --join-only
 // Then mux: ffmpeg -i EP/silent.mp4 -i EP/audio.norm.wav -c:v copy -c:a aac -b:a 192k -shortest EP/video.mp4
-const { chromium } = require('playwright');
+const { chromium } = require('playwright'); const makeGuard = require('./frame_guard.cjs');
 const http = require('http'), fs = require('fs'), path = require('path'), { spawn, spawnSync } = require('child_process');
 const REPO = path.resolve(__dirname, '..'), FPS = 30, CHUNK = 2;
 const args = process.argv.slice(2), EP = path.resolve(args[0]);
@@ -21,6 +21,7 @@ const page = opt('page', fs.readdirSync(EP).filter(f => f.endsWith('.html'))[0])
 const PAGE = '/' + path.relative(REPO, path.join(EP, page)).split(path.sep).join('/');
 const WORKERS = +opt('workers', 4), CH_DIR = path.join(EP, 'chunks'); fs.mkdirSync(CH_DIR, { recursive: true });
 const cfile = i => path.join(CH_DIR, `c${String(i).padStart(3, '0')}.mp4`);
+const gfile = i => cfile(i).replace(/\.mp4$/, '.guard.json');   // frame guard log per chunk, merged into EP/frame_guard.json on join
 const range = s => { if (s === 'all') return [0, 1e9]; const [a, b] = String(s).split('-').map(Number); return [a, b ?? a]; };
 const ENC = ['-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', '-r', String(FPS)];
 
@@ -61,9 +62,10 @@ const ff = (a) => spawnSync('ffmpeg', ['-y', '-loglevel', 'error', ...a], { stdi
     while (todo.length) { const i = todo.shift(); const [f0, f1] = chunkSpan(i); const tmp = cfile(i) + '.part.mp4';
       const enc = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', ...ENC, tmp], { stdio: ['pipe', 'inherit', 'inherit'] });
       const closed = new Promise(r => enc.on('close', r));
-      for (let f = f0; f < f1; f++) { await w.p.evaluate(t => window.renderFrame(t), f / FPS); const buf = await w.p.screenshot({ type: 'jpeg', quality: 92, timeout: 600000 });
+      const guard = makeGuard(w.p, () => w.p.screenshot({ type: 'jpeg', quality: 92, timeout: 600000 }));   // retries black-tile glitches
+      for (let f = f0; f < f1; f++) { const buf = await guard.frame(f / FPS);
         if (!enc.stdin.write(buf)) await new Promise(r => enc.stdin.once('drain', r)); }
-      enc.stdin.end(); await closed; fs.renameSync(tmp, cfile(i)); done++;
+      enc.stdin.end(); await closed; fs.writeFileSync(gfile(i), JSON.stringify(guard.log)); fs.renameSync(tmp, cfile(i)); done++;
       console.log(`chunk ${i} done (${done} this run, ${((Date.now() - t0) / 1000).toFixed(0)}s)`); }
     await w.b.close(); }));
   server.close();
@@ -71,5 +73,10 @@ const ff = (a) => spawnSync('ffmpeg', ['-y', '-loglevel', 'error', ...a], { stdi
   if (missing.length) { console.log('not joined; missing chunks', missing.join(',')); return; }
   fs.writeFileSync(path.join(CH_DIR, 'list.txt'), [...Array(nChunks).keys()].map(i => `file '${path.basename(cfile(i))}'`).join('\n'));
   ff(['-f', 'concat', '-safe', '0', '-i', path.join(CH_DIR, 'list.txt'), '-c', 'copy', path.join(EP, 'silent.mp4')]);
+  const g = { frames: 0, retried: 0, unresolved: [], chunks_without_log: 0 };
+  for (let i = 0; i < nChunks; i++) { if (!fs.existsSync(gfile(i))) { g.chunks_without_log++; continue; } const l = JSON.parse(fs.readFileSync(gfile(i), 'utf8'));
+    g.frames += l.frames; g.retried += l.retried; g.unresolved.push(...l.unresolved); }
+  fs.writeFileSync(path.join(EP, 'frame_guard.json'), JSON.stringify(g, null, 1));
+  console.log(`frame guard: ${g.retried} glitch frame(s) retried, ${g.unresolved.length} still dark (see tools/qa.py)`);
   console.log('joined', path.join(EP, 'silent.mp4'), ((Date.now() - t0) / 1000).toFixed(0) + 's');
 })();

@@ -254,7 +254,21 @@ def main(ep_dir):
     mix = voice + bed * 0.13 * duck * fade + sfx
     mix /= max(1.0, np.abs(mix).max() / 0.95)
     sf.write(ep / "audio.mix.wav", mix.astype(np.float32), SR)
+    loudnorm(ep / "audio.mix.wav")
     print("mixed", ep / "audio.mix.wav")
+
+
+def loudnorm(path, I=-14.0, TP=-1.5):
+    """Two-pass ffmpeg loudnorm in place to YouTube's level (-14 LUFS). Before this the daily Shorts came out
+    around -22 LUFS, so YouTube played them quieter than everything around them (tools/qa.py checks it)."""
+    import re, subprocess, tempfile
+    f = f"loudnorm=I={I}:TP={TP}:LRA=11"
+    m = subprocess.run(["ffmpeg", "-hide_banner", "-nostats", "-i", str(path), "-af", f + ":print_format=json", "-f", "null", "-"], capture_output=True, text=True).stderr
+    j = json.loads(re.search(r"\{[^{}]*\}\s*$", m).group(0))
+    f2 = f + f":measured_I={j['input_i']}:measured_TP={j['input_tp']}:measured_LRA={j['input_lra']}:measured_thresh={j['input_thresh']}:offset={j['target_offset']}:linear=true"
+    tmp = tempfile.mktemp(suffix=".wav")
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(path), "-af", f2, "-ar", str(SR), "-c:a", "pcm_f32le", tmp], check=True)
+    Path(tmp).replace(path)
 
 
 if __name__ == "__main__":

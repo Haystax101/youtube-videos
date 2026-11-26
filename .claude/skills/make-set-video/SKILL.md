@@ -104,8 +104,12 @@ Stills can look perfect while the moving video shimmers, so every set page needs
 
 - **Length is whatever fits.** Archimedes is 1:17 and george was happy with that. Don't pad, and
   don't cut a real arc to hit 30 s.
+- **Hook strength (george, 26 Nov):** our facts are the edge, and the visuals and hook must be
+  strong enough to carry them. Use a bold claim to "you" that states the surprising fact or stakes,
+  not a soft question; Darwin's "Did Darwin invent the office chair?" was too weak. See the rules
+  in the `write-short-script` skill, under "Hook strength".
 - **Cold open:**
-  - Show the most extreme moment while the hook question is asked.
+  - Show the most striking moment while the hook claim is spoken.
   - Then play exactly **one** rewind: a `◀◀ REWIND` overlay, a scanline effect and the camera flying back along its path for 1 s.
   - george loved it. It must never appear again later.
     - Pauses in the voice are **not** rewinds. v2 showed the overlay in the story pauses and it read as "going back in time" when time was going forward.
@@ -189,9 +193,11 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
 
 ## Pre-delivery checklist (every note george has given)
 
+- [ ] `python3 tools/lint_voice.py EP` passes before any voicing (Kokoro or Qwen): no "Mt."-style abbreviations, digits, symbols or unexplained acronyms; names have phonetic spellings in `pronounce`.
+
 - [ ] Quality bar: high fidelity and vibrant, and no asset anywhere looks unrealistic or unfinished, only stylised. Otherwise fix or cut it before delivery.
 
-- [ ] `python3 tools/check_frames.py video.mp4` reports no dark patches. It catches the camera inside grass or trunks and one-frame black glitch rectangles; george spotted one at 13 s. Move cameras that sit inside geometry and re-render with `--redo`; for one-frame black tiles (a swiftshader glitch that can recur on re-render) use `--fix OUT.mp4`, which swaps in the previous frame.
+- [ ] `python3 tools/qa.py EP --page EP/page.html --fix` has no FAIL and every WARN is explained, and the contact-sheet review passed (the `qa-video` skill). It covers dark patches and one-frame black tiles (george spotted one at 13 s; the renderers now retry those frames as they render, and `--fix` patches any left), loudness, clipping, static, dead air, voice-over-music balance and continuity. Move cameras that sit inside geometry and re-render with `--redo`.
 - [ ] Characters use the same pearly-white faces as Syracuse and walk-in-circles, and the set is detailed and angular.
 
 - [ ] The rewind appears once, after the hook, and nowhere else.
