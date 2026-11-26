@@ -1,2 +1,2 @@
-episodes/dark/002-mt-gox
-# rerun: MtGox pronunciation, HOT WALLET plate, LOBBY text
+episodes/dark/005-xbox-underground
+# Xbox Underground in the smol reference style
