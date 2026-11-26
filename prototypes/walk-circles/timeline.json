@@ -1,0 +1,491 @@
+{
+ "duration": 28.095,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 4.619,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "This",
+     "s": 0.15,
+     "e": 0.355,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hiker",
+     "s": 0.355,
+     "e": 0.746,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 0.746,
+     "e": 0.938,
+     "speaker": "narrator"
+    },
+    {
+     "w": "walking",
+     "s": 0.938,
+     "e": 1.342,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 1.342,
+     "e": 1.534,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 1.534,
+     "e": 1.719,
+     "speaker": "narrator"
+    },
+    {
+     "w": "perfectly",
+     "s": 1.719,
+     "e": 2.315,
+     "speaker": "narrator"
+    },
+    {
+     "w": "straight",
+     "s": 2.315,
+     "e": 2.547,
+     "speaker": "narrator"
+    },
+    {
+     "w": "line.",
+     "s": 2.547,
+     "e": 2.753,
+     "speaker": "narrator"
+    },
+    {
+     "w": "At",
+     "s": 2.893,
+     "e": 3.113,
+     "speaker": "narrator"
+    },
+    {
+     "w": "least,",
+     "s": 3.113,
+     "e": 3.479,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that's",
+     "s": 3.479,
+     "e": 3.722,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 3.722,
+     "e": 3.958,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 3.958,
+     "e": 4.178,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thinks.",
+     "s": 4.178,
+     "e": 4.429,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 4.619,
+   "end": 10.657,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "He's",
+     "s": 4.619,
+     "e": 4.812,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lost",
+     "s": 4.812,
+     "e": 5.012,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 5.012,
+     "e": 5.198,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 5.198,
+     "e": 5.379,
+     "speaker": "narrator"
+    },
+    {
+     "w": "German",
+     "s": 5.379,
+     "e": 5.765,
+     "speaker": "narrator"
+    },
+    {
+     "w": "forest,",
+     "s": 5.765,
+     "e": 6.256,
+     "speaker": "narrator"
+    },
+    {
+     "w": "so",
+     "s": 6.256,
+     "e": 6.442,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 6.442,
+     "e": 6.629,
+     "speaker": "narrator"
+    },
+    {
+     "w": "picks",
+     "s": 6.629,
+     "e": 6.835,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 6.835,
+     "e": 7.015,
+     "speaker": "narrator"
+    },
+    {
+     "w": "direction",
+     "s": 7.015,
+     "e": 7.595,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 7.595,
+     "e": 7.788,
+     "speaker": "narrator"
+    },
+    {
+     "w": "commits.",
+     "s": 7.788,
+     "e": 8.181,
+     "speaker": "narrator"
+    },
+    {
+     "w": "No",
+     "s": 8.321,
+     "e": 8.631,
+     "speaker": "narrator"
+    },
+    {
+     "w": "turning.",
+     "s": 8.631,
+     "e": 9.281,
+     "speaker": "narrator"
+    },
+    {
+     "w": "No",
+     "s": 9.421,
+     "e": 9.754,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stopping.",
+     "s": 9.754,
+     "e": 10.467,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 10.657,
+   "end": 15.372,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "An",
+     "s": 10.657,
+     "e": 10.868,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hour",
+     "s": 10.868,
+     "e": 11.095,
+     "speaker": "narrator"
+    },
+    {
+     "w": "later,",
+     "s": 11.095,
+     "e": 11.644,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 11.644,
+     "e": 11.856,
+     "speaker": "narrator"
+    },
+    {
+     "w": "finds",
+     "s": 11.856,
+     "e": 12.09,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 12.09,
+     "e": 12.294,
+     "speaker": "narrator"
+    },
+    {
+     "w": "campfire.",
+     "s": 12.294,
+     "e": 12.747,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Someone's",
+     "s": 12.887,
+     "e": 13.541,
+     "speaker": "narrator"
+    },
+    {
+     "w": "been",
+     "s": 13.541,
+     "e": 13.769,
+     "speaker": "narrator"
+    },
+    {
+     "w": "here!",
+     "s": 13.769,
+     "e": 13.997,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Help",
+     "s": 14.137,
+     "e": 14.489,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 14.489,
+     "e": 14.818,
+     "speaker": "narrator"
+    },
+    {
+     "w": "close!",
+     "s": 14.818,
+     "e": 15.182,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 15.372,
+   "end": 22.479,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "He",
+     "s": 15.372,
+     "e": 15.627,
+     "speaker": "narrator"
+    },
+    {
+     "w": "marches",
+     "s": 15.627,
+     "e": 16.164,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on,",
+     "s": 16.164,
+     "e": 16.561,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dead",
+     "s": 16.561,
+     "e": 16.834,
+     "speaker": "narrator"
+    },
+    {
+     "w": "straight.",
+     "s": 16.834,
+     "e": 17.143,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Another",
+     "s": 17.283,
+     "e": 18.103,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hour.",
+     "s": 18.103,
+     "e": 18.392,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Another",
+     "s": 18.532,
+     "e": 19.245,
+     "speaker": "narrator"
+    },
+    {
+     "w": "campfire.",
+     "s": 19.245,
+     "e": 19.748,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Same",
+     "s": 19.888,
+     "e": 20.354,
+     "speaker": "narrator"
+    },
+    {
+     "w": "log.",
+     "s": 20.354,
+     "e": 20.805,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Same",
+     "s": 20.945,
+     "e": 21.287,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sad",
+     "s": 21.287,
+     "e": 21.617,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sausage.",
+     "s": 21.617,
+     "e": 22.289,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 22.479,
+   "end": 25.655,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "It's",
+     "s": 22.479,
+     "e": 22.768,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 22.768,
+     "e": 23.056,
+     "speaker": "narrator"
+    },
+    {
+     "w": "campfire.",
+     "s": 23.056,
+     "e": 23.653,
+     "speaker": "narrator"
+    },
+    {
+     "w": "He's",
+     "s": 23.793,
+     "e": 24.001,
+     "speaker": "narrator"
+    },
+    {
+     "w": "been",
+     "s": 24.001,
+     "e": 24.216,
+     "speaker": "narrator"
+    },
+    {
+     "w": "walking",
+     "s": 24.216,
+     "e": 24.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 24.64,
+     "e": 24.841,
+     "speaker": "narrator"
+    },
+    {
+     "w": "circles.",
+     "s": 24.841,
+     "e": 25.265,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 25.655,
+   "end": 27.495,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "And",
+     "s": 25.655,
+     "e": 25.877,
+     "speaker": "narrator"
+    },
+    {
+     "w": "scientists",
+     "s": 25.877,
+     "e": 26.351,
+     "speaker": "narrator"
+    },
+    {
+     "w": "say",
+     "s": 26.351,
+     "e": 26.573,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 26.573,
+     "e": 26.795,
+     "speaker": "narrator"
+    },
+    {
+     "w": "would",
+     "s": 26.795,
+     "e": 27.033,
+     "speaker": "narrator"
+    },
+    {
+     "w": "too.",
+     "s": 27.033,
+     "e": 27.255,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}

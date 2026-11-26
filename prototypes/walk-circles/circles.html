@@ -1,0 +1,253 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Poppins"; font-weight: 800; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2"); }
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Poppins,sans-serif}
+canvas{position:absolute;inset:0}
+#cap{position:absolute;left:0;right:0;top:1160px;text-align:center}
+#cap span{display:inline-block;font:800 92px Poppins;color:#fff;-webkit-text-stroke:14px #111;paint-order:stroke fill;letter-spacing:1px;transform-origin:50% 60%;text-shadow:0 8px 18px rgba(0,0,0,.45)}
+#cap span.k{color:#ffd23a}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+</style>
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }</script>
+</head><body><div id="stage"><canvas id="gl" width="1080" height="1920"></canvas><div id="flash"></div><div id="cap"><span></span></div></div>
+<script type="module">
+// "Why lost people walk in circles": opening test in a fast-cut, several-sets style.
+// Each shot is its own camera set-up (a cut every ~2 s); shots start on spoken words from timeline.json.
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { drawPerson } from './people2d.js';
+const TL = await (await fetch('./timeline.json')).json();
+const W = 1080, H = 1920, DUR = TL.duration;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const ease = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * (3 - 2 * k); };
+const lerp = (a, b, k) => a + (b - a) * k;
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const WORDS = TL.beats.flatMap((b, bi) => b.words.map(w => ({ ...w, bi })));
+// start time of the n-th occurrence of a word in a beat
+const WT = (bi, word, n = 1) => { let c = 0; for (const w of WORDS) if (w.bi === bi && w.w.replace(/[^A-Za-z']/g, '') === word && ++c === n) return w.s; throw new Error('no word ' + word); };
+
+// ---------- renderer + post ----------
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false); renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.0;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const FOG = new THREE.Color('#a9c3b0'); scene.fog = new THREE.FogExp2(FOG, 0.012);
+const cam = new THREE.PerspectiveCamera(45, W / H, 0.05, 900);
+const composer = new EffectComposer(renderer);
+composer.addPass(new RenderPass(scene, cam));
+const bokeh = new BokehPass(scene, cam, { focus: 3, aperture: 0.002, maxblur: 0.008 }); composer.addPass(bokeh);
+const bloom = new UnrealBloomPass(new THREE.Vector2(W / 2, H / 2), 0.32, 0.5, 0.86); composer.addPass(bloom);
+composer.addPass(new OutputPass());
+
+function canvasTex(w, h, draw, rep) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep); } return t; }
+const std = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.92, ...o });
+function add(m, x = 0, y = 0, z = 0, shadow = true) { m.position.set(x, y, z); if (shadow) { m.castShadow = true; m.receiveShadow = true; } scene.add(m); return m; }
+
+// ---------- sky + light ----------
+const skyTex = canvasTex(4, 512, (x) => { const g = x.createLinearGradient(0, 0, 0, 512); g.addColorStop(0, '#5f9fd6'); g.addColorStop(0.55, '#bcdbe9'); g.addColorStop(1, '#e9efe0'); x.fillStyle = g; x.fillRect(0, 0, 4, 512); });
+scene.add(new THREE.Mesh(new THREE.SphereGeometry(800, 32, 16), new THREE.MeshBasicMaterial({ map: skyTex, side: THREE.BackSide, fog: false })));
+scene.add(new THREE.HemisphereLight('#dff0ff', '#4b5a33', 1.15));
+const sun = new THREE.DirectionalLight('#fff1d6', 2.6); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03;
+const sc = sun.shadow.camera; sc.left = sc.bottom = -30; sc.right = sc.top = 30; sc.near = 1; sc.far = 200; scene.add(sun, sun.target);
+function sunAt(p) { sun.target.position.copy(p); sun.position.copy(p).add(V(-40, 70, 25)); }
+
+// ---------- ground ----------
+const groundTex = canvasTex(1024, 1024, (x, w, h) => { x.fillStyle = '#5d6b34'; x.fillRect(0, 0, w, h); const r = rng(4);
+  for (let i = 0; i < 9000; i++) { const c = ['#4e5a2b', '#6d7a3c', '#7a6a3e', '#596a30', '#8a7a48', '#3f4a24'][Math.floor(r() * 6)]; x.fillStyle = c; x.globalAlpha = 0.35 + r() * 0.5; x.beginPath(); x.ellipse(r() * w, r() * h, 2 + r() * 9, 1 + r() * 5, r() * 3, 0, 7); x.fill(); }
+  x.globalAlpha = 1; for (let i = 0; i < 500; i++) { x.fillStyle = r() < 0.5 ? '#9a6a33' : '#b8823e'; x.save(); x.translate(r() * w, r() * h); x.rotate(r() * 6); x.beginPath(); x.ellipse(0, 0, 7, 3.5, 0, 0, 7); x.fill(); x.restore(); } }, 40);
+add(new THREE.Mesh(new THREE.PlaneGeometry(1600, 1600).rotateX(-Math.PI / 2), std('#ffffff', { map: groundTex })), 0, 0, 0).castShadow = false;
+
+// ---------- the walk: a big loop that comes back to the campfire ----------
+const R = 34, FIRE = V(R, 0, 0);
+const onLoop = th => V(Math.cos(th) * R, 0, Math.sin(th) * R);          // th = 0 at the campfire, increasing anticlockwise from above
+const tangent = th => V(-Math.sin(th), 0, Math.cos(th));
+const outward = th => V(Math.cos(th), 0, Math.sin(th));
+function frame(th, along, side, up) { return onLoop(th).add(tangent(th).multiplyScalar(along)).add(outward(th).multiplyScalar(side)).add(V(0, up, 0)); }
+const nearLoop = (x, z, m) => Math.abs(Math.hypot(x, z) - R) < m;
+
+// ---------- trees (instanced): beeches and pines ----------
+const barkTex = canvasTex(128, 512, (x, w, h) => { x.fillStyle = '#6e5a46'; x.fillRect(0, 0, w, h); const r = rng(8); for (let i = 0; i < 260; i++) { x.fillStyle = r() < 0.5 ? '#54432f' : '#8a7660'; x.globalAlpha = 0.6; x.fillRect(r() * w, r() * h, 2 + r() * 5, 14 + r() * 50); } }, 0);
+barkTex.wrapS = barkTex.wrapT = THREE.RepeatWrapping; barkTex.repeat.set(2, 3);
+const leafTex = canvasTex(256, 256, (x, w, h) => { x.fillStyle = '#3f7a31'; x.fillRect(0, 0, w, h); const r = rng(9); for (let i = 0; i < 1400; i++) { x.fillStyle = ['#2f6427', '#4f9238', '#6aa845', '#2a5a22', '#83bb52'][Math.floor(r() * 5)]; x.globalAlpha = 0.8; x.beginPath(); x.ellipse(r() * w, r() * h, 5 + r() * 7, 3 + r() * 4, r() * 3, 0, 7); x.fill(); } }, 0);
+leafTex.wrapS = leafTex.wrapT = THREE.RepeatWrapping; leafTex.repeat.set(3, 3);
+const trees = []; { const r = rng(21);
+  for (let i = 0; i < 2600; i++) { const x = (r() - 0.5) * 300, z = (r() - 0.5) * 300; if (nearLoop(x, z, 5.2) || Math.hypot(x - FIRE.x, z - FIRE.z) < 9 || Math.hypot(x, z) > 150) continue;
+    trees.push({ x, z, s: 0.75 + r() * 0.7, pine: r() < 0.35, rot: r() * 6, lean: (r() - 0.5) * 0.06 }); } }
+const dummy = new THREE.Object3D();
+function inst(geo, mat, list, place) { const m = new THREE.InstancedMesh(geo, mat, list.length); list.forEach((t, i) => { place(dummy, t); dummy.updateMatrix(); m.setMatrixAt(i, dummy.matrix); }); m.castShadow = true; m.receiveShadow = true; scene.add(m); return m; }
+const trunkGeo = new THREE.CylinderGeometry(0.22, 0.38, 14, 9, 1).translate(0, 7, 0);
+inst(trunkGeo, std('#ffffff', { map: barkTex }), trees, (d, t) => { d.position.set(t.x, 0, t.z); d.rotation.set(t.lean, t.rot, t.lean); d.scale.set(t.s, t.s * (t.pine ? 1.1 : 1), t.s); });
+const beeches = trees.filter(t => !t.pine), pines = trees.filter(t => t.pine);
+const blobGeo = new THREE.IcosahedronGeometry(3.4, 1);
+for (const [k, dy, dx, sc] of [[0, 12.5, 0, 1], [1, 10.8, 1.9, 0.75], [2, 11.2, -1.8, 0.8], [3, 14.2, 0.4, 0.7]])
+  inst(blobGeo, std('#ffffff', { map: leafTex, flatShading: true }), beeches, (d, t) => { const a = t.rot + k * 2.1; d.position.set(t.x + Math.cos(a) * dx * t.s, dy * t.s, t.z + Math.sin(a) * dx * t.s); d.rotation.set(k, t.rot * 3, 0); d.scale.set(sc * t.s, sc * t.s * 0.8, sc * t.s); });
+const coneGeo = new THREE.ConeGeometry(3, 5, 8);
+for (const [k, dy, sc] of [[0, 6.5, 1.15], [1, 9.5, 0.95], [2, 12.3, 0.72], [3, 14.6, 0.48]])
+  inst(coneGeo, std('#2f5e34', { flatShading: true }), pines, (d, t) => { d.position.set(t.x, dy * t.s * 1.1, t.z); d.rotation.set(0, t.rot + k, 0); d.scale.setScalar(sc * t.s); });
+
+// ferns, bushes and grass tufts
+const fernTex = canvasTex(256, 256, (x, w, h) => { x.translate(w / 2, h); const r = rng(5);
+  for (let f = 0; f < 7; f++) { x.save(); x.rotate((f - 3) * 0.32); x.strokeStyle = '#3d7a2c'; x.lineWidth = 4; x.beginPath(); x.moveTo(0, 0); x.quadraticCurveTo(10, -120, 0, -230); x.stroke();
+    for (let y = -20; y > -220; y -= 12) { const L = 46 * (1 - Math.abs(y + 110) / 140); x.fillStyle = r() < 0.5 ? '#4d9136' : '#3f8030'; for (const s of [-1, 1]) { x.beginPath(); x.ellipse(s * L / 2, y, L / 2, 5, s * 0.3, 0, 7); x.fill(); } } x.restore(); } });
+const fernMat = new THREE.MeshStandardMaterial({ map: fernTex, transparent: true, alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.9 });
+const fernGeo = new THREE.PlaneGeometry(1.6, 1.6).translate(0, 0.8, 0), fernGeo2 = fernGeo.clone().rotateY(Math.PI / 2);
+const ferns = []; { const r = rng(33); for (let i = 0; i < 4200; i++) { const a = r() * 6.283, d = r() * 120; const x = Math.cos(a) * d + (r() < 0.3 ? FIRE.x : 0), z = Math.sin(a) * d; if (nearLoop(x, z, 1.9) || Math.hypot(x - FIRE.x, z) < 4.2) continue; ferns.push({ x, z, s: 0.5 + r() * 0.9, rot: r() * 6 }); } }
+for (const gg of [fernGeo, fernGeo2]) { const m = inst(gg, fernMat, ferns, (d, t) => { d.position.set(t.x, 0, t.z); d.rotation.set(0, t.rot, 0); d.scale.setScalar(t.s); }); m.castShadow = false; }
+const bushes = []; { const r = rng(41); for (let i = 0; i < 700; i++) { const x = (r() - 0.5) * 220, z = (r() - 0.5) * 220; if (nearLoop(x, z, 3.0) || Math.hypot(x - FIRE.x, z) < 6) continue; bushes.push({ x, z, s: 0.6 + r() * 0.8, rot: r() * 6 }); } }
+inst(new THREE.IcosahedronGeometry(0.9, 1), std('#ffffff', { map: leafTex, flatShading: true }), bushes, (d, t) => { d.position.set(t.x, 0.45 * t.s, t.z); d.rotation.set(t.rot, t.rot, 0); d.scale.set(t.s * 1.3, t.s * 0.8, t.s); });
+
+// light shafts through the canopy
+const shaftTex = canvasTex(64, 256, (x, w, h) => { const g = x.createLinearGradient(0, 0, w, 0); g.addColorStop(0, 'rgba(255,245,210,0)'); g.addColorStop(0.5, 'rgba(255,245,210,1)'); g.addColorStop(1, 'rgba(255,245,210,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h); const g2 = x.createLinearGradient(0, 0, 0, h); g2.addColorStop(0, 'rgba(0,0,0,0)'); g2.addColorStop(0.3, 'rgba(0,0,0,1)'); g2.addColorStop(1, 'rgba(0,0,0,0)'); x.globalCompositeOperation = 'destination-in'; x.fillStyle = g2; x.fillRect(0, 0, w, h); });
+const shafts = []; { const r = rng(55); for (let i = 0; i < 70; i++) { const th = r() * 6.283, d = R + (r() - 0.5) * 30; const m = new THREE.Mesh(new THREE.PlaneGeometry(2.5 + r() * 3, 30), new THREE.MeshBasicMaterial({ map: shaftTex, transparent: true, opacity: 0.16 + r() * 0.14, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide, fog: false }));
+  m.position.set(Math.cos(th) * d, 11, Math.sin(th) * d); m.rotation.set(0.0, r() * 3, 0.42); scene.add(m); shafts.push(m); } }
+
+// a worn dirt trail along the loop, and a red dashed line drawn over it in the aerial shots
+const dirtTex = canvasTex(512, 64, (x, w, h) => { x.fillStyle = '#8a6a44'; x.fillRect(0, 0, w, h); const r = rng(12); for (let i = 0; i < 900; i++) { x.fillStyle = ['#7a5c3a', '#9c7b50', '#6e5232', '#a88a5e'][Math.floor(r() * 4)]; x.globalAlpha = 0.6; x.beginPath(); x.ellipse(r() * w, r() * h, 2 + r() * 6, 1 + r() * 3, 0, 0, 7); x.fill(); }
+  x.globalAlpha = 1; x.globalCompositeOperation = 'destination-in'; const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(0.3, 'rgba(0,0,0,1)'); g.addColorStop(0.7, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h); });
+dirtTex.wrapS = THREE.RepeatWrapping; dirtTex.repeat.set(40, 1);
+{ const ring = new THREE.RingGeometry(R - 1.3, R + 1.3, 256, 1); const uv = ring.attributes.uv, pos = ring.attributes.position; for (let i = 0; i < uv.count; i++) { const x = pos.getX(i), y = pos.getY(i); uv.setXY(i, (Math.atan2(y, x) / 6.283 + 1) % 1, (Math.hypot(x, y) - (R - 1.3)) / 2.6); }
+  const m = new THREE.Mesh(ring.rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ map: dirtTex, transparent: true, depthWrite: false, roughness: 1 })); m.position.y = 0.012; m.receiveShadow = true; scene.add(m); }
+const NDASH = 160; const dashes = new THREE.InstancedMesh(new THREE.BoxGeometry(1.6, 0.05, 2.6), new THREE.MeshBasicMaterial({ color: '#ff3b2f', depthTest: false, fog: false }), NDASH); dashes.renderOrder = 5; dashes.frustumCulled = false; scene.add(dashes);
+function showDashes(th0, th1) { let c = 0; const step = 3.6 / R; for (let th = th0; th < th1 && c < NDASH; th += step) { dummy.position.set(Math.cos(th) * R, 0.4, Math.sin(th) * R); dummy.rotation.set(0, -th, 0); dummy.scale.setScalar(1); dummy.updateMatrix(); dashes.setMatrixAt(c++, dummy.matrix); } dashes.count = c; dashes.instanceMatrix.needsUpdate = true; }
+
+// footprints along the loop (shown up to the hiker's progress)
+const printTex = canvasTex(64, 128, (x) => { x.fillStyle = 'rgba(40,28,16,.75)'; x.beginPath(); x.ellipse(32, 44, 20, 32, 0, 0, 7); x.fill(); x.beginPath(); x.ellipse(32, 104, 15, 18, 0, 0, 7); x.fill(); });
+const NPR = 520; const prints = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.22, 0.42).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: printTex, transparent: true, depthWrite: false }), NPR); scene.add(prints); prints.frustumCulled = false;
+function showPrints(th0, th1, ring = R, cx = 0, cz = 0, mesh = prints, n = NPR) { let c = 0; const step = 0.85 / ring;
+  for (let th = th0; th < th1 && c < n; th += step) { const side = (c % 2 ? 1 : -1) * 0.17; const p = V(cx + Math.cos(th) * (ring + side), 0.03, cz + Math.sin(th) * (ring + side));
+    dummy.position.copy(p); dummy.rotation.set(0, -th, 0); dummy.scale.setScalar(1); dummy.updateMatrix(); mesh.setMatrixAt(c++, dummy.matrix); }
+  mesh.count = c; mesh.instanceMatrix.needsUpdate = true; }
+
+// ---------- the campfire clearing ----------
+const fire = new THREE.Group(); fire.position.copy(FIRE); scene.add(fire);
+{ const r = rng(61);
+  for (let i = 0; i < 11; i++) { const a = i / 11 * 6.283; const s = add(new THREE.Mesh(new THREE.DodecahedronGeometry(0.22 + r() * 0.08, 0), std('#8e8c86', { flatShading: true })), Math.cos(a) * 0.75, 0.12, Math.sin(a) * 0.75); s.rotation.set(r() * 3, r() * 3, 0); fire.add(s); }
+  for (let i = 0; i < 4; i++) { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.09, 1.2, 7).rotateZ(Math.PI / 2), std('#4a3220')); l.position.set(0, 0.16, 0); l.rotation.y = i * 0.8; l.rotation.z = 0.25; l.castShadow = true; fire.add(l); }
+  const ash = new THREE.Mesh(new THREE.CircleGeometry(0.62, 20).rotateX(-Math.PI / 2), std('#2e2924')); ash.position.y = 0.02; fire.add(ash); }
+const flames = []; for (let i = 0; i < 6; i++) { const f = new THREE.Mesh(new THREE.ConeGeometry(0.16 + (i % 3) * 0.05, 0.7, 7), new THREE.MeshBasicMaterial({ color: i % 2 ? '#ffb43a' : '#ff6a1f', transparent: true, opacity: 0.92 })); f.position.set((i - 2.5) * 0.09, 0.45, ((i * 7) % 5 - 2) * 0.07); fire.add(f); flames.push(f); }
+const fireLight = new THREE.PointLight('#ff9a3c', 6, 9, 1.6); fireLight.position.set(0, 0.9, 0); fire.add(fireLight);
+const smokeTex = canvasTex(128, 128, (x) => { const g = x.createRadialGradient(64, 64, 4, 64, 64, 62); g.addColorStop(0, 'rgba(220,220,215,.8)'); g.addColorStop(1, 'rgba(220,220,215,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128); });
+const smoke = []; for (let i = 0; i < 14; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: smokeTex, transparent: true, depthWrite: false })); fire.add(s); smoke.push({ s, ph: i / 14 }); }
+// sitting log with a heart carved in it, tin can, stick with a sad burnt sausage
+const seat = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.32, 2.4, 12).rotateZ(Math.PI / 2), std('#ffffff', { map: barkTex })); seat.position.set(-0.4, 0.3, 2.0); seat.rotation.y = 0.25; seat.castShadow = seat.receiveShadow = true; fire.add(seat);
+const carve = new THREE.Mesh(new THREE.CircleGeometry(0.16, 20), new THREE.MeshBasicMaterial({ map: canvasTex(128, 128, (x) => { x.fillStyle = '#d8b88a'; x.beginPath(); x.arc(64, 64, 62, 0, 7); x.fill(); x.strokeStyle = '#5a3a1e'; x.lineWidth = 9; x.beginPath(); x.moveTo(64, 98); x.bezierCurveTo(10, 60, 30, 20, 64, 44); x.bezierCurveTo(98, 20, 118, 60, 64, 98); x.stroke(); }) }));
+carve.position.set(-0.4 + 1.215 * Math.cos(0.25), 0.3, 2.0 - 1.215 * Math.sin(0.25)); carve.rotation.y = Math.PI / 2 + 0.25; fire.add(carve);
+const can = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.16, 14), std('#b8bcc2', { metalness: 0.6, roughness: 0.4 })); can.position.set(0.55, 0.08, 1.75); can.rotation.z = 1.4; can.castShadow = true; fire.add(can);
+const stick = new THREE.Group(); { const s = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.025, 1.9, 6), std('#6b4a2c')); s.rotation.z = 1.05; stick.add(s); const sau = new THREE.Mesh(new THREE.CapsuleGeometry(0.075, 0.26, 6, 12), std('#3a1d12', { roughness: 0.45 })); sau.position.set(-0.86, 0.43, 0); sau.rotation.z = 0.9; stick.add(sau); }
+stick.position.set(0.95, 0.55, 0.2); stick.rotation.y = -0.4; fire.add(stick);
+
+// ---------- the meadow test ground (for the scientists) ----------
+const MEAD = V(420, 0, 0);
+const grassTex = canvasTex(512, 512, (x, w, h) => { x.fillStyle = '#5f8a38'; x.fillRect(0, 0, w, h); const r = rng(14); for (let i = 0; i < 6000; i++) { x.fillStyle = ['#4f7a2c', '#6f9a44', '#7da84e', '#557f31'][Math.floor(r() * 4)]; x.globalAlpha = 0.7; x.fillRect(r() * w, r() * h, 2, 5 + r() * 6); } }, 30);
+const meadow = add(new THREE.Mesh(new THREE.CircleGeometry(140, 48).rotateX(-Math.PI / 2), std('#ffffff', { map: grassTex })), MEAD.x, 0.01, MEAD.z); meadow.castShadow = false;
+const WALKERS = [{ r: 5, c: V(-7, 0, -3), sp: 0.22, ph: 0, k: 'walker' }, { r: 6, c: V(7, 0, -6), sp: -0.15, ph: 2, k: 'walker2' }, { r: 3.5, c: V(4, 0, 8), sp: 0.3, ph: 4, k: 'walker' }, { r: 4.5, c: V(-6, 0, 9), sp: -0.18, ph: 1, k: 'walker2' }];
+const wPrints = WALKERS.map(() => { const m = new THREE.InstancedMesh(new THREE.PlaneGeometry(0.22, 0.42).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: printTex, transparent: true, depthWrite: false }), 200); m.frustumCulled = false; scene.add(m); return m; });
+{ const r = rng(71); const flags = []; for (let i = 0; i < 6; i++) { const a = i / 6 * 6.283; const p = add(new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 1.6), std('#eeeeee')), MEAD.x + Math.cos(a) * 26, 0.8, MEAD.z + Math.sin(a) * 26); const f = add(new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.4), std('#e2463a', { side: THREE.DoubleSide })), p.position.x + 0.3, 1.4, p.position.z); } }
+
+// ---------- people: camera-facing cards ----------
+const CW = 448, CH = 640, CARD_H = 2.05;
+const shadowTex = canvasTex(64, 64, (x) => { const g = x.createRadialGradient(32, 32, 2, 32, 32, 30); g.addColorStop(0, 'rgba(0,0,0,.45)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, 0, 64, 64); });
+const people = [];
+function person(kind) { const c = document.createElement('canvas'); c.width = CW; c.height = CH; const tex = new THREE.CanvasTexture(c); tex.colorSpace = THREE.SRGBColorSpace;
+  const geo = new THREE.PlaneGeometry(CARD_H * CW / CH, CARD_H); geo.translate(0, CARD_H / 2, 0);
+  const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: tex, transparent: true, alphaTest: 0.4, side: THREE.DoubleSide })); m.castShadow = true; scene.add(m);
+  const sh = new THREE.Mesh(new THREE.PlaneGeometry(1.3, 0.5).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false })); scene.add(sh);
+  const P = { kind, m, sh, ctx: c.getContext('2d'), tex, last: '' }; people.push(P); return P; }
+// place() is called before the shot sets the camera, so facing and drawing happen in finishPeople()
+function place(P, pos, pose, expr, t, vel, opts = {}) { P.m.visible = P.sh.visible = true; P.m.position.copy(pos); P.sh.position.set(pos.x, 0.03, pos.z); P.pend = { pose, expr, t, vel, opts }; }
+function finishPeople() { for (const P of people) { if (!P.m.visible || !P.pend) continue; const { pose, expr, t, vel, opts } = P.pend, pos = P.m.position;
+  P.m.rotation.set(0, Math.atan2(cam.position.x - pos.x, cam.position.z - pos.z), 0);
+  let flip = false; if (vel) { const right = V(1, 0, 0).applyQuaternion(cam.quaternion); flip = vel.dot(right) < 0; }
+  const pt = Math.round(t * 30) / 30, key = [pose, expr, pt, flip, opts.lines, opts.blind].join('|');
+  if (key !== P.last) { drawPerson(P.ctx, CW, CH, P.kind, pose, expr, pt, P.seed || 0, { flip, ...opts }); P.tex.needsUpdate = true; P.last = key; } } }
+const hiker = person('hiker'); const walkers = WALKERS.map((w, i) => { const p = person(w.k); p.seed = i * 1.7; return p; });
+
+// ---------- shots: one per cut ----------
+// each: { at, f(t, u) } where u = seconds into the shot; f sets the camera, people and props.
+const SPEED = 1.35; // walking speed, m/s
+function hikerOn(th, dir, t, pose, expr, opts) { const pos = onLoop(th); place(hiker, pos, pose, expr, t, tangent(th).multiplyScalar(dir), opts); return pos; }
+function look(p, l, fov = 45, focus = null, fog = 0.012) { scene.fog.density = fog; cam.position.copy(p); cam.fov = fov; cam.updateProjectionMatrix(); cam.lookAt(l); bokeh.enabled = focus !== null; if (focus !== null) { bokeh.uniforms.focus.value = focus; bokeh.uniforms.aperture.value = 0.0045; bokeh.uniforms.maxblur.value = 0.01; } }
+const TH_START = 2.2; // where the opening shots happen on the loop (far side from the fire)
+const SHOTS = [
+  // cold open: high above the forest, the footprint loop almost closed, he walks "straight" around it
+  { at: 0, f: (t, u) => { const th = -0.55 + u * 0.04; hikerOn(th, 1, t, 'walk', 'smug'); showPrints(0.05, 6.283 - 0.6 + u * 0.04);
+    showDashes(0.05, 6.283 - 0.6 + u * 0.04); look(V(2, 150 - u * 8, 30 - u * 2), V(1, 0, 2), 42, null, 0.0012); } },
+  // close-up: smug, walking, camera tracking beside him
+  { at: WT(0, 'At'), f: (t, u) => { const th = TH_START + u * SPEED / R; const p = hikerOn(th, 1, t, 'walk', 'smug'); showPrints(TH_START - 1, th);
+    look(frame(th, 1.2, 1.75, 1.15), p.clone().add(V(0, 1.12, 0)), 36, 2.1); } },
+  // wide, low: tiny among huge trees, lost
+  { at: WT(1, "He's"), f: (t, u) => { const th = TH_START + 0.25; const p = hikerOn(th, 1, t, 'lookup', 'worried'); showPrints(TH_START - 1, th);
+    look(frame(th, -7.5 - u * 0.4, 0.4, 0.5), p.clone().add(V(0, 5.0 + u * 0.3, 0)), 62); } },
+  // medium: picks a direction, points, commits
+  { at: WT(1, 'so'), f: (t, u) => { const th = TH_START + 0.27; const p = hikerOn(th, 1, u * 1.4, 'point', 'smug'); showPrints(TH_START - 1, th);
+    look(frame(th, 2.6 - u * 0.25, 1.6, 0.85), p.clone().add(V(0, 0.95, 0)), 40, 2.9); } },
+  // low ground tracking: marching past, boots and ferns
+  { at: WT(1, 'No'), f: (t, u) => { const th = TH_START + 0.3 + u * SPEED * 1.3 / R; const p = hikerOn(th, 1, t, 'march', 'angry'); showPrints(TH_START - 1, th);
+    look(frame(th, 2.3, 0.15, 0.3), p.clone().add(V(0, 0.8, 0)), 50, 2.3); } },
+  // the campfire! he walks in from the left of a wide shot
+  { at: WT(2, 'An'), f: (t, u) => { const th = -0.32 + u * 0.95 / R; const p = hikerOn(th, 1, t, 'walk', 'watch'); showPrints(th - 1.2, th);
+    look(V(FIRE.x + 7.5, 2.4, FIRE.z + 3.4), V(FIRE.x - 0.2, 0.7, FIRE.z - 0.6), 46); } },
+  // joy close-up
+  { at: WT(2, "Someone's"), f: (t, u) => { const p = hikerOn(-0.08, 1, t, 'cheer', 'joy', { lines: true });
+    look(frame(-0.08, 2.0, 0.3, 1.2).add(V(0.3, 0, 0)), p.clone().add(V(0, 1.2, 0)), 40, 2.05); } },
+  // marching away from behind, "dead straight" (the path visibly curves)
+  { at: WT(3, 'He'), f: (t, u) => { const th = 0.08 + u * SPEED * 1.2 / R; const p = hikerOn(th, 1, t, 'march', 'smug'); showPrints(th - 0.8, th);
+    look(frame(th, -3.2, -0.25, 1.3), p.clone().add(V(0, 0.9, 0)).add(tangent(th).multiplyScalar(4)), 48, 3.3); } },
+  // another hour, another campfire: exactly the same wide as before
+  { at: WT(3, 'Another'), f: (t, u) => { const th = -0.32 + u * 0.95 / R; const p = hikerOn(th, 1, t, 'walk', 'watch'); showPrints(th - 5.5, th);
+    look(V(FIRE.x + 7.5, 2.4, FIRE.z + 3.4), V(FIRE.x - 0.2, 0.7, FIRE.z - 0.6), 46); } },
+  // same log (the carved heart)
+  { at: WT(3, 'Same'), f: (t, u) => { hiker.m.visible = hiker.sh.visible = false; const c = carve.getWorldPosition(V(0, 0, 0)); const n = V(Math.cos(0.25), 0, -Math.sin(0.25));
+    look(c.clone().add(n.multiplyScalar(0.75 - u * 0.12)).add(V(0, 0.12, 0.1)), c, 40, 0.7); } },
+  // same sad sausage
+  { at: WT(3, 'Same', 2), f: (t, u) => { hiker.m.visible = hiker.sh.visible = false; const s = stick.children[1].getWorldPosition(V(0, 0, 0));
+    look(s.clone().add(V(0.5, 0.45 - u * 0.05, 2.3 - u * 0.2)), s.clone().add(V(0.1, -0.2, 0)), 38, 2.3); } },
+  // it's HIS campfire: shocked close-up, slow push
+  { at: WT(4, "It's"), f: (t, u) => { const p = hikerOn(-0.06, 1, t, 'idle', 'shocked');
+    look(frame(-0.06, 1.95 - u * 0.2, 0.2, 1.15), p.clone().add(V(0, 1.15, 0)), 38, 1.95 - u * 0.2); } },
+  // crane up to reveal the loop of footprints
+  { at: WT(4, "He's"), f: (t, u) => { const p = hikerOn(-0.04, 1, t, 'idle', 'shocked'); showPrints(-0.02, 6.283 - 0.06); const k = ease(0, 1.9, u);
+    if (u > 0.5) showDashes(0.02, 0.02 + (6.283 - 0.08) * ease(0.5, 1.8, u)); look(V(FIRE.x + lerp(3, -FIRE.x + 2, k), lerp(2.0, 150, k), FIRE.z + lerp(2.5, 30, k)), V(lerp(FIRE.x, 1, k), lerp(0.9, 0, k), lerp(FIRE.z, 2, k)), lerp(50, 42, k), null, lerp(0.012, 0.0012, k)); } },
+  // the scientists' meadow: blindfolded walkers all drifting into loops
+  { at: WT(5, 'And'), f: (t, u) => { hiker.m.visible = hiker.sh.visible = false;
+    WALKERS.forEach((w, i) => { const th = w.ph + (t * 0.9) * w.sp * 6 / w.r; const c = MEAD.clone().add(w.c); const p = V(c.x + Math.cos(th) * w.r, 0, c.z + Math.sin(th) * w.r);
+      place(walkers[i], p, 'walk', 'worried', t + i, V(-Math.sin(th), 0, Math.cos(th)).multiplyScalar(Math.sign(w.sp)), { blind: true });
+      const a = Math.min(th, th - Math.sign(w.sp) * 3.5), b = Math.max(th, th - Math.sign(w.sp) * 3.5); showPrints(a, b, w.r, c.x, c.z, wPrints[i], 200); });
+    look(MEAD.clone().add(V(-2 + u * 1.2, 7.5 - u * 0.5, 17 - u * 1.2)), MEAD.clone().add(V(-1, 0, 1)), 56, null, 0.003); } },
+];
+const shotAt = t => { let i = 0; for (let k = 0; k < SHOTS.length; k++) if (t >= SHOTS[k].at) i = k; return i; };
+
+// ---------- captions ----------
+const capEl = document.querySelector('#cap span');
+function captions(t) { let wi = -1; for (let i = 0; i < WORDS.length; i++) if (WORDS[i].s <= t + 0.14) wi = i; const wd = WORDS[wi];
+  if (!wd || t > wd.e + 0.3) { capEl.textContent = ''; return; }
+  const txt = wd.w.replace(/[.,?!]/g, '').toUpperCase(); capEl.textContent = txt;
+  capEl.className = /^(STRAIGHT|LOST|CAMPFIRE|CLOSE|SAUSAGE|HIS|CIRCLES|SCIENTISTS|YOU)$/.test(txt) ? 'k' : '';
+  const a = clamp((t + 0.14 - wd.s) / 0.06); capEl.style.transform = `scale(${0.82 + 0.18 * a + 0.05 * Math.sin(a * Math.PI)})`; }
+
+// ---------- frame ----------
+window.DURATION = DUR;
+window.renderFrame = (t) => {
+  const si = shotAt(t), S = SHOTS[si], u = t - S.at;
+  people.forEach(P => { P.m.visible = P.sh.visible = false; }); wPrints.forEach(m => { m.count = 0; }); prints.count = 0; dashes.count = 0;
+  S.f(t, u); cam.updateMatrixWorld(); finishPeople();
+  { const d = cam.getWorldDirection(V(0, 0, 0)); d.y = 0; if (d.lengthSq() < 1e-4) d.set(0, 0, -1); sunAt(cam.position.clone().setY(0).add(d.normalize().multiplyScalar(Math.min(14, 4 + cam.position.y * 0.5)))); }
+  // fire + smoke
+  flames.forEach((f, i) => { const k = 0.75 + 0.35 * Math.sin(t * 13 + i * 2.1) + 0.15 * Math.sin(t * 29 + i); f.scale.set(1, k, 1); f.position.y = 0.25 + 0.35 * k / 2; });
+  fireLight.intensity = 5 + Math.sin(t * 17) * 0.8 + Math.sin(t * 31) * 0.5;
+  smoke.forEach(s => { const a = (t * 0.25 + s.ph) % 1; s.s.position.set(Math.sin(a * 6 + s.ph * 9) * 0.3 * a, 0.8 + a * 4.5, Math.cos(a * 5) * 0.2 * a); s.s.scale.setScalar(0.5 + a * 2.2); s.s.material.opacity = 0.22 * (1 - a) * Math.min(1, a * 6); });
+  shafts.forEach((m, i) => { m.material.opacity = (0.12 + 0.08 * Math.sin(t * 0.7 + i)) * (cam.position.y > 30 ? 0 : 1); });
+  captions(t); window.DBG = { si, cam: cam.position.toArray(), w: people.map(P => [P.kind, P.m.visible, P.m.position.toArray().map(Math.round)]) };
+  document.getElementById('flash').style.opacity = Math.max(0, 0.5 - u * 3) * (si > 0 && [5, 8, 11, 13].includes(si) ? 1 : 0);
+  composer.render();
+};
+await document.fonts.load('800 92px Poppins');
+window.renderFrame(0); window.READY = true;
+</script></body></html>
