@@ -12,6 +12,7 @@ Usage: python3 tools/fetch_sfx.py [OUT]"""
 import io, json, os, re, subprocess, sys, time, urllib.parse, urllib.request, zipfile
 OUT = sys.argv[1] if len(sys.argv) > 1 else 'sfx'
 UA = {'User-Agent': 'world-of-how-sfx-fetch/1.0 (CC0 sound effects for an educational channel)'}
+USE_COMMONS = os.environ.get('SFX_COMMONS') == '1'  # Wikimedia rate-limits CI (HTTP 429), so it's off by default
 man = []; seen = set(); total = [0]; MAX_FILE = 25 * 2**20; MAX_LEN = 90  # seconds
 
 def get(url, binary=True, tries=3):
@@ -68,6 +69,21 @@ def commons(folder, q, n):
         cont = '&gsroffset=' + str(c.get('gsroffset', ''))
     return got
 
+# ---------------- Freesound (CC0 only, public previews) ----------------
+FS = 'https://freesound.org'
+def freesound(folder, q, n):
+    url = f'{FS}/search/?q={urllib.parse.quote_plus(q)}&f=license%3A%22Creative+Commons+0%22&s=Downloads+desc'
+    html = get(url, False) or ''; got = 0
+    # each result carries its sound page link and its preview mp3 (data-mp3 / -hq.mp3 urls)
+    pages = list(dict.fromkeys(re.findall(r'href="(/people/[^/"]+/sounds/\d+/)"', html)))
+    mp3s = list(dict.fromkeys(re.findall(r'(https://cdn\.freesound\.org/previews/[^"\' ]+?-hq\.mp3)', html)))
+    for i, m in enumerate(mp3s[: n * 2]):
+        time.sleep(0.7)
+        if save(folder, os.path.basename(m), get(m), FS + (pages[i] if i < len(pages) else ''), 'CC0', ''):
+            got += 1
+            if got >= n: break
+    return got
+
 # ---------------- Kenney (CC0) ----------------
 def kenney(slug_):
     html = get(f'https://kenney.nl/assets/{slug_}', False) or ''
@@ -106,10 +122,11 @@ if __name__ == '__main__':
     kw = [l.split(':', 1) for l in open('sfx-keywords.txt') if ':' in l and not l.startswith('#')]
     for folder, qs in kw:
         folder = slug(folder)
-        for q in [x.strip() for x in qs.split('|') if x.strip()]:
-            got = commons(folder, q, 4)
-            print(f'[{folder}] commons "{q}": {got}', flush=True)
-        oga(folder, qs.split('|')[0].strip(), 2)
+        for q in [x.strip() for x in qs.split('|') if x.strip()][:3]:
+            got = freesound(folder, q, 3)
+            print(f'[{folder}] freesound "{q}": {got}', flush=True)
+            if got == 0 and USE_COMMONS:
+                got = commons(folder, q, 2); print(f'[{folder}] commons "{q}": {got}', flush=True)
     for s in ['impact-sounds', 'rpg-audio', 'interface-sounds', 'casino-audio', 'sci-fi-sounds', 'digital-audio', 'music-jingles']:
         kenney(s)
     json.dump(man, open(os.path.join(OUT, 'manifest.json'), 'w'), indent=1)
