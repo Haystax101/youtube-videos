@@ -1,0 +1,987 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Poppins"; font-weight: 800; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-weight: 600; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2") format("woff2"); }
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Poppins,sans-serif}
+canvas{position:absolute;inset:0}
+#label{position:absolute;left:50%;top:170px;transform:translateX(-50%);max-width:900px;padding:14px 30px 16px;border-radius:22px;background:rgba(8,6,16,.72);border:3px solid rgba(255,255,255,.12);
+  color:#fff;font:800 50px Poppins;letter-spacing:1px;text-align:center;white-space:nowrap}
+#label .hot{color:#ff3b4a}
+#cap{position:absolute;left:0;right:0;top:1180px;text-align:center}
+#cap span{display:inline-block;font:800 104px Poppins;color:#fff;-webkit-text-stroke:18px #111;paint-order:stroke fill;letter-spacing:2px;transform-origin:50% 60%}
+#cap span.k{color:#ff3b4a}
+#rw{position:absolute;inset:0;pointer-events:none;opacity:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.08) 0 3px,rgba(0,0,0,.10) 3px 7px)}
+#rw b{position:absolute;left:70px;top:330px;font:800 90px Poppins;color:#fff;-webkit-text-stroke:12px #111;paint-order:stroke fill}
+</style>
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }</script>
+</head><body><div id="stage"><canvas id="gl" width="1080" height="1920"></canvas><canvas id="ov" width="1080" height="1920"></canvas><div id="rw"><b>◀◀ REWIND</b></div><div id="label"></div><div id="cap"><span></span></div></div>
+<script type="module">
+// DARK STORIES 002: Vladimir Levin and the 1994 Citibank heist. Noir toon look (engine from 001-alphabay).
+// (engine notes: Techniques: screen-space inverted-hull ink outlines
+// (constant pixel width) + depth/normal crease lines in a post pass, a soft 4-band toon ramp,
+// hand-painted canvas textures (tiles, wood, cork, rug), a real window that casts a warm
+// sun patch through venetian blinds, cool fill so shadows go blue, and a colour grade.)
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
+import { drawChar, KINDS } from './chars2d.js';
+const SCRIPT = await (await fetch('./script.json')).json();
+
+const W = 1080, H = 1920;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const sstep = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * k * (k * (k * 6 - 15) + 10); };
+const lerp = (a, b, k) => a + (b - a) * k;
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false); renderer.toneMapping = THREE.NoToneMapping;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, W / H, 0.05, 160);
+
+// ---------- materials ----------
+const RAMP = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 1; const x = c.getContext('2d');
+  for (let i = 0; i < 256; i++) { const u = i / 255; // soft-edged bands: deep shadow / shadow / mid / lit
+    let v = 0.50; v = lerp(v, 0.66, sstep(0.36, 0.42, u)); v = lerp(v, 0.86, sstep(0.52, 0.58, u)); v = lerp(v, 1.0, sstep(0.70, 0.76, u));
+    const g = Math.round(v * 255); x.fillStyle = `rgb(${g},${g},${g})`; x.fillRect(i, 0, 1, 1); }
+  const t = new THREE.CanvasTexture(c); t.minFilter = t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; return t; })();
+const RAMP_C = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 1; const x = c.getContext('2d');
+  for (let i = 0; i < 256; i++) { const u = i / 255; let v = 0.6; v = lerp(v, 1.0, sstep(0.46, 0.52, u)); const g = Math.round(v * 255); x.fillStyle = `rgb(${g},${g},${g})`; x.fillRect(i, 0, 1, 1); }
+  const t = new THREE.CanvasTexture(c); t.minFilter = t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; return t; })();
+const matCache = {};
+const toon = (color, o = {}) => new THREE.MeshToonMaterial({ color, gradientMap: RAMP, ...o });
+const M = (color) => matCache[color] || (matCache[color] = toon(color));
+function canvasTex(w, h, draw, rep) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; if (rep) t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; }
+const hsl = (h, s, l, a = 1) => `hsla(${h},${s}%,${l}%,${a})`;
+
+// ---------- ink: inverted hull pushed out in clip space, so lines are a constant pixel width ----------
+const INK = new THREE.Color('#0e0b16');
+const hullMats = {};
+const hullMat = px => hullMats[px] || (hullMats[px] = new THREE.ShaderMaterial({
+  uniforms: { thick: { value: px }, res: { value: new THREE.Vector2(W, H) }, col: { value: INK } },
+  vertexShader: `uniform float thick; uniform vec2 res;
+    void main(){ vec4 c = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      vec3 n = normalize(normalMatrix * normal); vec4 cn = projectionMatrix * vec4(n, 0.0);
+      vec2 d = cn.xy; float L = length(d); d = L > 1e-5 ? d / L : vec2(0.0);
+      c.xy += d * thick * 1.7 * 2.0 / res * c.w; c.z += 0.0004 * c.w; gl_Position = c; }`,
+  fragmentShader: `uniform vec3 col; void main(){ gl_FragColor = vec4(col, 1.0); }`,
+  side: THREE.BackSide }));
+function hullGeo(geo) { if (geo.userData.hull) return geo.userData.hull; let g = geo.clone(); for (const k of Object.keys(g.attributes)) if (k !== 'position') g.deleteAttribute(k); g = mergeVertices(g, 1e-4); g.computeVertexNormals(); geo.userData.hull = g; return g; }
+function ink(mesh, px = 4.5, smooth = true) { const h = new THREE.Mesh(smooth ? hullGeo(mesh.geometry) : mesh.geometry, hullMat(px)); h.userData.noOutline = true; h.userData.isHull = true; mesh.add(h); mesh.userData.hull = h; return mesh; }
+
+// helpers
+const ROOT = new THREE.Group(); scene.add(ROOT);
+function mesh(geo, mat, x = 0, y = 0, z = 0, parent = ROOT, px = 4.5) { const m = new THREE.Mesh(geo, typeof mat === 'string' ? M(mat) : mat); m.position.set(x, y, z); parent.add(m); if (px) ink(m, px); return m; }
+const rbox = (w, h, d, r = 0.015) => new RoundedBoxGeometry(w, h, d, 3, Math.min(r, w / 2.01, h / 2.01, d / 2.01));
+const cyl = (rt, rb, h, s = 24) => new THREE.CylinderGeometry(rt, rb, h, s);
+const sph = (r, s = 24) => new THREE.SphereGeometry(r, s, Math.round(s * 0.66));
+
+
+// =====================================================================================================
+// SETS: the New York bank hall + vault (also the San Francisco branch), Levin's St Petersburg flat, the
+// world map, the FBI office, Stansted's transfer lounge, the courtroom (also the House of Lords), a cell.
+// Each set lives in its own group far apart; only the current shot's set is visible.
+// =====================================================================================================
+const BANK = new THREE.Group(); scene.add(BANK);
+const FLAT = new THREE.Group(); FLAT.position.set(70, 0, 0); scene.add(FLAT);
+const WORLD = new THREE.Group(); WORLD.position.set(150, 0, 0); scene.add(WORLD);
+const HQ = new THREE.Group(); HQ.position.set(240, 0, 0); scene.add(HQ);
+const CELL = new THREE.Group(); CELL.position.set(300, 0, 0); scene.add(CELL);
+const AIR = new THREE.Group(); AIR.position.set(380, 0, 0); scene.add(AIR);
+const COURT = new THREE.Group(); COURT.position.set(460, 0, 0); scene.add(COURT);
+const SETS = { bank: BANK, flat: FLAT, world: WORLD, hq: HQ, cell: CELL, air: AIR, court: COURT };
+const basic = (color, o = {}) => new THREE.MeshBasicMaterial({ color, ...o });
+const glowTex = canvasTex(64, 64, (x, w) => { const g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, w, w); });
+function glow(G, x, y, z, color, s = 0.5, op = 0.8) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color, transparent: true, opacity: op, depthWrite: false, blending: THREE.AdditiveBlending })); sp.position.set(x, y, z); sp.scale.setScalar(s); sp.userData.noOutline = true; G.add(sp); return sp; }
+function textCanvas(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; const o = { c, x: c.getContext('2d'), t, w, h, draw, key: null }; o.update = (...a) => { const k = JSON.stringify(a); if (k === o.key) return; o.key = k; draw(o.x, w, h, ...a); t.needsUpdate = true; }; return o; }
+function neonSign(G, text, color, x, y, z, ry = 0, hgt = 0.7, font = 900) {
+  const len = text.length, cw = Math.max(256, 120 * len + 80), tc = textCanvas(cw, 200, (cx, w, h, on = 1) => { cx.clearRect(0, 0, w, h);
+    cx.fillStyle = 'rgba(8,6,16,.88)'; cx.beginPath(); cx.roundRect(6, 6, w - 12, h - 12, 26); cx.fill(); cx.lineWidth = 10; cx.strokeStyle = on ? color : '#333'; cx.stroke();
+    cx.font = `${font} 130px Poppins, sans-serif`; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    if (on) { cx.shadowColor = color; cx.shadowBlur = 30; } cx.fillStyle = on ? '#ffffff' : '#3a3a44'; cx.fillText(text, w / 2, h / 2 + 8); cx.shadowBlur = 0; cx.lineWidth = 5; cx.strokeStyle = on ? color : '#222'; cx.strokeText(text, w / 2, h / 2 + 8); });
+  tc.update(1); const m = new THREE.Mesh(new THREE.PlaneGeometry(hgt * cw / 200, hgt), basic('#ffffff', { map: tc.t, transparent: true })); m.position.set(x, y, z); m.rotation.y = ry; m.userData.noOutline = true; G.add(m);
+  const g = glow(G, x, y, z - 0.05 * Math.cos(ry), color, hgt * cw / 200 * 1.3, 0.35); return { m, tc, g, set(on) { tc.update(on ? 1 : 0); g.visible = !!on; } };
+}
+function skyDome(G, draw, r = 95) { const t = canvasTex(1024, 1024, draw); const m = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 20), basic('#ffffff', { map: t, side: THREE.BackSide, fog: false })); m.userData.noOutline = true; G.add(m); return m; }
+
+// ---------- painted textures ----------
+const stuccoTex = canvasTex(512, 512, (x, w, h) => { const r = rng(3); x.fillStyle = '#ece3d2'; x.fillRect(0, 0, w, h); for (let i = 0; i < 1800; i++) { x.fillStyle = `rgba(${r() < 0.5 ? '120,100,80' : '255,255,255'},${0.04 + r() * 0.06})`; x.fillRect(r() * w, r() * h, 2 + r() * 4, 2 + r() * 4); }
+  for (let i = 0; i < 6; i++) { x.strokeStyle = 'rgba(110,90,70,.18)'; x.lineWidth = 2; x.beginPath(); let px = r() * w, py = r() * h; x.moveTo(px, py); for (let k = 0; k < 5; k++) { px += (r() - 0.5) * 50; py += r() * 30; x.lineTo(px, py); } x.stroke(); }
+  x.fillStyle = 'rgba(90,70,50,.22)'; x.fillRect(0, h - 40, w, 40); }, true);
+const roadTex = canvasTex(1024, 512, (x, w, h) => { const r = rng(8); x.fillStyle = '#3d3a44'; x.fillRect(0, 0, w, h); for (let i = 0; i < 5000; i++) { x.fillStyle = `rgba(${r() < 0.5 ? '0,0,0' : '255,255,255'},${r() * 0.07})`; x.fillRect(r() * w, r() * h, 2, 2); }
+  x.fillStyle = '#e8c35a'; for (let u = 0; u < w; u += 160) x.fillRect(u + 20, h / 2 - 6, 90, 12); x.fillStyle = 'rgba(0,0,0,.25)'; for (let i = 0; i < 6; i++) { x.beginPath(); x.ellipse(r() * w, r() * h, 40 + r() * 60, 10 + r() * 20, 0, 0, 7); x.fill(); } }, true);
+const paveTex = canvasTex(512, 512, (x, w, h) => { const r = rng(11); x.fillStyle = '#9c8f84'; x.fillRect(0, 0, w, h); const s = 64; for (let j = 0; j < 8; j++) for (let i = 0; i < 8; i++) { x.fillStyle = `hsl(25,${8 + r() * 6}%,${52 + r() * 8}%)`; x.fillRect(i * s + 3 + (j % 2) * 32, j * s + 3, s - 6, s - 6); } }, true);
+const grassTex = canvasTex(256, 256, (x, w, h) => { const r = rng(14); x.fillStyle = '#3f7a3a'; x.fillRect(0, 0, w, h); for (let i = 0; i < 900; i++) { x.fillStyle = `rgba(${r() < 0.5 ? '120,180,80' : '20,60,30'},.35)`; x.fillRect(r() * w, r() * h, 2, 5); } }, true);
+const poolTex = canvasTex(512, 512, (x, w, h) => { x.fillStyle = '#2bb6d9'; x.fillRect(0, 0, w, h); x.strokeStyle = 'rgba(255,255,255,.35)'; x.lineWidth = 4; for (let i = 0; i < 26; i++) { x.beginPath(); const y = i * 22; for (let u = 0; u <= w; u += 16) x.lineTo(u, y + Math.sin(u * 0.05 + i) * 6); x.stroke(); } }, true);
+const darkWallTex = canvasTex(512, 512, (x, w, h) => { const r = rng(5); x.fillStyle = '#232741'; x.fillRect(0, 0, w, h); for (let i = 0; i < 4; i++) { x.fillStyle = i % 2 ? '#262b47' : '#20243d'; x.fillRect(i * 128, 0, 128, h); x.fillStyle = 'rgba(255,255,255,.05)'; x.fillRect(i * 128 + 2, 0, 3, h); }
+  for (let i = 0; i < 1500; i++) { x.fillStyle = `rgba(0,0,0,${r() * 0.08})`; x.fillRect(r() * w, r() * h, 2, 2); } }, true);
+const plankTex = canvasTex(512, 512, (x, w, h) => { const r = rng(6); for (let i = 0; i < 8; i++) { x.fillStyle = `hsl(24,${30 + r() * 10}%,${20 + r() * 6}%)`; x.fillRect(0, i * 64, w, 64); x.fillStyle = 'rgba(0,0,0,.4)'; x.fillRect(0, i * 64, w, 3); x.fillRect(((i * 197) % w), i * 64, 3, 64);
+  for (let k = 0; k < 8; k++) { x.strokeStyle = 'rgba(255,200,150,.07)'; x.lineWidth = 2; x.beginPath(); const y = i * 64 + 8 + r() * 48; x.moveTo(0, y); x.lineTo(w, y + (r() - 0.5) * 8); x.stroke(); } } }, true);
+const carpetTex = canvasTex(256, 256, (x, w, h) => { const r = rng(15); x.fillStyle = '#2b3247'; x.fillRect(0, 0, w, h); for (let i = 0; i < 2500; i++) { x.fillStyle = `rgba(${r() < 0.5 ? '0,0,0' : '160,170,210'},${r() * 0.12})`; x.fillRect(r() * w, r() * h, 2, 2); } x.strokeStyle = 'rgba(120,130,180,.18)'; x.lineWidth = 3; x.strokeRect(0, 0, w, h); }, true);
+const concreteTex = canvasTex(512, 512, (x, w, h) => { const r = rng(19); x.fillStyle = '#5a5e68'; x.fillRect(0, 0, w, h); for (let i = 0; i < 3000; i++) { x.fillStyle = `rgba(${r() < 0.5 ? '0,0,0' : '255,255,255'},${r() * 0.08})`; x.fillRect(r() * w, r() * h, 3, 3); }
+  x.strokeStyle = 'rgba(0,0,0,.25)'; x.lineWidth = 3; for (let j = 0; j < 4; j++) { x.beginPath(); x.moveTo(0, j * 128); x.lineTo(w, j * 128); x.stroke(); } for (let i = 0; i < 3; i++) { x.fillStyle = 'rgba(40,30,20,.12)'; x.beginPath(); x.ellipse(r() * w, r() * h, 30 + r() * 60, 60 + r() * 90, 0, 0, 7); x.fill(); } }, true);
+const gridTex = canvasTex(512, 512, (x, w, h) => { x.fillStyle = '#0c0818'; x.fillRect(0, 0, w, h); x.strokeStyle = 'rgba(80,220,255,.55)'; x.lineWidth = 3; for (let i = 0; i <= 4; i++) { x.beginPath(); x.moveTo(i * 128, 0); x.lineTo(i * 128, h); x.stroke(); x.beginPath(); x.moveTo(0, i * 128); x.lineTo(w, i * 128); x.stroke(); }
+  x.strokeStyle = 'rgba(255,60,200,.18)'; x.lineWidth = 1.5; for (let i = 0; i < 16; i++) { x.beginPath(); x.moveTo(i * 32, 0); x.lineTo(i * 32, h); x.stroke(); x.beginPath(); x.moveTo(0, i * 32); x.lineTo(w, i * 32); x.stroke(); } }, true);
+
+// ---------- generic room shell (floor, 4 walls, ceiling) ----------
+function shell(G, o) { const { x0, x1, z0, z1, h, wall, floor, ceil = '#1a1d2e', skip = [] } = o, out = {};
+  const P = (w, hh, mat, rep) => { const mt = mat.clone(); if (mt.map) { mt.map = mat.map.clone(); mt.map.needsUpdate = true; mt.map.repeat.set(...rep); } const m = new THREE.Mesh(new THREE.PlaneGeometry(w, hh), mt); m.receiveShadow = true; m.userData.noHull = true; G.add(m); return m; };
+  out.floor = P(x1 - x0, z1 - z0, floor, [(x1 - x0) / 2, (z1 - z0) / 2]); out.floor.rotation.x = -Math.PI / 2; out.floor.position.set((x0 + x1) / 2, 0, (z0 + z1) / 2);
+  if (!skip.includes('back')) { out.back = P(x1 - x0, h, wall, [(x1 - x0) / 2, h / 2]); out.back.position.set((x0 + x1) / 2, h / 2, z0); }
+  if (!skip.includes('right')) { out.right = P(z1 - z0, h, wall, [(z1 - z0) / 2, h / 2]); out.right.rotation.y = -Math.PI / 2; out.right.position.set(x1, h / 2, (z0 + z1) / 2); }
+  if (!skip.includes('left')) { out.left = P(z1 - z0, h, wall, [(z1 - z0) / 2, h / 2]); out.left.rotation.y = Math.PI / 2; out.left.position.set(x0, h / 2, (z0 + z1) / 2); }
+  if (!skip.includes('front')) { out.front = P(x1 - x0, h, wall, [(x1 - x0) / 2, h / 2]); out.front.rotation.y = Math.PI; out.front.position.set((x0 + x1) / 2, h / 2, z1); }
+  out.ceil = P(x1 - x0, z1 - z0, toon(ceil), [1, 1]); out.ceil.rotation.x = Math.PI / 2; out.ceil.position.set((x0 + x1) / 2, h, (z0 + z1) / 2);
+  return out; }
+
+// ---------- flat cards (from the office-toon engine) ----------
+const cards = []; const _wp = V(0, 0, 0);
+function makeCard(G, kind, h = 1.75) {
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 768; const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  const w = h * 512 / 768, geo = new THREE.PlaneGeometry(w, h).translate(0, h / 2, 0);
+  const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: tex, alphaTest: 0.45, side: THREE.DoubleSide })); m.userData.noOutline = true; G.add(m);
+  const cmat = m.material, nmat = new THREE.ShaderMaterial({ uniforms: { map: { value: tex } }, side: THREE.DoubleSide,
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: 'uniform sampler2D map; varying vec2 vUv; void main(){ if (texture2D(map, vUv).a < 0.45) discard; gl_FragColor = vec4(0.5, 0.5, 1.0, 1.0); }' });
+  const blob = new THREE.Mesh(new THREE.CircleGeometry(w * 0.33, 24), new THREE.MeshBasicMaterial({ color: '#05030a', transparent: true, opacity: 0.4, depthWrite: false })); blob.rotation.x = -Math.PI / 2; blob.scale.y = 0.55; blob.userData.noOutline = true; G.add(blob);
+  const c = { kind, cv, ctx: cv.getContext('2d'), tex, m, blob, cmat, nmat, pose: {}, pos: V(0, -50, 0), spin: 0, key: '', G, on: true, tint: null }; cards.push(c); return c;
+}
+function updateCard(c, t) {
+  c.m.visible = c.blob.visible = c.on && c.G.visible; if (!c.m.visible) return;
+  const animated = c.pose.zzz || c.pose.walk || c.pose.talk; const key = c.kind + JSON.stringify(c.pose) + (animated ? t.toFixed(3) : '');
+  if (key !== c.key) { drawChar(c.ctx, c.kind, c.pose, t); c.tex.needsUpdate = true; c.key = key; }
+  c.cmat.color.set(c.tint || '#ffffff');
+  c.m.position.copy(c.pos); c.m.updateMatrixWorld(); c.m.getWorldPosition(_wp);
+  c.m.rotation.y = Math.atan2(camera.position.x - _wp.x, camera.position.z - _wp.z);
+  const sx = Math.cos(c.spin || 0); c.m.scale.x = Math.sign(sx || 1) * Math.max(0.12, Math.abs(sx));
+  c.blob.position.set(c.pos.x, 0.012, c.pos.z); c.blob.visible = c.m.visible && c.pos.y < 0.1;
+}
+
+// ---------- cars: extruded side profiles ----------
+function profileCar(G, pts, len, width, col, o = {}) { // pts: side profile in (x along car, y up), extruded across width
+  const sh = new THREE.Shape(); sh.moveTo(pts[0][0], pts[0][1]); for (const p of pts.slice(1)) sh.lineTo(p[0], p[1]); sh.closePath();
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: width, bevelEnabled: true, bevelSize: 0.04, bevelThickness: 0.04, bevelSegments: 2 }); geo.translate(0, 0, -width / 2); geo.computeVertexNormals();
+  const root = new THREE.Group(); G.add(root); const body = mesh(geo, toon(col), 0, 0, 0, root, 4.5); body.material.flatShading = false;
+  const wheels = []; for (const [wx, wz] of o.wheels) { const wg = new THREE.Group(); wg.position.set(wx, o.wr, wz); root.add(wg); const w = mesh(cyl(o.wr, o.wr, 0.24, 20).rotateX(Math.PI / 2), '#16141c', 0, 0, 0, wg, 3.5); mesh(cyl(o.wr * 0.55, o.wr * 0.55, 0.26, 12).rotateX(Math.PI / 2), o.rim || '#b9bcc8', 0, 0, 0, wg, 2); wheels.push(wg); }
+  return { root, body, wheels };
+}
+
+const SCR = {}; // screen canvases, drawn per frame
+// ---------- extra painted textures ----------
+const marbleTex = canvasTex(512, 512, (x, w, h) => { const r = rng(21); for (let j = 0; j < 2; j++) for (let i = 0; i < 2; i++) { x.fillStyle = (i + j) % 2 ? '#2f4a3e' : '#e9e1cf'; x.fillRect(i * 256, j * 256, 256, 256); }
+  for (let k = 0; k < 26; k++) { x.strokeStyle = `rgba(${r() < 0.5 ? '120,110,90' : '255,255,255'},.18)`; x.lineWidth = 1 + r() * 2; x.beginPath(); let px = r() * w, py = r() * h; x.moveTo(px, py); for (let s = 0; s < 6; s++) { px += (r() - 0.5) * 90; py += (r() - 0.5) * 90; x.lineTo(px, py); } x.stroke(); }
+  x.strokeStyle = 'rgba(0,0,0,.35)'; x.lineWidth = 3; x.strokeRect(0, 0, 256, 256); x.strokeRect(256, 256, 256, 256); x.strokeRect(256, 0, 256, 256); x.strokeRect(0, 256, 256, 256); }, true);
+const stoneTex = canvasTex(512, 512, (x, w, h) => { const r = rng(22); x.fillStyle = '#d9cdb4'; x.fillRect(0, 0, w, h); for (let j = 0; j < 4; j++) for (let i = 0; i < 2; i++) { x.fillStyle = `hsl(40,${22 + r() * 6}%,${70 + r() * 6}%)`; x.fillRect(i * 256 + (j % 2) * 128 - 128 + 3, j * 128 + 3, 250, 122); x.fillRect(i * 256 + (j % 2) * 128 + 128 + 3, j * 128 + 3, 250, 122); }
+  for (let i = 0; i < 1500; i++) { x.fillStyle = `rgba(90,70,50,${r() * 0.06})`; x.fillRect(r() * w, r() * h, 2, 2); } }, true);
+const wallpaperTex = canvasTex(256, 256, (x, w, h) => { const r = rng(23); x.fillStyle = '#5d6e58'; x.fillRect(0, 0, w, h); x.strokeStyle = 'rgba(230,220,180,.16)'; x.lineWidth = 3;
+  for (let j = 0; j < 4; j++) for (let i = 0; i < 4; i++) { const cx = i * 64 + (j % 2) * 32, cy = j * 64; x.beginPath(); x.moveTo(cx, cy - 22); x.lineTo(cx + 16, cy); x.lineTo(cx, cy + 22); x.lineTo(cx - 16, cy); x.closePath(); x.stroke(); }
+  for (let i = 0; i < 800; i++) { x.fillStyle = `rgba(40,30,20,${r() * 0.08})`; x.fillRect(r() * w, r() * h, 3, 3); } x.fillStyle = 'rgba(60,40,20,.16)'; x.fillRect(0, h * 0.8, w, h * 0.2); }, true);
+const terrazzoTex = canvasTex(512, 512, (x, w, h) => { const r = rng(24); x.fillStyle = '#b9b4aa'; x.fillRect(0, 0, w, h); for (let i = 0; i < 2600; i++) { x.fillStyle = ['#8f8a80', '#d8d2c6', '#6f6a62', '#a89070'][Math.floor(r() * 4)]; x.beginPath(); x.arc(r() * w, r() * h, 1 + r() * 3, 0, 7); x.fill(); }
+  x.strokeStyle = 'rgba(60,50,40,.35)'; x.lineWidth = 3; for (let i = 0; i <= 2; i++) { x.beginPath(); x.moveTo(i * 256, 0); x.lineTo(i * 256, h); x.stroke(); x.beginPath(); x.moveTo(0, i * 256); x.lineTo(w, i * 256); x.stroke(); } }, true);
+const woodPanelTex = canvasTex(512, 512, (x, w, h) => { const r = rng(25); for (let i = 0; i < 4; i++) { x.fillStyle = `hsl(22,${38 + r() * 8}%,${24 + r() * 5}%)`; x.fillRect(i * 128, 0, 128, h); x.strokeStyle = 'rgba(0,0,0,.45)'; x.lineWidth = 4; x.strokeRect(i * 128 + 14, 20, 100, h * 0.42); x.strokeRect(i * 128 + 14, h * 0.5, 100, h * 0.44);
+  for (let k = 0; k < 10; k++) { x.strokeStyle = 'rgba(255,200,150,.06)'; x.lineWidth = 2; x.beginPath(); const xx = i * 128 + 10 + r() * 108; x.moveTo(xx, 0); x.lineTo(xx + (r() - 0.5) * 10, h); x.stroke(); } } }, true);
+const billTex = canvasTex(256, 112, (x, w, h) => { x.fillStyle = '#9fc48a'; x.fillRect(0, 0, w, h); x.strokeStyle = '#2f5a2a'; x.lineWidth = 6; x.strokeRect(6, 6, w - 12, h - 12); x.fillStyle = '#d9e8c8'; x.beginPath(); x.ellipse(w / 2, h / 2, 34, 40, 0, 0, 7); x.fill(); x.strokeStyle = '#2f5a2a'; x.lineWidth = 3; x.stroke();
+  x.fillStyle = '#2f5a2a'; x.font = '900 34px Poppins'; x.fillText('100', 16, 44); x.fillText('100', w - 78, h - 18); x.font = '900 40px Poppins'; x.textAlign = 'center'; x.fillText('$', w / 2, h / 2 + 14); });
+const billMat = new THREE.MeshBasicMaterial({ map: billTex, side: THREE.DoubleSide });
+
+// world map projection (lon, lat) -> WORLD-local x, z on the map floor
+const MAPK = 0.115, MAPZ = 1.2, MAPW = 44, MAPD = 20, MAPZC = -0.6;
+const PM = (lon, lat, y = 0.03) => V(lon * MAPK, y, -lat * MAPK + MAPZ);
+const CITY = { ny: [-74, 40.7, 'NEW YORK'], stp: [30.3, 59.9, 'ST PETERSBURG'], hel: [24.9, 60.2, 'FINLAND'], tlv: [34.8, 32.1, 'ISRAEL'], ams: [4.9, 52.4, 'NETHERLANDS'], fra: [8.7, 50.1, 'GERMANY'],
+  sf: [-122.4, 37.8, 'SAN FRANCISCO'], bue: [-58.4, -34.6, 'ARGENTINA'], jkt: [106.8, -6.2, 'INDONESIA'], nas: [-77.3, 25.0, 'BAHAMAS'], lon: [0.26, 51.9, 'LONDON'] };
+const LAND = [
+  [[-165, 65], [-140, 70], [-110, 72], [-95, 72], [-80, 66], [-62, 60], [-56, 52], [-66, 45], [-70, 42], [-75, 37], [-80, 32], [-80, 26], [-82, 25], [-84, 30], [-90, 29], [-97, 27], [-97, 21], [-90, 21], [-87, 15], [-83, 9], [-78, 8], [-82, 8], [-86, 12], [-95, 16], [-105, 20], [-112, 29], [-117, 33], [-123, 39], [-124, 48], [-133, 57], [-150, 60], [-165, 60]],
+  [[-78, 8], [-60, 10], [-50, 2], [-35, -7], [-39, -15], [-41, -23], [-48, -26], [-53, -34], [-58, -38], [-65, -42], [-68, -52], [-72, -54], [-75, -47], [-73, -38], [-71, -28], [-71, -18], [-77, -12], [-81, -5], [-80, 1]],
+  [[-50, 60], [-40, 64], [-22, 70], [-18, 77], [-30, 83], [-55, 82], [-70, 78], [-60, 70]],
+  [[-10, 36], [-9, 43], [-2, 44], [-4, 48], [2, 51], [8, 54], [9, 57], [5, 59], [6, 62], [14, 67], [20, 70], [28, 71], [40, 68], [55, 69], [70, 73], [90, 76], [110, 77], [130, 72], [150, 71], [180, 68], [178, 64], [160, 60], [156, 51], [142, 54], [140, 46], [132, 43], [128, 38], [126, 35], [121, 31], [120, 24], [110, 21], [108, 16], [109, 11], [104, 9], [101, 3], [98, 8], [97, 16], [92, 21], [88, 22], [80, 15], [77, 8], [73, 17], [72, 22], [66, 25], [57, 26], [52, 28], [48, 30], [55, 25], [56, 22], [52, 16], [44, 12], [43, 15], [39, 21], [35, 28], [34, 31], [36, 36], [27, 37], [26, 40], [23, 38], [20, 40], [16, 38], [12, 44], [8, 44], [3, 42], [-1, 37], [-6, 36]],
+  [[-17, 15], [-16, 22], [-10, 29], [-6, 35], [10, 37], [20, 31], [32, 31], [35, 28], [39, 20], [43, 12], [51, 11], [48, 4], [40, -3], [40, -15], [35, -24], [32, -29], [27, -34], [20, -35], [17, -29], [12, -17], [13, -9], [9, -1], [9, 4], [4, 6], [-5, 5], [-9, 5], [-13, 8]],
+  [[114, -22], [122, -18], [130, -12], [137, -12], [142, -11], [146, -19], [153, -27], [151, -34], [146, -39], [140, -38], [135, -35], [130, -32], [118, -35], [115, -33], [114, -26]],
+  [[-5, 50], [1, 51], [2, 53], [0, 54], [-2, 57], [-5, 58.5], [-6, 56], [-3, 55], [-4.5, 53.5], [-5, 52]],
+  [[-10, 52], [-6, 52], [-6, 55], [-10, 54]],
+  [[95, 5], [104, -2], [106, -6], [100, -4], [97, 2]], [[105, -6], [115, -8], [114, -6.5], [106, -5.6]], [[109, 1], [117, 6], [118, 1], [115, -3], [110, -2]], [[119, 0], [125, 1], [122, -5], [120, -4]],
+  [[130, 31], [135, 34], [141, 41], [140, 36], [135, 33]], [[166, -46], [174, -36], [178, -38], [171, -45]]];
+const mapTex = (() => { const cw = 2048, ch = Math.round(2048 * MAPD / MAPW), c = document.createElement('canvas'); c.width = cw; c.height = ch; const x = c.getContext('2d');
+  const U = (lon, lat) => [(lon * MAPK + MAPW / 2) / MAPW * cw, ((-lat * MAPK + MAPZ) - (MAPZC - MAPD / 2)) / MAPD * ch];
+  const g = x.createRadialGradient(cw / 2, ch / 2, 50, cw / 2, ch / 2, cw * 0.6); g.addColorStop(0, '#132a4a'); g.addColorStop(1, '#070d1c'); x.fillStyle = g; x.fillRect(0, 0, cw, ch);
+  x.strokeStyle = 'rgba(90,170,255,.16)'; x.lineWidth = 2; for (let lon = -180; lon <= 180; lon += 15) { x.beginPath(); const [a] = U(lon, 0); x.moveTo(a, 0); x.lineTo(a, ch); x.stroke(); } for (let lat = -75; lat <= 90; lat += 15) { x.beginPath(); const [, b] = U(0, lat); x.moveTo(0, b); x.lineTo(cw, b); x.stroke(); }
+  for (const poly of LAND) { x.beginPath(); poly.forEach(([lo, la], i) => { const [a, b] = U(lo, la); i ? x.lineTo(a, b) : x.moveTo(a, b); }); x.closePath(); x.fillStyle = '#2b5a5a'; x.fill(); x.lineWidth = 7; x.strokeStyle = '#7ff0e0'; x.globalAlpha = 0.5; x.stroke(); x.globalAlpha = 1; }
+  const r = rng(26); x.fillStyle = 'rgba(160,255,230,.22)'; for (let i = 0; i < 4000; i++) { const px = r() * cw, py = r() * ch; if (x.getImageData(px, py, 1, 1).data[1] > 80) x.fillRect(px, py, 3, 3); }
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t; })();
+function labelSprite(G, text, col = '#ffffff', s = 0.9) { const tc = textCanvas(512, 128, (x, w, h, a = 1) => { x.clearRect(0, 0, w, h); x.globalAlpha = a; x.font = '900 64px Poppins'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.lineWidth = 16; x.strokeStyle = '#07060d'; x.strokeText(text, w / 2, h / 2); x.fillStyle = col; x.fillText(text, w / 2, h / 2); x.globalAlpha = 1; });
+  tc.update(1); const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tc.t, transparent: true, depthWrite: false, depthTest: false })); sp.scale.set(s * 4, s, 1); sp.userData.noOutline = true; sp.renderOrder = 5; G.add(sp); return sp; }
+
+// ---------- a small cartoon airliner (map jet and the Stansted apron) ----------
+function airliner(G, s = 1, livery = '#2f4f9e') { const g = new THREE.Group(); G.add(g);
+  const fus = mesh(cyl(0.5, 0.5, 7, 20).rotateZ(Math.PI / 2), '#f2f2f4', 0, 0, 0, g, 4); mesh(sph(0.5, 20).scale(1.4, 1, 1), '#f2f2f4', 3.5, 0, 0, g, 4); mesh(new THREE.ConeGeometry(0.5, 1.8, 20).rotateZ(Math.PI / 2), '#f2f2f4', -4.4, 0.08, 0, g, 4);
+  mesh(rbox(7.0, 0.14, 0.04), livery, 0, -0.05, 0.5, g, 0); mesh(rbox(7.0, 0.14, 0.04), livery, 0, -0.05, -0.5, g, 0);
+  for (let i = 0; i < 12; i++) for (const sz of [-1, 1]) mesh(rbox(0.16, 0.14, 0.02), basic('#1d2a4a'), 2.6 - i * 0.5, 0.18, sz * 0.49, g, 0);
+  const wing = new THREE.Shape(); wing.moveTo(0.9, 0); wing.lineTo(-0.6, 4.2); wing.lineTo(-1.3, 4.2); wing.lineTo(-0.9, 0); wing.closePath();
+  for (const sz of [-1, 1]) { const wm = mesh(new THREE.ExtrudeGeometry(wing, { depth: 0.12, bevelEnabled: false }), '#d9dce4', 0.2, -0.2, 0, g, 3); wm.rotation.x = sz * Math.PI / 2; wm.position.y = -0.2 + (sz > 0 ? 0.06 : -0.06);
+    mesh(cyl(0.26, 0.26, 1.0, 14).rotateZ(Math.PI / 2), '#b9bcc8', 0.6, -0.55, sz * 1.6, g, 3); }
+  const tail = new THREE.Shape(); tail.moveTo(0, 0); tail.lineTo(-1.2, 1.7); tail.lineTo(-1.8, 1.7); tail.lineTo(-1.3, 0); tail.closePath(); mesh(new THREE.ExtrudeGeometry(tail, { depth: 0.1, bevelEnabled: false }), livery, -3.0, 0.3, -0.05, g, 3);
+  const st = new THREE.Shape(); st.moveTo(0.4, 0); st.lineTo(-0.5, 1.4); st.lineTo(-0.9, 1.4); st.lineTo(-0.5, 0); st.closePath(); for (const sz of [-1, 1]) { const m = mesh(new THREE.ExtrudeGeometry(st, { depth: 0.08, bevelEnabled: false }), '#d9dce4', -3.6, 0.1, 0, g, 2.5); m.rotation.x = sz * Math.PI / 2; }
+  g.scale.setScalar(s); return g; }
+
+// =====================================================================================================
+// BANK: a grand New York banking hall. Marble floor, columns, a round vault door in the back wall with the
+// vault behind it, the cash-management mainframe on the right wall with the phone line running up out of
+// the building, teller windows along the left wall, front doors to the street. Banner swaps to San Francisco.
+// =====================================================================================================
+{ const G = BANK, x0 = -6, x1 = 6, z0 = -9, z1 = 6, h = 6.5;
+  const wallM = toon('#ffffff', { map: stoneTex });
+  shell(G, { x0, x1, z0, z1, h, wall: wallM, floor: toon('#ffffff', { map: marbleTex }), ceil: '#2e2a24', skip: ['back', 'front'] });
+  const wp = (xa, xb, ya, yb, z, ry = 0) => { const mt = wallM.clone(); mt.map = stoneTex.clone(); mt.map.needsUpdate = true; mt.map.repeat.set((xb - xa) / 2, (yb - ya) / 2); const m = new THREE.Mesh(new THREE.PlaneGeometry(xb - xa, yb - ya), mt); m.position.set((xa + xb) / 2, (ya + yb) / 2, z); m.rotation.y = ry; m.receiveShadow = true; m.userData.noHull = true; G.add(m); };
+  const HX = 1.85, HY0 = 0.55, HY1 = 4.25, VY = 2.4;
+  wp(x0, -HX, 0, h, z0); wp(HX, x1, 0, h, z0); wp(-HX, HX, 0, HY0, z0); wp(-HX, HX, HY1, h, z0);
+  // front wall with the doorway x -1..1, y 0..2.8 (faces -z)
+  wp(-1, x0, 0, h, z1, Math.PI); wp(x1, 1, 0, h, z1, Math.PI); wp(1, -1, 2.8, h, z1, Math.PI);
+  // dado rail + skirting
+  for (const [a, b, z, ry] of [[x0, x1, z0 + 0.03, 0], [x0, x1, z1 - 0.03, Math.PI]]) { const m = mesh(rbox(b - a, 0.16, 0.06), '#8a6a3a', 0, 1.1, z, G, 3); m.rotation.y = ry; }
+  // vault: steel ring, tunnel, hinged door, room behind
+  mesh(new THREE.RingGeometry(1.8, 2.75, 48), toon('#8a8f9a', { side: THREE.DoubleSide }), 0, VY, z0 + 0.03, G, 0);
+  mesh(new THREE.TorusGeometry(2.75, 0.09, 8, 48), '#5a5e68', 0, VY, z0 + 0.05, G, 3); mesh(new THREE.TorusGeometry(1.8, 0.1, 8, 48), '#5a5e68', 0, VY, z0 + 0.06, G, 3);
+  for (let i = 0; i < 16; i++) { const a = i / 16 * Math.PI * 2; mesh(cyl(0.07, 0.07, 0.06, 10).rotateX(Math.PI / 2), '#c9ccd6', Math.cos(a) * 2.3, VY + Math.sin(a) * 2.3, z0 + 0.07, G, 2); }
+  { const t = mesh(cyl(1.8, 1.8, 1.2, 48, 1, true).rotateX(Math.PI / 2), toon('#6a6e78', { side: THREE.DoubleSide }), 0, VY, z0 - 0.6, G, 0); t.userData.noHull = true; }
+  const hinge = new THREE.Group(); hinge.position.set(1.95, VY, z0 + 0.32); G.add(hinge); const door = new THREE.Group(); door.position.set(-1.95, 0, 0); hinge.add(door);
+  mesh(cyl(1.86, 1.86, 0.5, 48).rotateX(Math.PI / 2), '#9aa0ac', 0, 0, 0, door, 5); mesh(cyl(1.5, 1.5, 0.06, 40).rotateX(Math.PI / 2), '#b6bcc8', 0, 0, 0.27, door, 2);
+  for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; mesh(cyl(0.09, 0.09, 0.08, 10).rotateX(Math.PI / 2), '#e8c35a', Math.cos(a) * 1.65, Math.sin(a) * 1.65, 0.28, door, 2); }
+  const wheel = new THREE.Group(); wheel.position.z = 0.42; door.add(wheel); mesh(new THREE.TorusGeometry(0.55, 0.06, 8, 32), '#e8c35a', 0, 0, 0, wheel, 3); for (let i = 0; i < 3; i++) { const sp = mesh(rbox(1.3, 0.07, 0.07), '#e8c35a', 0, 0, 0, wheel, 2.5); sp.rotation.z = i * Math.PI / 3; } mesh(cyl(0.14, 0.14, 0.2, 16).rotateX(Math.PI / 2), '#c9a43a', 0, 0, -0.06, wheel, 2.5);
+  for (const yy of [1.1, -1.1]) mesh(rbox(0.36, 0.5, 0.36), '#5a5e68', 1.95, yy, 0, door, 3);
+  G.userData.vault = { hinge, wheel };
+  { const V0 = z0 - 1.2, V1 = z0 - 5.4, vx = 3.0, vh = 4.8; const vm = toon('#7a7e88');
+    const pl = (w, hh, x, y, z, ry, rx = 0) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, hh), vm); m.position.set(x, y, z); m.rotation.set(rx, ry, 0); m.receiveShadow = true; m.userData.noHull = true; G.add(m); };
+    pl(2 * vx, vh, 0, vh / 2, V1, 0); pl(V0 - V1, vh, -vx, vh / 2, (V0 + V1) / 2, Math.PI / 2); pl(V0 - V1, vh, vx, vh / 2, (V0 + V1) / 2, -Math.PI / 2); pl(2 * vx, V0 - V1, 0, 0.01, (V0 + V1) / 2, 0, -Math.PI / 2); pl(2 * vx, V0 - V1, 0, vh, (V0 + V1) / 2, 0, Math.PI / 2);
+    pl(2 * vx, vh, 0, vh / 2, V0, Math.PI);
+    const vl = new THREE.PointLight('#ffd890', 8, 9, 1.4); vl.position.set(0, 3.8, (V0 + V1) / 2); G.add(vl);
+    G.userData.stacks = []; for (const sx of [-1, 1]) for (let j = 0; j < 4; j++) { mesh(rbox(0.6, 0.05, 3.6), '#4a4e58', sx * (vx - 0.35), 0.5 + j * 0.9, (V0 + V1) / 2, G, 3);
+      for (let k = 0; k < 7; k++) { const st = mesh(rbox(0.3, 0.22, 0.42, 0.02), '#7fae6a', sx * (vx - 0.38), 0.64 + j * 0.9, V1 + 0.6 + k * 0.48, G, 2.5); mesh(rbox(0.31, 0.06, 0.1), '#f4efe4', 0, 0, 0, st, 0); G.userData.stacks.push(st); } }
+    mesh(rbox(1.6, 0.8, 0.9), '#4a4e58', 0, 0.4, V1 + 0.7, G, 3); for (let i = 0; i < 9; i++) mesh(rbox(0.32, 0.12, 0.15, 0.02), '#ffcf3f', -0.5 + (i % 4) * 0.33 + (i > 3 ? 0.16 : 0) - (i > 6 ? 0.16 : 0), 0.86 + (i > 3 ? 0.12 : 0) + (i > 6 ? 0.12 : 0), V1 + 0.7, G, 2);
+    for (let i = 0; i < 3; i++) { const p = new THREE.Group(); p.position.set(-1.6 + i * 1.6, 0, V0 - 2.0); G.add(p); mesh(rbox(1.1, 0.12, 0.9), '#8a6a3a', 0, 0.06, 0, p, 3); for (let k = 0; k < 6; k++) { const st = mesh(rbox(0.5, 0.2, 0.4, 0.02), '#7fae6a', (k % 2) * 0.52 - 0.26, 0.22 + Math.floor(k / 2) * 0.21, 0, p, 2.5); G.userData.stacks.push(st); } } }
+  // columns
+  for (const cx of [-2.6, 2.6]) for (const cz of [-5, -1, 3]) { mesh(cyl(0.34, 0.38, h - 0.7, 20), '#efe6d2', cx, (h - 0.7) / 2 + 0.35, cz, G, 4); mesh(rbox(0.95, 0.35, 0.95, 0.03), '#d9cdb4', cx, 0.175, cz, G, 3.5); mesh(rbox(0.95, 0.35, 0.95, 0.03), '#d9cdb4', cx, h - 0.175, cz, G, 3.5);
+    for (let k = 0; k < 8; k++) { const a = k / 8 * Math.PI * 2; mesh(rbox(0.04, h - 1.0, 0.04), '#cfc6b0', cx + Math.cos(a) * 0.36, h / 2, cz + Math.sin(a) * 0.36, G, 0); } }
+  // clock above the vault
+  { const tc = textCanvas(256, 256, (x, w, hh) => { x.fillStyle = '#f4efe4'; x.beginPath(); x.arc(128, 128, 120, 0, 7); x.fill(); x.lineWidth = 10; x.strokeStyle = '#2a2018'; x.stroke(); x.fillStyle = '#2a2018'; for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; x.fillRect(128 + Math.sin(a) * 100 - 4, 128 - Math.cos(a) * 100 - 8, 8, 16); } }); tc.update();
+    mesh(new THREE.PlaneGeometry(0.9, 0.9), basic('#fff', { map: tc.t, transparent: true }), 0, 5.6, z0 + 0.04, G, 0); const hm = mesh(rbox(0.04, 0.22, 0.01), '#2a2018', 0, 5.6, z0 + 0.06, G, 0), mm = mesh(rbox(0.03, 0.34, 0.01), '#2a2018', 0, 5.6, z0 + 0.065, G, 0);
+    hm.geometry.translate(0, 0.1, 0); mm.geometry.translate(0, 0.15, 0); G.userData.clock = [hm, mm]; }
+  // mainframe on the right wall: three cabinets with tape reels, console desk, the phone line up the wall
+  G.userData.reels = []; G.userData.leds = [];
+  for (let i = 0; i < 3; i++) { const cz = -8.2 + i * 0.85, c = new THREE.Group(); c.position.set(5.5, 0, cz); G.add(c); mesh(rbox(0.9, 2.4, 0.8, 0.03), '#c9c2b0', 0, 1.2, 0, c, 4.5); mesh(rbox(0.04, 2.2, 0.7), '#3a3e48', -0.45, 1.2, 0, c, 0);
+    for (const ry of [1.75, 1.15]) { mesh(rbox(0.02, 0.5, 0.62), basic('#1a1d28'), -0.465, ry, 0, c, 0); for (const rz of [-0.16, 0.16]) { const r = mesh(cyl(0.13, 0.13, 0.03, 18).rotateZ(Math.PI / 2), '#e8eef8', -0.48, ry, rz, c, 2); mesh(cyl(0.05, 0.05, 0.035, 10).rotateZ(Math.PI / 2), '#3a3e48', 0, 0, 0, r, 0); mesh(rbox(0.035, 0.2, 0.02), '#3a3e48', 0, 0, 0, r, 0); G.userData.reels.push(r); } }
+    for (let j = 0; j < 3; j++) for (let k = 0; k < 6; k++) { const l = mesh(rbox(0.01, 0.035, 0.035), basic('#ff3b4a'), -0.47, 0.55 + j * 0.12, -0.25 + k * 0.1, c, 0); l.userData.ph = i * 3 + j * 1.3 + k * 0.7; G.userData.leds.push(l); } }
+  { const d = new THREE.Group(); d.position.set(4.2, 0, -7.35); G.add(d); mesh(rbox(0.8, 0.07, 1.8), '#5a3a22', 0, 0.78, 0, d, 4); for (const s of [-1, 1]) mesh(rbox(0.7, 0.74, 0.06), '#4a2f1c', 0, 0.38, s * 0.85, d, 3);
+    const tg = new THREE.Group(); tg.position.set(0.12, 1.12, 0); tg.rotation.y = Math.PI / 2; d.add(tg); mesh(rbox(0.62, 0.5, 0.5, 0.03), '#d8d0bc', 0, 0, 0.2, tg, 3.5); const tc = textCanvas(640, 480, () => {}); SCR.bankterm = tc;
+    const p = new THREE.Mesh(new THREE.PlaneGeometry(0.5, 0.375), basic('#ffffff', { map: tc.t })); p.position.z = -0.055; p.rotation.y = Math.PI; p.userData.noOutline = true; tg.add(p);
+    mesh(rbox(0.22, 0.03, 0.6), '#c9c2b0', -0.15, 0.82, 0, d, 2); mesh(rbox(0.18, 0.1, 0.24), '#2a2a30', -0.1, 0.86, 0.6, d, 2.5); mesh(cyl(0.035, 0.035, 0.2, 8).rotateX(Math.PI / 2), '#2a2a30', -0.1, 0.93, 0.6, d, 2);
+    G.userData.termGlow = glow(G, 4.1, 1.15, -7.35, '#7fffb0', 1.0, 0.1); }
+  { const pts = [V(5.5, 2.4, -7.35), V(5.5, 3.0, -7.35), V(5.85, 3.4, -7.35), V(5.92, 4.5, -7.35), V(5.92, h + 0.2, -7.35)]; const curve = new THREE.CatmullRomCurve3(pts);
+    const ct = canvasTex(256, 16, (x, w, hh) => { x.fillStyle = '#1a3a2a'; x.fillRect(0, 0, w, hh); const g = x.createLinearGradient(0, 0, w, 0); g.addColorStop(0, 'rgba(120,255,170,0)'); g.addColorStop(0.5, 'rgba(160,255,190,1)'); g.addColorStop(1, 'rgba(120,255,170,0)'); x.fillStyle = g; x.fillRect(0, 0, w * 0.3, hh); }, true);
+    const cm = new THREE.MeshBasicMaterial({ map: ct }); ct.repeat.set(4, 1); const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 40, 0.05, 8), cm); tube.userData.noOutline = true; G.add(tube); G.userData.cable = ct; G.userData.cableCurve = curve;
+    mesh(rbox(0.12, 0.35, 0.3), '#5a5e68', 5.92, 4.5, -7.35, G, 2.5); const lab = textCanvas(256, 64, (x, w, hh) => { x.fillStyle = '#1d1a26'; x.fillRect(0, 0, w, hh); x.fillStyle = '#7fffb0'; x.font = '800 30px monospace'; x.fillText('PHONE LINE', 20, 42); }); lab.update(); mesh(new THREE.PlaneGeometry(0.5, 0.125), basic('#fff', { map: lab.t }), 5.4, 2.6, -6.92, G, 0).rotation.y = -Math.PI / 2; }
+  { const sg = textCanvas(512, 128, (x, w, hh) => { x.fillStyle = '#1d2a4a'; x.fillRect(0, 0, w, hh); x.fillStyle = '#fff'; x.font = '900 44px Poppins'; x.textAlign = 'center'; x.fillText('CASH MANAGEMENT', w / 2, 82); }); sg.update(); const m = mesh(new THREE.PlaneGeometry(1.8, 0.45), basic('#fff', { map: sg.t }), 5.97, 3.0, -7.4, G, 0); m.rotation.y = -Math.PI / 2; }
+  // teller windows along the left wall
+  { const cx = -4.65; mesh(rbox(0.5, 1.1, 6.8, 0.02), '#6a4524', cx, 0.55, -0.2, G, 4.5); mesh(rbox(0.62, 0.06, 6.9, 0.02), '#e9e1cf', cx, 1.13, -0.2, G, 3);
+    const win = [-2.6, -0.2, 2.2]; G.userData.windows = win;
+    for (let k = 0; k <= 22; k++) { const z = -3.55 + k * 0.3; if (win.some(w => Math.abs(z - w) < 0.42)) continue; mesh(cyl(0.02, 0.02, 1.1, 6), '#d9b25a', cx, 1.7, z, G, 2); }
+    mesh(rbox(0.08, 0.08, 6.9), '#d9b25a', cx, 2.26, -0.2, G, 2.5); for (const w of win) { mesh(rbox(0.08, 0.06, 0.9), '#d9b25a', cx, 1.6, w, G, 2);
+      const pc = textCanvas(256, 96, (x, ww, hh, open = 1) => { x.fillStyle = open ? '#2f7a3a' : '#7a1f2b'; x.fillRect(0, 0, ww, hh); x.fillStyle = '#fff'; x.font = '900 46px Poppins'; x.textAlign = 'center'; x.fillText(open ? 'OPEN' : 'CLOSED', ww / 2, 64); }); pc.update(0);
+      const m = mesh(new THREE.PlaneGeometry(0.5, 0.19), basic('#fff', { map: pc.t }), cx + 0.3, 1.27, w, G, 0); m.rotation.y = Math.PI / 2; (G.userData.plaques ||= []).push(pc); }
+    mesh(rbox(0.02, 2.4, 6.8), '#c9bba8', x0 + 0.02, 1.2, -0.2, G, 0); }
+  // stanchions + velvet rope, plants, pendant lamps
+  for (const [px, pz] of [[-5.3, 5.3], [5.3, 5.3], [-5.3, -8.3]]) { mesh(cyl(0.3, 0.24, 0.6, 14), '#6a4524', px, 0.3, pz, G, 3.5); for (let k = 0; k < 6; k++) mesh(sph(0.3, 10), k % 2 ? '#2f7a3a' : '#3f9a46', px + Math.cos(k) * 0.22, 0.9 + (k % 3) * 0.22, pz + Math.sin(k) * 0.22, G, 3); }
+  for (const [lx, lz] of [[0, -5], [0, -1], [0, 3]]) { mesh(cyl(0.01, 0.01, 1.2, 4), '#2a2018', lx, h - 0.6, lz, G, 0); mesh(sph(0.32, 16).scale(1, 0.6, 1), '#d9b25a', lx, h - 1.2, lz, G, 3); mesh(sph(0.2, 12), basic('#fff2c8'), lx, h - 1.32, lz, G, 0); glow(G, lx, h - 1.35, lz, '#ffd890', 1.6, 0.5); }
+  // front doors (double, hinged at x = +-1) + the street outside
+  G.userData.doors = []; for (const s of [-1, 1]) { const hg = new THREE.Group(); hg.position.set(s * 1.0, 0, z1 - 0.05); G.add(hg); const pn = new THREE.Group(); pn.position.x = -s * 0.5; hg.add(pn);
+    mesh(rbox(0.98, 2.75, 0.08, 0.02), '#4a2f1c', 0, 1.38, 0, pn, 3.5); mesh(new THREE.PlaneGeometry(0.66, 1.6), basic('#9fc0e0', { transparent: true, opacity: 0.55 }), 0, 1.7, -0.045, pn, 0); mesh(rbox(0.06, 0.4, 0.06), '#d9b25a', s * 0.36, 1.2, -0.08, pn, 2); G.userData.doors.push({ hg, s }); }
+  { const st = canvasTex(1024, 512, (x, w, hh) => { const g = x.createLinearGradient(0, 0, 0, hh); g.addColorStop(0, '#9fc8f0'); g.addColorStop(0.6, '#e8e0c8'); g.addColorStop(0.61, '#6a6560'); g.addColorStop(1, '#4a4644'); x.fillStyle = g; x.fillRect(0, 0, w, hh); const r = rng(27);
+      for (let i = 0; i < 10; i++) { const bw = 70 + r() * 60, bh = 120 + r() * 160, bx = i * 104; x.fillStyle = `hsl(${20 + r() * 20},25%,${45 + r() * 15}%)`; x.fillRect(bx, hh * 0.61 - bh, bw, bh); x.fillStyle = 'rgba(255,255,255,.3)'; for (let yy = hh * 0.61 - bh + 12; yy < hh * 0.58; yy += 26) for (let xx = bx + 8; xx < bx + bw - 12; xx += 20) x.fillRect(xx, yy, 10, 14); }
+      x.fillStyle = '#f2c94c'; x.fillRect(380, hh * 0.68, 260, 70); x.fillStyle = '#2a2a30'; x.beginPath(); x.arc(430, hh * 0.82, 22, 0, 7); x.arc(590, hh * 0.82, 22, 0, 7); x.fill(); });
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(9, 4.5), basic('#fff', { map: st })); m.position.set(0, 2.0, z1 + 2.5); m.rotation.y = Math.PI; m.userData.noOutline = true; G.add(m);
+    const pv = new THREE.Mesh(new THREE.PlaneGeometry(6, 2.6), toon('#ffffff', { map: paveTex })); pv.rotation.x = -Math.PI / 2; pv.position.set(0, 0.002, z1 + 1.3); pv.userData.noHull = true; G.add(pv);
+    G.userData.street = new THREE.PointLight('#fff2d8', 0, 6, 1.4); G.userData.street.position.set(0, 2.0, z1 + 0.8); G.add(G.userData.street); }
+  // banner above the vault: CITIBANK / SAN FRANCISCO
+  { const tc = textCanvas(1024, 192, (x, w, hh, which) => { x.fillStyle = '#14213d'; x.fillRect(0, 0, w, hh); x.strokeStyle = '#e8c35a'; x.lineWidth = 10; x.strokeRect(10, 10, w - 20, hh - 20); x.fillStyle = '#e8c35a'; x.font = '900 92px Poppins'; x.textAlign = 'center';
+      x.fillText(which === 'sf' ? 'SAN FRANCISCO' : 'CITIBANK', w / 2, 120); x.font = '700 30px Poppins'; x.fillText(which === 'sf' ? 'BANK BRANCH  ·  1994' : 'NEW YORK  ·  1994', w / 2, 168); }); tc.update('ny'); SCR.banner = tc;
+    mesh(new THREE.PlaneGeometry(3.6, 0.675), basic('#fff', { map: tc.t }), -3.9, 4.7, z0 + 0.04, G, 0); }
+  G.add(new THREE.HemisphereLight('#c8c0ff', '#6a5040', 0.9));
+  const key = new THREE.DirectionalLight('#ffe2b0', 2.0); key.position.set(-4, 9, 5); key.target.position.set(0, 0, -2); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -10, right: 10, top: 10, bottom: -10, near: 1, far: 30 }); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.03; G.add(key, key.target);
+  const fill = new THREE.PointLight('#ffcf8a', 6, 12, 1.3); fill.position.set(0, 4.4, -1); G.add(fill);
+  const alarm = new THREE.PointLight('#ff2030', 0, 14, 1.2); alarm.position.set(3.5, 4.5, -5); G.add(alarm); G.userData.alarm = alarm;
+  G.userData.alarmLamp = mesh(sph(0.16, 12), basic('#5a1018'), 5.95, 4.0, -5.6, G, 2); G.userData.alarmGlow = glow(G, 5.8, 4.0, -5.6, '#ff2030', 2.2, 0);
+  // the money: bills that fly out of the vault into the mainframe
+  G.userData.bills = Array.from({ length: 70 }, (_, i) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.15), billMat); m.userData.noOutline = true; m.userData.k = i; G.add(m); return m; });
+  G.userData.billPath = new THREE.CatmullRomCurve3([V(0, 1.2, -11.2), V(0, 1.9, -9.2), V(0.4, 2.5, -7.2), V(2.4, 2.9, -6.6), V(4.2, 2.6, -7.0), V(5.1, 2.35, -7.35)]);
+}
+const BCARD = { guard: makeCard(BANK, 'guard', 1.8), b1: makeCard(BANK, 'banker'), b2: makeCard(BANK, 'banker2', 1.68), teller: makeCard(BANK, 'teller', 1.7), courier: makeCard(BANK, 'courier', 1.7), husband: makeCard(BANK, 'husband'), agentM: makeCard(BANK, 'agentM'), agentF: makeCard(BANK, 'agentF'), agentM2: makeCard(BANK, 'agentM2'), cust: makeCard(BANK, 'cowork2') };
+
+// =====================================================================================================
+// FLAT: Levin's room in St Petersburg, winter 1994. Faded wallpaper, a snowy window with a gold dome,
+// desk with the laptop, a beige CRT, the modem and phone; radiator, bookshelf, a torn Soviet poster.
+// =====================================================================================================
+
+{ const G = FLAT, x0 = -3, x1 = 3, z0 = -2.6, z1 = 3.2, h = 2.9;
+  const wallM = toon('#ffffff', { map: wallpaperTex }), floorM = toon('#ffffff', { map: plankTex });
+  shell(G, { x0, x1, z0, z1, h, wall: wallM, floor: floorM, ceil: '#3a3830', skip: ['left'] });
+  const WZ0 = -1.6, WZ1 = 0.6, WY0 = 0.9, WY1 = 2.3;
+  const lp = (za, zb, ya, yb) => { const mt = wallM.clone(); mt.map = wallpaperTex.clone(); mt.map.needsUpdate = true; mt.map.repeat.set((zb - za) / 2, (yb - ya) / 2); const m = new THREE.Mesh(new THREE.PlaneGeometry(zb - za, yb - ya), mt); m.rotation.y = Math.PI / 2; m.position.set(x0, (ya + yb) / 2, (za + zb) / 2); m.receiveShadow = true; m.userData.noHull = true; G.add(m); };
+  lp(z0, WZ0, 0, h); lp(WZ1, z1, 0, h); lp(WZ0, WZ1, 0, WY0); lp(WZ0, WZ1, WY1, h);
+  for (const d of [WZ0 - 0.04, WZ1 + 0.04]) mesh(rbox(0.06, WY1 - WY0 + 0.16, 0.08), '#e8e2d0', x0 + 0.03, (WY0 + WY1) / 2, d, G, 3);
+  mesh(rbox(0.08, 0.08, WZ1 - WZ0 + 0.16), '#e8e2d0', x0 + 0.03, WY1 + 0.04, (WZ0 + WZ1) / 2, G, 3); mesh(rbox(0.25, 0.06, WZ1 - WZ0 + 0.3), '#e8e2d0', x0 + 0.1, WY0 - 0.03, (WZ0 + WZ1) / 2, G, 3);
+  mesh(rbox(0.05, WY1 - WY0, 0.05), '#e8e2d0', x0 + 0.02, (WY0 + WY1) / 2, (WZ0 + WZ1) / 2, G, 2); mesh(rbox(0.05, 0.05, WZ1 - WZ0), '#e8e2d0', x0 + 0.02, 1.85, (WZ0 + WZ1) / 2, G, 2);
+  const viewTex = canvasTex(1024, 768, (x, w, h2) => { const g = x.createLinearGradient(0, 0, 0, h2); g.addColorStop(0, '#0b1430'); g.addColorStop(1, '#34507e'); x.fillStyle = g; x.fillRect(0, 0, w, h2); const r = rng(53);
+    // St Isaac's-style gold dome + drum + colonnade, then a row of tall classical blocks along the canal
+    const dx = 360, dy = h2 - 330; x.fillStyle = '#1c2846'; x.fillRect(dx - 150, dy + 120, 300, 220); x.fillStyle = '#26345a'; x.fillRect(dx - 90, dy + 20, 180, 110); x.fillStyle = '#d9a73a'; x.beginPath(); x.ellipse(dx, dy + 22, 95, 110, 0, Math.PI, 0); x.fill(); x.fillStyle = '#ffd56a'; x.beginPath(); x.ellipse(dx - 30, dy - 20, 22, 60, -0.2, 0, 7); x.fill();
+    x.fillStyle = '#d9a73a'; x.fillRect(dx - 6, dy - 130, 12, 50); x.beginPath(); x.arc(dx, dy - 132, 10, 0, 7); x.fill(); for (let i = 0; i < 9; i++) { x.fillStyle = '#3a4a70'; x.fillRect(dx - 84 + i * 20, dy + 30, 8, 95); }
+    let u = 0; while (u < w) { const bw = 90 + r() * 80, bh = 140 + r() * 70; if (Math.abs(u + bw / 2 - dx) < 170) { u += bw; continue; } x.fillStyle = r() < 0.5 ? '#1a2440' : '#202c4c'; x.fillRect(u, h2 - 50 - bh, bw, bh); x.fillStyle = '#eef4ff'; x.fillRect(u - 3, h2 - 54 - bh, bw + 6, 8);
+      for (let yy = h2 - 30 - bh; yy < h2 - 70; yy += 34) for (let xx = u + 10; xx < u + bw - 16; xx += 24) if (r() < 0.45) { x.fillStyle = '#ffcf7a'; x.fillRect(xx, yy, 12, 18); } u += bw + 6; }
+    x.fillStyle = '#e8eef8'; x.fillRect(0, h2 - 50, w, 50); x.fillStyle = '#fffbe8'; x.beginPath(); x.arc(w * 0.8, 110, 40, 0, 7); x.fill(); });
+  const back = new THREE.Mesh(new THREE.PlaneGeometry(9, 6.6), basic('#ffffff', { map: viewTex })); back.rotation.y = Math.PI / 2; back.position.set(x0 - 3.5, 1.6, (WZ0 + WZ1) / 2); back.userData.noOutline = true; G.add(back);
+  G.userData.snow = Array.from({ length: 60 }, (_, i) => { const r = rng(i * 3 + 9); const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: '#ffffff', transparent: true, opacity: 0.8, depthWrite: false })); s.scale.setScalar(0.05); s.userData = { noOutline: true, a: r(), b: r(), c: r() }; G.add(s); return s; });
+  G.add(new THREE.HemisphereLight('#6a7aaa', '#3a2a20', 0.75));
+  const moon = new THREE.DirectionalLight('#8fb4ff', 1.5); moon.position.set(-8, 4, -0.5); moon.target.position.set(0, 0, 0.5); moon.castShadow = true; moon.shadow.mapSize.set(1536, 1536); Object.assign(moon.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5, near: 1, far: 20 }); moon.shadow.bias = -0.0004; moon.shadow.normalBias = 0.02; G.add(moon, moon.target);
+  const lampL = new THREE.PointLight('#ffb860', 6, 6, 1.4); lampL.position.set(1.3, 1.45, -1.9); G.add(lampL); G.userData.lampL = lampL;
+  const mglow = new THREE.PointLight('#7fffb0', 3, 4, 1.5); mglow.position.set(-0.4, 1.2, -1.5); G.add(mglow); G.userData.mglow = mglow;
+  // desk
+  const desk = new THREE.Group(); desk.position.set(0.3, 0, -2.05); G.add(desk);
+  mesh(rbox(2.4, 0.07, 0.9, 0.02), '#6a4524', 0, 0.76, 0, desk, 5); for (const s of [-1, 1]) mesh(rbox(0.07, 0.74, 0.8), '#5a3a1e', s * 1.12, 0.37, 0, desk, 4); mesh(rbox(0.5, 0.5, 0.8), '#5a3a1e', 0.85, 0.42, 0, desk, 3.5);
+  // CRT + keyboard (left)
+  { const g = new THREE.Group(); g.position.set(-0.72, 0.8, -0.12); desk.add(g); mesh(rbox(0.5, 0.42, 0.42, 0.04), '#d8d0bc', 0, 0.26, 0, g, 3.5); mesh(rbox(0.4, 0.34, 0.25, 0.04), '#c9c2b0', 0, 0.26, -0.3, g, 3); mesh(rbox(0.3, 0.05, 0.28), '#c9c2b0', 0, 0.025, 0, g, 2.5);
+    const tc = textCanvas(512, 384, () => {}); SCR.crt = tc; const p = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.285), basic('#ffffff', { map: tc.t })); p.position.set(0, 0.27, 0.212); p.userData.noOutline = true; g.add(p);
+    mesh(rbox(0.46, 0.03, 0.16, 0.01), '#d8d0bc', 0, 0.02, 0.36, g, 2.5); }
+  // laptop (center)
+  const lap = new THREE.Group(); lap.position.set(-0.05, 0.8, 0.12); desk.add(lap); mesh(rbox(0.42, 0.03, 0.29, 0.008), '#2a2a30', 0, 0.015, 0, lap, 3);
+  mesh(rbox(0.36, 0.004, 0.12), '#4a4a54', 0, 0.032, -0.04, lap, 0);
+  const lid = new THREE.Group(); lid.position.set(0, 0.03, -0.145); lid.rotation.x = -0.25; lap.add(lid); mesh(rbox(0.42, 0.28, 0.015, 0.008), '#2a2a30', 0, 0.14, -0.008, lid, 3);
+  { const tc = textCanvas(640, 420, () => {}); const p = new THREE.Mesh(new THREE.PlaneGeometry(0.38, 0.25), basic('#ffffff', { map: tc.t })); p.position.set(0, 0.14, 0.001); p.userData.noOutline = true; lid.add(p); SCR.lap = tc; }
+  G.userData.lapGlow = glow(G, 0.25, 1.0, -2.0, '#9fd0ff', 1.0, 0.25);
+  // modem (LEDs), phone, cable to the wall socket
+  { const g = new THREE.Group(); g.position.set(0.5, 0.8, 0.05); desk.add(g); mesh(rbox(0.3, 0.06, 0.22, 0.01), '#2a2a30', 0, 0.03, 0, g, 3); G.userData.mleds = [];
+    for (let i = 0; i < 6; i++) { const l = mesh(rbox(0.025, 0.015, 0.01), basic('#3ff07a'), -0.1 + i * 0.04, 0.035, 0.112, g, 0); l.userData.ph = i * 1.7; G.userData.mleds.push(l); } const lab = textCanvas(128, 32, (x, w, hh) => { x.fillStyle = '#2a2a30'; x.fillRect(0, 0, w, hh); x.fillStyle = '#d8d0bc'; x.font = '800 20px monospace'; x.fillText('MODEM 2400', 6, 22); }); lab.update(); mesh(new THREE.PlaneGeometry(0.16, 0.04), basic('#fff', { map: lab.t }), 0, 0.03, 0.113, g, 0).position.y = 0.012; }
+  { const g = new THREE.Group(); g.position.set(0.85, 0.8, -0.18); desk.add(g); mesh(rbox(0.22, 0.08, 0.18, 0.02), '#7a1f2b', 0, 0.04, 0, g, 3); mesh(rbox(0.24, 0.05, 0.06, 0.02), '#7a1f2b', 0, 0.11, 0, g, 3); mesh(cyl(0.05, 0.05, 0.01, 16), '#d8d0bc', 0, 0.081, 0.05, g, 1.5); }
+  { const pts = [V(0.8, 0.82, -1.95), V(1.0, 0.78, -2.25), V(1.25, 0.5, -2.5), V(1.3, 0.3, -2.58)]; mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 20, 0.012, 5), '#d8d0bc', 0, 0, 0, G, 0); mesh(rbox(0.12, 0.1, 0.03), '#e8e2d0', 1.3, 0.3, z0 + 0.015, G, 2); }
+  // desk lamp, tea glass, floppies, papers
+  { const g = new THREE.Group(); g.position.set(1.0, 0.8, -0.1); desk.add(g); mesh(cyl(0.09, 0.1, 0.03, 14), '#2f4a3e', 0, 0.015, 0, g, 2.5); const arm = mesh(cyl(0.012, 0.012, 0.45, 6), '#2f4a3e', 0, 0.24, 0, g, 1.5); arm.rotation.z = 0.25;
+    mesh(new THREE.ConeGeometry(0.11, 0.16, 16, 1, true), toon('#2f4a3e', { side: THREE.DoubleSide }), -0.06, 0.5, 0.02, g, 2.5).rotation.z = 0.6; mesh(sph(0.04, 10), basic('#fff2c8'), -0.08, 0.46, 0.02, g, 0); glow(g, -0.1, 0.42, 0.04, '#ffc870', 0.6, 0.6); }
+  mesh(cyl(0.035, 0.03, 0.1, 12), toon('#d8a060', { transparent: true, opacity: 0.85 }), -0.95, 0.86, 0.2, desk, 2); mesh(cyl(0.04, 0.035, 0.07, 12), '#c9a43a', -0.95, 0.85, 0.2, desk, 2);
+  for (let i = 0; i < 4; i++) mesh(rbox(0.09, 0.01, 0.09), ['#2f4f9e', '#2a2a30', '#d7263d', '#2a2a30'][i], -0.25 + i * 0.012, 0.8 + i * 0.011, 0.3, desk, 1.5);
+  for (let k = 0; k < 3; k++) mesh(rbox(0.21, 0.004, 0.29), '#f4efe4', 0.48 + k * 0.02, 0.795 + k * 0.004, 0.3, desk, 0).rotation.y = k * 0.2;
+  // wooden chair (Levin sits in front of it, facing camera, as in 001)
+  const chair = new THREE.Group(); chair.position.set(0.3, 0, -0.85); G.add(chair);
+  mesh(rbox(0.5, 0.06, 0.48, 0.02), '#7a5030', 0, 0.48, 0, chair, 3.5); for (const [a, b] of [[-0.21, -0.2], [0.21, -0.2], [-0.21, 0.2], [0.21, 0.2]]) mesh(rbox(0.04, 0.48, 0.04), '#6a4524', a, 0.24, b, chair, 2.5);
+  for (const a of [-0.21, 0.21]) mesh(rbox(0.04, 0.5, 0.04), '#6a4524', a, 0.74, 0.21, chair, 2.5); mesh(rbox(0.46, 0.12, 0.03), '#7a5030', 0, 0.92, 0.21, chair, 2.5); mesh(rbox(0.46, 0.06, 0.03), '#7a5030', 0, 0.7, 0.21, chair, 2);
+  G.userData.chair = chair;
+  // radiator under the window, bookshelf, poster, calendar, map, sofa, rug, ceiling lamp
+  { const g = new THREE.Group(); g.position.set(x0 + 0.12, 0, -0.5); G.add(g); for (let i = 0; i < 11; i++) mesh(rbox(0.1, 0.6, 0.08, 0.03), '#e8e2d0', 0, 0.45, -0.75 + i * 0.15, g, 2.5); mesh(cyl(0.025, 0.025, 0.4, 6), '#c9c2b0', 0, 0.12, -0.8, g, 1.5); }
+  { const g = new THREE.Group(); g.position.set(2.7, 0, -1.4); G.add(g); mesh(rbox(0.5, 2.0, 1.2, 0.02), '#5a3a1e', 0, 1.0, 0, g, 4); const r = rng(61);
+    for (let j = 0; j < 4; j++) { mesh(rbox(0.46, 0.03, 1.12), '#6a4524', -0.02, 0.35 + j * 0.45, 0, g, 0); let z = -0.52; while (z < 0.5) { const bw = 0.05 + r() * 0.06, bh = 0.22 + r() * 0.14; mesh(rbox(0.32, bh, bw), ['#7a1f2b', '#2f4f9e', '#d9b25a', '#2f7a3a', '#5a5e68', '#c9c2b0'][Math.floor(r() * 6)], -0.08, 0.37 + j * 0.45 + bh / 2, z + bw / 2, g, 1.5); z += bw + 0.01; } } }
+  { const tc = canvasTex(384, 512, (x, w, hh) => { x.fillStyle = '#e8d8b0'; x.fillRect(0, 0, w, hh); x.fillStyle = '#c0302a'; x.fillRect(0, 0, w, hh * 0.55); x.fillStyle = '#ffd56a'; x.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? 40 : 100; x.lineTo(w / 2 + Math.cos(a) * rr, 150 + Math.sin(a) * rr); } x.closePath(); x.fill();
+      x.fillStyle = '#1d1a26'; x.font = '900 54px Poppins'; x.textAlign = 'center'; x.fillText('CCCP', w / 2, hh * 0.72); x.font = '800 30px Poppins'; x.fillText('1922 – 1991', w / 2, hh * 0.82);
+      x.fillStyle = 'rgba(80,60,40,.5)'; x.beginPath(); x.moveTo(w, hh * 0.6); x.lineTo(w * 0.62, hh); x.lineTo(w, hh); x.fill(); x.fillStyle = '#5d6e58'; x.beginPath(); x.moveTo(w, hh * 0.66); x.lineTo(w * 0.7, hh); x.lineTo(w, hh); x.fill(); });
+    const m = mesh(new THREE.PlaneGeometry(0.62, 0.82), toon('#ffffff', { map: tc, transparent: true }), -1.75, 1.85, z0 + 0.01, G, 0); m.rotation.z = 0.04; G.userData.poster = m; }
+  { const tc = canvasTex(256, 320, (x, w, hh) => { x.fillStyle = '#f4efe4'; x.fillRect(0, 0, w, hh); x.fillStyle = '#c0302a'; x.fillRect(0, 0, w, 80); x.fillStyle = '#fff'; x.font = '900 56px Poppins'; x.textAlign = 'center'; x.fillText('1994', w / 2, 60); x.fillStyle = '#1d1a26'; x.font = '700 22px Poppins'; x.fillText('ИЮНЬ  ·  JUNE', w / 2, 110);
+      for (let j = 0; j < 5; j++) for (let i = 0; i < 7; i++) { x.fillStyle = i > 4 ? '#c0302a' : '#3a3e48'; x.fillText(String(j * 7 + i + 1).slice(0, 2), 24 + i * 34, 150 + j * 36); } }); mesh(new THREE.PlaneGeometry(0.34, 0.42), toon('#ffffff', { map: tc }), -0.85, 1.75, z0 + 0.01, G, 0); }
+  { const m = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 0.5), toon('#ffffff', { map: mapTex })); m.position.set(1.4, 1.9, z0 + 0.012); m.userData.noOutline = true; G.add(m); mesh(rbox(1.16, 0.56, 0.02), '#2a2018', 1.4, 1.9, z0 + 0.005, G, 2.5); }
+  mesh(rbox(1.7, 0.42, 0.85, 0.08), '#7a3a3a', 1.9, 0.21, 2.5, G, 4); mesh(rbox(1.7, 0.5, 0.2, 0.08), '#6a2e2e', 1.9, 0.6, 2.85, G, 4); for (const s of [-1, 1]) mesh(rbox(0.18, 0.55, 0.85, 0.06), '#6a2e2e', 1.9 + s * 0.8, 0.3, 2.5, G, 3);
+  { const rt = canvasTex(256, 256, (x, w, hh) => { x.fillStyle = '#7a2a2a'; x.fillRect(0, 0, w, hh); x.strokeStyle = '#d9b25a'; x.lineWidth = 8; x.strokeRect(16, 16, w - 32, hh - 32); x.strokeStyle = '#2a3a6a'; x.lineWidth = 6; x.beginPath(); x.moveTo(w / 2, 40); x.lineTo(w - 40, hh / 2); x.lineTo(w / 2, hh - 40); x.lineTo(40, hh / 2); x.closePath(); x.stroke(); });
+    const m = new THREE.Mesh(new THREE.PlaneGeometry(2.0, 1.5), toon('#ffffff', { map: rt })); m.rotation.x = -Math.PI / 2; m.position.set(0.2, 0.006, 0.4); m.userData.noHull = true; G.add(m); }
+  mesh(cyl(0.008, 0.008, 0.5, 4), '#2a2018', 0.3, h - 0.25, 0.6, G, 0); mesh(new THREE.ConeGeometry(0.24, 0.18, 16, 1, true), toon('#e8d8b0', { side: THREE.DoubleSide }), 0.3, h - 0.55, 0.6, G, 2.5);
+  // the hackers' $100 deal props (beat 11): a floppy disk and a banknote, carried between hands
+  G.userData.floppy = mesh(rbox(0.12, 0.12, 0.012, 0.005), '#2a2a30', 0, -5, 0, G, 2); mesh(rbox(0.07, 0.04, 0.014), '#c9ccd6', 0, 0.035, 0, G.userData.floppy, 0); mesh(rbox(0.09, 0.05, 0.014), '#f4efe4', 0, -0.025, 0, G.userData.floppy, 0);
+  G.userData.note = new THREE.Mesh(new THREE.PlaneGeometry(0.2, 0.088), billMat); G.userData.note.userData.noOutline = true; G.add(G.userData.note); G.userData.note.position.y = -5;
+}
+const FCARD = { levin: makeCard(FLAT, 'levin', 1.72), ru1: makeCard(FLAT, 'ruCop', 1.74), ru2: makeCard(FLAT, 'ruCop2', 1.7), h1: makeCard(FLAT, 'hacker1', 1.7), h2: makeCard(FLAT, 'hacker2', 1.72), h3: makeCard(FLAT, 'hoodA', 1.62) };
+
+// =====================================================================================================
+// WORLD: a glowing map floor in the dark with city pins, transfer arcs that draw on, and a jet.
+// =====================================================================================================
+{ const G = WORLD;
+  skyDome(G, (x, w, h) => { x.fillStyle = '#04060e'; x.fillRect(0, 0, w, h); const r = rng(81); for (let i = 0; i < 700; i++) { x.fillStyle = `rgba(200,220,255,${r() * 0.8})`; x.fillRect(r() * w, r() * h * 0.6, 2, 2); } const g = x.createLinearGradient(0, h * 0.4, 0, h * 0.6); g.addColorStop(0, 'rgba(30,60,120,0)'); g.addColorStop(1, 'rgba(30,60,120,.6)'); x.fillStyle = g; x.fillRect(0, h * 0.4, w, h * 0.2); });
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(MAPW, MAPD), new THREE.MeshBasicMaterial({ map: mapTex })); m.rotation.x = -Math.PI / 2; m.position.set(0, 0, MAPZC); m.userData.noHull = true; G.add(m);
+  mesh(rbox(MAPW + 0.6, 0.3, MAPD + 0.6, 0.05), '#14121a', 0, -0.16, MAPZC, G, 4);
+  G.add(new THREE.HemisphereLight('#9fb0ff', '#203040', 1.2)); const d = new THREE.DirectionalLight('#ffffff', 1.4); d.position.set(4, 10, 6); G.add(d);
+  G.userData.pins = {}; for (const [k, [lo, la, name]] of Object.entries(CITY)) { const p = PM(lo, la, 0); const col = k === 'stp' ? '#ff3b4a' : k === 'ny' ? '#5fd0ff' : '#ffcf3f';
+    const g = new THREE.Group(); g.position.copy(p); G.add(g); mesh(cyl(0.03, 0.03, 0.55, 8), '#e8eef8', 0, 0.28, 0, g, 1.5); const hd = mesh(sph(0.12, 12), basic(col), 0, 0.6, 0, g, 2.5); const gl = glow(g, 0, 0.6, 0, col, 0.9, 0.7);
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.15, 0.22, 32), new THREE.MeshBasicMaterial({ color: col, transparent: true, opacity: 0.8, side: THREE.DoubleSide, depthWrite: false })); ring.rotation.x = -Math.PI / 2; ring.position.y = 0.04; ring.userData.noOutline = true; g.add(ring);
+    const lab = labelSprite(g, name, col, 0.62); lab.position.set(0, 1.15, 0); G.userData.pins[k] = { g, hd, gl, ring, lab, col }; }
+  G.userData.arcs = {}; const arc = (key, a, b, col, lift = 0.22) => { const pa = PM(CITY[a][0], CITY[a][1], 0.6), pb = PM(CITY[b][0], CITY[b][1], 0.6), mid = pa.clone().lerp(pb, 0.5); mid.y += 0.6 + pa.distanceTo(pb) * lift;
+    const curve = new THREE.QuadraticBezierCurve3(pa, mid, pb), geo = new THREE.TubeGeometry(curve, 64, 0.045, 6); const mm = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: col })); mm.userData.noOutline = true; G.add(mm); geo.setDrawRange(0, 0);
+    const pk = glow(G, 0, -5, 0, col, 0.7, 0.9); G.userData.arcs[key] = { mm, geo, curve, pk, n: geo.index.count }; };
+  arc('hook', 'ny', 'stp', '#ff3b4a'); for (const c of ['bue', 'jkt', 'nas']) arc('pw_' + c, c, 'stp', '#ffcf3f');
+  for (const c of ['hel', 'tlv', 'ams', 'fra', 'sf']) arc('tx_' + c, 'ny', c, '#7fffb0', 0.18); arc('trap', 'sf', 'stp', '#ff3b4a', 0.2); arc('fly1', 'stp', 'lon', '#ffffff', 0.3); arc('fly2', 'lon', 'ny', '#ffffff', 0.18);
+  for (let k = 0; k < 6; k++) arc('fan' + k, 'ny', ['hel', 'bue', 'jkt', 'tlv', 'sf', 'nas'][k], '#5fd0ff', 0.2);
+  G.userData.jet = airliner(G, 0.16, '#c0302a'); G.userData.jet.position.y = -5;
+}
+
+// =====================================================================================================
+// HQ: the FBI office (from 001): wall screen, corkboard with red string, desks, a wall clock.
+// =====================================================================================================
+{ const G = HQ, x0 = -4, x1 = 4, z0 = -4, z1 = 4, h = 3.2;
+  const wallM = toon('#ffffff', { map: (() => { const t = canvasTex(512, 512, (x, w, h2) => { x.fillStyle = '#3a4258'; x.fillRect(0, 0, w, h2); x.fillStyle = '#323a4f'; x.fillRect(0, h2 * 0.62, w, h2 * 0.38); x.fillStyle = '#272d3e'; x.fillRect(0, h2 * 0.6, w, 10); const r = rng(71); for (let i = 0; i < 1500; i++) { x.fillStyle = `rgba(0,0,0,${r() * 0.07})`; x.fillRect(r() * w, r() * h2, 2, 2); } }, true); return t; })() });
+  shell(G, { x0, x1, z0, z1, h, wall: wallM, floor: toon('#ffffff', { map: carpetTex }), ceil: '#20243a' });
+  G.add(new THREE.HemisphereLight('#9fb0ff', '#2a2030', 0.9));
+  const top = new THREE.DirectionalLight('#dfe6ff', 1.2); top.position.set(2, 8, 4); top.target.position.set(0, 0, -1); top.castShadow = true; top.shadow.mapSize.set(1536, 1536); Object.assign(top.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6, near: 1, far: 20 }); top.shadow.bias = -0.0004; G.add(top, top.target);
+  const scrL = new THREE.PointLight('#5fd0ff', 6, 7, 1.4); scrL.position.set(0, 1.9, -3.0); G.add(scrL); const bl = new THREE.PointLight('#fff2d8', 5, 4, 1.3); bl.position.set(2.6, 2.4, -0.4); G.add(bl);
+  for (const lz of [-2, 1]) { mesh(rbox(2.6, 0.05, 0.35, 0.01), '#cfd6e6', 0, h - 0.03, lz, G, 3); mesh(new THREE.PlaneGeometry(2.5, 0.28), basic('#f4f8ff'), 0, h - 0.06, lz, G, 0).rotation.x = Math.PI / 2; }
+  { const tc = textCanvas(1024, 585, () => {}); SCR.wall = tc; mesh(rbox(4.5, 2.6, 0.12, 0.03), '#14121a', 0, 1.85, z0 + 0.07, G, 4.5); const p = new THREE.Mesh(new THREE.PlaneGeometry(4.3, 2.45), basic('#ffffff', { map: tc.t })); p.position.set(0, 1.85, z0 + 0.135); p.userData.noOutline = true; G.add(p); glow(G, 0, 1.85, z0 + 0.6, '#5fd0ff', 6, 0.18); }
+  { const tc = textCanvas(512, 512, (x, w, h2) => { x.clearRect(0, 0, w, h2); x.fillStyle = '#14213d'; x.beginPath(); x.arc(256, 230, 200, 0, 7); x.fill(); x.lineWidth = 16; x.strokeStyle = '#e8c35a'; x.stroke(); x.fillStyle = '#e8c35a'; x.textAlign = 'center';
+      x.font = '900 130px Poppins'; x.fillText('FBI', 256, 260); x.font = '800 30px Poppins'; x.fillText('NEW YORK OFFICE', 256, 320); x.fillStyle = '#ffffff'; x.font = '800 40px Poppins'; x.fillText('1994', 256, 490); }); tc.update();
+    const p = new THREE.Mesh(new THREE.PlaneGeometry(1.1, 1.1), basic('#ffffff', { map: tc.t, transparent: true })); p.position.set(-3.1, 2.0, z0 + 0.02); p.userData.noOutline = true; G.add(p); }
+  { const tc = textCanvas(1024, 640, () => {}); SCR.board = tc; const g = new THREE.Group(); g.position.set(x1 - 0.04, 1.7, -0.4); g.rotation.y = -Math.PI / 2; G.add(g);
+    mesh(rbox(3.4, 2.1, 0.06, 0.02), '#6a4a2a', 0, 0, -0.03, g, 4); const p = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 2.0), toon('#ffffff', { map: tc.t })); p.position.z = 0.005; p.userData.noOutline = true; g.add(p); }
+  { const tc = textCanvas(512, 320, () => {}); SCR.desk = tc;
+    for (const [dx, dz] of [[-1.8, -1.6], [1.6, -1.6], [-1.8, 1.0], [1.6, 1.0]]) { const d = new THREE.Group(); d.position.set(dx, 0, dz); G.add(d);
+      mesh(rbox(1.7, 0.06, 0.8, 0.02), '#4a4f63', 0, 0.75, 0, d, 4.5); for (const s of [-1, 1]) mesh(rbox(0.06, 0.73, 0.7), '#2e3242', s * 0.8, 0.37, 0, d, 3.5);
+      mesh(rbox(0.5, 0.4, 0.42, 0.03), '#d8d0bc', 0, 1.0, -0.2, d, 3); const p = new THREE.Mesh(new THREE.PlaneGeometry(0.4, 0.3), basic('#ffffff', { map: tc.t })); p.position.set(0, 1.0, 0.012); p.userData.noOutline = true; d.add(p);
+      mesh(rbox(0.4, 0.02, 0.14), '#c9c2b0', 0, 0.79, 0.15, d, 2); mesh(cyl(0.05, 0.045, 0.1, 12), '#ffffff', 0.6, 0.83, 0.15, d, 2.5); mesh(rbox(0.2, 0.07, 0.16, 0.02), '#2a2a30', -0.55, 0.81, 0.05, d, 2.5);
+      for (let k = 0; k < 3; k++) mesh(rbox(0.22, 0.004, 0.3), '#f4efe4', -0.25, 0.785 + k * 0.006, 0.16, d, 0);
+      mesh(rbox(0.5, 0.08, 0.5, 0.03), '#1d1a26', 0, 0.48, 0.6, d, 3); mesh(rbox(0.5, 0.35, 0.07, 0.03), '#1d1a26', 0, 0.7, 0.85, d, 3); mesh(cyl(0.03, 0.03, 0.4, 6), '#3a3a44', 0, 0.25, 0.6, d, 2); } }
+  for (const fx of [-3.6, -3.0]) { mesh(rbox(0.55, 1.3, 0.6, 0.02), '#5a6070', fx, 0.65, 3.4, G, 4); for (let k = 0; k < 3; k++) mesh(rbox(0.2, 0.03, 0.03), '#c9ccd6', fx, 1.1 - k * 0.4, 3.08, G, 1.5); }
+  mesh(rbox(0.35, 1.0, 0.35), '#e8eef8', x0 + 0.3, 0.5, 2.6, G, 3.5); mesh(cyl(0.16, 0.16, 0.45, 14), toon('#7fc8ff', { transparent: true, opacity: 0.8 }), x0 + 0.3, 1.24, 2.6, G, 3);
+  { const tc = textCanvas(256, 256, (x) => { x.fillStyle = '#f4efe4'; x.beginPath(); x.arc(128, 128, 120, 0, 7); x.fill(); x.lineWidth = 12; x.strokeStyle = '#14121a'; x.stroke(); x.fillStyle = '#14121a'; for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; x.fillRect(128 + Math.sin(a) * 100 - 4, 128 - Math.cos(a) * 100 - 8, 8, 16); } }); tc.update();
+    const p = new THREE.Mesh(new THREE.PlaneGeometry(0.6, 0.6), basic('#fff', { map: tc.t, transparent: true })); p.rotation.y = Math.PI / 2; p.position.set(x0 + 0.02, 2.3, -2.2); p.userData.noOutline = true; G.add(p);
+    const hm = mesh(rbox(0.01, 0.15, 0.03), '#14121a', x0 + 0.04, 2.3, -2.2, G, 0), mm = mesh(rbox(0.01, 0.23, 0.02), '#d7263d', x0 + 0.045, 2.3, -2.2, G, 0); hm.geometry.translate(0, 0.065, 0); mm.geometry.translate(0, 0.1, 0); G.userData.clock = [hm, mm]; }
+}
+const HCARD = { agentM: makeCard(HQ, 'agentM'), agentF: makeCard(HQ, 'agentF'), analyst: makeCard(HQ, 'analyst'), agentM2: makeCard(HQ, 'agentM2') };
+
+// CELL (from 001): a dim cell, a bunk, bars and a moonbeam
+{ const G = CELL, x0 = -1.6, x1 = 1.6, z0 = -2.0, z1 = 1.6, h = 3.0;
+  const wallM = toon('#ffffff', { map: concreteTex });
+  shell(G, { x0, x1, z0, z1, h, wall: wallM, floor: toon('#ffffff', { map: concreteTex }), ceil: '#3a3e48', skip: ['front', 'back'] });
+  const WX0 = -0.4, WX1 = 0.4, WY0 = 2.0, WY1 = 2.5; const bp = (xa, xb, ya, yb) => { const mt = wallM.clone(); mt.map = concreteTex.clone(); mt.map.needsUpdate = true; mt.map.repeat.set((xb - xa) / 2, (yb - ya) / 2); const m = new THREE.Mesh(new THREE.PlaneGeometry(xb - xa, yb - ya), mt); m.position.set((xa + xb) / 2, (ya + yb) / 2, z0); m.receiveShadow = true; m.userData.noHull = true; G.add(m); };
+  bp(x0, WX0, 0, h); bp(WX1, x1, 0, h); bp(WX0, WX1, 0, WY0); bp(WX0, WX1, WY1, h);
+  for (let i = 0; i < 4; i++) mesh(cyl(0.02, 0.02, WY1 - WY0, 6), '#2a2a30', WX0 + 0.16 * (i + 0.5) + 0.02, (WY0 + WY1) / 2, z0 + 0.02, G, 2);
+  { const sky = new THREE.Mesh(new THREE.PlaneGeometry(3, 2), basic('#20305a')); sky.position.set(0, 2.3, z0 - 1); sky.userData.noOutline = true; G.add(sky); mesh(sph(0.15, 12), basic('#f4f8ff'), 0.25, 2.4, z0 - 0.9, G, 0); }
+  for (let i = 0; i < 11; i++) mesh(cyl(0.025, 0.025, h, 8), '#3a3e48', x0 + 0.15 + i * 0.29, h / 2, z1 - 0.05, G, 2.5);
+  for (const by of [0.1, 1.2, h - 0.1]) mesh(rbox(x1 - x0, 0.06, 0.06), '#3a3e48', 0, by, z1 - 0.05, G, 2.5);
+  mesh(rbox(0.85, 0.08, 1.9), '#4a4e58', x0 + 0.5, 0.45, -0.9, G, 4); for (const [bx, bz] of [[0.12, -1.8], [0.88, -1.8], [0.12, 0.0], [0.88, 0.0]]) mesh(cyl(0.025, 0.025, 0.45, 6), '#3a3e48', x0 + bx, 0.22, bz, G, 2);
+  mesh(rbox(0.8, 0.12, 1.85, 0.05), '#8a8070', x0 + 0.5, 0.55, -0.9, G, 3.5); mesh(rbox(0.6, 0.12, 0.4, 0.05), '#6a7890', x0 + 0.5, 0.66, -0.3, G, 3); mesh(rbox(0.45, 0.1, 0.3, 0.05), '#e8e2d6', x0 + 0.5, 0.66, -1.6, G, 3);
+  mesh(rbox(0.3, 0.02, 0.25), '#c9ccd6', 1.1, 0.012, -1.3, G, 2); mesh(cyl(0.05, 0.045, 0.1, 10), '#c9ccd6', 1.15, 0.07, -1.3, G, 2);
+  G.add(new THREE.HemisphereLight('#4a5a8a', '#1a1520', 0.6));
+  const moon = new THREE.DirectionalLight('#9fc0ff', 2.2); moon.position.set(0.6, 6, -8); moon.target.position.set(0, 0, 0.3); moon.castShadow = true; moon.shadow.mapSize.set(1024, 1024); Object.assign(moon.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: 1, far: 20 }); moon.shadow.bias = -0.0005; G.add(moon, moon.target);
+  { const d = V(-0.6, -6, 8).normalize(), c = [V(WX0, WY0, z0), V(WX1, WY0, z0), V(WX1, WY1, z0), V(WX0, WY1, z0)], f = c.map(p => p.clone().addScaledVector(d, 3.4)), pos = [], col = [];
+    const quad = (a, b, cc, dd, ka, kb) => { for (const [p, k] of [[a, ka], [b, ka], [cc, kb], [a, ka], [cc, kb], [dd, kb]]) { pos.push(p.x, p.y, p.z); col.push(k * 0.7, k * 0.8, k); } };
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; quad(c[i], c[j], f[j], f[i], 0.22, 0.0); }
+    const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
+    const m = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ vertexColors: true, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide })); m.userData.noOutline = true; G.add(m); }
+  const out = new THREE.Mesh(new THREE.PlaneGeometry(8, 4), toon('#2a2e38')); out.position.set(0, 2, z1 + 1.2); out.rotation.y = Math.PI; out.userData.noHull = true; G.add(out);
+  const corr = new THREE.Mesh(new THREE.PlaneGeometry(8, 3), toon('#3a3e48')); corr.rotation.x = -Math.PI / 2; corr.position.set(0, 0.002, z1 + 0.6); corr.userData.noHull = true; G.add(corr);
+}
+const CCARD = { levin: makeCard(CELL, 'levin', 1.72) };
+
+// =====================================================================================================
+// AIR: Stansted's transfer lounge, March 1995. Terrazzo floor, a glass wall onto the apron with a jet,
+// rows of seats, a flip departures board, duty free, and an opening on the right to the gates.
+// =====================================================================================================
+{ const G = AIR, x0 = -9, x1 = 9, z0 = -4, z1 = 6, h = 4.2;
+  const wallM = toon('#ffffff', { map: canvasTex(256, 256, (x, w, hh) => { x.fillStyle = '#dcd8cc'; x.fillRect(0, 0, w, hh); x.fillStyle = '#c9c4b6'; x.fillRect(0, hh * 0.75, w, hh * 0.25); x.fillStyle = '#2f4f9e'; x.fillRect(0, hh * 0.72, w, 8); }, true) });
+  shell(G, { x0, x1, z0, z1, h, wall: wallM, floor: toon('#ffffff', { map: terrazzoTex }), ceil: '#c9c4b6', skip: ['back', 'right'] });
+  // right wall with a 4 m opening to the gates (z -0.6..3.4)
+  const rp = (za, zb, ya, yb) => { const mt = wallM.clone(); mt.map = wallM.map.clone(); mt.map.needsUpdate = true; mt.map.repeat.set((zb - za) / 2, (yb - ya) / 2); const m = new THREE.Mesh(new THREE.PlaneGeometry(zb - za, yb - ya), mt); m.rotation.y = -Math.PI / 2; m.position.set(x1, (ya + yb) / 2, (za + zb) / 2); m.receiveShadow = true; m.userData.noHull = true; G.add(m); };
+  rp(z0, -0.6, 0, h); rp(3.4, z1, 0, h); rp(-0.6, 3.4, 3.0, h);
+  { const fl = new THREE.Mesh(new THREE.PlaneGeometry(6, 4), toon('#ffffff', { map: terrazzoTex })); fl.rotation.x = -Math.PI / 2; fl.position.set(x1 + 3, 0.001, 1.4); fl.userData.noHull = true; G.add(fl);
+    const bw = new THREE.Mesh(new THREE.PlaneGeometry(4, 3), toon('#b9b4a6')); bw.rotation.y = -Math.PI / 2; bw.position.set(x1 + 6, 1.5, 1.4); bw.userData.noHull = true; G.add(bw);
+    for (const s of [-1, 1]) { const sw = new THREE.Mesh(new THREE.PlaneGeometry(6, 3), toon('#cfcabc', { side: THREE.DoubleSide })); sw.position.set(x1 + 3, 1.5, 1.4 + s * 2); sw.userData.noHull = true; G.add(sw); }
+    const sg = textCanvas(512, 128, (x, w, hh) => { x.fillStyle = '#f2c94c'; x.fillRect(0, 0, w, hh); x.fillStyle = '#14121a'; x.font = '900 60px Poppins'; x.fillText('GATES 1–20  ▶', 30, 86); }); sg.update(); const m = mesh(new THREE.PlaneGeometry(1.8, 0.45), basic('#fff', { map: sg.t }), x1 - 0.02, 3.35, 1.4, G, 0); m.rotation.y = -Math.PI / 2; }
+  // glass wall: sill, mullions, transoms
+  { const s = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, 0.6), toon('#9a958a')); s.position.set(0, 0.3, z0); s.userData.noHull = true; G.add(s); mesh(rbox(x1 - x0, 0.08, 0.3), '#5a5e68', 0, 0.62, z0 + 0.1, G, 3);
+    for (let x = x0; x <= x1 + 0.01; x += 1.5) mesh(rbox(0.1, h, 0.12), '#5a5e68', x, h / 2, z0, G, 3); for (const y of [2.6, h - 0.05]) mesh(rbox(x1 - x0, 0.08, 0.12), '#5a5e68', 0, y, z0, G, 3);
+    const gl = new THREE.Mesh(new THREE.PlaneGeometry(x1 - x0, h - 0.6), new THREE.MeshBasicMaterial({ color: '#9fc0e0', transparent: true, opacity: 0.08, depthWrite: false })); gl.position.set(0, 0.6 + (h - 0.6) / 2, z0 - 0.02); gl.userData.noOutline = true; G.add(gl); }
+  // outside: overcast sky, apron, the jet, a control tower and distant hangars
+  skyDome(G, (x, w, hh) => { const g = x.createLinearGradient(0, 0, 0, hh); g.addColorStop(0, '#5a6a88'); g.addColorStop(0.45, '#b8c0cc'); g.addColorStop(0.52, '#e8e2d4'); g.addColorStop(1, '#4a4a50'); x.fillStyle = g; x.fillRect(0, 0, w, hh); const r = rng(91); x.fillStyle = 'rgba(255,255,255,.25)'; for (let i = 0; i < 30; i++) { x.beginPath(); x.ellipse(r() * w, hh * (0.2 + r() * 0.25), 80 + r() * 140, 14 + r() * 18, 0, 0, 7); x.fill(); } }, 110);
+  { const ap = new THREE.Mesh(new THREE.PlaneGeometry(120, 70), toon('#ffffff', { map: (() => { const t = roadTex.clone(); t.needsUpdate = true; t.repeat.set(12, 6); return t; })() })); ap.rotation.x = -Math.PI / 2; ap.position.set(0, -0.02, z0 - 35); ap.userData.noHull = true; G.add(ap);
+    const jet = airliner(G, 1.3, '#2f4f9e'); jet.position.set(-1.5, 1.35, -15); G.userData.apJet = jet; mesh(cyl(0.08, 0.08, 1.0, 8), '#3a3a44', -1.5 + 3.6, 0.5, -15, G, 2);
+    for (const gx of [-2.4, 1.0]) for (const gz of [-1.3, 1.3]) { mesh(cyl(0.08, 0.08, 1.0, 8), '#3a3a44', gx, 0.5, -15 + gz, G, 2); mesh(cyl(0.3, 0.3, 0.25, 14).rotateX(Math.PI / 2), '#16141c', gx, 0.3, -15 + gz, G, 2.5); }
+    const bridge = mesh(rbox(1.6, 1.8, 8.5, 0.05), '#cfcabc', 3.5, 2.6, -9.0, G, 4); mesh(cyl(0.2, 0.25, 2.6, 10), '#8a8f9a', 3.5, 1.3, -11.5, G, 3);
+    const tw = new THREE.Group(); tw.position.set(16, 0, -45); G.add(tw); mesh(cyl(1.0, 1.4, 16, 12), '#d9d4c8', 0, 8, 0, tw, 4); mesh(cyl(2.4, 1.8, 2.4, 12), '#3a4a60', 0, 17.2, 0, tw, 4); mesh(cyl(2.6, 2.6, 0.3, 12), '#d9d4c8', 0, 18.5, 0, tw, 3);
+    for (const [hx, hw] of [[-22, 14], [-6, 10], [30, 16]]) mesh(rbox(hw, 6, 8, 0.1), '#8a8f9a', hx, 3, -55, G, 4);
+    const truck = new THREE.Group(); truck.position.set(-9, 0, -10); G.add(truck); mesh(rbox(2.4, 1.2, 1.4, 0.06), '#f2c94c', 0, 0.9, 0, truck, 3.5); mesh(rbox(1.0, 1.0, 1.4, 0.06), '#e8e2d4', 1.6, 0.8, 0, truck, 3); for (const [a, b] of [[-0.7, 0.72], [0.9, 0.72], [-0.7, -0.72], [0.9, -0.72]]) mesh(cyl(0.3, 0.3, 0.2, 14).rotateX(Math.PI / 2), '#16141c', a, 0.3, b, truck, 2.5); G.userData.truck = truck; }
+  // seats: two rows (backs to the window, and back to back)
+  for (const [rz, face] of [[-2.4, 1], [-0.2, 1]]) for (let i = 0; i < 18; i++) { const sx = -7.6 + i * 0.62 + Math.floor(i / 6) * 0.6; if (sx > 6.5) continue;
+    mesh(rbox(0.52, 0.08, 0.5, 0.03), '#2f4f9e', sx, 0.46, rz, G, 3); mesh(rbox(0.52, 0.5, 0.07, 0.03), '#2f4f9e', sx, 0.74, rz - face * 0.24, G, 3); if (i % 3 === 0) for (const lz of [-0.2, 0.2]) mesh(rbox(0.05, 0.44, 0.05), '#8a8f9a', sx, 0.22, rz + lz, G, 2); }
+  for (const rz of [-2.4, -0.2]) mesh(rbox(14.6, 0.05, 0.1), '#8a8f9a', -0.8, 0.42, rz, G, 2);
+  // departures board (flip style), hanging
+  { const tc = textCanvas(1024, 560, (x, w, hh, f) => { x.fillStyle = '#14121a'; x.fillRect(0, 0, w, hh); x.fillStyle = '#f2c94c'; x.font = '900 52px Poppins'; x.fillText('DEPARTURES', 30, 66); x.fillText('STANSTED', 690, 66); x.fillStyle = '#2a2830'; for (let j = 0; j < 6; j++) x.fillRect(20, 96 + j * 74, w - 40, 64);
+      const rows = [['08:40', 'AMSTERDAM', 'BOARDING'], ['09:05', 'NEW YORK JFK', 'DELAYED'], ['09:20', 'MOSCOW', 'GATE 7'], ['09:35', 'PARIS CDG', 'GATE 4'], ['09:50', 'DUBLIN', 'ON TIME'], ['10:10', 'FRANKFURT', 'GATE 12']];
+      x.font = '800 44px monospace'; rows.forEach((r, j) => { const flip = f > j * 0.12 ? 1 : 0; x.fillStyle = '#fff6d0'; x.fillText(r[0], 34, 142 + j * 74); x.fillText(r[1], 220, 142 + j * 74); x.fillStyle = r[2] === 'DELAYED' ? '#ff5a4a' : r[2] === 'BOARDING' ? '#7fffb0' : '#fff6d0'; x.fillText(flip ? r[2] : '········', 740, 142 + j * 74); }); });
+    tc.update(1); SCR.board2 = tc; const g = new THREE.Group(); g.position.set(-3.0, 3.1, 1.2); G.add(g); mesh(rbox(3.0, 1.7, 0.18, 0.03), '#3a3a44', 0, 0, 0, g, 4); const p = new THREE.Mesh(new THREE.PlaneGeometry(2.8, 1.53), basic('#fff', { map: tc.t })); p.position.z = 0.095; p.userData.noOutline = true; g.add(p);
+    for (const s of [-1, 1]) mesh(cyl(0.015, 0.015, 0.4, 6), '#3a3a44', s * 1.2, 1.05, 0, g, 0); }
+  { const sg = textCanvas(768, 160, (x, w, hh) => { x.fillStyle = '#2f4f9e'; x.fillRect(0, 0, w, hh); x.fillStyle = '#fff'; x.font = '900 64px Poppins'; x.fillText('TRANSFERS', 30, 70); x.font = '700 40px Poppins'; x.fillText('FLIGHT CONNECTIONS  ▶', 30, 134); }); sg.update();
+    const g = new THREE.Group(); g.position.set(3.6, 3.4, 2.2); G.add(g); mesh(rbox(2.5, 0.55, 0.08), '#2f4f9e', 0, 0, 0, g, 3); mesh(new THREE.PlaneGeometry(2.4, 0.5), basic('#fff', { map: sg.t }), 0, 0, 0.045, g, 0); for (const s of [-1, 1]) mesh(cyl(0.012, 0.012, 0.5, 6), '#3a3a44', s * 1.0, 0.5, 0, g, 0); }
+  { const sg = textCanvas(1024, 160, (x, w, hh) => { x.fillStyle = '#14121a'; x.fillRect(0, 0, w, hh); x.fillStyle = '#fff'; x.font = '900 84px Poppins'; x.textAlign = 'center'; x.fillText('LONDON STANSTED', w / 2, 110); }); sg.update(); const m = mesh(new THREE.PlaneGeometry(4.0, 0.62), basic('#fff', { map: sg.t }), x0 + 0.02, 3.4, 1.0, G, 0); m.rotation.y = Math.PI / 2; }
+  // duty free shopfront on the left wall
+  { const g = new THREE.Group(); g.position.set(x0 + 0.05, 0, 3.6); g.rotation.y = Math.PI / 2; G.add(g); mesh(rbox(3.2, 2.6, 0.1), '#14121a', 0, 1.3, 0, g, 3.5); const w = new THREE.Mesh(new THREE.PlaneGeometry(3.0, 2.0), basic('#ffe8b0')); w.position.set(0, 1.25, 0.06); w.userData.noOutline = true; g.add(w);
+    for (let i = 0; i < 14; i++) mesh(rbox(0.14, 0.3 + (i % 3) * 0.08, 0.1), ['#7a1f2b', '#2f7a3a', '#d9b25a', '#2f4f9e'][i % 4], -1.3 + (i % 7) * 0.42, 0.75 + Math.floor(i / 7) * 0.8, 0.12, g, 2);
+    for (const y of [0.55, 1.35]) mesh(rbox(3.0, 0.04, 0.25), '#c9c2b0', 0, y, 0.12, g, 2);
+    const sg = textCanvas(512, 96, (x, ww, hh) => { x.fillStyle = '#7a1f2b'; x.fillRect(0, 0, ww, hh); x.fillStyle = '#fff'; x.font = '900 60px Poppins'; x.textAlign = 'center'; x.fillText('DUTY FREE', ww / 2, 70); }); sg.update(); mesh(new THREE.PlaneGeometry(2.4, 0.45), basic('#fff', { map: sg.t }), 0, 2.85, 0.07, g, 0); glow(g, 0, 1.3, 0.6, '#ffd890', 3.5, 0.25); }
+  // bins, plant, clock
+  for (const [bx, bz] of [[-6.2, 4.6], [6.8, -2.9]]) mesh(cyl(0.22, 0.2, 0.7, 14), '#5a5e68', bx, 0.35, bz, G, 3);
+  mesh(cyl(0.3, 0.24, 0.5, 14), '#3a3a44', 7.5, 0.25, 4.8, G, 3); for (let k = 0; k < 6; k++) mesh(sph(0.3, 10), k % 2 ? '#2f7a3a' : '#3f9a46', 7.5 + Math.cos(k) * 0.2, 0.8 + (k % 3) * 0.22, 4.8 + Math.sin(k) * 0.2, G, 3);
+  for (let i = 0; i < 4; i++) { mesh(rbox(3.0, 0.05, 0.4), '#e8e2d4', -6 + i * 4, h - 0.03, 1.0, G, 2); mesh(new THREE.PlaneGeometry(2.9, 0.32), basic('#fffaf0'), -6 + i * 4, h - 0.06, 1.0, G, 0).rotation.x = Math.PI / 2; }
+  G.add(new THREE.HemisphereLight('#d8e0f0', '#6a6050', 1.0));
+  const sun = new THREE.DirectionalLight('#f0f0ff', 1.6); sun.position.set(-6, 12, -14); sun.target.position.set(0, 0, 1); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14, near: 1, far: 50 }); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03; G.add(sun, sun.target);
+  const fill = new THREE.PointLight('#fff2d8', 5, 14, 1.2); fill.position.set(0, 3.6, 2.5); G.add(fill);
+}
+const ACARD = { levin: makeCard(AIR, 'levin', 1.72), d1: makeCard(AIR, 'det1', 1.78), d2: makeCard(AIR, 'det2', 1.76),
+  s1: makeCard(AIR, 'cowork1', 1.66), s2: makeCard(AIR, 'office', 1.7), s3: makeCard(AIR, 'admin2', 1.72), s4: makeCard(AIR, 'analyst', 1.7), w1: makeCard(AIR, 'cowork2', 1.72), w2: makeCard(AIR, 'admin', 1.7) };
+
+// =====================================================================================================
+// COURT: a wood-panelled federal courtroom (SDNY). Raised bench, seal, flag, counsel tables, gallery.
+// In beat 9 it dresses as the House of Lords (red crest, red benches, a law lord).
+// =====================================================================================================
+{ const G = COURT, x0 = -5, x1 = 5, z0 = -5, z1 = 5, h = 5.2;
+  shell(G, { x0, x1, z0, z1, h, wall: toon('#ffffff', { map: woodPanelTex }), floor: toon('#ffffff', { map: carpetTex }), ceil: '#2a2018' });
+  mesh(rbox(5.6, 0.4, 2.0, 0.03), '#5a3a1e', 0, 0.2, -4.0, G, 4); mesh(rbox(4.6, 1.3, 0.5, 0.03), '#6a4524', 0, 1.05, -3.05, G, 5); mesh(rbox(4.8, 0.08, 0.7, 0.02), '#4a2f1c', 0, 1.72, -3.1, G, 3);
+  mesh(rbox(0.9, 0.06, 0.6), '#2f4a3e', -0.2, 1.77, -3.25, G, 2); G.userData.gavel = new THREE.Group(); G.userData.gavel.position.set(0.9, 1.78, -3.2); G.add(G.userData.gavel);
+  { const gv = G.userData.gavel; const hd = mesh(cyl(0.06, 0.06, 0.22, 12).rotateZ(Math.PI / 2), '#5a3a1e', -0.22, 0.06, 0, gv, 2); mesh(rbox(0.3, 0.025, 0.025), '#6a4524', -0.08, 0.06, 0, gv, 1.5); mesh(cyl(0.07, 0.07, 0.03, 12), '#3a2414', 0.2, 0.0, 0, G.userData.gavel.parent, 1.5).position.set(0.68, 1.775, -3.2); }
+  const chair = new THREE.Group(); chair.position.set(0, 0.4, -4.45); G.add(chair); mesh(rbox(0.8, 1.6, 0.15, 0.05), '#3a1f14', 0, 1.0, -0.1, chair, 3.5);
+  { const tc = textCanvas(512, 512, (x, w, hh, mode) => { x.clearRect(0, 0, w, hh); const lords = mode === 'lords'; x.fillStyle = lords ? '#7a1f2b' : '#14213d'; x.beginPath(); x.arc(256, 256, 236, 0, 7); x.fill(); x.lineWidth = 18; x.strokeStyle = '#e8c35a'; x.stroke(); x.lineWidth = 4; x.beginPath(); x.arc(256, 256, 200, 0, 7); x.stroke();
+      x.fillStyle = '#e8c35a'; x.textAlign = 'center'; if (lords) { x.font = '900 70px Poppins'; x.fillText('HOUSE', 256, 200); x.fillText('OF LORDS', 256, 280); x.font = '700 30px Poppins'; x.fillText('LONDON · 1997', 256, 350); }
+      else { x.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? 34 : 84; x.lineTo(256 + Math.cos(a) * rr, 200 + Math.sin(a) * rr); } x.closePath(); x.fill(); x.font = '900 44px Poppins'; x.fillText('U.S. DISTRICT', 256, 330); x.fillText('COURT', 256, 380); x.font = '700 26px Poppins'; x.fillText('SOUTHERN DISTRICT OF NEW YORK', 256, 425); } });
+    tc.update('us'); SCR.seal = tc; const p = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 1.6), basic('#fff', { map: tc.t, transparent: true })); p.position.set(0, 3.55, z0 + 0.02); p.userData.noOutline = true; G.add(p); }
+  { const ft = canvasTex(384, 256, (x, w, hh) => { for (let i = 0; i < 13; i++) { x.fillStyle = i % 2 ? '#f4efe4' : '#b8303a'; x.fillRect(0, i * hh / 13, w, hh / 13 + 1); } x.fillStyle = '#1f2f5a'; x.fillRect(0, 0, w * 0.42, hh * 7 / 13); x.fillStyle = '#fff'; for (let j = 0; j < 5; j++) for (let i = 0; i < 6; i++) x.fillRect(10 + i * 26, 10 + j * 24, 6, 6); });
+    mesh(cyl(0.04, 0.04, 3.2, 8), '#d9b25a', -3.2, 1.6, -4.4, G, 2); mesh(sph(0.08, 10), '#d9b25a', -3.2, 3.25, -4.4, G, 2); const f = new THREE.Mesh(new THREE.PlaneGeometry(1.2, 0.8, 8, 1), toon('#ffffff', { map: ft, side: THREE.DoubleSide })); f.position.set(-2.58, 2.7, -4.4); f.userData.noOutline = true; G.add(f); G.userData.flag = f;
+    const r = mesh(cyl(0.04, 0.04, 3.2, 8), '#d9b25a', 3.2, 1.6, -4.4, G, 2); }
+  for (const tx of [-1.8, 1.8]) { mesh(rbox(2.2, 0.07, 0.9, 0.02), '#6a4524', tx, 0.78, 0.9, G, 4); for (const s of [-1, 1]) mesh(rbox(0.07, 0.75, 0.8), '#5a3a1e', tx + s * 1.0, 0.38, 0.9, G, 3); for (let k = 0; k < 3; k++) mesh(rbox(0.3, 0.004, 0.22), '#f4efe4', tx - 0.6 + k * 0.5, 0.82, 0.9, G, 0); mesh(cyl(0.05, 0.045, 0.12, 12), '#e8eef8', tx + 0.85, 0.87, 0.7, G, 2); }
+  mesh(rbox(9.6, 0.9, 0.12, 0.02), '#5a3a1e', 0, 0.45, 2.0, G, 3.5); mesh(rbox(9.6, 0.06, 0.2), '#4a2f1c', 0, 0.92, 2.0, G, 2.5);
+  G.userData.benches = []; for (const bz of [2.9, 3.9]) { const b = mesh(rbox(9.0, 0.08, 0.5, 0.02), '#6a4524', 0, 0.45, bz, G, 3); const bb = mesh(rbox(9.0, 0.55, 0.07, 0.02), '#6a4524', 0, 0.75, bz + 0.25, G, 3); for (const lx of [-4.2, 0, 4.2]) mesh(rbox(0.06, 0.45, 0.45), '#4a2f1c', lx, 0.22, bz, G, 2); G.userData.benches.push(b, bb); }
+  mesh(rbox(1.0, 1.1, 1.0, 0.03), '#6a4524', 3.6, 0.95, -2.6, G, 4); mesh(rbox(1.1, 0.4, 1.1, 0.03), '#5a3a1e', 3.6, 0.2, -2.6, G, 3);
+  for (const lx of [-3, 0, 3]) { mesh(cyl(0.01, 0.01, 0.8, 4), '#2a2018', lx, h - 0.4, 0, G, 0); mesh(cyl(0.35, 0.35, 0.18, 16), '#d9b25a', lx, h - 0.85, 0, G, 2.5); glow(G, lx, h - 0.95, 0, '#ffd890', 1.2, 0.45); }
+  G.add(new THREE.HemisphereLight('#d8d0ff', '#6a5040', 1.5)); const key = new THREE.DirectionalLight('#ffe2b0', 2.4); key.position.set(3, 9, 6); key.target.position.set(0, 0, -1); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -7, right: 7, top: 7, bottom: -7, near: 1, far: 25 }); key.shadow.bias = -0.0004; G.add(key, key.target);
+  const fill = new THREE.PointLight('#ffcf8a', 12, 12, 1.2); fill.position.set(0, 3.8, -1); G.add(fill); G.userData.fill = fill; const f2 = new THREE.PointLight('#ffe8c8', 8, 9, 1.2); f2.position.set(0, 3.2, 3.0); G.add(f2);
+}
+const KCARD = { judge: makeCard(COURT, 'judge', 1.95), lord: makeCard(COURT, 'lord', 1.95), levin: makeCard(COURT, 'levin', 1.72), lawyer: makeCard(COURT, 'lawyer', 1.76), pros: makeCard(COURT, 'banker2', 1.7), marshal: makeCard(COURT, 'guard', 1.8),
+  g1: makeCard(COURT, 'cowork1', 1.62), g2: makeCard(COURT, 'admin', 1.68), g3: makeCard(COURT, 'cowork2', 1.66), g4: makeCard(COURT, 'analyst', 1.66) };
+
+// =====================================================================================================
+// TIME: video t -> voice. Hook (the money pouring out), one 1 s rewind, then the story.
+// =====================================================================================================
+const TL = await (await fetch('./timeline.json')).json();
+const B = TL.beats.map(b => b.start), HOOK_END = B[1], RW = 1.0, VEND = TL.duration;
+const DUR = VEND + RW + 0.2;
+const vt = v => v + (v >= HOOK_END - 1e-6 ? RW : 0);
+const VB = i => vt(B[i]);
+function WT(i, word, n = 1) { let c = 0; for (const w of TL.beats[i].words) if (w.w.replace(/[^A-Za-z0-9'_]/g, '').toLowerCase() === word.toLowerCase() && ++c === n) return vt(w.s); console.log('[c] missing word', i, word); return VB(i); }
+const WORDS = TL.beats.flatMap((b, i) => b.words.map(w => ({ ...w, s: vt(w.s), e: vt(w.e), i })));
+const lerpV = (a, b, k) => a.clone().lerp(b, k);
+const blinkAt = (t, ph = 0) => ((t + ph) % 3.4) < 0.11;
+const inB = (t, i) => t >= VB(i) && t < (i + 1 < B.length ? VB(i + 1) : DUR);
+const HT = t => t < HOOK_END ? t : t < HOOK_END + RW ? HOOK_END * (1 - sstep(HOOK_END, HOOK_END + RW, t)) : null; // hook world time (runs back in the rewind)
+const HIDE = V(0, -60, 0);
+const hideCard = c => { c.on = false; c.pos.copy(HIDE); };
+const showCard = (c, p, pose) => { c.on = true; c.pos.copy(p); c.pose = pose; c.spin = 0; };
+const path = (pts, k) => { const n = pts.length - 1, f = clamp(k) * n, i = Math.min(n - 1, Math.floor(f)); return lerpV(pts[i], pts[i + 1], f - i); };
+const walkTo = (c, pts, t0, t1, t, pose = {}) => { const k = clamp((t - t0) / (t1 - t0)); showCard(c, path(pts, k), { walk: k > 0 && k < 1 ? t * 3.4 : 0, blink: blinkAt(t), ...pose }); return k; };
+
+// ---------- screens ----------
+const mono = (x, size, col) => { x.font = `700 ${size}px monospace`; x.fillStyle = col; };
+function drawCode(x, w, h, t, seed, col = '#3ff07a') { x.fillStyle = '#07060d'; x.fillRect(0, 0, w, h); const r = rng(seed), n = Math.floor(t * 9); mono(x, 20, col);
+  for (let i = 0; i < 15; i++) { const k = n - 14 + i; if (k < 0) continue; const rr = rng(seed * 100 + k); let s = ''; const L = 6 + Math.floor(rr() * 30); for (let j = 0; j < L; j++) s += 'abcdefghijklmnopqrstuvwxyz{}();=<>/_$'[Math.floor(rr() * 37)]; x.fillStyle = rr() < 0.2 ? '#ff3fa8' : col; x.fillText(' '.repeat(Math.floor(rr() * 6)) + s, 16, 30 + i * 22); }
+  x.fillStyle = 'rgba(255,255,255,.04)'; for (let y = 0; y < h; y += 4) x.fillRect(0, y, w, 1); }
+const typed = (s, k) => s.slice(0, Math.floor(clamp(k) * s.length));
+function scan(x, w, h) { x.fillStyle = 'rgba(255,255,255,.035)'; for (let y = 0; y < h; y += 4) x.fillRect(0, y, w, 1); }
+// laptop: Citibank-style dial-in terminal (our own mock-up, no real branding)
+function drawLap(x, w, h, t, mode, k = 1) { x.fillStyle = '#06140c'; x.fillRect(0, 0, w, h); const G1 = '#7fffb0', R1 = '#ff4a5a';
+  if (mode === 'off') { x.fillStyle = '#05050a'; x.fillRect(0, 0, w, h); return; }
+  if (mode === 'dos') { mono(x, 26, G1); ['C:\\> ATDT 1-212-…', 'DIALING…', 'CONNECT 2400', ''].forEach((s, i) => x.fillText(typed(s, k * 4 - i), 24, 60 + i * 40)); if (Math.floor(t * 2) % 2) x.fillRect(24, 200, 16, 26); scan(x, w, h); return; }
+  x.fillStyle = '#0d2a5a'; x.fillRect(0, 0, w, 56); x.fillStyle = '#fff'; x.font = '900 28px Poppins'; x.fillText('CASH MANAGEMENT  ·  WIRE', 20, 38); mono(x, 24, G1);
+  if (mode === 'login') { x.fillText('ACCOUNT CODE:', 30, 120); x.fillText('PASSWORD:', 30, 190); x.fillStyle = '#fff'; x.fillText(typed('4471-90233', k * 2), 250, 120); x.fillText(typed('********', k * 2 - 1), 250, 190);
+    if (k > 0.95) { x.fillStyle = G1; x.font = '900 40px Poppins'; x.fillText('ACCESS GRANTED', 30, 290); } }
+  else if (mode === 'logo') { x.fillStyle = '#fff'; x.font = '900 64px Poppins'; x.textAlign = 'center'; x.globalAlpha = clamp(k); x.fillText('CITIBANK', w / 2, 220); x.font = '700 26px Poppins'; x.fillText('NEW YORK  ·  CASH MANAGEMENT', w / 2, 270); x.globalAlpha = 1; x.textAlign = 'left'; }
+  else if (mode === 'list') { x.fillText('SAVED LOGINS', 30, 100); const rows = [['ARGENTINA', '7731-…', '********'], ['INDONESIA', '2209-…', '********'], ['BAHAMAS', '5518-…', '********']];
+    rows.forEach((r, i) => { if (k * 3 < i) return; x.fillStyle = '#123a24'; x.fillRect(24, 124 + i * 80, w - 48, 64); x.fillStyle = '#fff'; x.font = '800 26px monospace'; x.fillText(r[0], 40, 166 + i * 80); x.fillStyle = G1; x.fillText(r[1] + '  ' + r[2], 280, 166 + i * 80); }); }
+  else if (mode === 'transfer' || mode === 'evidence') { const n = Math.max(1, Math.min(40, Math.floor(k * 40))); x.fillText(`TRANSFERS: ${String(n).padStart(2, '0')} / 40`, 30, 100);
+    const dests = ['FINLAND', 'ISRAEL', 'NETHERLANDS', 'GERMANY', 'USA']; for (let i = 0; i < 6; i++) { const j = n - 5 + i; if (j < 1) continue; const rr = rng(j * 31); x.fillStyle = '#fff'; x.font = '700 22px monospace';
+      x.fillText(`#${String(j).padStart(2, '0')}  $${(120 + Math.floor(rr() * 880)).toLocaleString('en-US')},${String(Math.floor(rr() * 999)).padStart(3, '0')}  →  ${dests[j % 5]}`, 30, 140 + i * 40); }
+    if (mode === 'evidence') { x.strokeStyle = R1; x.lineWidth = 8; x.strokeRect(14, 70, w - 28, h - 84); x.fillStyle = R1; x.font = '900 34px Poppins'; x.fillText('EVIDENCE', w - 210, h - 26); } }
+  else if (mode === 'twostep') { x.fillStyle = '#fff'; x.font = '800 30px Poppins'; x.fillText('PASSWORD  ✓', 30, 120); x.fillText('CODE FROM YOUR PHONE:', 30, 190); x.fillStyle = G1; x.font = '900 60px monospace'; x.fillText(typed('4 8 1 9 0 2', k), 30, 280);
+    if (k > 0.98) { x.fillStyle = G1; x.font = '900 32px Poppins'; x.fillText('2-STEP LOGIN ON', 30, 350); } }
+  scan(x, w, h); }
+// bank terminal on the cash-management console
+function drawTerm(x, w, h, t, mode, k = 1) { x.fillStyle = '#04120a'; x.fillRect(0, 0, w, h); mono(x, 30, '#7fffb0');
+  if (mode === 'idle') { x.fillText('CASH MANAGEMENT SYSTEM', 30, 60); x.fillText('READY_', 30, 120); }
+  else if (mode === 'dial') { ['INCOMING CALL…', 'CONNECT 2400', 'ACCOUNT CODE: ' + typed('4471-90233', k * 2), 'PASSWORD: ' + typed('********', k * 2 - 1)].forEach((s, i) => { if (k * 4 > i) x.fillText(s, 30, 70 + i * 60); }); }
+  else if (mode === 'granted') { x.fillText('PASSWORD OK', 30, 80); x.fillStyle = '#ffffff'; x.font = '900 56px Poppins'; x.fillText('ACCESS', 30, 220); x.fillText('GRANTED', 30, 290); }
+  else if (mode === 'tx') { x.fillText('OUTGOING WIRES', 30, 56); for (let i = 0; i < 7; i++) { const j = Math.floor(t * 3) + i, rr = rng(j * 17); x.fillStyle = i === 6 ? '#ffffff' : '#7fffb0'; x.fillText(`-$${(100 + Math.floor(rr() * 900))},${String(Math.floor(rr() * 999)).padStart(3, '0')}  ${['HEL', 'TLV', 'AMS', 'FRA', 'SFO'][j % 5]}`, 30, 110 + i * 50); } }
+  else if (mode === 'alert') { const on = Math.floor(t * 4) % 2; x.fillStyle = on ? '#5a0a12' : '#2a0508'; x.fillRect(0, 0, w, h); x.fillStyle = '#fff'; x.font = '900 44px Poppins'; x.fillText('ACCOUNT ALERT', 30, 80); x.font = '900 86px Poppins'; x.fillStyle = '#ff4a5a'; x.fillText('-$400,000', 30, 230); x.fillStyle = '#fff'; x.font = '700 28px Poppins'; x.fillText('UNAUTHORISED TRANSFERS', 30, 300); }
+  else if (mode === 'recovered') { x.fillText('RECOVERY REPORT', 30, 60); x.fillStyle = '#fff'; x.font = '900 46px Poppins'; x.fillText('RECOVERED', 30, 160); x.fillStyle = '#7fffb0'; x.fillText('ALL BUT', 30, 230); x.fillStyle = '#ff4a5a'; x.font = '900 62px Poppins'; x.fillText('$400,000', 30, 310); }
+  scan(x, w, h); }
+function face(x, cx, cy, r, skin, hair, o = {}) { x.fillStyle = hair; x.beginPath(); x.arc(cx, cy - r * 0.15, r * 1.08, Math.PI, 0); x.fill(); x.fillStyle = skin; x.beginPath(); x.arc(cx, cy, r, 0, 7); x.fill(); x.lineWidth = 4; x.strokeStyle = '#16121f'; x.stroke();
+  x.fillStyle = hair; x.beginPath(); x.arc(cx, cy - r * 0.35, r * 0.95, Math.PI * 1.05, Math.PI * 1.95); x.fill(); x.fillStyle = '#16121f'; x.beginPath(); x.arc(cx - r * 0.35, cy + r * 0.05, r * 0.1, 0, 7); x.arc(cx + r * 0.35, cy + r * 0.05, r * 0.1, 0, 7); x.fill();
+  if (o.glasses) { x.lineWidth = 3; x.strokeRect(cx - r * 0.6, cy - r * 0.12, r * 0.5, r * 0.32); x.strokeRect(cx + r * 0.1, cy - r * 0.12, r * 0.5, r * 0.32); }
+  x.beginPath(); x.moveTo(cx - r * 0.3, cy + r * 0.5); x.lineTo(cx + r * 0.3, cy + r * 0.5); x.lineWidth = 4; x.stroke(); }
+function drawWall(x, w, h, t, mode, k = 1) { x.fillStyle = '#0b1020'; x.fillRect(0, 0, w, h); x.fillStyle = '#2f6fe0'; x.fillRect(0, 0, w, 56); x.fillStyle = '#fff'; x.font = '900 34px Poppins';
+  const title = { alert: 'CITIBANK  ·  FRAUD REPORT', watch: 'RECEIVING ACCOUNTS  ·  WATCH LIST', sf: 'WITHDRAWAL ATTEMPT', stp: 'SUSPECT IDENTIFIED', wait: 'EXTRADITION STATUS' }[mode] || 'FBI'; x.fillText(title, 24, 40);
+  if (mode === 'alert') { x.fillStyle = '#ff4a5a'; x.font = '900 120px Poppins'; x.fillText('$400,000', 60, 240); x.fillStyle = '#fff'; x.font = '800 40px Poppins'; x.fillText('MISSING FROM CUSTOMER ACCOUNTS', 60, 320); x.font = '700 34px monospace'; x.fillStyle = '#9fb0d0'; x.fillText('JULY 1994  ·  CASH MANAGEMENT', 60, 390); }
+  if (mode === 'watch' || mode === 'sf') { const rows = [['HELSINKI', 'FINLAND'], ['TEL AVIV', 'ISRAEL'], ['ROTTERDAM', 'NETHERLANDS'], ['FRANKFURT', 'GERMANY'], ['SAN FRANCISCO', 'USA']];
+    rows.forEach(([c, n], i) => { const hot = mode === 'sf' && i === 4; x.fillStyle = hot ? (Math.floor(t * 4) % 2 ? '#7a1020' : '#4a0a14') : '#16203a'; x.fillRect(30, 80 + i * 92, w - 60, 78); x.fillStyle = hot ? '#fff' : '#cfe0ff'; x.font = '800 38px Poppins'; x.fillText(c, 60, 132 + i * 92); x.font = '700 30px monospace'; x.fillStyle = hot ? '#ffcf3f' : '#7fffb0';
+      x.fillText(hot ? 'WITHDRAWAL NOW' : (Math.floor(t * 1.5 + i) % 3 ? 'WATCHING…' : 'NO ACTIVITY'), 600, 132 + i * 92); }); }
+  if (mode === 'stp') { face(x, 220, 300, 120, '#f0c4a0', '#3a2a1e', { glasses: true }); x.fillStyle = '#ff4a5a'; x.font = '900 70px Poppins'; x.fillText('V. LEVIN', 400, 230); x.fillStyle = '#fff'; x.font = '800 40px Poppins'; x.fillText('ST PETERSBURG, RUSSIA', 400, 300); x.font = '700 32px Poppins'; x.fillStyle = '#9fb0d0'; x.fillText('PROGRAMMER · AO SATURN', 400, 360); }
+  if (mode === 'wait') { x.fillStyle = '#fff'; x.font = '900 60px Poppins'; x.fillText('RUSSIA', 60, 190); x.fillStyle = '#ff4a5a'; x.font = '900 150px Poppins'; x.fillText('✕', 340, 210); x.fillStyle = '#fff'; x.font = '800 40px Poppins'; x.fillText('WILL NOT EXTRADITE ITS CITIZENS', 60, 290);
+    x.fillStyle = '#ffcf3f'; x.font = '900 56px monospace'; x.fillText(`DAYS WAITING: ${Math.floor(k * 230)}`, 60, 420); }
+  scan(x, w, h); }
+function drawBoard(x, w, h, t, n) { x.fillStyle = '#b58a5a'; x.fillRect(0, 0, w, h); const r = rng(9); for (let i = 0; i < 1200; i++) { x.fillStyle = `rgba(${r() < 0.5 ? '90,60,30' : '230,200,160'},.2)`; x.fillRect(r() * w, r() * h, 3, 3); }
+  const items = [[180, 200, 'COURIER', 'SAN FRANCISCO', ['#f2c39c', '#d9b25a']], [180, 470, 'HUSBAND', 'ARRESTED', ['#f0c4a0', '#5a3a22']], [620, 300, 'V. LEVIN', 'ST PETERSBURG', ['#f0c4a0', '#3a2a1e', 1]], [880, 140, 'AO SATURN', 'EMPLOYER'], [880, 500, 'LAPTOP', 'DIAL-IN LOGS']];
+  x.strokeStyle = '#d7263d'; x.lineWidth = 5; const vis = Math.floor(n); for (let i = 1; i < Math.min(vis, 5); i++) { const a = items[i === 1 ? 0 : 2], b = items[i]; x.beginPath(); x.moveTo(a[0], a[1]); x.lineTo(b[0], b[1]); x.stroke(); }
+  if (vis >= 3) { x.beginPath(); x.moveTo(items[0][0], items[0][1]); x.lineTo(items[2][0], items[2][1]); x.moveTo(items[1][0], items[1][1]); x.lineTo(items[2][0], items[2][1]); x.stroke(); }
+  items.forEach(([cx, cy, a, b, fc], i) => { if (i >= vis + (n % 1 > 0 ? 1 : 0)) return; const s = i < vis ? 1 : n % 1; x.save(); x.translate(cx, cy); x.rotate((i % 2 ? 1 : -1) * 0.05); x.scale(s, s); const bw = fc ? 220 : 240, bh = fc ? 250 : 120;
+    x.fillStyle = '#f4efe4'; x.fillRect(-bw / 2, -bh / 2, bw, bh); x.strokeStyle = '#2a2018'; x.lineWidth = 3; x.strokeRect(-bw / 2, -bh / 2, bw, bh);
+    if (fc) { x.fillStyle = '#5a6a88'; x.fillRect(-bw / 2 + 14, -bh / 2 + 14, bw - 28, 150); face(x, 0, -bh / 2 + 92, 52, fc[0], fc[1], { glasses: fc[2] }); }
+    x.fillStyle = i === 2 ? '#d7263d' : '#14121a'; x.font = '900 30px Poppins'; x.textAlign = 'center'; x.fillText(a, 0, fc ? 82 : -6); x.font = '700 22px Poppins'; x.fillStyle = '#3a3e48'; x.fillText(b, 0, fc ? 112 : 30); x.textAlign = 'left';
+    x.fillStyle = '#d7263d'; x.beginPath(); x.arc(0, -bh / 2 + 4, 10, 0, 7); x.fill(); x.restore(); });
+  if (vis >= 3) { x.strokeStyle = '#d7263d'; x.lineWidth = 8; x.beginPath(); x.ellipse(620, 300, 150, 170, 0, 0, 7); x.stroke(); } }
+
+// =====================================================================================================
+// WORLD STATES
+// =====================================================================================================
+function bankState(t) {
+  const U = BANK.userData; for (const c of Object.values(BCARD)) hideCard(c);
+  const sf = inB(t, 6), ht = HT(t);
+  SCR.banner.update(sf ? 'sf' : 'ny'); U.plaques.forEach((p, i) => p.update(sf ? (i === 1 ? 1 : 0) : 0)); U.street.intensity = sf ? 6 : 0;
+  // vault door
+  let open = 0; if (ht !== null) open = 1; else if (inB(t, 4)) open = sstep(WT(4, 'work') - 0.3, WT(4, 'work') + 1.0, t); else if (inB(t, 5)) open = 1; else if (inB(t, 12)) open = 1 - sstep(WT(12, 'password') - 0.2, WT(12, 'lock') - 0.05, t);
+  U.vault.hinge.rotation.y = 1.45 * open; U.vault.wheel.rotation.z = open * 5.5;
+  // money stream: hook, the summer of transfers, and back in for the recovery
+  let s = null, dir = 1; if (ht !== null) s = ht + 3; else if (inB(t, 4) && t > WT(4, 'work') + 0.4) s = t - WT(4, 'work'); else if (inB(t, 5) && t < VB(5) + 1.2) s = t - WT(4, 'work'); else if (inB(t, 12) && t < WT(12, 'password')) { s = t; dir = -1; }
+  U.bills.forEach((m, i) => { if (s === null) { m.position.y = -5; return; } const r = rng(i * 5 + 3), a = r(), b = r(), c = r(); let p = (s * 0.32 + i / U.bills.length) % 1; if (dir < 0) p = 1 - p;
+    const q = U.billPath.getPoint(p); m.position.set(q.x + Math.sin(s * 2 + i) * 0.25 * (b - 0.5) * 2, q.y + Math.sin(s * 3 + a * 9) * 0.18, q.z + Math.cos(s * 2.3 + c * 9) * 0.25); m.rotation.set(s * (2 + a * 3), s * (1 + b * 2) + i, s * c * 2); m.scale.setScalar(Math.min(1, p * 8, (1 - p) * 8)); });
+  const active = s !== null; U.cable.offset.x = -(t * (active ? 1.6 : 0.25)) % 1; U.reels.forEach((r, i) => r.rotation.x = t * (active ? 7 : 0.6) * (i % 2 ? 1 : -1.2));
+  U.leds.forEach(l => l.material.color.set(Math.sin(t * (active ? 16 : 5) + l.userData.ph * 3) > 0.1 ? '#ff3b4a' : '#3a0a10'));
+  U.stacks.forEach((st, i) => { const gone = inB(t, 4) || inB(t, 5) ? clamp((t - WT(4, 'pulled') + 0.5) / 4 - (i % 7) * 0.08) : ht !== null ? clamp((ht - 4) / 6 - (i % 7) * 0.1) : inB(t, 12) ? 1 - clamp((t - VB(12)) / 3 - (i % 7) * 0.06) : 0; st.visible = gone < 0.5 || i % 3 === 0; });
+  U.clock[0].rotation.z = -t * 0.02; U.clock[1].rotation.z = -t * 0.25;
+  const al = inB(t, 5) && Math.floor(t * 4) % 2; U.alarm.intensity = al ? 14 : 0; U.alarmGlow.material.opacity = al ? 0.9 : 0; U.alarmLamp.material.color.set(al ? '#ff2030' : '#5a1018');
+  // terminal
+  let mode = 'idle', k = 1; if (ht !== null) mode = 'tx'; else if (inB(t, 2)) { if (t > WT(2, 'Just') - 0.2) mode = 'granted'; else if (t > WT(2, 'dial') - 0.2) { mode = 'dial'; k = (t - WT(2, 'dial') + 0.2) / (WT(2, 'send') - WT(2, 'dial')); } }
+  else if (inB(t, 4)) mode = t > WT(4, 'work') ? 'tx' : 'granted'; else if (inB(t, 5)) mode = t > WT(5, 'About') - 0.3 ? 'alert' : 'tx'; else if (inB(t, 12)) mode = t > WT(12, 'four') - 0.6 ? 'recovered' : 'idle';
+  drawTerm(SCR.bankterm.x, 640, 480, t, mode, k); SCR.bankterm.t.needsUpdate = true;
+  // doors (San Francisco: the courier comes in)
+  const dk = sf ? sstep(WT(6, 'San') - 0.4, WT(6, 'San') + 0.4, t) * (1 - sstep(WT(6, 'tries'), WT(6, 'tries') + 0.8, t)) : 0; U.doors.forEach(d => d.hg.rotation.y = -d.s * 1.3 * dk);
+  // people
+  const guardOn = ht !== null || inB(t, 2) || inB(t, 4) || inB(t, 5) || inB(t, 12);
+  if (guardOn) showCard(BCARD.guard, V(-1.7, 0, -7.4), { expr: inB(t, 5) ? 'shocked' : ht !== null ? 'happy' : 'neutral', armR: [0.3, 0.3], armL: [0.3, 0.3], blink: blinkAt(t), zzz: ht !== null && ht > 5 && ht < 7.5 });
+  if (inB(t, 5) || inB(t, 12)) { const sh = inB(t, 5); showCard(BCARD.b1, V(3.2, 0, -6.1), { expr: sh ? (t > WT(5, 'missing') - 0.2 ? 'shocked' : 'annoyed') : t > WT(12, 'four') ? 'smug' : 'neutral', armR: sh && t > WT(5, 'calls') - 0.3 ? [2.6, 2.2] : [0.6, 1.2], sweat: sh ? 1 : 0, blink: blinkAt(t) });
+    showCard(BCARD.b2, V(3.0, 0, -8.15), { expr: sh ? 'shocked' : 'happy', armL: sh ? [2.2, 0.3] : [0.4, 0.3], blink: blinkAt(t, 1) }); }
+  if (sf) { const s0 = WT(6, 'San') - 0.2, a0 = WT(6, 'arrested') - 0.5, cuffed = t > WT(6, 'arrested') + 0.2;
+    showCard(BCARD.teller, V(-5.45, 0, -0.2), { expr: t > a0 + 0.3 ? 'shocked' : 'happy', armR: t > WT(6, 'withdraw') && t < a0 ? [1.0, 1.4] : [0.3, 0.3], blink: blinkAt(t, 2) });
+    showCard(BCARD.cust, V(-3.75, 0, 2.2), { expr: t > a0 + 0.3 ? 'shocked' : 'neutral', blink: blinkAt(t, 0.7) });
+    if (t > s0 - 0.5) walkTo(BCARD.courier, [V(0, 0, 6.6), V(0, 0, 5.2), V(-1.5, 0, 2.0), V(-3.75, 0, -0.2)], s0, WT(6, 'withdraw') - 0.2, t, { expr: t > a0 + 0.2 ? 'shocked' : 'neutral', cuffed, sweat: cuffed ? 1 : 0 });
+    walkTo(BCARD.agentM, [V(-3.6, 0, -4.4), V(-3.4, 0, -1.35)], a0 - 0.6, a0 + 0.4, t, { expr: 'angry', armR: t > a0 + 0.4 ? [2.0, 0.4] : [0.6, 1.2] });
+    walkTo(BCARD.agentF, [V(-1.2, 0, 3.6), V(-3.75, 0, 0.85)], a0 - 0.7, a0 + 0.4, t, { expr: t > a0 - 0.7 ? 'angry' : 'neutral', armL: t > a0 + 0.4 ? [2.0, 0.4] : t < a0 - 0.7 ? [1.0, 1.4] : [0.6, 1.2] });
+    const h0 = WT(6, 'husband') - 0.8; showCard(BCARD.husband, V(1.6, 0, 4.4), { expr: t > h0 + 0.6 ? 'shocked' : t > WT(6, 'arrested') ? 'annoyed' : 'neutral', cuffed: t > h0 + 0.9, sweat: t > h0 + 0.6 ? 1 : 0, blink: blinkAt(t, 1.3) });
+    walkTo(BCARD.agentM2, [V(3.5, 0, 3.8), V(2.5, 0, 4.0)], h0, h0 + 0.6, t, { expr: 'angry', armL: t > h0 + 0.6 ? [2.0, 0.4] : [0.6, 1.2] }); }
+}
+function flatState(t) {
+  const U = FLAT.userData, ht = HT(t); for (const c of Object.values(FCARD)) hideCard(c);
+  U.snow.forEach(s => { const u = s.userData, kk = (u.a + t * (0.12 + u.c * 0.1)) % 1; s.position.set(-3.2 - u.b * 2.5, 2.6 - kk * 2.4, -1.6 + u.c * 2.2 + Math.sin(t + u.a * 9) * 0.1); });
+  const online = ht !== null || (inB(t, 1) && t > WT(1, 'found') - 0.3) || inB(t, 3) || inB(t, 4) || inB(t, 13);
+  U.mleds.forEach(l => l.material.color.set(online && Math.sin(t * 23 + l.userData.ph * 5) > -0.2 ? '#3ff07a' : '#0a2a12')); U.mglow.intensity = 3 + Math.sin(t * 13) * 0.3;
+  U.floppy.position.y = -5; U.note.position.y = -5; U.lampL.intensity = inB(t, 11) ? 3 : 6;
+  // laptop
+  let mode = 'off', k = 1; if (ht !== null) { mode = 'login'; k = clamp((ht - 7.6) / 2.4); }
+  else if (inB(t, 1)) { mode = t < WT(1, 'found') - 0.3 ? 'off' : t < WT(1, 'American') - 0.3 ? 'dos' : 'logo'; k = mode === 'dos' ? (t - WT(1, 'found') + 0.3) / 1.0 : (t - WT(1, 'American') + 0.3) / 0.5; }
+  else if (inB(t, 3)) { mode = 'list'; k = clamp((t - WT(3, 'Real') + 0.2) / 3.0); } else if (inB(t, 4)) { mode = 'transfer'; k = clamp((t - VB(4)) / (VB(5) - VB(4) - 0.5)); }
+  else if (inB(t, 7)) { mode = 'evidence'; k = 1; } else if (inB(t, 13)) { mode = t > WT(13, 'So') - 0.2 ? 'twostep' : 'login'; k = mode === 'twostep' ? (t - WT(13, 'So') + 0.2) / 2.2 : 1; }
+  drawLap(SCR.lap.x, 640, 420, t, mode, k); SCR.lap.t.needsUpdate = true; U.lapGlow.material.opacity = mode === 'off' ? 0 : 0.25;
+  drawCode(SCR.crt.x, 512, 384, t, 3, '#7fffb0'); SCR.crt.t.needsUpdate = true;
+  const seat = V(0.3, 0, -0.3);
+  if (ht !== null || inB(t, 1) || inB(t, 3) || inB(t, 4)) { let expr = 'neutral'; if (ht !== null) expr = ht > 7.8 ? 'smug' : 'neutral'; else if (inB(t, 1)) expr = t > WT(1, 'found') ? 'smug' : 'neutral'; else if (inB(t, 3)) expr = t > WT(3, 'Real') ? 'smug' : 'neutral'; else expr = t > WT(4, 'accounts', 2) ? 'delighted' : 'smug';
+    const typing = (inB(t, 4) || (ht !== null && ht > 7.5)) && Math.sin(t * 18) > 0; showCard(FCARD.levin, seat, { sit: 1, expr, armR: typing ? [1.2, 1.6] : [1.0, 1.4], armL: typing ? [1.0, 1.4] : [1.2, 1.6], blink: blinkAt(t) }); }
+  if (inB(t, 7)) { showCard(FCARD.ru1, V(-0.75, 0, -1.05), { expr: t > WT(7, 'laptop') - 0.3 ? 'smug' : 'neutral', armR: t > WT(7, 'dialling') - 0.3 ? [2.0, 0.4] : [0.5, 0.5], blink: blinkAt(t) }); showCard(FCARD.ru2, V(1.55, 0, -0.55), { expr: 'neutral', armL: [1.1, 1.2], blink: blinkAt(t, 1) }); }
+  if (inB(t, 11)) { const sold = WT(11, 'sold'), hun = WT(11, 'hundred');
+    showCard(FCARD.h1, V(-1.15, 0, 0.35), { expr: t > sold ? 'smug' : 'neutral', armR: t > sold - 0.5 && t < sold + 0.9 ? [1.8, 0.4] : [0.5, 0.5], armL: t > hun ? [1.6, 0.6] : [0.4, 0.4], blink: blinkAt(t) });
+    showCard(FCARD.h2, V(1.6, 0, 0.1), { expr: t > WT(11, 'claimed') ? 'smug' : 'neutral', armL: [1.0, 1.4], armR: [1.0, 1.4], blink: blinkAt(t, 1) });
+    showCard(FCARD.h3, V(-2.0, 0, 1.4), { expr: 'neutral', blink: blinkAt(t, 2) });
+    showCard(FCARD.levin, V(0.35, 0, 0.55), { expr: t > sold + 0.4 ? 'delighted' : 'neutral', armL: t > sold && t < hun + 1 ? [1.8, 0.4] : [0.4, 0.4], armR: [0.4, 0.4], blink: blinkAt(t, 0.5) });
+    const fk = sstep(sold - 0.2, sold + 0.7, t); if (t > sold - 0.6) U.floppy.position.copy(lerpV(V(-0.62, 1.02, 0.42), V(-0.15, 1.0, 0.5), fk)), U.floppy.rotation.set(0, 0, Math.sin(t * 3) * 0.2);
+    const nk = sstep(hun - 0.2, hun + 0.6, t); if (t > hun - 0.5) U.note.position.copy(lerpV(V(-0.12, 1.08, 0.52), V(-0.62, 1.05, 0.42), nk)), U.note.rotation.set(0, 0.2, Math.sin(t * 4) * 0.25); }
+}
+const ARC_ON = [['hook', 0, 'He', 0, 1.6], ['pw_bue', 3, 'Argentina'], ['pw_jkt', 3, 'Indonesia'], ['pw_nas', 3, 'Bahamas'], ['tx_hel', 4, 'Finland'], ['tx_tlv', 4, 'Israel'], ['tx_ams', 4, 'Netherlands'], ['tx_fra', 4, 'Germany'], ['tx_sf', 4, 'United'], ['trap', 6, 'point', 7], ['fly1', 8, 'Then', 8, 3.2], ['fly2', 9, 'September', 9, 2.6]];
+function worldState(t) {
+  const U = WORLD.userData, ht = HT(t); const shown = {};
+  for (const a of Object.values(U.arcs)) { a.geo.setDrawRange(0, 0); a.pk.position.y = -5; }
+  const setArc = (key, k) => { const a = U.arcs[key]; k = clamp(k); shown[key] = k; a.geo.setDrawRange(0, Math.floor(k * 64) * 36); const p = a.curve.getPoint(k < 1 ? k : (t * 0.45 + key.length * 0.13) % 1); a.pk.position.copy(p); a.pk.material.opacity = k > 0 ? 0.95 : 0; };
+  if (ht !== null) setArc('hook', (ht - (WT(0, 'He') - 0.15)) / 1.6);
+  if (inB(t, 2)) for (let k = 0; k < 6; k++) setArc('fan' + k, (t - WT(2, 'send') + 0.15 - k * 0.12) / 0.8);
+  for (const [key, bi, w, until, d = 0.9] of ARC_ON) { if (bi === 0) continue; const t0 = WT(bi, w) - 0.2; const last = until ?? (bi === 3 || bi === 4 ? bi : bi); if (t >= t0 && t < (last + 1 < B.length ? VB(last + 1) : DUR)) setArc(key, (t - t0) / d); }
+  if (inB(t, 7)) setArc('trap', 1);
+  if (inB(t, 13)) for (const key of ['hook', 'tx_hel', 'tx_tlv', 'tx_ams', 'tx_fra', 'tx_sf', 'pw_bue', 'pw_jkt', 'pw_nas']) setArc(key, (t - WT(13, 'Follow') + 0.6) / 0.8);
+  // labels
+  let lab = ['ny', 'stp']; if (inB(t, 3)) lab = ['stp', ...['bue', 'jkt', 'nas'].filter(c => shown['pw_' + c] > 0)]; if (inB(t, 4)) lab = ['ny', ...['hel', 'tlv', 'ams', 'fra', 'sf'].filter(c => shown['tx_' + c] > 0)]; if (inB(t, 2)) lab = ['ny'];
+  if (inB(t, 6)) lab = ['sf', 'stp']; if (inB(t, 7)) lab = ['stp']; if (inB(t, 8)) lab = ['stp', 'lon']; if (inB(t, 9)) lab = ['lon', 'ny'];
+  for (const [k, p] of Object.entries(U.pins)) { const on = lab.includes(k); p.lab.material.opacity = on ? 1 : 0; const pulse = 1 + 0.5 * ((t * 1.2 + k.length) % 1); p.ring.scale.setScalar(on ? pulse * (k === 'stp' && inB(t, 7) ? 2.2 : 1) : 1); p.ring.material.opacity = on ? 0.9 * (1 - ((t * 1.2 + k.length) % 1)) : 0.25; p.gl.material.opacity = on ? 0.8 : 0.3; }
+  // the jet
+  const J = U.jet; J.position.y = -5; let jk = null, ja = null; if (inB(t, 8)) { jk = sstep(VB(8), WT(8, 'lands') + 0.3, t); ja = U.arcs.fly1; } if (inB(t, 9) && t > WT(9, 'September') - 0.2) { jk = sstep(WT(9, 'September') - 0.2, WT(9, 'York') + 0.3, t); ja = U.arcs.fly2; }
+  if (ja) { const p = ja.curve.getPoint(Math.min(jk, 0.999)), tg = ja.curve.getTangent(Math.min(jk, 0.999)); J.position.copy(p); J.position.y += 0.08; J.rotation.set(0, Math.atan2(-tg.z, tg.x), 0); J.rotateZ(Math.atan2(tg.y, Math.hypot(tg.x, tg.z)) * 0.8); }
+}
+function hqState(t) {
+  for (const c of Object.values(HCARD)) hideCard(c);
+  let mode = 'alert', k = 1; if (inB(t, 6)) mode = t > WT(6, 'point') - 0.3 ? 'stp' : t > WT(6, 'San') - 0.2 ? 'sf' : 'watch'; if (inB(t, 7)) { mode = 'wait'; k = sstep(WT(7, 'So') - 0.3, VB(8), t); }
+  drawWall(SCR.wall.x, 1024, 585, t, mode, k); SCR.wall.t.needsUpdate = true;
+  let n = 0; if (inB(t, 6)) { for (const [w, v] of [['woman', 0], ['arrested', 1], ['husband', 2], ['point', 3]]) if (t > WT(6, w) - 0.2) n = v + clamp((t - WT(6, w) + 0.2) / 0.6) * 0.99; } else if (inB(t, 7)) { n = 3.99; if (t > WT(7, 'Russian')) n = 4 + clamp((t - WT(7, 'Russian')) / 0.6) * 0.99; if (t > WT(7, 'laptop')) n = 5; }
+  drawBoard(SCR.board.x, 1024, 640, t, n); SCR.board.t.needsUpdate = true;
+  drawCode(SCR.desk.x, 512, 320, t, 11, '#5fd0ff'); SCR.desk.t.needsUpdate = true;
+  const wait = inB(t, 7) && t > WT(7, 'So') - 0.3; HQ.userData.clock[0].rotation.z = -(t * 0.02 + (wait ? (t - WT(7, 'So')) * 4 : 0)); HQ.userData.clock[1].rotation.z = -(t * 0.25 + (wait ? (t - WT(7, 'So')) * 40 : 0));
+  const call = inB(t, 5); showCard(HCARD.analyst, V(1.0, 0, -2.6), { expr: call ? 'shocked' : inB(t, 6) && t > WT(6, 'arrested') ? 'delighted' : 'neutral', armR: call || (inB(t, 6) && t > WT(6, 'San') - 0.3 && t < WT(6, 'arrested')) ? [2.7, 2.4] : [2.2, 0.3], blink: blinkAt(t, 2) });
+  showCard(HCARD.agentF, V(-1.8, 0, -0.6), { sit: 1, expr: wait ? 'annoyed' : 'neutral', armR: [1.0, 1.4], armL: [1.0, 1.4], blink: blinkAt(t, 1) });
+  showCard(HCARD.agentM, V(-0.3, 0, -2.4), { expr: inB(t, 6) && t > WT(6, 'point') ? 'smug' : wait ? 'annoyed' : 'neutral', armL: inB(t, 6) && t > WT(6, 'both') - 0.2 ? [2.1, 0.3] : [0.4, 0.3], blink: blinkAt(t) });
+  if (!call) showCard(HCARD.agentM2, V(-0.7, 0, 2.4), { expr: wait ? 'sleep' : 'neutral', zzz: wait && t > WT(7, 'waits'), armR: [1.1, 1.2], armL: [1.1, 1.2], blink: blinkAt(t, 0.4) });
+}
+function airState(t) {
+  for (const c of Object.values(ACARD)) hideCard(c);
+  const A = AIR.userData; A.truck.position.x = -9 + ((t * 2.2) % 24); A.apJet.position.x = -1.5 + Math.min(0, (t - VB(8)) * 0.0);
+  SCR.board2.update(inB(t, 8) ? clamp((t - WT(8, 'Airport') + 0.3) / 1.2) : 1);
+  const sitP = (x, z) => V(x, 0, z + 0.3); const sc = (c, x, z, ph, ex = {}) => showCard(c, sitP(x, z), { sit: 1, expr: 'neutral', armR: [1.0, 1.4], armL: [1.0, 1.4], blink: blinkAt(t, ph), ...ex });
+  const scot = WT(8, 'Scotland'), wait = WT(8, 'waiting'), arrest = inB(t, 8) && t > wait + 0.3 || inB(t, 9);
+  sc(ACARD.s1, -5.74, -0.2, 0.3); sc(ACARD.s2, -2.04, -0.2, 1.1, { zzz: true, expr: 'sleep' }); sc(ACARD.s3, 3.52, -0.2, 2.1, { expr: t > scot && inB(t, 8) ? 'shocked' : 'neutral' }); sc(ACARD.s4, 1.66, -2.4, 0.8);
+  for (const [c, z, sp, ph] of [[ACARD.w1, 1.2, 1.15, 3], [ACARD.w2, 1.85, -1.0, 9]]) { const x = sp > 0 ? 8.5 - ((t * sp + ph) % 17.5) : -8.5 + ((t * -sp + ph) % 17.5); showCard(c, V(x, 0, z), { walk: t * 3.2 + ph, expr: 'neutral', blink: blinkAt(t, ph) }); c.spin = 0; }
+  if (inB(t, 8)) { const L0 = WT(8, 'Airport') - 0.2; walkTo(ACARD.levin, [V(11.5, 0, 1.4), V(9.0, 0, 1.8), V(1.6, 0, 2.6)], L0, scot + 0.1, t, { expr: t > wait - 0.2 ? 'shocked' : 'happy', cuffed: t > wait + 0.6, sweat: t > scot + 0.3 ? 1 : 0 });
+    walkTo(ACARD.d1, [V(-6.5, 0, 3.4), V(0.35, 0, 2.7)], WT(8, 'transfer') - 0.6, scot + 0.2, t, { expr: t > scot ? 'angry' : 'neutral', armR: t > scot + 0.1 ? [2.4, 0.2] : [0.6, 1.2] });
+    if (t < scot - 0.2) showCard(ACARD.d2, sitP(4.14, -0.2), { sit: 1, expr: 'neutral', armR: [1.0, 1.4], armL: [1.0, 1.4], blink: blinkAt(t, 1.7) });
+    else walkTo(ACARD.d2, [V(4.14, 0, 0.5), V(3.4, 0, 1.6), V(2.9, 0, 2.6)], scot - 0.2, scot + 0.6, t, { expr: 'angry', armL: t > wait + 0.3 ? [2.0, 0.4] : [0.6, 1.2] }); }
+  if (inB(t, 9)) { const k0 = VB(9) + 0.1, k1 = WT(9, 'two') - 0.1; const dx = -3.2 * clamp((t - k0) / (k1 - k0)); const wk = t > k0 && t < k1 ? t * 3.4 : 0;
+    showCard(ACARD.levin, V(1.6 + dx, 0, 2.6), { expr: 'annoyed', cuffed: true, sweat: 1, walk: wk }); showCard(ACARD.d1, V(0.35 + dx, 0, 2.7), { expr: 'neutral', walk: wk, armR: [1.6, 0.6] }); showCard(ACARD.d2, V(2.9 + dx, 0, 2.6), { expr: 'neutral', walk: wk, armL: [1.6, 0.6] }); }
+}
+function courtState(t) {
+  for (const c of Object.values(KCARD)) hideCard(c);
+  const lords = inB(t, 9); SCR.seal.update(lords ? 'lords' : 'us'); COURT.userData.flag.visible = !lords; COURT.userData.fill.color.set(lords ? '#ff9a8a' : '#ffcf8a');
+  COURT.userData.flag.geometry.attributes.position.array.forEach((_, i, a) => { if (i % 3 === 2) { const x0 = a[i - 2]; a[i] = Math.sin(x0 * 4 + t * 3) * 0.04 * (x0 + 0.6); } }); COURT.userData.flag.geometry.attributes.position.needsUpdate = true;
+  const bangs = [WT(9, 'loses') - 0.12, WT(10, 'sentence') - 0.1, WT(10, 'prison') - 0.15]; let g = 0; for (const b of bangs) if (t > b - 0.25 && t < b + 0.35) g = t < b ? sstep(b - 0.25, b, t) * -1 + 1 : 1 - sstep(b, b + 0.3, t); COURT.userData.gavel.rotation.z = 0.9 * (1 - g);
+  const J = lords ? KCARD.lord : KCARD.judge; showCard(J, V(0, 0.85, -3.75), { expr: lords ? (t > WT(9, 'loses') - 0.3 ? 'annoyed' : 'neutral') : t > WT(10, 'sentence') ? 'annoyed' : 'neutral', armR: g > 0.1 ? [2.4, 1.8] : [0.6, 1.2], blink: blinkAt(t) });
+  showCard(KCARD.levin, V(-1.0, 0, -0.25), { expr: lords ? (t > WT(9, 'loses') ? 'shocked' : 'neutral') : t > WT(10, 'sentence') ? 'annoyed' : 'neutral', cuffed: !lords, sweat: t > WT(9, 'loses') ? 1 : 0, blink: blinkAt(t, 1) });
+  showCard(KCARD.lawyer, V(-2.3, 0, -0.2), { expr: 'neutral', armR: [1.2, 1.0], blink: blinkAt(t, 2) }); if (!lords) showCard(KCARD.pros, V(2.3, 0, -0.2), { expr: t > WT(10, 'sentence') ? 'smug' : 'neutral', blink: blinkAt(t, 3) });
+  showCard(KCARD.marshal, V(-3.9, 0, -1.4), { expr: 'neutral', blink: blinkAt(t, 0.6) });
+  [[KCARD.g1, -2.8, 2.9], [KCARD.g2, 1.2, 2.9], [KCARD.g3, -0.6, 3.9], [KCARD.g4, 3.0, 3.9]].forEach(([c, x, z], i) => showCard(c, V(x, 0, z - 0.35), { sit: 1, expr: t > WT(10, 'sentence') && !lords ? 'shocked' : 'neutral', armR: [1.0, 1.4], armL: [1.0, 1.4], blink: blinkAt(t, i) }));
+}
+function cellState(t) { hideCard(CCARD.levin); if (inB(t, 10)) showCard(CCARD.levin, V(0.25, 0, -0.55), { expr: 'annoyed', blink: blinkAt(t), armR: [0.25, 0.3], armL: [0.25, 0.3] }); }
+
+// =====================================================================================================
+// SHOTS (a cut every ~2 s, every shot moving). Positions are in each set's local coordinates.
+// =====================================================================================================
+const sh = (set, p0, l0, f0, p1, l1, f1) => ({ set, f: k => ({ p: lerpV(p0, p1 || p0, k), l: lerpV(l0, l1 || l0, k), fov: lerp(f0, f1 ?? f0, k) }) });
+const orbit = (set, c, r, y, a0, a1, ly, fov) => ({ set, f: k => { const a = lerp(a0, a1, k); return { p: V(c.x + Math.sin(a) * r, y, c.z + Math.cos(a) * r), l: V(c.x, ly, c.z), fov }; } });
+const P = (c, y = 0) => { const p = PM(CITY[c][0], CITY[c][1], y); return p; };
+const SHOTS = [];
+function buildShots() {
+  const S = (t, s) => SHOTS.push({ t, ...s });
+  // ---- hook: the money pours out of the vault and down a phone line to Russia
+  S(0, sh('bank', V(0.6, 1.5, 4.8), V(0.3, 2.4, -8.5), 54, V(0.4, 1.8, 2.4), V(0.3, 2.6, -8.5), 50));
+  S(WT(0, 'Citibank') - 0.25, sh('bank', V(1.6, 1.3, -3.6), V(0.2, 2.4, -9.6), 48, V(1.0, 1.6, -4.8), V(0.0, 2.5, -9.6), 46));
+  S(WT(0, 'ten') - 0.2, sh('bank', V(2.0, 1.2, -3.6), V(5.2, 2.8, -7.3), 52, V(2.9, 2.4, -4.4), V(5.6, 5.0, -7.3), 54));
+  S(WT(0, 'No') - 0.1, sh('bank', V(-0.6, 1.6, -4.4), V(-1.7, 1.3, -7.4), 44, V(-0.9, 1.5, -5.0), V(-1.7, 1.3, -7.4), 40));
+  S(WT(0, 'He') - 0.15, sh('world', V(-14, 5.5, 5), V(-5, 0, -3), 50, V(-2, 7.5, 4), V(1, 0, -4.5), 50));
+  S(WT(0, 'All') - 0.2, sh('flat', V(1.5, 1.55, 1.5), V(0.25, 1.0, -1.2), 48, V(1.15, 1.45, 0.9), V(0.25, 1.0, -1.3), 44));
+  S(WT(0, 'someone') - 0.35, sh('flat', V(0.22, 1.2, -1.15), V(0.25, 0.97, -2.0), 40, V(0.24, 1.1, -1.42), V(0.25, 0.97, -2.0), 34));
+  // ---- beat 1: St Petersburg, 1994
+  S(VB(1), sh('flat', V(2.5, 2.3, 2.9), V(-0.6, 1.0, -1.2), 58, V(2.1, 2.1, 2.4), V(-0.4, 1.0, -1.4), 55));
+  S(WT(1, 'Saint') - 0.1, sh('flat', V(-1.3, 1.5, 0.4), V(-3.4, 1.6, -0.5), 50, V(-1.7, 1.55, 0.0), V(-3.4, 1.65, -0.5), 46));
+  S(WT(1, 'Soviet') - 0.15, sh('flat', V(-1.3, 1.6, -0.5), V(-1.75, 1.5, -2.6), 46, V(-1.5, 1.65, -0.9), V(-1.75, 1.5, -2.6), 42));
+  S(WT(1, 'Vladimir') - 0.1, sh('flat', V(1.1, 1.35, 1.1), V(0.3, 1.0, -0.3), 46, V(0.85, 1.3, 0.8), V(0.3, 1.02, -0.3), 43));
+  S(WT(1, 'computer') - 0.1, sh('flat', V(0.0, 1.3, -1.0), V(-0.42, 1.05, -2.2), 44, V(-0.15, 1.22, -1.35), V(-0.42, 1.05, -2.2), 38));
+  S(WT(1, 'And') - 0.1, sh('flat', V(-0.4, 1.0, 0.95), V(0.3, 1.05, -0.3), 44, V(-0.15, 1.05, 0.7), V(0.3, 1.08, -0.3), 40));
+  S(WT(1, 'American') - 0.3, sh('flat', V(0.24, 1.22, -1.2), V(0.25, 0.97, -2.0), 40, V(0.25, 1.14, -1.48), V(0.25, 0.97, -2.0), 33));
+  // ---- beat 2: the back door (cash management)
+  S(VB(2), sh('bank', V(0, 4.4, 5.3), V(0, 1.6, -6), 60, V(0, 3.4, 3.8), V(0, 1.8, -6), 56));
+  S(WT(2, 'business') - 0.2, sh('bank', V(2.6, 1.6, -3.2), V(5.5, 1.4, -7.0), 50, V(3.0, 1.7, -4.6), V(5.5, 1.5, -8.0), 48));
+  S(WT(2, 'dial') - 0.15, sh('bank', V(2.9, 1.3, -5.2), V(5.0, 1.4, -7.35), 50, V(3.1, 1.9, -5.5), V(5.2, 2.4, -7.35), 52));
+  S(WT(2, 'type') - 0.15, sh('bank', V(2.75, 1.2, -7.28), V(4.26, 1.12, -7.35), 40, V(2.95, 1.17, -7.33), V(4.26, 1.12, -7.35), 36));
+  S(WT(2, 'send') - 0.15, sh('world', V(-8, 9, 8), V(-6, 0, -2), 52, V(-4, 10, 6), V(-3, 0, -2), 54));
+  S(WT(2, 'No') - 0.15, sh('bank', V(-2.0, 1.5, -2.2), V(-4.7, 1.3, -0.2), 46, V(-2.0, 1.5, 0.6), V(-4.7, 1.3, 2.2), 46));
+  S(WT(2, 'Just') - 0.2, sh('bank', V(2.75, 1.2, -7.28), V(4.26, 1.12, -7.35), 40, V(2.95, 1.17, -7.33), V(4.26, 1.12, -7.35), 36));
+  // ---- beat 3: the keys
+  S(VB(3), sh('flat', V(1.9, 1.6, 1.8), V(0.2, 1.0, -1.2), 52, V(1.5, 1.5, 1.4), V(0.2, 1.0, -1.3), 50));
+  S(WT(3, 'Real') - 0.15, sh('flat', V(0.22, 1.2, -1.2), V(0.25, 0.97, -2.0), 40, V(0.24, 1.12, -1.45), V(0.25, 0.97, -2.0), 34));
+  S(WT(3, 'customers') - 0.3, sh('world', V(-1, 15, 9), V(-1, 0, -1), 56, V(1, 13, 7), V(1, 0, -1.5), 54));
+  // ---- beat 4: the summer of transfers
+  S(VB(4), sh('flat', V(-0.4, 1.0, 0.95), V(0.3, 1.05, -0.3), 46, V(-0.1, 1.1, 0.6), V(0.3, 1.08, -0.4), 42));
+  S(WT(4, 'work') - 0.3, sh('bank', V(-1.6, 1.8, -1.2), V(0.4, 2.3, -9.0), 54, V(-1.2, 1.8, -2.4), V(0.6, 2.4, -9.0), 52));
+  S(WT(4, 'forty') - 0.25, sh('flat', V(0.22, 1.2, -1.2), V(0.25, 0.97, -2.0), 40, V(0.24, 1.12, -1.45), V(0.25, 0.97, -2.0), 34));
+  S(WT(4, 'More') - 0.15, sh('bank', V(0.6, 1.5, 1.2), V(0, 2.4, -8), 54, V(0.3, 1.9, -0.6), V(0, 2.6, -8), 52));
+  S(WT(4, 'pulled') - 0.2, sh('bank', V(0.0, 1.7, -10.1), V(-1.6, 1.4, -13.6), 52, V(0.3, 1.6, -11.0), V(-2.0, 1.2, -13.8), 50));
+  S(WT(4, 'accounts', 2) - 0.25, sh('world', V(-8, 6, 3), V(-6, 0, -4), 50, V(-3, 5.5, 1.5), V(0, 0, -4.5), 50));
+  S(WT(4, 'Finland') - 0.3, sh('world', V(0.8, 6.8, 1.6), V(2.0, 0, -4.6), 50, V(3.4, 6.4, 1.2), V(2.6, 0, -4.4), 50));
+  S(WT(4, 'United') - 0.3, sh('world', V(-10, 4.2, 2.0), V(-11.5, 0, -4.2), 52, V(-12.5, 4.0, 1.5), V(-12.5, 0, -4.0), 50));
+  // ---- beat 5: they notice
+  S(VB(5), { ...sh('bank', V(3.0, 1.7, -3.8), V(4.0, 1.3, -7.4), 54, V(3.2, 1.7, -4.3), V(4.0, 1.3, -7.4), 52), shake: VB(5) + 0.2 });
+  S(WT(5, 'four') - 0.2, sh('bank', V(2.75, 1.2, -7.28), V(4.26, 1.12, -7.35), 40, V(2.95, 1.17, -7.33), V(4.26, 1.12, -7.35), 36));
+  S(WT(5, 'Citibank') - 0.2, sh('hq', V(-3.4, 2.6, 3.6), V(0.5, 1.3, -2), 58, V(-3.0, 2.3, 3.1), V(0.5, 1.3, -2), 56));
+  S(WT(5, 'FBI') - 0.35, sh('hq', V(-2.3, 2.0, -2.0), V(-3.1, 2.0, -4), 42, V(-2.6, 2.0, -2.6), V(-3.1, 2.0, -4), 38));
+  // ---- beat 6: the trap
+  S(VB(6), sh('hq', V(0.3, 1.9, 2.5), V(0, 1.6, -4), 58, V(0.1, 1.88, 1.7), V(0, 1.6, -4), 54));
+  S(WT(6, 'investigators') - 0.2, sh('hq', V(-1.0, 1.95, 2.6), V(0, 1.4, -3), 58, V(1.0, 1.95, 2.4), V(0, 1.4, -3), 58));
+  S(WT(6, 'San') - 0.2, sh('bank', V(1.6, 1.7, -3.6), V(-0.6, 1.3, 5.0), 56, V(1.2, 1.6, -2.8), V(-0.8, 1.2, 4.0), 54));
+  S(WT(6, 'withdraw') - 0.3, sh('bank', V(-2.4, 1.6, -2.6), V(-4.6, 1.25, 0.0), 52, V(-2.2, 1.55, -2.2), V(-4.6, 1.25, 0.0), 50));
+  S(WT(6, 'arrested') - 0.35, { ...sh('bank', V(-1.3, 1.6, 1.4), V(-3.8, 1.1, -0.3), 52, V(-1.6, 1.5, 0.9), V(-3.8, 1.1, -0.3), 48), shake: WT(6, 'arrested') + 0.1 });
+  S(WT(6, 'husband') - 0.35, sh('bank', V(-0.4, 1.5, 1.6), V(1.9, 1.1, 4.3), 48, V(-0.1, 1.45, 2.2), V(2.0, 1.1, 4.3), 46));
+  S(WT(6, 'both') - 0.15, sh('hq', V(1.5, 1.8, 1.4), V(3.96, 1.7, -0.4), 50, V(1.9, 1.75, 0.8), V(3.96, 1.7, -0.4), 46));
+  S(WT(6, 'Saint') - 0.3, sh('world', V(3.8, 3.2, -1.2), V(3.4, 0, -5.8), 48, V(3.6, 2.4, -2.6), V(3.4, 0, -5.8), 44));
+  // ---- beat 7: the evidence, and a wall
+  S(VB(7), sh('flat', V(2.3, 1.75, 2.7), V(-0.2, 1.0, -1.6), 54, V(1.9, 1.6, 2.1), V(-0.1, 1.0, -1.6), 52));
+  S(WT(7, 'Levin') - 0.15, sh('flat', V(0.22, 1.2, -1.2), V(0.25, 0.97, -2.0), 40, V(0.24, 1.12, -1.45), V(0.25, 0.97, -2.0), 34));
+  S(WT(7, 'But') - 0.15, sh('world', V(6.0, 3.2, -2.2), V(3.5, 0, -5.8), 50, V(4.6, 2.6, -2.8), V(3.5, 0, -5.8), 46));
+  S(WT(7, 'citizens') - 0.2, sh('hq', V(0.2, 1.9, 2.2), V(0, 1.7, -4), 56, V(0.0, 1.85, 1.4), V(0, 1.7, -4), 52));
+  S(WT(7, 'So') - 0.15, sh('hq', V(-2.0, 1.6, 0.2), V(-4.0, 2.2, -2.2), 50, V(-2.4, 1.7, -0.6), V(-4.0, 2.3, -2.2), 46));
+  S(WT(7, 'FBI') - 0.2, sh('hq', V(0.8, 1.5, 4.2 - 0.6), V(-0.7, 1.0, 2.4), 46, V(0.4, 1.4, 3.4), V(-0.7, 1.0, 2.4), 42));
+  // ---- beat 8: Stansted
+  S(VB(8), sh('world', V(6, 3.0, 0.5), V(2.2, 0, -5.6), 48, V(1.0, 3.2, -1.0), V(0.2, 0, -5.8), 48));
+  S(WT(8, 'March') - 0.2, sh('air', V(-6.5, 2.4, 5.4), V(1.0, 1.6, -6), 56, V(-5.0, 2.2, 5.2), V(2.0, 1.6, -6), 54));
+  S(WT(8, 'lands') - 0.2, sh('air', V(1.5, 1.6, -2.9), V(-2.0, 2.2, -15), 50, V(0.5, 1.7, -3.1), V(-1.5, 2.2, -15), 48));
+  S(WT(8, 'Airport') - 0.2, sh('air', V(-1.0, 2.2, 5.2), V(-3.0, 2.9, 1.2), 50, V(-2.2, 2.3, 5.0), V(-3.0, 2.9, 1.2), 48));
+  S(WT(8, 'change') - 0.2, sh('air', V(2.8, 1.8, 6.6), V(8.0, 1.8, 1.8), 56, V(2.4, 1.8, 6.3), V(6.5, 1.8, 2.0), 54));
+  S(WT(8, 'transfer') - 0.25, sh('air', V(1.8, 1.7, 5.6), V(4.0, 1.4, 2.4), 50, V(0.8, 1.6, 5.5), V(2.6, 1.4, 2.5), 50));
+  S(WT(8, 'Scotland') - 0.25, { ...sh('air', V(-1.6, 1.5, 5.0), V(1.2, 1.2, 2.5), 48, V(-1.2, 1.5, 4.8), V(1.4, 1.2, 2.5), 46), shake: WT(8, 'Scotland') });
+  S(WT(8, 'waiting') - 0.25, sh('air', V(1.8, 1.45, 4.5), V(1.6, 1.35, 2.6), 40, V(1.7, 1.42, 4.2), V(1.6, 1.35, 2.6), 36));
+  // ---- beat 9: thirty months
+  S(VB(9), sh('air', V(2.0, 1.6, 5.6), V(0.5, 1.2, 2.6), 52, V(-1.0, 1.6, 5.6), V(-1.6, 1.2, 2.6), 52));
+  S(WT(9, 'two') - 0.15, sh('court', V(0, 3.1, 4.6), V(0, 1.7, -3.8), 58, V(0, 2.6, 3.4), V(0, 1.8, -3.8), 54));
+  S(WT(9, 'House') - 0.2, sh('court', V(0.6, 3.0, -1.4), V(0, 3.5, -5), 46, V(0.2, 3.3, -2.0), V(0, 3.55, -5), 40));
+  S(WT(9, 'He', 2) - 0.25, { ...sh('court', V(1.4, 2.1, -1.3), V(0.2, 2.0, -3.6), 46, V(1.1, 2.05, -1.6), V(0.2, 2.0, -3.6), 42), shake: WT(9, 'loses') - 0.1 });
+  S(WT(9, 'September') - 0.2, sh('world', V(1.5, 4.2, 0.5), V(-1.5, 1.0, -4.5), 52, V(-7.5, 4.2, 0.8), V(-7.0, 1.0, -4.0), 52));
+  S(WT(9, 'New') - 0.3, sh('world', V(-7.0, 2.6, -1.2), V(-8.5, 0.6, -3.5), 46, V(-7.8, 2.2, -1.6), V(-8.5, 0.6, -3.5), 42));
+  // ---- beat 10: the deal
+  S(VB(10), sh('court', V(2.4, 2.3, 4.6), V(0, 1.4, -2), 56, V(1.6, 2.1, 4.2), V(-0.4, 1.4, -2), 54));
+  S(WT(10, 'admits') - 0.2, sh('court', V(-0.4, 1.6, -2.2), V(-1.0, 1.25, 0.0), 46, V(-0.6, 1.5, -1.8), V(-1.0, 1.25, 0.0), 42));
+  S(WT(10, 'taking') - 0.2, sh('court', V(0.4, 1.8, 1.4), V(0, 1.75, -3.7), 52, V(0.2, 1.85, 0.8), V(0, 1.75, -3.7), 48));
+  S(WT(10, 'sentence') - 0.25, { ...sh('court', V(1.6, 2.2, -2.0), V(0.7, 2.0, -3.2), 50, V(1.4, 2.15, -2.3), V(0.7, 2.0, -3.2), 46), shake: WT(10, 'sentence') - 0.05 });
+  S(WT(10, 'prison') - 0.35, sh('cell', V(0, 1.5, 2.7), V(0, 1.0, -1), 50, V(0, 1.45, 2.1), V(0, 1.0, -1), 48));
+  S(WT(10, 'pay') - 0.2, sh('cell', V(0.9, 1.35, 1.6), V(0.2, 1.75, -0.6), 54, V(0.7, 1.32, 1.4), V(0.2, 1.75, -0.6), 52));
+  // ---- beat 11: real or myth
+  S(VB(11), sh('flat', V(2.3, 1.8, 2.9), V(0, 1.0, -0.2), 56, V(1.8, 1.65, 2.4), V(0, 1.0, -0.3), 54));
+  S(WT(11, 'hackers') - 0.2, sh('flat', V(-0.2, 1.4, 2.4), V(-1.3, 1.0, 0.4), 48, V(-0.5, 1.35, 2.1), V(-1.3, 1.0, 0.4), 46));
+  S(WT(11, 'never') - 0.2, sh('flat', V(1.0, 1.45, 2.7), V(0.35, 1.05, 0.5), 48, V(0.8, 1.4, 2.4), V(0.35, 1.05, 0.5), 45));
+  S(WT(11, 'They') - 0.15, sh('flat', V(1.2, 1.3, 2.4), V(1.6, 1.0, 0.1), 46, V(1.0, 1.3, 2.0), V(1.6, 1.0, 0.1), 44));
+  S(WT(11, 'sold') - 0.3, sh('flat', V(-0.4, 1.25, 1.9), V(-0.4, 1.0, 0.45), 46, V(-0.4, 1.2, 1.6), V(-0.4, 1.0, 0.45), 42));
+  S(WT(11, 'never', 2) - 0.25, sh('flat', V(0.2, 1.8, 2.9), V(-0.2, 1.0, 0.2), 54, V(0.2, 2.0, 3.0), V(-0.2, 1.0, 0.2), 58));
+  // ---- beat 12: the money comes back, and a lesson for every bank
+  S(VB(12), sh('bank', V(-1.2, 1.8, -2.4), V(0.6, 2.4, -9.0), 52, V(-1.6, 1.8, -1.2), V(0.4, 2.3, -9.0), 54));
+  S(WT(12, 'four') - 0.25, sh('bank', V(2.75, 1.2, -7.28), V(4.26, 1.12, -7.35), 40, V(2.95, 1.17, -7.33), V(4.26, 1.12, -7.35), 36));
+  S(WT(12, 'banks') - 0.15, sh('bank', V(0, 2.0, 4.4), V(0, 2.6, -8), 58, V(0, 4.6, 3.4), V(0, 2.0, -8), 58));
+  S(WT(12, 'password') - 0.35, { ...sh('bank', V(-1.8, 2.2, -2.6), V(0.2, 2.4, -9.0), 58, V(-1.4, 2.2, -3.4), V(0.2, 2.4, -9.0), 54), shake: WT(12, 'lock') - 0.02 });
+  // ---- beat 13: the lesson
+  S(VB(13), sh('flat', V(-1.3, 1.5, 0.4), V(-3.4, 1.6, -0.5), 50, V(-1.6, 1.55, 0.0), V(-3.4, 1.65, -0.5), 46));
+  S(WT(13, 'didn\'t') - 0.15, sh('bank', V(0.6, 1.6, 4.6), V(0.3, 2.4, -8.5), 54, V(0.4, 2.2, 2.6), V(0.3, 2.6, -8.5), 50));
+  S(WT(13, 'Just') - 0.2, sh('flat', V(0.5, 1.45, 0.9), V(0.25, 1.0, -1.9), 48, V(0.35, 1.3, 0.2), V(0.25, 0.98, -1.9), 44));
+  S(WT(13, 'So') - 0.15, sh('flat', V(0.22, 1.2, -1.15), V(0.25, 0.97, -2.0), 42, V(0.24, 1.1, -1.42), V(0.25, 0.97, -2.0), 36));
+  S(WT(13, 'Follow') - 0.15, sh('world', V(0, 8, 9), V(0, 0, -2), 54, V(0, 13, 10), V(0, 0, -1.5), 54));
+}
+
+// =====================================================================================================
+// 2D OVERLAYS (the money counter, the deal, the $100 claim, the lesson)
+// =====================================================================================================
+const OV = document.getElementById('ov').getContext('2d');
+function card2d(x, cx, cy, w, h, rot, sc, draw) { x.save(); x.translate(cx, cy); x.rotate(rot); x.scale(sc, sc); x.fillStyle = 'rgba(0,0,0,.35)'; x.beginPath(); x.roundRect(-w / 2 + 10, -h / 2 + 14, w, h, 22); x.fill(); draw(x, w, h); x.restore(); }
+const pop = (t, t0) => { const a = clamp((t - t0) / 0.22); return a <= 0 ? 0 : 1 + 0.12 * Math.sin(a * Math.PI); };
+const paper = (c, cw, ch, fill = '#f4efe4') => { c.fillStyle = fill; c.beginPath(); c.roundRect(-cw / 2, -ch / 2, cw, ch, 22); c.fill(); c.lineWidth = 8; c.strokeStyle = '#0e0b16'; c.stroke(); };
+function stamp(x, t, t0, text, col, cx, cy, rot = -0.12, size = 120) { const s = pop(t, t0); if (!s) return; x.save(); x.translate(cx, cy); x.rotate(rot); x.scale(s * (1 + 0.6 * (1 - clamp((t - t0) / 0.15))), s * (1 + 0.6 * (1 - clamp((t - t0) / 0.15)))); x.font = `900 ${size}px Poppins`; x.textAlign = 'center'; x.textBaseline = 'middle';
+  const w = x.measureText(text).width + 70; x.lineWidth = 14; x.strokeStyle = col; x.strokeRect(-w / 2, -size * 0.65, w, size * 1.3); x.fillStyle = col; x.fillText(text, 0, 6); x.restore(); }
+function overlays2d(t) { const x = OV; x.clearRect(0, 0, W, H);
+  // beat 4: the money counter
+  if (inB(t, 4) && t > WT(4, 'ten') - 0.3 && t < WT(4, 'accounts', 2) - 0.3) { const k = sstep(WT(4, 'ten') - 0.3, WT(4, 'dollars') + 0.6, t), v = Math.floor(k * 10000000); card2d(x, 540, 560, 820, 200, -0.02, pop(t, WT(4, 'ten') - 0.3), (c, cw, ch) => { paper(c, cw, ch, '#0d2a1a'); c.fillStyle = '#7fffb0'; c.font = '900 96px Poppins'; c.textAlign = 'center'; c.fillText('$' + v.toLocaleString('en-US') + (k >= 1 ? '+' : ''), 0, 34); c.textAlign = 'left'; }); }
+  // beat 10: the deal
+  if (inB(t, 10) && t < WT(10, 'prison') - 0.35) { stamp(x, t, WT(10, 'three') - 0.1, 'ADMITS $3.7M', '#ffcf3f', 540, 1010, -0.08, 96); }
+  if (inB(t, 10) && t > WT(10, 'prison') - 0.35) { stamp(x, t, WT(10, 'three', 2) - 0.1, '3 YEARS', '#ff3b4a', 540, 520, -0.1, 130);
+    if (t > WT(10, 'pay') - 0.2) card2d(x, 540, 820, 760, 220, 0.03, pop(t, WT(10, 'pay') - 0.2), (c, cw, ch) => { paper(c, cw, ch); c.fillStyle = '#3a3e48'; c.font = '800 40px Poppins'; c.textAlign = 'center'; c.fillText('ORDERED TO PAY BACK', 0, -26); c.fillStyle = '#d7263d'; c.font = '900 84px Poppins'; c.fillText('$240,015', 0, 64); c.textAlign = 'left'; }); }
+  // beat 11: real or myth
+  if (inB(t, 11)) { if (t > WT(11, 'sold') - 0.2) card2d(x, 330, 600, 300, 300, -0.1, pop(t, WT(11, 'sold') - 0.2), (c, cw, ch) => { c.fillStyle = '#2a2a30'; c.beginPath(); c.roundRect(-cw / 2, -ch / 2, cw, ch, 14); c.fill(); c.lineWidth = 8; c.strokeStyle = '#0e0b16'; c.stroke(); c.fillStyle = '#c9ccd6'; c.fillRect(-70, -ch / 2, 140, 90); c.fillStyle = '#2a2a30'; c.fillRect(20, -ch / 2 + 14, 30, 62); c.fillStyle = '#f4efe4'; c.fillRect(-110, 0, 220, 130); c.fillStyle = '#d7263d'; c.font = '900 30px Poppins'; c.textAlign = 'center'; c.fillText('CITIBANK', 0, 50); c.fillText('ACCESS', 0, 90); c.textAlign = 'left'; });
+    if (t > WT(11, 'hundred') - 0.25) card2d(x, 760, 640, 400, 190, 0.12, pop(t, WT(11, 'hundred') - 0.25), (c, cw, ch) => { c.drawImage(billTex.image, -cw / 2, -ch / 2, cw, ch); c.lineWidth = 6; c.strokeStyle = '#0e0b16'; c.strokeRect(-cw / 2, -ch / 2, cw, ch); });
+    stamp(x, t, WT(11, 'proven') - 0.1, 'NEVER PROVEN', '#ff3b4a', 540, 900, -0.12, 104); }
+  // beat 13: the lesson
+  if (inB(t, 13) && t > WT(13, 'So') - 0.1 && t < WT(13, 'Follow') + 0.3) { const fade = 1 - clamp((t - WT(13, 'Follow')) / 0.3); x.globalAlpha = fade;
+    const tips = [['turn', 'TURN ON 2-STEP LOGIN', 'A password alone', 'is not a lock', '#2f7a3a'], ['bank2', 'BANK + EMAIL FIRST', 'They unlock', 'everything else', '#2f6fe0']];
+    tips.forEach(([w, title, l1, l2, col], i) => { const s = pop(t, (w === 'bank2' ? WT(13, 'bank', 2) : WT(13, w)) - 0.15); if (!s) return; card2d(x, 540, 520 + i * 330, 900, 270, (i ? 1 : -1) * 0.025, s, (c, cw, ch) => { paper(c, cw, ch);
+      c.fillStyle = col; c.beginPath(); c.arc(-cw / 2 + 120, 0, 76, 0, 7); c.fill(); c.lineWidth = 7; c.strokeStyle = '#0e0b16'; c.stroke(); c.strokeStyle = '#fff'; c.fillStyle = '#fff'; c.lineWidth = 10;
+      if (i === 0) { c.beginPath(); c.roundRect(-cw / 2 + 92, -46, 56, 92, 10); c.stroke(); c.fillRect(-cw / 2 + 108, 26, 24, 8); } else { c.fillRect(-cw / 2 + 80, -6, 80, 56); c.beginPath(); c.arc(-cw / 2 + 120, -10, 26, Math.PI, 0); c.stroke(); }
+      c.fillStyle = '#0e0b16'; c.font = '900 48px Poppins'; c.fillText(title, -cw / 2 + 230, -38); c.fillStyle = '#3a3e48'; c.font = '700 36px Poppins'; c.fillText(l1, -cw / 2 + 230, 22); c.fillText(l2, -cw / 2 + 230, 70); }); });
+    x.globalAlpha = 1; }
+}
+// =====================================================================================================
+// post: crease lines + noir grade + grain + vignette
+// =====================================================================================================
+scene.traverse(o => { if (!o.isMesh || o.userData.isHull || o.userData.casterOnly) return; const mm = Array.isArray(o.material) ? o.material[0] : o.material; if (mm.isMeshBasicMaterial || mm.transparent) { o.castShadow = false; return; } o.castShadow = true; o.receiveShadow = true; });
+const rtColor = new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType });
+const rtNormal = new THREE.WebGLRenderTarget(W, H); rtNormal.depthTexture = new THREE.DepthTexture(W, H);
+const normalMat = new THREE.MeshNormalMaterial();
+const post = new THREE.ShaderMaterial({
+  uniforms: { tColor: { value: rtColor.texture }, tNormal: { value: rtNormal.texture }, tDepth: { value: rtNormal.depthTexture }, near: { value: camera.near }, far: { value: camera.far }, px: { value: new THREE.Vector2(1 / W, 1 / H) }, inkColor: { value: INK }, time: { value: 0 }, warm: { value: 0 } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+  fragmentShader: `
+    uniform sampler2D tColor, tNormal, tDepth; uniform float near, far, time, warm; uniform vec2 px; uniform vec3 inkColor; varying vec2 vUv;
+    float lin(vec2 uv){ float d = texture2D(tDepth, uv).x; float z = d * 2.0 - 1.0; return (2.0 * near * far) / (far + near - z * (far - near)); }
+    vec3 nrm(vec2 uv){ return texture2D(tNormal, uv).xyz * 2.0 - 1.0; }
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+    void main(){
+      vec4 col = texture2D(tColor, vUv);
+      float mx = max(max(col.r, col.g), col.b); if (mx > 1.0) col.rgb = mix(col.rgb / mx, vec3(1.0), clamp((mx - 1.0) * 0.04, 0.0, 0.08));
+      float dc = lin(vUv); vec3 nc = nrm(vUv); float e = 0.0;
+      vec2 o[8]; o[0]=vec2(1.8,0.); o[1]=vec2(-1.8,0.); o[2]=vec2(0.,1.8); o[3]=vec2(0.,-1.8); o[4]=vec2(1.3,1.3); o[5]=vec2(-1.3,1.3); o[6]=vec2(1.3,-1.3); o[7]=vec2(-1.3,-1.3);
+      for (int i = 0; i < 8; i++) { vec2 uv = vUv + o[i] * px; float dn = lin(uv); e = max(e, smoothstep(0.04, 0.08, (dn - dc) / dc));
+        e = max(e, smoothstep(0.45, 0.75, 1.0 - dot(nc, nrm(uv)))); }
+      col.rgb = mix(col.rgb, inkColor, e * 0.9);
+      float l = dot(col.rgb, vec3(0.299, 0.587, 0.114));
+      col.rgb = mix(vec3(l), col.rgb, 1.12);
+      col.rgb = (col.rgb - 0.5) * 1.1 + 0.5;
+      col.rgb += vec3(0.03, 0.005, -0.02) * smoothstep(0.5, 1.0, l) * (1.0 + warm) + vec3(-0.015, 0.0, 0.045) * (1.0 - smoothstep(0.0, 0.5, l));
+      vec2 q = vUv - 0.5; col.rgb *= 1.0 - 0.42 * smoothstep(0.3, 0.85, length(q * vec2(1.0, 0.72)));
+      col.rgb += (hash(vUv * 1000.0 + time) - 0.5) * 0.045;
+      gl_FragColor = vec4(clamp(col.rgb, 0.0, 1.0), 1.0);
+      #include <colorspace_fragment>
+    }`,
+  depthTest: false, depthWrite: false });
+const postScene = new THREE.Scene(), postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post));
+function draw() {
+  const hidden = []; scene.traverse(o => { if ((o.isSprite || o.userData.noOutline || o.userData.noHull) && o.visible) { hidden.push(o); o.visible = false; } });
+  for (const G of Object.values(SETS)) if (G.visible) G.traverse(o => { if (o.userData.noHull && o.isMesh && hidden.includes(o)) o.visible = true; });
+  scene.overrideMaterial = normalMat; renderer.setClearColor(0x8080ff, 1);
+  renderer.setRenderTarget(rtNormal); renderer.clear(); renderer.render(scene, camera);
+  scene.overrideMaterial = null; hidden.forEach(o => o.visible = true);
+  const cvis = cards.filter(c => c.m.visible); if (cvis.length) { const keep = []; scene.traverse(o => { if (o.visible && o.isMesh) { keep.push(o); o.visible = false; } }); cvis.forEach(c => { c.m.visible = true; c.m.material = c.nmat; });
+    renderer.autoClear = false; renderer.render(scene, camera); renderer.autoClear = true; cvis.forEach(c => c.m.material = c.cmat); keep.forEach(o => o.visible = true); }
+  renderer.setClearColor(0x000000, 1); renderer.setRenderTarget(rtColor); renderer.clear(); renderer.render(scene, camera);
+  renderer.setRenderTarget(null); renderer.render(postScene, postCam);
+}
+
+
+// =====================================================================================================
+// captions + labels
+// =====================================================================================================
+const labelEl = document.getElementById('label'), capEl = document.querySelector('#cap span'), rwEl = document.getElementById('rw');
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const KEYW = /^(million|gun|password|passwords|fbi|arrested|laptop|prison|lock|robbed|loses|trap|twist|hundred|missing)$/i;
+function overlays(t) {
+  const inRW = t >= HOOK_END && t < HOOK_END + RW; rwEl.style.opacity = inRW ? 1 : 0;
+  let bi = 0; for (let i = 0; i < B.length; i++) if (t >= VB(i) - 0.05) bi = i; const lab = inRW ? '' : SCRIPT.beats[bi] && SCRIPT.beats[bi].label || '';
+  labelEl.innerHTML = esc(lab).replace(/\*(.+?)\*/g, '<span class="hot">$1</span>'); labelEl.style.opacity = lab ? 1 : 0;
+  if (inRW) { capEl.textContent = ''; return; }
+  let wi = -1; for (let i = 0; i < WORDS.length; i++) if (WORDS[i].s <= t + 0.14) wi = i; const wd = WORDS[wi];
+  if (!wd || t > wd.e + 0.5) { capEl.textContent = ''; return; }
+  const w = wd.w.replace(/[.,!?;:]+$/, ''); capEl.textContent = w; capEl.style.fontSize = w.length > 11 ? '72px' : '';
+  capEl.className = KEYW.test(w.replace(/['"]/g, '')) ? 'k' : '';
+  const a = clamp((t + 0.14 - wd.s) / 0.06); capEl.style.transform = `scale(${0.8 + 0.2 * a + 0.06 * Math.sin(a * Math.PI)})`;
+}
+
+// =====================================================================================================
+// frame
+// =====================================================================================================
+const FOG = { bank: null, flat: null, world: new THREE.Fog('#04060e', 30, 70), hq: null, cell: null, air: new THREE.Fog('#c8ccd4', 40, 120), court: null };
+const STATES = { bank: [bankState, BCARD], flat: [flatState, FCARD], world: [worldState, null], hq: [hqState, HCARD], cell: [cellState, CCARD], air: [airState, ACARD], court: [courtState, KCARD] };
+function renderFrame(t) {
+  let ct = t; if (t >= HOOK_END && t < HOOK_END + RW) ct = HOOK_END * (1 - sstep(HOOK_END, HOOK_END + RW, t)) - 0.0001;
+  let si = 0; for (let i = 0; i < SHOTS.length; i++) if (ct >= SHOTS[i].t) si = i;
+  const s = SHOTS[si], tEnd = SHOTS[si + 1] ? SHOTS[si + 1].t : DUR, k = clamp((ct - s.t) / Math.max(0.01, tEnd - s.t));
+  for (const [n, G] of Object.entries(SETS)) G.visible = n === s.set; const G = SETS[s.set]; scene.fog = FOG[s.set];
+  const c = s.f(k, ct);
+  let shake = 0; if (s.shake !== undefined && ct >= s.shake) shake = Math.exp(-(ct - s.shake) * 5) * 0.09;
+  camera.position.copy(c.p).add(G.position); camera.position.x += Math.sin(t * 1.1) * 0.012 + Math.sin(t * 37) * shake; camera.position.y += Math.sin(t * 1.7 + 1) * 0.008 + Math.cos(t * 41) * shake;
+  camera.lookAt(c.l.clone().add(G.position)); camera.fov = c.fov; camera.updateProjectionMatrix();
+  for (const [n, [fn, cs]] of Object.entries(STATES)) { if (n === s.set) fn(t); else if (cs) for (const cd of Object.values(cs)) hideCard(cd); }
+  for (const cd of cards) updateCard(cd, t);
+  post.uniforms.time.value = (Math.floor(t * 30) % 97) * 0.37; post.uniforms.warm.value = s.set === 'bank' || s.set === 'court' ? 0.6 : 0;
+  overlays(t); overlays2d(t);
+  draw();
+}
+buildShots(); SHOTS.sort((a, b) => a.t - b.t); await document.fonts.ready;
+window.renderFrame = renderFrame; window.DURATION = DUR; renderFrame(0.5); window.READY = true;
+window.DBG = { V, camera, SETS, SHOTS, VB, WT, B, renderFrame };
+</script></body></html>

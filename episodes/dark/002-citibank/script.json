@@ -1,0 +1,66 @@
+{
+ "title": "He Robbed Citibank Of $10 Million Over A Phone Line",
+ "channel": "dark-stories",
+ "style": "set",
+ "look": "noir-toon",
+ "noGary": true,
+ "voices": { "narrator": "am_fenrir" },
+ "speed": 1.1,
+ "tail": 1.2,
+ "pronounce": {
+  "Levin": "Levvin",
+  "Levin's": "Levvin's",
+  "Saturn": "Sattern",
+  "AO": "A-O",
+  "Stansted": "Stanstead",
+  "1994": "nineteen ninety-four",
+  "1995": "nineteen ninety-five",
+  "1997": "nineteen ninety-seven",
+  "Citibank": "Sittybank",
+  "Citibank's": "Sittybank's",
+  "dialling": "dialing"
+ },
+ "beats": [
+  { "label": "$10 MILLION. *NO GUN.*", "hook": true, "hold": 0.25, "lines": [
+   { "text": "In 1994, one man robbed Citibank of over ten million dollars. No gun. No mask. He never set foot in America. All he needed was a phone line, and someone else's password." } ] },
+  { "label": "ST PETERSBURG, *1994*", "lines": [
+   { "text": "Rewind. Saint Petersburg, Russia. The Soviet Union collapsed three years ago. Vladimir Levin is a programmer at a computer company called AO Saturn. And he's found a way into an American bank." } ] },
+  { "label": "THE *BACK DOOR*", "lines": [
+   { "text": "Citibank has a system for its biggest business customers. They dial in over a phone line, type an account code and a password, and send money anywhere on Earth. No teller. No signature. Just the password." } ] },
+  { "label": "THE *KEYS*", "lines": [
+   { "text": "Somehow, Levin has those passwords. Real logins, belonging to Citibank customers in Argentina, Indonesia and the Bahamas." } ] },
+  { "label": "JUNE, *1994*", "lines": [
+   { "text": "And in the summer of 1994, he goes to work. About forty transfers. More than ten million dollars, pulled from real companies' accounts into accounts his accomplices have opened in Finland, Israel, the Netherlands, Germany and the United States." } ] },
+  { "label": "JULY: *$400,000 GONE*", "hold": 0.4, "lines": [
+   { "text": "Then customers notice. About four hundred thousand dollars is missing. Citibank calls the FBI." } ] },
+  { "label": "THE *TRAP*", "lines": [
+   { "text": "Stolen money is useless until someone takes it out. So investigators watch the accounts, and wait. In San Francisco, a woman flies in and tries to withdraw the cash. She's arrested. Then her husband. And both of them point to one man, in Saint Petersburg." } ] },
+  { "label": "*UNTOUCHABLE?*", "lines": [
+   { "text": "Russian police help gather the evidence. Levin had been dialling into the bank from his own laptop. But Russia won't hand its citizens over to America. So the FBI waits." } ] },
+  { "label": "LONDON, *MARCH 1995*", "lines": [
+   { "text": "Then Levin travels. On March the third, 1995, he lands at Stansted Airport, near London, to change planes. In the transfer lounge, Scotland Yard is waiting." } ] },
+  { "label": "*30 MONTHS*", "lines": [
+   { "text": "He fights extradition for two and a half years, all the way to the House of Lords. He loses. In September 1997, he's flown to New York." } ] },
+  { "label": "THE *DEAL*", "hold": 0.5, "lines": [
+   { "text": "In court, he admits to one conspiracy, and to taking three point seven million dollars. The sentence: three years in prison, and pay back two hundred and forty thousand." } ] },
+  { "label": "REAL OR *MYTH?*", "lines": [
+   { "text": "But here's the twist. Years later, hackers from Saint Petersburg claimed Levin never broke in at all. They said they found the way in, and sold it to him, for one hundred dollars. It's never been proven." } ] },
+  { "label": "ALL BUT *$400,000*", "lines": [
+   { "text": "Citibank says it got back all but about four hundred thousand dollars. But banks everywhere learned the same thing. A password on its own is not a lock." } ] },
+  { "label": "THE *LESSON*", "lines": [
+   { "text": "The first great online bank robbery didn't need a gun, or even a genius. Just someone else's password. So turn on two-step login for your bank and your email. Follow for more true stories of internet crime." } ] }
+ ],
+ "experiment": {
+  "vars": { "format": "dark_story", "length": "long_short", "voice": "am_fenrir", "music": "orchestral_suspense", "look": "noir-toon" },
+  "hypothesis": "A pre-internet 'first online bank robbery' story with a clean trap-and-airport-arrest arc holds as well as the AlphaBay pilot.",
+  "facts": [
+   { "claim": "Case began July 1994 when corporate customers found about $400,000 missing; Citibank called the FBI; a woman was arrested when she flew into San Francisco and tried to withdraw funds, her husband soon after, both pointed to Levin in St. Petersburg; Russian authorities cooperated and evidence showed he accessed the bank's computer from his own laptop", "source": "FBI, 'A Byte Out of History: $10 Million Hack' https://www.fbi.gov/news/stories/a-byte-out-of-history-10-million-hack" },
+   { "claim": "Passwords and codes of Citibank customers and affiliates in Argentina, the Bahamas and Indonesia; transfers to accounts in several countries", "source": "UPI, 'Citibank: Russian hackers broke into system' (18 Aug 1995) https://www.upi.com/Archives/1995/08/18/Citibank-Russian-hackers-broke-into-system/6086808718400/" },
+   { "claim": "About 40 transfers, more than $10 million (often given as $10.7m), June-October 1994, via Citibank's dial-up wire transfer (cash management) service, to accomplice accounts in Finland, the US, the Netherlands, Germany and Israel; Levin a programmer at AO Saturn, St Petersburg; all but $400,000 recovered", "source": "Wikipedia, 'Vladimir Levin (hacker)'; PBS Frontline 'Notable Hacks'" },
+   { "claim": "Arrested 3 March 1995 in the transfer lounge at Stansted Airport on a provisional US warrant; extradition appeal rejected by the House of Lords June 1997", "source": "House of Lords, In re Levin (19 June 1997) https://publications.parliament.uk/pa/ld199798/ldjudgmt/jd970619/levin.htm" },
+   { "claim": "Handed to US custody September 1997, SDNY; pleaded guilty to one conspiracy count admitting $3.7 million; February 1998 sentenced to three years and $240,015 restitution", "source": "CNN Money, 'Internet robber sentenced' (24 Feb 1998) https://money.cnn.com/1998/02/24/technology/robber/index.htm" },
+   { "claim": "Real or myth: St Petersburg hackers later claimed (ArkanoiD memo, 2005) Levin bought the access for $100 and did not break in himself; unproven", "source": "Wikipedia; Malicious Life ep. 232" },
+   { "claim": "Russia does not extradite its own citizens (1993 Constitution, art. 61)", "source": "Constitution of the Russian Federation" }
+  ]
+ }
+}
