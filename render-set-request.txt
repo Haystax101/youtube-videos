@@ -1,2 +1,2 @@
 prototypes/walk-circles
-# Aiden voice, full video (retry)
+# Kokoro narrator + Qwen Klaus (hybrid)

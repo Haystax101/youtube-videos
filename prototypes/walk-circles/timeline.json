@@ -1,1154 +1,1144 @@
 {
- "duration": 61.823,
- "sr": 24000,
- "engine": "qwen3-tts",
- "voice": "aiden",
- "cast": {
-  "narrator": "aiden",
-  "hiker": "ryan"
- },
+ "duration": 61.668,
  "beats": [
   {
    "i": 0,
-   "start": 0.143,
-   "end": 4.495,
+   "start": 0.15,
+   "end": 4.587,
    "deathAt": null,
    "words": [
     {
      "w": "Get",
-     "s": 0.143,
-     "e": 0.347,
+     "s": 0.15,
+     "e": 0.365,
      "speaker": "narrator"
     },
     {
      "w": "lost",
-     "s": 0.347,
-     "e": 0.557,
+     "s": 0.365,
+     "e": 0.587,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 0.557,
-     "e": 0.753,
+     "s": 0.587,
+     "e": 0.795,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 0.753,
-     "e": 0.943,
+     "s": 0.795,
+     "e": 0.995,
      "speaker": "narrator"
     },
     {
      "w": "forest,",
-     "s": 0.943,
-     "e": 1.46,
+     "s": 0.995,
+     "e": 1.541,
      "speaker": "narrator"
     },
     {
      "w": "and",
-     "s": 1.46,
-     "e": 1.663,
+     "s": 1.541,
+     "e": 1.756,
      "speaker": "narrator"
     },
     {
      "w": "your",
-     "s": 1.663,
-     "e": 1.873,
+     "s": 1.756,
+     "e": 1.979,
      "speaker": "narrator"
     },
     {
      "w": "own",
-     "s": 1.873,
-     "e": 2.077,
+     "s": 1.979,
+     "e": 2.194,
      "speaker": "narrator"
     },
     {
      "w": "legs",
-     "s": 2.077,
-     "e": 2.288,
+     "s": 2.194,
+     "e": 2.416,
      "speaker": "narrator"
     },
     {
      "w": "will",
-     "s": 2.288,
-     "e": 2.498,
+     "s": 2.416,
+     "e": 2.638,
      "speaker": "narrator"
     },
     {
      "w": "secretly",
-     "s": 2.498,
-     "e": 3.101,
+     "s": 2.638,
+     "e": 3.276,
      "speaker": "narrator"
     },
     {
      "w": "walk",
-     "s": 3.101,
-     "e": 3.311,
+     "s": 3.276,
+     "e": 3.498,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 3.311,
-     "e": 3.515,
+     "s": 3.498,
+     "e": 3.713,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 3.515,
-     "e": 3.711,
+     "s": 3.713,
+     "e": 3.921,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 3.711,
-     "e": 3.902,
+     "s": 3.921,
+     "e": 4.121,
      "speaker": "narrator"
     },
     {
      "w": "giant",
-     "s": 3.902,
-     "e": 4.119,
+     "s": 4.121,
+     "e": 4.351,
      "speaker": "narrator"
     },
     {
      "w": "circle.",
-     "s": 4.119,
-     "e": 4.343,
+     "s": 4.351,
+     "e": 4.587,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 1,
-   "start": 4.495,
-   "end": 10.028,
+   "start": 4.807,
+   "end": 9.866,
    "deathAt": null,
    "words": [
     {
      "w": "Meet",
-     "s": 4.495,
-     "e": 4.875,
+     "s": 4.807,
+     "e": 5.269,
      "speaker": "narrator"
     },
     {
      "w": "Klaus.",
-     "s": 4.875,
-     "e": 5.267,
+     "s": 5.269,
+     "e": 5.746,
      "speaker": "narrator"
     },
     {
      "w": "He's",
-     "s": 5.343,
-     "e": 5.567,
+     "s": 5.886,
+     "e": 6.101,
      "speaker": "narrator"
     },
     {
      "w": "lost",
-     "s": 5.567,
-     "e": 5.797,
+     "s": 6.101,
+     "e": 6.324,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 5.797,
-     "e": 6.013,
+     "s": 6.324,
+     "e": 6.531,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 6.013,
-     "e": 6.222,
+     "s": 6.531,
+     "e": 6.732,
      "speaker": "narrator"
     },
     {
      "w": "German",
-     "s": 6.222,
-     "e": 6.67,
+     "s": 6.732,
+     "e": 7.162,
      "speaker": "narrator"
     },
     {
      "w": "forest.",
-     "s": 6.67,
-     "e": 7.116,
+     "s": 7.162,
+     "e": 7.593,
      "speaker": "narrator"
     },
     {
      "w": "Easy.",
-     "s": 7.192,
-     "e": 7.738,
+     "s": 7.773,
+     "e": 8.113,
      "speaker": "hiker"
     },
     {
      "w": "I'll",
-     "s": 7.814,
-     "e": 8.105,
+     "s": 8.193,
+     "e": 8.426,
      "speaker": "hiker"
     },
     {
      "w": "just",
-     "s": 8.105,
-     "e": 8.405,
+     "s": 8.426,
+     "e": 8.667,
      "speaker": "hiker"
     },
     {
      "w": "walk",
-     "s": 8.405,
-     "e": 8.705,
+     "s": 8.667,
+     "e": 8.909,
      "speaker": "hiker"
     },
     {
      "w": "in",
-     "s": 8.705,
-     "e": 8.985,
+     "s": 8.909,
+     "e": 9.134,
      "speaker": "hiker"
     },
     {
      "w": "a",
-     "s": 8.985,
-     "e": 9.255,
+     "s": 9.134,
+     "e": 9.352,
      "speaker": "hiker"
     },
     {
      "w": "straight",
-     "s": 9.255,
-     "e": 9.594,
+     "s": 9.352,
+     "e": 9.625,
      "speaker": "hiker"
     },
     {
      "w": "line.",
-     "s": 9.594,
-     "e": 9.894,
+     "s": 9.625,
+     "e": 9.866,
      "speaker": "hiker"
     }
    ]
   },
   {
    "i": 2,
-   "start": 10.028,
-   "end": 13.704,
+   "start": 10.206,
+   "end": 13.789,
    "deathAt": null,
    "words": [
     {
      "w": "An",
-     "s": 10.028,
-     "e": 10.237,
+     "s": 10.206,
+     "e": 10.417,
      "speaker": "narrator"
     },
     {
      "w": "hour",
-     "s": 10.237,
-     "e": 10.462,
+     "s": 10.417,
+     "e": 10.644,
      "speaker": "narrator"
     },
     {
      "w": "later,",
-     "s": 10.462,
-     "e": 11.007,
+     "s": 10.644,
+     "e": 11.193,
      "speaker": "narrator"
     },
     {
      "w": "he",
-     "s": 11.007,
-     "e": 11.216,
+     "s": 11.193,
+     "e": 11.405,
      "speaker": "narrator"
     },
     {
      "w": "finds",
-     "s": 11.216,
-     "e": 11.449,
+     "s": 11.405,
+     "e": 11.639,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 11.449,
-     "e": 11.65,
+     "s": 11.639,
+     "e": 11.843,
      "speaker": "narrator"
     },
     {
      "w": "campfire.",
-     "s": 11.65,
-     "e": 12.1,
+     "s": 11.843,
+     "e": 12.296,
      "speaker": "narrator"
     },
     {
      "w": "People!",
-     "s": 12.176,
-     "e": 12.63,
+     "s": 12.476,
+     "e": 12.892,
      "speaker": "hiker"
     },
     {
      "w": "I'm",
-     "s": 12.706,
-     "e": 12.984,
+     "s": 12.972,
+     "e": 13.241,
      "speaker": "hiker"
     },
     {
      "w": "saved!",
-     "s": 12.984,
-     "e": 13.551,
+     "s": 13.241,
+     "e": 13.789,
      "speaker": "hiker"
     }
    ]
   },
   {
    "i": 3,
-   "start": 13.704,
-   "end": 21.899,
+   "start": 14.129,
+   "end": 22.21,
    "deathAt": null,
    "words": [
     {
      "w": "Nobody's",
-     "s": 13.704,
-     "e": 14.27,
+     "s": 14.129,
+     "e": 14.697,
      "speaker": "narrator"
     },
     {
      "w": "there,",
-     "s": 14.27,
-     "e": 14.512,
+     "s": 14.697,
+     "e": 15.008,
      "speaker": "narrator"
     },
     {
      "w": "so",
-     "s": 14.512,
-     "e": 14.699,
+     "s": 15.008,
+     "e": 15.195,
      "speaker": "narrator"
     },
     {
      "w": "he",
-     "s": 14.699,
-     "e": 14.886,
+     "s": 15.195,
+     "e": 15.382,
      "speaker": "narrator"
     },
     {
      "w": "marches",
-     "s": 14.886,
-     "e": 15.277,
+     "s": 15.382,
+     "e": 15.776,
      "speaker": "narrator"
     },
     {
      "w": "on.",
-     "s": 15.277,
-     "e": 15.464,
+     "s": 15.776,
+     "e": 15.963,
      "speaker": "narrator"
     },
     {
      "w": "Dead",
-     "s": 15.54,
-     "e": 16.156,
+     "s": 16.103,
+     "e": 16.554,
      "speaker": "narrator"
     },
     {
      "w": "straight.",
-     "s": 16.156,
-     "e": 16.851,
+     "s": 16.554,
+     "e": 17.063,
      "speaker": "narrator"
     },
     {
      "w": "Another",
-     "s": 16.928,
-     "e": 17.565,
+     "s": 17.203,
+     "e": 18.024,
      "speaker": "narrator"
     },
     {
      "w": "hour.",
-     "s": 17.565,
-     "e": 17.79,
+     "s": 18.024,
+     "e": 18.313,
      "speaker": "narrator"
     },
     {
      "w": "Another",
-     "s": 17.866,
-     "e": 18.457,
+     "s": 18.453,
+     "e": 19.166,
      "speaker": "narrator"
     },
     {
      "w": "campfire.",
-     "s": 18.457,
-     "e": 18.873,
+     "s": 19.166,
+     "e": 19.669,
      "speaker": "narrator"
     },
     {
      "w": "Same",
-     "s": 18.95,
-     "e": 19.467,
+     "s": 19.809,
+     "e": 20.275,
      "speaker": "narrator"
     },
     {
      "w": "log.",
-     "s": 19.467,
-     "e": 19.968,
+     "s": 20.275,
+     "e": 20.726,
      "speaker": "narrator"
     },
     {
      "w": "Same",
-     "s": 20.044,
-     "e": 20.476,
+     "s": 20.866,
+     "e": 21.208,
      "speaker": "narrator"
     },
     {
      "w": "sad",
-     "s": 20.476,
-     "e": 20.895,
+     "s": 21.208,
+     "e": 21.538,
      "speaker": "narrator"
     },
     {
      "w": "sausage.",
-     "s": 20.895,
-     "e": 21.747,
+     "s": 21.538,
+     "e": 22.21,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 4,
-   "start": 21.899,
-   "end": 26.32,
+   "start": 22.47,
+   "end": 25.676,
    "deathAt": null,
    "words": [
     {
      "w": "Wait.",
-     "s": 21.899,
-     "e": 22.23,
+     "s": 22.47,
+     "e": 22.726,
      "speaker": "hiker"
     },
     {
      "w": "That's",
-     "s": 22.307,
-     "e": 22.834,
+     "s": 22.806,
+     "e": 23.104,
      "speaker": "hiker"
     },
     {
      "w": "my",
-     "s": 22.834,
-     "e": 23.311,
+     "s": 23.104,
+     "e": 23.375,
      "speaker": "hiker"
     },
     {
      "w": "sausage.",
-     "s": 23.311,
-     "e": 24.315,
+     "s": 23.375,
+     "e": 23.944,
      "speaker": "hiker"
     },
     {
      "w": "He's",
-     "s": 24.391,
-     "e": 24.643,
+     "s": 24.204,
+     "e": 24.412,
      "speaker": "narrator"
     },
     {
      "w": "been",
-     "s": 24.643,
-     "e": 24.903,
+     "s": 24.412,
+     "e": 24.627,
      "speaker": "narrator"
     },
     {
      "w": "walking",
-     "s": 24.903,
-     "e": 25.413,
+     "s": 24.627,
+     "e": 25.051,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 25.413,
-     "e": 25.656,
+     "s": 25.051,
+     "e": 25.252,
      "speaker": "narrator"
     },
     {
      "w": "circles.",
-     "s": 25.656,
-     "e": 26.168,
+     "s": 25.252,
+     "e": 25.676,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 5,
-   "start": 26.32,
-   "end": 33.441,
+   "start": 25.896,
+   "end": 33.225,
    "deathAt": null,
    "words": [
     {
      "w": "In",
-     "s": 26.32,
-     "e": 26.54,
+     "s": 25.896,
+     "e": 26.102,
      "speaker": "narrator"
     },
     {
      "w": "2009,",
-     "s": 26.54,
-     "e": 27.892,
+     "s": 26.102,
+     "e": 27.371,
      "speaker": "narrator"
     },
     {
      "w": "scientists",
-     "s": 27.892,
-     "e": 28.379,
+     "s": 27.371,
+     "e": 27.828,
      "speaker": "narrator"
     },
     {
      "w": "tested",
-     "s": 28.379,
-     "e": 28.835,
+     "s": 27.828,
+     "e": 28.256,
      "speaker": "narrator"
     },
     {
      "w": "this.",
-     "s": 28.835,
-     "e": 29.071,
+     "s": 28.256,
+     "e": 28.477,
      "speaker": "narrator"
     },
     {
      "w": "They",
-     "s": 29.148,
-     "e": 29.357,
+     "s": 28.617,
+     "e": 28.851,
      "speaker": "narrator"
     },
     {
      "w": "sent",
-     "s": 29.357,
-     "e": 29.568,
+     "s": 28.851,
+     "e": 29.085,
      "speaker": "narrator"
     },
     {
      "w": "people",
-     "s": 29.568,
-     "e": 29.791,
+     "s": 29.085,
+     "e": 29.334,
      "speaker": "narrator"
     },
     {
      "w": "into",
-     "s": 29.791,
-     "e": 30.184,
+     "s": 29.334,
+     "e": 29.771,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 30.184,
-     "e": 30.374,
+     "s": 29.771,
+     "e": 29.982,
      "speaker": "narrator"
     },
     {
      "w": "German",
-     "s": 30.374,
-     "e": 30.78,
+     "s": 29.982,
+     "e": 30.434,
      "speaker": "narrator"
     },
     {
      "w": "forest",
-     "s": 30.78,
-     "e": 31.187,
+     "s": 30.434,
+     "e": 30.887,
      "speaker": "narrator"
     },
     {
      "w": "with",
-     "s": 31.187,
-     "e": 31.397,
+     "s": 30.887,
+     "e": 31.121,
      "speaker": "narrator"
     },
     {
      "w": "GPS",
-     "s": 31.397,
-     "e": 31.601,
+     "s": 31.121,
+     "e": 31.347,
      "speaker": "narrator"
     },
     {
      "w": "trackers",
-     "s": 31.601,
-     "e": 32.021,
+     "s": 31.347,
+     "e": 31.814,
      "speaker": "narrator"
     },
     {
      "w": "and",
-     "s": 32.021,
-     "e": 32.224,
+     "s": 31.814,
+     "e": 32.041,
      "speaker": "narrator"
     },
     {
      "w": "told",
-     "s": 32.224,
-     "e": 32.434,
+     "s": 32.041,
+     "e": 32.274,
      "speaker": "narrator"
     },
     {
      "w": "them",
-     "s": 32.434,
-     "e": 32.645,
+     "s": 32.274,
+     "e": 32.508,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 32.645,
-     "e": 32.841,
+     "s": 32.508,
+     "e": 32.727,
      "speaker": "narrator"
     },
     {
      "w": "walk",
-     "s": 32.841,
-     "e": 33.051,
+     "s": 32.727,
+     "e": 32.961,
      "speaker": "narrator"
     },
     {
      "w": "straight.",
-     "s": 33.051,
-     "e": 33.289,
+     "s": 32.961,
+     "e": 33.225,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 6,
-   "start": 33.441,
-   "end": 39.11,
+   "start": 33.445,
+   "end": 39.324,
    "deathAt": null,
    "words": [
     {
      "w": "When",
-     "s": 33.441,
-     "e": 33.613,
+     "s": 33.445,
+     "e": 33.638,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 33.613,
-     "e": 33.779,
+     "s": 33.638,
+     "e": 33.825,
      "speaker": "narrator"
     },
     {
      "w": "sun",
-     "s": 33.779,
-     "e": 33.946,
+     "s": 33.825,
+     "e": 34.012,
      "speaker": "narrator"
     },
     {
      "w": "was",
-     "s": 33.946,
-     "e": 34.112,
+     "s": 34.012,
+     "e": 34.199,
      "speaker": "narrator"
     },
     {
      "w": "out,",
-     "s": 34.112,
-     "e": 34.338,
+     "s": 34.199,
+     "e": 34.486,
      "speaker": "narrator"
     },
     {
      "w": "they",
-     "s": 34.338,
-     "e": 34.492,
+     "s": 34.486,
+     "e": 34.679,
      "speaker": "narrator"
     },
     {
      "w": "managed",
-     "s": 34.492,
-     "e": 34.98,
+     "s": 34.679,
+     "e": 35.227,
      "speaker": "narrator"
     },
     {
      "w": "it.",
-     "s": 34.98,
-     "e": 35.141,
+     "s": 35.227,
+     "e": 35.408,
      "speaker": "narrator"
     },
     {
      "w": "Under",
-     "s": 35.217,
-     "e": 35.664,
+     "s": 35.548,
+     "e": 35.955,
      "speaker": "narrator"
     },
     {
      "w": "clouds,",
-     "s": 35.664,
-     "e": 36.036,
+     "s": 35.955,
+     "e": 36.294,
      "speaker": "narrator"
     },
     {
      "w": "they",
-     "s": 36.036,
-     "e": 36.11,
+     "s": 36.294,
+     "e": 36.508,
      "speaker": "narrator"
     },
     {
      "w": "looped",
-     "s": 36.11,
-     "e": 36.476,
+     "s": 36.508,
+     "e": 36.922,
      "speaker": "narrator"
     },
     {
      "w": "back",
-     "s": 36.476,
-     "e": 36.711,
+     "s": 36.922,
+     "e": 37.136,
      "speaker": "narrator"
     },
     {
      "w": "over",
-     "s": 36.711,
-     "e": 37.15,
+     "s": 37.136,
+     "e": 37.536,
      "speaker": "narrator"
     },
     {
      "w": "their",
-     "s": 37.15,
-     "e": 37.392,
+     "s": 37.536,
+     "e": 37.757,
      "speaker": "narrator"
     },
     {
      "w": "own",
-     "s": 37.392,
-     "e": 37.619,
+     "s": 37.757,
+     "e": 37.963,
      "speaker": "narrator"
     },
     {
      "w": "path,",
-     "s": 37.619,
-     "e": 37.929,
+     "s": 37.963,
+     "e": 38.289,
      "speaker": "narrator"
     },
     {
      "w": "without",
-     "s": 37.929,
-     "e": 38.286,
+     "s": 38.289,
+     "e": 38.71,
      "speaker": "narrator"
     },
     {
      "w": "noticing.",
-     "s": 38.286,
-     "e": 38.958,
+     "s": 38.71,
+     "e": 39.324,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 7,
-   "start": 39.11,
-   "end": 43.412,
+   "start": 39.544,
+   "end": 43.789,
    "deathAt": null,
    "words": [
     {
      "w": "Blindfolded",
-     "s": 39.11,
-     "e": 39.778,
+     "s": 39.544,
+     "e": 40.206,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 39.778,
-     "e": 39.989,
+     "s": 40.206,
+     "e": 40.414,
      "speaker": "narrator"
     },
     {
      "w": "an",
-     "s": 39.989,
-     "e": 40.199,
+     "s": 40.414,
+     "e": 40.623,
      "speaker": "narrator"
     },
     {
      "w": "open",
-     "s": 40.199,
-     "e": 40.62,
+     "s": 40.623,
+     "e": 41.04,
      "speaker": "narrator"
     },
     {
      "w": "field,",
-     "s": 40.62,
-     "e": 40.836,
+     "s": 41.04,
+     "e": 41.386,
      "speaker": "narrator"
     },
     {
      "w": "some",
-     "s": 40.836,
-     "e": 41.061,
+     "s": 41.386,
+     "e": 41.609,
      "speaker": "narrator"
     },
     {
      "w": "walked",
-     "s": 41.061,
-     "e": 41.497,
+     "s": 41.609,
+     "e": 42.041,
      "speaker": "narrator"
     },
     {
      "w": "circles",
-     "s": 41.497,
-     "e": 41.939,
+     "s": 42.041,
+     "e": 42.48,
      "speaker": "narrator"
     },
     {
      "w": "just",
-     "s": 41.939,
-     "e": 42.165,
+     "s": 42.48,
+     "e": 42.703,
      "speaker": "narrator"
     },
     {
      "w": "twenty",
-     "s": 42.165,
-     "e": 42.6,
+     "s": 42.703,
+     "e": 43.134,
      "speaker": "narrator"
     },
     {
      "w": "metres",
-     "s": 42.6,
-     "e": 43.035,
+     "s": 43.134,
+     "e": 43.566,
      "speaker": "narrator"
     },
     {
      "w": "wide.",
-     "s": 43.035,
-     "e": 43.26,
+     "s": 43.566,
+     "e": 43.789,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 8,
-   "start": 43.412,
-   "end": 51.282,
+   "start": 44.009,
+   "end": 50.634,
    "deathAt": null,
    "words": [
     {
      "w": "And",
-     "s": 43.412,
-     "e": 43.679,
+     "s": 44.009,
+     "e": 44.242,
      "speaker": "narrator"
     },
     {
      "w": "it",
-     "s": 43.679,
-     "e": 43.936,
+     "s": 44.242,
+     "e": 44.467,
      "speaker": "narrator"
     },
     {
      "w": "isn't",
-     "s": 43.936,
-     "e": 44.211,
+     "s": 44.467,
+     "e": 44.707,
      "speaker": "narrator"
     },
     {
      "w": "one",
-     "s": 44.211,
-     "e": 44.478,
+     "s": 44.707,
+     "e": 44.94,
      "speaker": "narrator"
     },
     {
      "w": "leg",
-     "s": 44.478,
-     "e": 44.745,
+     "s": 44.94,
+     "e": 45.173,
      "speaker": "narrator"
     },
     {
      "w": "being",
-     "s": 44.745,
-     "e": 45.029,
+     "s": 45.173,
+     "e": 45.421,
      "speaker": "narrator"
     },
     {
      "w": "longer.",
-     "s": 45.029,
-     "e": 45.562,
+     "s": 45.421,
+     "e": 45.886,
      "speaker": "narrator"
     },
     {
      "w": "With",
-     "s": 45.638,
-     "e": 45.899,
+     "s": 46.026,
+     "e": 46.239,
      "speaker": "narrator"
     },
     {
      "w": "nothing",
-     "s": 45.899,
-     "e": 46.412,
+     "s": 46.239,
+     "e": 46.658,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 46.412,
-     "e": 46.657,
+     "s": 46.658,
+     "e": 46.857,
      "speaker": "narrator"
     },
     {
      "w": "steer",
-     "s": 46.657,
-     "e": 46.927,
+     "s": 46.857,
+     "e": 47.077,
      "speaker": "narrator"
     },
     {
      "w": "by,",
-     "s": 46.927,
-     "e": 47.145,
+     "s": 47.077,
+     "e": 47.387,
      "speaker": "narrator"
     },
     {
      "w": "tiny",
-     "s": 47.145,
-     "e": 47.633,
+     "s": 47.387,
+     "e": 47.784,
      "speaker": "narrator"
     },
     {
      "w": "errors",
-     "s": 47.633,
-     "e": 48.138,
+     "s": 47.784,
+     "e": 48.196,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 48.138,
-     "e": 48.382,
+     "s": 48.196,
+     "e": 48.395,
      "speaker": "narrator"
     },
     {
      "w": "your",
-     "s": 48.382,
-     "e": 48.644,
+     "s": 48.395,
+     "e": 48.608,
      "speaker": "narrator"
     },
     {
      "w": "sense",
-     "s": 48.644,
-     "e": 48.913,
+     "s": 48.608,
+     "e": 48.828,
      "speaker": "narrator"
     },
     {
      "w": "of",
-     "s": 48.913,
-     "e": 49.157,
+     "s": 48.828,
+     "e": 49.027,
      "speaker": "narrator"
     },
     {
      "w": "straight",
-     "s": 49.157,
-     "e": 49.452,
+     "s": 49.027,
+     "e": 49.267,
      "speaker": "narrator"
     },
     {
      "w": "pile",
-     "s": 49.452,
-     "e": 49.713,
+     "s": 49.267,
+     "e": 49.48,
      "speaker": "narrator"
     },
     {
      "w": "up,",
-     "s": 49.713,
-     "e": 50.094,
+     "s": 49.48,
+     "e": 49.79,
      "speaker": "narrator"
     },
     {
      "w": "and",
-     "s": 50.094,
-     "e": 50.347,
+     "s": 49.79,
+     "e": 49.996,
      "speaker": "narrator"
     },
     {
      "w": "curl",
-     "s": 50.347,
-     "e": 50.608,
+     "s": 49.996,
+     "e": 50.209,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 50.608,
-     "e": 50.86,
+     "s": 50.209,
+     "e": 50.415,
      "speaker": "narrator"
     },
     {
      "w": "round.",
-     "s": 50.86,
-     "e": 51.13,
+     "s": 50.415,
+     "e": 50.634,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 9,
-   "start": 51.282,
-   "end": 59.017,
+   "start": 50.854,
+   "end": 57.98,
    "deathAt": null,
    "words": [
     {
      "w": "So",
-     "s": 51.282,
-     "e": 51.525,
+     "s": 50.854,
+     "e": 51.031,
      "speaker": "narrator"
     },
     {
      "w": "if",
-     "s": 51.525,
-     "e": 51.767,
+     "s": 51.031,
+     "e": 51.207,
      "speaker": "narrator"
     },
     {
      "w": "you're",
-     "s": 51.767,
-     "e": 52.034,
+     "s": 51.207,
+     "e": 51.402,
      "speaker": "narrator"
     },
     {
      "w": "ever",
-     "s": 52.034,
-     "e": 52.518,
+     "s": 51.402,
+     "e": 51.755,
      "speaker": "narrator"
     },
     {
      "w": "lost,",
-     "s": 52.518,
-     "e": 52.852,
+     "s": 51.755,
+     "e": 52.042,
      "speaker": "narrator"
     },
     {
      "w": "aim",
-     "s": 52.852,
-     "e": 52.934,
+     "s": 52.042,
+     "e": 52.225,
      "speaker": "narrator"
     },
     {
      "w": "at",
-     "s": 52.934,
-     "e": 53.176,
+     "s": 52.225,
+     "e": 52.401,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 53.176,
-     "e": 53.41,
+     "s": 52.401,
+     "e": 52.572,
      "speaker": "narrator"
     },
     {
      "w": "landmark",
-     "s": 53.41,
-     "e": 53.929,
+     "s": 52.572,
+     "e": 52.949,
      "speaker": "narrator"
     },
     {
      "w": "far",
-     "s": 53.929,
-     "e": 54.179,
+     "s": 52.949,
+     "e": 53.132,
      "speaker": "narrator"
     },
     {
      "w": "ahead,",
-     "s": 54.179,
-     "e": 54.588,
+     "s": 53.132,
+     "e": 53.589,
      "speaker": "narrator"
     },
     {
      "w": "walk",
-     "s": 54.588,
-     "e": 54.847,
+     "s": 53.589,
+     "e": 53.778,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 54.847,
-     "e": 55.09,
+     "s": 53.778,
+     "e": 53.954,
      "speaker": "narrator"
     },
     {
      "w": "it,",
-     "s": 55.09,
-     "e": 55.257,
+     "s": 53.954,
+     "e": 54.229,
      "speaker": "narrator"
     },
     {
      "w": "then",
-     "s": 55.257,
-     "e": 55.516,
+     "s": 54.229,
+     "e": 54.418,
      "speaker": "narrator"
     },
     {
      "w": "pick",
-     "s": 55.516,
-     "e": 55.775,
+     "s": 54.418,
+     "e": 54.607,
      "speaker": "narrator"
     },
     {
      "w": "another.",
-     "s": 55.775,
-     "e": 56.51,
+     "s": 54.607,
+     "e": 55.142,
      "speaker": "narrator"
     },
     {
      "w": "Landmark.",
-     "s": 56.586,
-     "e": 57.146,
+     "s": 55.322,
+     "e": 55.903,
      "speaker": "hiker"
     },
     {
      "w": "Got",
-     "s": 57.222,
-     "e": 57.502,
+     "s": 55.983,
+     "e": 56.193,
      "speaker": "hiker"
     },
     {
      "w": "it.",
-     "s": 57.502,
-     "e": 57.771,
+     "s": 56.193,
+     "e": 56.397,
      "speaker": "hiker"
     },
     {
      "w": "Klaus",
-     "s": 57.848,
-     "e": 58.027,
+     "s": 56.657,
+     "e": 56.89,
      "speaker": "narrator"
     },
     {
      "w": "picked",
-     "s": 58.027,
-     "e": 58.362,
+     "s": 56.89,
+     "e": 57.326,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 58.362,
-     "e": 58.518,
+     "s": 57.326,
+     "e": 57.529,
      "speaker": "narrator"
     },
     {
      "w": "squirrel.",
-     "s": 58.518,
-     "e": 58.865,
+     "s": 57.529,
+     "e": 57.98,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 10,
-   "start": 59.017,
-   "end": 61.251,
+   "start": 58.2,
+   "end": 60.248,
    "deathAt": null,
    "words": [
     {
      "w": "Follow",
-     "s": 59.017,
-     "e": 59.43,
+     "s": 58.2,
+     "e": 58.607,
      "speaker": "narrator"
     },
     {
      "w": "for",
-     "s": 59.43,
-     "e": 59.637,
+     "s": 58.607,
+     "e": 58.81,
      "speaker": "narrator"
     },
     {
      "w": "more",
-     "s": 59.637,
-     "e": 59.851,
+     "s": 58.81,
+     "e": 59.02,
      "speaker": "narrator"
     },
     {
      "w": "interesting",
-     "s": 59.851,
-     "e": 60.671,
+     "s": 59.02,
+     "e": 59.827,
      "speaker": "narrator"
     },
     {
      "w": "cartoons.",
-     "s": 60.671,
-     "e": 61.099,
+     "s": 59.827,
+     "e": 60.248,
      "speaker": "narrator"
     }
    ]
   }
  ],
- "retime": {
-  "tempo": 1.05,
-  "maxPause": 0.25
- }
+ "engine": "hybrid"
 }
