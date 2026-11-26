@@ -182,8 +182,9 @@ Length is flexible, roughly 6-12 minutes; stop when the idea runs out, don't pad
    wait for it in a background command (a 10-minute video takes roughly 2-3 hours), then
    download the video from the pre-release it creates (tag `render-NNN-slug-RUN_ID`):
    `curl -sSL -o EP/video.mp4 https://github.com/Haystax101/youtube-videos/releases/download/TAG/video.mp4`
-   (`gh release download` uses GraphQL and fails here). The workflow keeps only the 3
-   newest render pre-releases; Claude sessions cannot delete releases.
+   (`gh release download` uses GraphQL and fails here). The workflows prune render pre-releases
+   but always keep the 12 newest and anything under 24 hours old, so download within a day;
+   Claude sessions cannot delete releases.
    Measured speed on Actions: about 16 s of render per second of 1080p video.
    (`gh workflow run` and GraphQL are not available from Claude sessions.)
    If Actions fails, render locally with `--workers 4` instead.
