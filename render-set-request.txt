@@ -1,3 +1,2 @@
-prototypes/walk-circles
-local: 2
-# george voice-2 clone narrating, Klaus = Qwen Ryan; 2 of 10 parts rendered in the Claude session
+prototypes/beet-tyres
+# v3: motion glitch fixes
