@@ -1,7 +1,7 @@
-// node rend.cjs stills 1,5,9  |  node rend.cjs video out.mp4 [workers]
+// node rend.cjs stills 1,5,9  |  node rend.cjs video out.mp4 [workers]   (page: the folder's only .html, or env PAGE)
 const { chromium } = require('playwright');
 const http = require('http'), fs = require('fs'), path = require('path'), { spawn } = require('child_process');
-const ROOT = path.resolve(__dirname, '../..'), PAGE = '/prototypes/shiratori/' + (process.env.PAGE || 'shira.html');
+const ROOT = path.resolve(__dirname, '../..'), PAGE = '/' + path.relative(ROOT, path.join(__dirname, process.env.PAGE || fs.readdirSync(__dirname).filter(f => f.endsWith('.html'))[0])).split(path.sep).join('/');
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.json': 'application/json', '.woff2': 'font/woff2' };
 const server = http.createServer((req, res) => { const p = path.join(ROOT, decodeURIComponent(new URL(req.url, 'http://x').pathname));
   if (!fs.existsSync(p) || fs.statSync(p).isDirectory()) { res.writeHead(404); return res.end(); }

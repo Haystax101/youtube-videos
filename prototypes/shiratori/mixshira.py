@@ -41,7 +41,7 @@ def seg(folder, a, b, g):
     x = lib.segment(folder, b - a) if b > a else None
     if x is not None: place(fade(x, 0.15), a, g)
 # shot cuts straight from the page (shot(WT(beat, 'word'[, n]) ...)
-html = open(f'{here}/shira.html').read()
+html = open(os.path.join(here, [f for f in os.listdir(here) if f.endswith('.html')][0])).read()   # the folder's only page
 cuts = [WT(int(b), w, int(k or 1)) for b, w, k in re.findall(r"^shot\(WT\((\d), '(\w+)'(?:, (\d))?\)", html, re.M)]
 OUT = [(WT(0, 'escaped'), WT(0, 'four')), (WT(2, 'slipped'), WT(3, 'coldest')), (WT(6, 'Nothing'), WT(7, 'And'))]   # snowy exteriors
 # ---- ambience: wind over the snowy exteriors, a quiet room tone of wind in the cold cell
