@@ -1,2 +1,3 @@
-prototypes/beet-tyres
-# v2: rust close-up, thermometer shot, bolts
+prototypes/walk-circles
+local: 2
+# george voice-2 clone narrating, Klaus = Qwen Ryan; 2 of 10 parts rendered in the Claude session
