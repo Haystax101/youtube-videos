@@ -62,7 +62,8 @@ Copy that folder as the starting point. Don't start from an empty page.
 - **Facts:**
   - Facts are sourced in `experiment.facts` as for Shorts.
   - Use one "real or myth?" beat when the evidence is shaky.
-- **Pronunciation:**
+- **Pronunciation (rule, george 2026-11-26):** before voicing, give a phonetic spelling in `"pronounce"` for every ambiguous word. That means heteronyms whose sound depends on meaning: lives, live, bow, read, wind, tear, lead, close, wound, minute, row, bass, desert, object, record, present, content, use, does. Also cover names and foreign words. "The iguana lives in its branches" came out as "l-eye-vz" until `"lives": "livz"` was added.
+  - `pronounce` replaces the word everywhere in the script. If the same word is said both ways, reword one of them.
   - Kokoro gets some words wrong. "Bow" (of a ship) came out as in bow-and-arrow.
   - Add `"pronounce": {"bow": "bough"}` to script.json. The caption keeps the real word and only the spoken text changes.
   - Check with `k.tokenizer.phonemize(text, 'en-us')` (`/baʊ/` is right).
@@ -131,5 +132,5 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
 - [ ] Captions are on time or slightly early.
 - [ ] Nothing clips through or floats. Every machine is mounted.
 - [ ] Earlier-scene debris is gone after a time jump.
-- [ ] Odd words are pronounced right (listen for ship/period terms).
+- [ ] Odd words are pronounced right: every heteronym and name has a `pronounce` spelling, checked with `phonemize` (ship/period terms too).
 - [ ] The set is busy in every shot, and the camera is never still.

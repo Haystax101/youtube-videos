@@ -13,6 +13,13 @@ say = {w.lower(): v for w, v in script.get('pronounce', {}).items()}
 qw, qsr = sf.read(f'{EP}/voice_Ryan.wav'); qw = qw.mean(1) if qw.ndim > 1 else qw
 if qsr != SR: qw = np.interp(np.arange(int(len(qw) * SR / qsr)) * qsr / SR, np.arange(len(qw)), qw); qsr = SR
 qtl = json.load(open(f'{EP}/timeline_Ryan.json'))
+OLD = None if WRITE_TL or not os.path.exists(f'{EP}/timeline.json') else json.load(open(f'{EP}/timeline.json'))
+def fit(x, i, w0, n):  # keep the committed timing (picture already rendered): pad or squeeze a re-voiced sentence to its old length
+    if not OLD: return x
+    ow = OLD['beats'][i]['words']; want = int(round((ow[w0 + n - 1]['e'] - ow[w0]['s']) * SR))
+    if abs(want - len(x)) < 2: return x
+    if want > len(x): return np.concatenate([x, np.zeros(want - len(x), np.float32)])
+    return np.interp(np.arange(want) * (len(x) - 1) / (want - 1), np.arange(len(x)), x).astype(np.float32)
 # character spans in the Qwen render, in script order: one span per (beat, consecutive run of the same speaker)
 spans = []
 for b in qtl['beats']:
@@ -44,7 +51,7 @@ for i, beat in enumerate(script['beats']):
             for sent in split_sentences(line['text']):
                 spoken = ' '.join(say.get(w.lower().strip('.,?!;:'), w) + (w[len(w.rstrip('.,?!;:')):] if w.lower().strip('.,?!;:') in say else '') for w in sent.split())
                 x, sr = k.create(spoken, voice=NARR, speed=SPEED, lang='en-us'); x = np.asarray(x, np.float32)
-                x = x / (np.abs(x).max() + 1e-9) * 0.85
+                x = x / (np.abs(x).max() + 1e-9) * 0.85; x = fit(x, i, len(words), len(sent.split()))
                 dur = len(x) / SR; ws = sent.split(); wt = [syllables(w) + (0.6 if re.search(r'[,;:]$', w) else 0) for w in ws]; tot = sum(wt); c = t
                 for w, g in zip(ws, wt): d = dur * g / tot; words.append({'w': w, 's': round(c, 3), 'e': round(c + d, 3), 'speaker': spk}); c += d
                 audio.append(x); t += dur; audio.append(sil(0.1)); t += 0.1
