@@ -22,7 +22,10 @@ Checks (each one PASS / WARN / FAIL):
   silence    ffmpeg silencedetect: dead air of 1.2 s+ inside the video
   balance    if EP/voice.wav exists: narration vs everything else under it (want >= 8 LU louder)
   length     portrait videos: warn outside 20-180 s
-  continuity tools/set_check.cjs on --page (needs window.SETCHECK; see the make-set-video skill)
+  continuity tools/set_check.cjs on the page (--page, or the one .html in EP_DIR; needs window.SETCHECK)
+  overlap    tools/check_overlap.cjs on the same page (needs window.QA): characters through each other, heads
+             or bodies inside props and furniture, from any camera that films them; FAIL if found, and FAIL
+             if a set page has neither hook (then nothing checked it)
 Then it writes EP/qa/contact.jpg (frames across every beat in timeline.json, about one per 1.5 s, else one
 per second; each labelled with its time) for the Claude review in .claude/skills/qa-video, and EP/qa/qa.json.
 Exit code 1 if anything FAILs. WARNs need a look but don't block delivery."""
@@ -183,9 +186,19 @@ if H > W and dur < 180: add('length', 'PASS' if 20 <= dur <= 180 else 'WARN', f'
 
 # ---- continuity
 page = opt('--page')
+if not page and ep:   # a set-video folder holds exactly one page: check it without being asked
+    htmls = [f for f in os.listdir(ep) if f.endswith('.html')]
+    if len(htmls) == 1: page = os.path.join(ep, htmls[0])
 if page:
-    r = run(['node', os.path.join(ROOT, 'tools', 'set_check.cjs'), os.path.abspath(page), '0.1'], env={**os.environ, 'NODE_PATH': run(['npm', 'root', '-g']).stdout.strip()})
-    add('continuity', 'PASS' if r.returncode == 0 else ('WARN' if r.returncode == 2 else 'FAIL'), tail(r.stdout, 8))
+    nenv = {**os.environ, 'NODE_PATH': run(['npm', 'root', '-g']).stdout.strip()}
+    r = run(['node', os.path.join(ROOT, 'tools', 'set_check.cjs'), os.path.abspath(page), '0.1'], env=nenv)
+    if r.returncode != 2: add('continuity', 'PASS' if r.returncode == 0 else 'FAIL', tail(r.stdout, 8))
+    o = run(['node', os.path.join(ROOT, 'tools', 'check_overlap.cjs'), os.path.abspath(page), '0.1'], env=nenv)
+    if o.returncode == 2 and r.returncode == 2:
+        add('overlap', 'FAIL', 'the page has neither window.QA nor window.SETCHECK, so nothing checked that characters and props stay out of each other; add the one-line window.QA hook (tools/check_overlap.cjs header)')
+    elif o.returncode != 2:
+        if ep: os.makedirs(os.path.join(ep, 'qa'), exist_ok=True); open(os.path.join(ep, 'qa', 'overlap.txt'), 'w').write(o.stdout)
+        add('overlap', 'PASS' if o.returncode == 0 else 'FAIL', tail(o.stdout, 10) + (' -> full list in qa/overlap.txt' if o.returncode else ''))
 
 # ---- contact sheet for the Claude review
 times = []

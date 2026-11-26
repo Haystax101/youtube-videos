@@ -1,0 +1,910 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Poppins"; font-weight: 800; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-weight: 600; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2") format("woff2"); }
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Poppins,sans-serif}
+canvas{position:absolute;inset:0}
+#label{position:absolute;left:50%;top:170px;transform:translateX(-50%);max-width:900px;padding:14px 30px 16px;border-radius:22px;background:rgba(8,6,16,.72);border:3px solid rgba(255,255,255,.12);
+  color:#fff;font:800 50px Poppins;letter-spacing:1px;text-align:center;white-space:nowrap}
+#label .hot{color:#ff3b4a}
+#cap{position:absolute;left:0;right:0;top:1180px;text-align:center}
+#cap span{display:inline-block;font:800 104px Poppins;color:#fff;-webkit-text-stroke:18px #111;paint-order:stroke fill;letter-spacing:2px;transform-origin:50% 60%}
+#cap span.k{color:#ff3b4a}
+#rw{position:absolute;inset:0;pointer-events:none;opacity:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.08) 0 3px,rgba(0,0,0,.10) 3px 7px)}
+#rw b{position:absolute;left:70px;top:330px;font:800 90px Poppins;color:#fff;-webkit-text-stroke:12px #111;paint-order:stroke fill}
+</style>
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }</script>
+</head><body><div id="stage"><canvas id="gl" width="1080" height="1920"></canvas><canvas id="ov" width="1080" height="1920"></canvas><div id="rw"><b>◀◀ REWIND</b></div><div id="label"></div><div id="cap"><span></span></div></div>
+<script type="module">
+// DARK STORIES 002: Mt. Gox. Noir toon look built on the office-toon engine (from 001 Operation Bayonet).
+// (engine notes: Techniques: screen-space inverted-hull ink outlines
+// (constant pixel width) + depth/normal crease lines in a post pass, a soft 4-band toon ramp,
+// hand-painted canvas textures (tiles, wood, cork, rug), a real window that casts a warm
+// sun patch through venetian blinds, cool fill so shadows go blue, and a colour grade.)
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
+import { drawChar, KINDS } from './chars2d.js';
+const SCRIPT = await (await fetch('./script.json')).json();
+
+const W = 1080, H = 1920;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const sstep = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * k * (k * (k * 6 - 15) + 10); };
+const lerp = (a, b, k) => a + (b - a) * k;
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false); renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, W / H, 0.05, 160);
+
+// ---------- materials ----------
+const RAMP = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 1; const x = c.getContext('2d');
+  for (let i = 0; i < 256; i++) { const u = i / 255; // soft-edged bands: deep shadow / shadow / mid / lit
+    let v = 0.50; v = lerp(v, 0.66, sstep(0.36, 0.42, u)); v = lerp(v, 0.86, sstep(0.52, 0.58, u)); v = lerp(v, 1.0, sstep(0.70, 0.76, u));
+    const g = Math.round(v * 255); x.fillStyle = `rgb(${g},${g},${g})`; x.fillRect(i, 0, 1, 1); }
+  const t = new THREE.CanvasTexture(c); t.minFilter = t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; return t; })();
+const RAMP_C = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 1; const x = c.getContext('2d');
+  for (let i = 0; i < 256; i++) { const u = i / 255; let v = 0.6; v = lerp(v, 1.0, sstep(0.46, 0.52, u)); const g = Math.round(v * 255); x.fillStyle = `rgb(${g},${g},${g})`; x.fillRect(i, 0, 1, 1); }
+  const t = new THREE.CanvasTexture(c); t.minFilter = t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; return t; })();
+const matCache = {};
+const toon = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.82, ...o }); // smooth shading (reference look)
+const M = (color) => matCache[color] || (matCache[color] = toon(color));
+function canvasTex(w, h, draw, rep) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; if (rep) t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; }
+const leafTex = (a, b, c, seed) => canvasTex(256, 256, (x, w, h) => { x.fillStyle = a; x.fillRect(0, 0, w, h); const r = rng(seed); for (let i = 0; i < 1400; i++) { x.fillStyle = r() < 0.45 ? b : c; x.beginPath(); const px = r() * w, py = r() * h, s = 4 + r() * 9; x.ellipse(px, py, s, s * 0.6, r() * 3, 0, 7); x.fill(); } }, 2);
+const LEAF1 = toon('#ffffff', { map: leafTex('#3f8a2e', '#2f6d22', '#5aa83c', 31), roughness: 0.9 }), LEAF2 = toon('#ffffff', { map: leafTex('#4c9a35', '#357a26', '#6dba48', 8), roughness: 0.9 }), LEAF3 = toon('#ffffff', { map: leafTex('#7a9a5a', '#5f7f45', '#9aba70', 5), roughness: 0.9 });
+const hsl = (h, s, l, a = 1) => `hsla(${h},${s}%,${l}%,${a})`;
+
+// ---------- ink: inverted hull pushed out in clip space, so lines are a constant pixel width ----------
+const INK = new THREE.Color('#0e0b16'); const INK_ENV = false; // reference look: no ink lines on the sets, only on the characters
+const hullMats = {};
+const hullMat = px => hullMats[px] || (hullMats[px] = new THREE.ShaderMaterial({
+  uniforms: { thick: { value: px }, res: { value: new THREE.Vector2(W, H) }, col: { value: INK } },
+  vertexShader: `uniform float thick; uniform vec2 res;
+    void main(){ vec4 c = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      vec3 n = normalize(normalMatrix * normal); vec4 cn = projectionMatrix * vec4(n, 0.0);
+      vec2 d = cn.xy; float L = length(d); d = L > 1e-5 ? d / L : vec2(0.0);
+      c.xy += d * thick * 1.7 * 2.0 / res * c.w; c.z += 0.0004 * c.w; gl_Position = c; }`,
+  fragmentShader: `uniform vec3 col; void main(){ gl_FragColor = vec4(col, 1.0); }`,
+  side: THREE.BackSide }));
+function hullGeo(geo) { if (geo.userData.hull) return geo.userData.hull; let g = geo.clone(); for (const k of Object.keys(g.attributes)) if (k !== 'position') g.deleteAttribute(k); g = mergeVertices(g, 1e-4); g.computeVertexNormals(); geo.userData.hull = g; return g; }
+function ink(mesh, px = 4.5, smooth = true) { if (!INK_ENV) return mesh; const h = new THREE.Mesh(smooth ? hullGeo(mesh.geometry) : mesh.geometry, hullMat(px)); h.userData.noOutline = true; h.userData.isHull = true; mesh.add(h); mesh.userData.hull = h; return mesh; }
+
+// helpers
+const ROOT = new THREE.Group(); scene.add(ROOT);
+function mesh(geo, mat, x = 0, y = 0, z = 0, parent = ROOT, px = 4.5) { const m = new THREE.Mesh(geo, typeof mat === 'string' ? M(mat) : mat); m.position.set(x, y, z); parent.add(m); if (px) ink(m, px); return m; }
+const rbox = (w, h, d, r = 0.015) => new RoundedBoxGeometry(w, h, d, 3, Math.min(r, w / 2.01, h / 2.01, d / 2.01));
+const cyl = (rt, rb, h, s = 24) => new THREE.CylinderGeometry(rt, rb, h, s);
+const sph = (r, s = 24) => new THREE.SphereGeometry(r, s, Math.round(s * 0.66));
+
+// ---------- flat cards (from the office-toon engine) ----------
+const cards = []; const _wp = V(0, 0, 0);
+function makeCard(G, kind, h = 1.75) {
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 768; const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  const w = h * 512 / 768, geo = new THREE.PlaneGeometry(w, h).translate(0, h / 2, 0);
+  const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: tex, alphaTest: 0.45, side: THREE.DoubleSide })); m.userData.noOutline = true; G.add(m);
+  const cmat = m.material, nmat = new THREE.ShaderMaterial({ uniforms: { map: { value: tex } }, side: THREE.DoubleSide,
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: 'uniform sampler2D map; varying vec2 vUv; void main(){ if (texture2D(map, vUv).a < 0.45) discard; gl_FragColor = vec4(0.5, 0.5, 1.0, 1.0); }' });
+  const blob = new THREE.Mesh(new THREE.CircleGeometry(w * 0.33, 24), new THREE.MeshBasicMaterial({ color: '#05030a', transparent: true, opacity: 0.4, depthWrite: false })); blob.rotation.x = -Math.PI / 2; blob.scale.y = 0.55; blob.userData.noOutline = true; G.add(blob);
+  const c = { kind, cv, ctx: cv.getContext('2d'), tex, m, blob, cmat, nmat, pose: {}, pos: V(0, -50, 0), spin: 0, key: '', G, on: true, tint: null }; cards.push(c); return c;
+}
+function updateCard(c, t) {
+  c.m.visible = c.blob.visible = c.on && c.G.visible; if (!c.m.visible) return;
+  if (c.face) { const dx = camera.position.x - (c.G.position.x + c.pos.x), dz = camera.position.z - (c.G.position.z + c.pos.z); c.pose.back = dx * c.face.x + dz * c.face.z < -0.2; }
+  const animated = c.pose.zzz || c.pose.walk || c.pose.talk; const key = c.kind + JSON.stringify(c.pose) + (animated ? t.toFixed(3) : '');
+  if (key !== c.key) { drawChar(c.ctx, c.kind, c.pose, t); c.tex.needsUpdate = true; c.key = key; }
+  c.cmat.color.set(c.tint || '#ffffff');
+  c.m.position.copy(c.pos); c.m.updateMatrixWorld(); c.m.getWorldPosition(_wp);
+  c.m.rotation.y = Math.atan2(camera.position.x - _wp.x, camera.position.z - _wp.z);
+  { const dx = camera.position.x - _wp.x, dz = camera.position.z - _wp.z; if (dx * dx + dz * dz < 1.3 * 1.3 && !c.keepNear) { c.m.visible = c.blob.visible = false; return; } } // never a giant head right against the lens
+  const sx = Math.cos(c.spin || 0); c.m.scale.x = Math.sign(sx || 1) * Math.max(0.12, Math.abs(sx));
+  c.blob.position.set(c.pos.x, 0.012, c.pos.z); c.blob.visible = c.m.visible && c.pos.y < 0.1;
+}
+
+// ---------- cars: extruded side profiles ----------
+function profileCar(G, pts, len, width, col, o = {}) { // pts: side profile in (x along car, y up), extruded across width
+  const sh = new THREE.Shape(); sh.moveTo(pts[0][0], pts[0][1]); for (const p of pts.slice(1)) sh.lineTo(p[0], p[1]); sh.closePath();
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: width, bevelEnabled: true, bevelSize: 0.04, bevelThickness: 0.04, bevelSegments: 2 }); geo.translate(0, 0, -width / 2); geo.computeVertexNormals();
+  const root = new THREE.Group(); G.add(root); const body = mesh(geo, toon(col), 0, 0, 0, root, 4.5); body.material.flatShading = false;
+  const wheels = []; for (const [wx, wz] of o.wheels) { const wg = new THREE.Group(); wg.position.set(wx, o.wr, wz); root.add(wg); const w = mesh(cyl(o.wr, o.wr, 0.24, 20).rotateX(Math.PI / 2), '#16141c', 0, 0, 0, wg, 3.5); mesh(cyl(o.wr * 0.55, o.wr * 0.55, 0.26, 12).rotateX(Math.PI / 2), o.rim || '#b9bcc8', 0, 0, 0, wg, 2); wheels.push(wg); }
+  return { root, body, wheels };
+}
+// =====================================================================================================
+// SETS: Tokyo street, the Mt. Gox office (with the hot-wallet vault), the press room, Jed's card room,
+// the blockchain, a Greek beach, a Tokyo cell. Each set lives in its own group far apart.
+// =====================================================================================================
+const STREET = ROOT;
+const OFFICE = new THREE.Group(); OFFICE.position.set(80, 0, 0); scene.add(OFFICE);
+const PRESS = new THREE.Group(); PRESS.position.set(160, 0, 0); scene.add(PRESS);
+const CARDS = new THREE.Group(); CARDS.position.set(230, 0, 0); scene.add(CARDS);
+const CHAIN = new THREE.Group(); CHAIN.position.set(320, 0, 0); scene.add(CHAIN);
+const BEACH = new THREE.Group(); BEACH.position.set(430, 0, 0); scene.add(BEACH);
+const CELL = new THREE.Group(); CELL.position.set(520, 0, 0); scene.add(CELL);
+const SETS = { street: STREET, office: OFFICE, press: PRESS, cards: CARDS, chain: CHAIN, beach: BEACH, cell: CELL };
+const basic = (color, o = {}) => new THREE.MeshBasicMaterial({ color, ...o });
+const glowTex = canvasTex(64, 64, (x, w) => { const g = x.createRadialGradient(32, 32, 0, 32, 32, 32); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.35, 'rgba(255,255,255,.45)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, w, w); });
+function glow(G, x, y, z, color, s = 0.5, op = 0.8) { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color, transparent: true, opacity: op, depthWrite: false, blending: THREE.AdditiveBlending })); sp.position.set(x, y, z); sp.scale.setScalar(s); sp.userData.noOutline = true; G.add(sp); return sp; }
+function textCanvas(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; const x = c.getContext('2d'); return { c, x, t, update(...a) { draw(x, w, h, ...a); t.needsUpdate = true; } }; }
+function neonSign(G, text, color, x, y, z, ry = 0, hgt = 0.7, font = 900) {
+  const len = text.length, cw = Math.max(256, 120 * len + 80), tc = textCanvas(cw, 200, (cx, w, h, on = 1) => { cx.clearRect(0, 0, w, h);
+    cx.fillStyle = 'rgba(8,6,16,.88)'; cx.beginPath(); cx.roundRect(6, 6, w - 12, h - 12, 26); cx.fill(); cx.lineWidth = 10; cx.strokeStyle = on ? color : '#333'; cx.stroke();
+    cx.font = `${font} 130px Poppins, sans-serif`; cx.textAlign = 'center'; cx.textBaseline = 'middle';
+    if (on) { cx.shadowColor = color; cx.shadowBlur = 30; } cx.fillStyle = on ? '#ffffff' : '#3a3a44'; cx.fillText(text, w / 2, h / 2 + 8); cx.shadowBlur = 0; });
+  tc.update(1); const m = new THREE.Mesh(new THREE.PlaneGeometry(hgt * cw / 200, hgt), basic('#ffffff', { map: tc.t, transparent: true })); m.position.set(x, y, z); m.rotation.y = ry; m.userData.noOutline = true; G.add(m);
+  const g = glow(G, x + 0.05 * Math.sin(ry), y, z + 0.05 * Math.cos(ry), color, hgt * cw / 200 * 1.3, 0.35); let st = 1; return { m, tc, g, set(on) { on = on ? 1 : 0; if (on !== st) { tc.update(on); st = on; } g.visible = !!on; } };
+}
+function skyDome(G, draw, r = 95) { const t = canvasTex(1024, 1024, draw); const m = new THREE.Mesh(new THREE.SphereGeometry(r, 32, 20), basic('#ffffff', { map: t, side: THREE.BackSide, fog: false })); m.userData.noOutline = true; m.userData.noHull = true; G.add(m); return m; }
+function plane(G, w, h, mat, x, y, z, rx = 0, ry = 0) { const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat); m.position.set(x, y, z); m.rotation.set(rx, ry, 0); m.receiveShadow = true; m.userData.noHull = true; G.add(m); return m; }
+function screenMesh(G, name, cw, ch, sw, shh, x, y, z, ry = 0, frame = true) { const tc = textCanvas(cw, ch, () => {}); const g = new THREE.Group(); g.position.set(x, y, z); g.rotation.y = ry; G.add(g);
+  if (frame) mesh(rbox(sw + 0.08, shh + 0.08, 0.06, 0.01), '#14121a', 0, 0, -0.035, g, 3);
+  const p = new THREE.Mesh(new THREE.PlaneGeometry(sw, shh), basic('#ffffff', { map: tc.t })); p.position.z = 0.002; p.userData.noOutline = true; g.add(p); SCR[name] = tc; return g; }
+const SCR = {};
+
+// ---------- painted textures ----------
+const roadTex = canvasTex(1024, 512, (x, w, h) => { const r = rng(8); x.fillStyle = '#34323c'; x.fillRect(0, 0, w, h); for (let i = 0; i < 5000; i++) { x.fillStyle = `rgba(${r() < 0.5 ? 0 : 255},${r() < 0.5 ? 0 : 255},255,${r() * 0.05})`; x.fillRect(r() * w, r() * h, 2, 2); }
+  x.fillStyle = '#e8e2d0'; for (let u = 0; u < w; u += 160) x.fillRect(u + 20, h / 2 - 5, 90, 10); x.fillStyle = '#e8e2d0'; for (let k = 0; k < 9; k++) x.fillRect(440 + k * 22, 30, 12, h - 60); }, true);
+const paveTex = canvasTex(512, 512, (x, w, h) => { const r = rng(11); x.fillStyle = '#7d7a84'; x.fillRect(0, 0, w, h); const s = 64; for (let j = 0; j < 8; j++) for (let i = 0; i < 8; i++) { x.fillStyle = `hsl(250,6%,${44 + r() * 8}%)`; x.fillRect(i * s + 2, j * s + 2, s - 4, s - 4); } }, true);
+const carpetTex = canvasTex(256, 256, (x, w, h) => { const r = rng(15); x.fillStyle = '#3a4256'; x.fillRect(0, 0, w, h); for (let i = 0; i < 2500; i++) { x.fillStyle = `rgba(255,255,255,${r() * 0.05})`; x.fillRect(r() * w, r() * h, 2, 2); } }, true);
+const officeWallTex = canvasTex(512, 512, (x, w, h) => { x.fillStyle = '#d9d6cf'; x.fillRect(0, 0, w, h); x.fillStyle = '#c9c5bc'; x.fillRect(0, h * 0.66, w, h * 0.34); x.fillStyle = '#a9a49a'; x.fillRect(0, h * 0.64, w, 8); const r = rng(71); for (let i = 0; i < 1500; i++) { x.fillStyle = `rgba(0,0,0,${r() * 0.05})`; x.fillRect(r() * w, r() * h, 2, 2); } }, true);
+const darkWallTex = canvasTex(512, 512, (x, w, h) => { const r = rng(5); x.fillStyle = '#2a2e48'; x.fillRect(0, 0, w, h); for (let i = 0; i < 1500; i++) { x.fillStyle = `rgba(0,0,0,${r() * 0.08})`; x.fillRect(r() * w, r() * h, 2, 2); } }, true);
+const plankTex = canvasTex(512, 512, (x, w, h) => { const r = rng(6); for (let i = 0; i < 8; i++) { x.fillStyle = `hsl(28,${34 + r() * 10}%,${30 + r() * 8}%)`; x.fillRect(0, i * 64, w, 62); x.fillStyle = 'rgba(0,0,0,.35)'; x.fillRect(0, i * 64 + 62, w, 2); x.fillRect(r() * w, i * 64, 2, 62); } }, true);
+const concreteTex = canvasTex(512, 512, (x, w, h) => { const r = rng(19); x.fillStyle = '#5a5e68'; x.fillRect(0, 0, w, h); for (let i = 0; i < 3000; i++) { x.fillStyle = `rgba(${r() < 0.5 ? 0 : 255},${r() < 0.5 ? 0 : 255},${r() < 0.5 ? 0 : 255},${r() * 0.06})`; x.fillRect(r() * w, r() * h, 3, 3); }
+  x.strokeStyle = 'rgba(0,0,0,.25)'; x.lineWidth = 3; for (let j = 0; j < 4; j++) { x.beginPath(); x.moveTo(0, j * 128); x.lineTo(w, j * 128); x.stroke(); } }, true);
+const gridTex = canvasTex(512, 512, (x, w, h) => { x.fillStyle = '#0a0818'; x.fillRect(0, 0, w, h); x.strokeStyle = 'rgba(255,190,60,.55)'; x.lineWidth = 3; for (let i = 0; i <= 4; i++) { x.beginPath(); x.moveTo(i * 128, 0); x.lineTo(i * 128, h); x.stroke(); x.beginPath(); x.moveTo(0, i * 128); x.lineTo(w, i * 128); x.stroke(); }
+  x.strokeStyle = 'rgba(80,220,255,.18)'; x.lineWidth = 1.5; for (let i = 0; i < 16; i++) { x.beginPath(); x.moveTo(i * 32, 0); x.lineTo(i * 32, h); x.stroke(); x.beginPath(); x.moveTo(0, i * 32); x.lineTo(w, i * 32); x.stroke(); } }, true);
+const sandTex = canvasTex(512, 512, (x, w, h) => { const r = rng(23); x.fillStyle = '#e9d3a4'; x.fillRect(0, 0, w, h); for (let i = 0; i < 6000; i++) { x.fillStyle = r() < 0.5 ? 'rgba(160,120,70,.18)' : 'rgba(255,250,230,.35)'; x.fillRect(r() * w, r() * h, 2, 2); } }, true);
+const stuccoTex = canvasTex(512, 512, (x, w, h) => { const r = rng(3); x.fillStyle = '#f4f1ea'; x.fillRect(0, 0, w, h); for (let i = 0; i < 1800; i++) { x.fillStyle = `rgba(120,110,100,${r() * 0.08})`; x.fillRect(r() * w, r() * h, 3, 3); } }, true);
+const coinTex = canvasTex(128, 128, (x, w) => { x.fillStyle = '#ffcf3f'; x.beginPath(); x.arc(64, 64, 62, 0, 7); x.fill(); x.lineWidth = 8; x.strokeStyle = '#c9932a'; x.beginPath(); x.arc(64, 64, 50, 0, 7); x.stroke(); x.fillStyle = '#c9932a'; x.font = '900 70px Poppins'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('B', 66, 68); x.fillRect(52, 24, 6, 14); x.fillRect(66, 24, 6, 14); x.fillRect(52, 98, 6, 14); x.fillRect(66, 98, 6, 14); });
+const coinMats = [toon('#c9932a'), toon('#ffffff', { map: coinTex }), toon('#ffffff', { map: coinTex })];
+const coinGeo = cyl(0.11, 0.11, 0.025, 18);
+function coin(G, s = 1) { const m = mesh(coinGeo, coinMats, 0, -9, 0, G, 2.5); m.scale.setScalar(s); return m; }
+const windowTex = (seed, base = '#2a2840', lit = '#ffd27a', cols = 8, rows = 30) => canvasTex(256, 512, (x, w, h) => { const r = rng(seed); x.fillStyle = base; x.fillRect(0, 0, w, h); for (let j = 0; j < rows; j++) for (let i = 0; i < cols; i++) { x.fillStyle = r() < 0.42 ? (r() < 0.15 ? '#9fd8ff' : lit) : 'rgba(0,0,0,.35)'; x.fillRect(6 + i * (w - 12) / cols + 3, 6 + j * (h - 12) / rows + 3, (w - 12) / cols - 8, (h - 12) / rows - 7); } });
+function shell(G, o) { const { x0, x1, z0, z1, h, wall, floor, ceil = '#1a1d2e', skip = [] } = o, out = {};
+  const P = (w, hh, mat, rep) => { const mt = mat.clone(); if (mt.map) { mt.map = mat.map.clone(); mt.map.needsUpdate = true; mt.map.repeat.set(...rep); } const m = new THREE.Mesh(new THREE.PlaneGeometry(w, hh), mt); m.receiveShadow = true; m.userData.noHull = true; G.add(m); return m; };
+  out.floor = P(x1 - x0, z1 - z0, floor, [(x1 - x0) / 2, (z1 - z0) / 2]); out.floor.rotation.x = -Math.PI / 2; out.floor.position.set((x0 + x1) / 2, 0, (z0 + z1) / 2);
+  if (!skip.includes('back')) { out.back = P(x1 - x0, h, wall, [(x1 - x0) / 2, h / 2]); out.back.position.set((x0 + x1) / 2, h / 2, z0); }
+  if (!skip.includes('right')) { out.right = P(z1 - z0, h, wall, [(z1 - z0) / 2, h / 2]); out.right.rotation.y = -Math.PI / 2; out.right.position.set(x1, h / 2, (z0 + z1) / 2); }
+  if (!skip.includes('left')) { out.left = P(z1 - z0, h, wall, [(z1 - z0) / 2, h / 2]); out.left.rotation.y = Math.PI / 2; out.left.position.set(x0, h / 2, (z0 + z1) / 2); }
+  if (!skip.includes('front')) { out.front = P(x1 - x0, h, wall, [(x1 - x0) / 2, h / 2]); out.front.rotation.y = Math.PI; out.front.position.set((x0 + x1) / 2, h / 2, z1); }
+  out.ceil = P(x1 - x0, z1 - z0, toon(ceil), [1, 1]); out.ceil.rotation.x = Math.PI / 2; out.ceil.position.set((x0 + x1) / 2, h, (z0 + z1) / 2);
+  return out; }
+// a wall along x at z = zw with a door hole (xa..xb, 0..dh); returns nothing. faceSign: +1 faces +z
+function wallWithHoleX(G, mat, x0, x1, zw, h, xa, xb, dh, ry = 0) { const pc = (a, b, ya, yb) => { const mt = mat.clone(); mt.map = mat.map.clone(); mt.map.needsUpdate = true; mt.map.repeat.set((b - a) / 2, (yb - ya) / 2); plane(G, b - a, yb - ya, mt, (a + b) / 2, (ya + yb) / 2, zw, 0, ry); };
+  pc(x0, xa, 0, h); pc(xb, x1, 0, h); pc(xa, xb, dh, h); }
+function wallWithHoleZ(G, mat, z0, z1, xw, h, za, zb, ya, yb, ry = Math.PI / 2) { const pc = (a, b, y0, y1) => { const mt = mat.clone(); mt.map = mat.map.clone(); mt.map.needsUpdate = true; mt.map.repeat.set((b - a) / 2, (y1 - y0) / 2); plane(G, b - a, y1 - y0, mt, xw, (y0 + y1) / 2, (a + b) / 2, 0, ry); };
+  pc(z0, za, 0, h); pc(zb, z1, 0, h); pc(za, zb, 0, ya); pc(za, zb, yb, h); }
+function desk(G, x, z, ry = 0, col = '#4a4f63', screenCol = '#5fd0ff') { const d = new THREE.Group(); d.position.set(x, 0, z); d.rotation.y = ry; G.add(d);
+  mesh(rbox(1.6, 0.06, 0.75, 0.02), col, 0, 0.75, 0, d, 4.5); for (const s of [-1, 1]) mesh(rbox(0.06, 0.73, 0.66), '#2e3242', s * 0.76, 0.37, 0, d, 3.5);
+  // monitor faces -z (toward the person sitting behind the desk), its back to the camera side
+  mesh(rbox(0.42, 0.02, 0.3, 0.008), '#b9bcc8', 0, 0.79, -0.02, d, 3); const lid = new THREE.Group(); lid.position.set(0, 0.8, 0.13); lid.rotation.x = 0.28; d.add(lid); mesh(rbox(0.42, 0.28, 0.015, 0.008), '#b9bcc8', 0, 0.14, 0, lid, 3);
+  const scr = mesh(new THREE.PlaneGeometry(0.38, 0.24), basic(screenCol), 0, 0.14, -0.009, lid, 0); scr.rotation.y = Math.PI; glow(d, 0, 0.95, -0.15, screenCol, 0.8, 0.25);
+  mesh(cyl(0.045, 0.04, 0.1, 12), '#ffffff', 0.55, 0.83, -0.1, d, 2.5);
+  for (let k = 0; k < 3; k++) mesh(rbox(0.22, 0.004, 0.3), '#f4efe4', -0.55, 0.785 + k * 0.006, 0.05, d, 0);
+  return d; }
+function chair(G, x, z, ry = 0, col = '#1d1a26') { const c = new THREE.Group(); c.position.set(x, 0, z); c.rotation.y = ry; G.add(c); mesh(cyl(0.28, 0.28, 0.05, 5), col, 0, 0.06, 0, c, 3); mesh(cyl(0.03, 0.03, 0.38, 6), '#3a3a44', 0, 0.27, 0, c, 2);
+  mesh(rbox(0.5, 0.08, 0.48, 0.03), col, 0, 0.48, 0, c, 3); mesh(rbox(0.5, 0.42, 0.07, 0.03), col, 0, 0.74, -0.24, c, 3); return c; }
+
+// =====================================================================================================
+// STREET: a Tokyo street at night. The Mt. Gox office building, neon, vending machines, poles + wires,
+// snow. The protester (beat 8), the police car (beat 15).
+// =====================================================================================================
+{ const G = STREET;
+  skyDome(G, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#05040c'); g.addColorStop(0.4, '#151236'); g.addColorStop(0.52, '#3a2050'); g.addColorStop(0.56, '#141026'); g.addColorStop(1, '#05040c'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    const r = rng(31); let u = 0; while (u < w) { const bw = 12 + r() * 26, bh = 30 + r() * (r() < 0.2 ? 140 : 60); x.fillStyle = '#120e22'; x.fillRect(u, h * 0.555 - bh, bw, bh + 4); x.fillStyle = r() < 0.5 ? '#ff4f6a' : '#ffcf7a'; for (let yy = h * 0.555 - bh + 6; yy < h * 0.55; yy += 9) for (let xx = u + 3; xx < u + bw - 4; xx += 7) if (r() < 0.25) x.fillRect(xx, yy, 3, 4); u += bw + 2; }
+    x.fillStyle = '#ff3b4a'; x.beginPath(); x.arc(w * 0.62, h * 0.555 - 150, 3, 0, 7); x.fill(); });
+  G.add(new THREE.HemisphereLight('#7a86d8', '#3a2a40', 0.9));
+  const moon = new THREE.DirectionalLight('#9fb4ff', 1.4); moon.position.set(8, 14, 10); moon.target.position.set(0, 0, -1); moon.castShadow = true; moon.shadow.mapSize.set(2048, 2048); Object.assign(moon.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 60 }); moon.shadow.bias = -0.0004; moon.shadow.normalBias = 0.03; G.add(moon, moon.target);
+  for (const [px, c] of [[-9, '#ff3fa8'], [0, '#ffcf7a'], [8, '#3ff0ff']]) { const p = new THREE.PointLight(c, 10, 12, 1.4); p.position.set(px, 3.4, 0.6); G.add(p); }
+  const ground = (w, d, tex, rep, x, z, y = 0) => { const t = tex.clone(); t.needsUpdate = true; t.repeat.set(...rep); const m = plane(G, w, d, toon('#ffffff', { map: t }), x, y, z, -Math.PI / 2); return m; };
+  ground(80, 5, roadTex, [10, 1], 0, 3.5); ground(80, 2.2, paveTex, [40, 1], 0, -0.1, 0.02); ground(80, 2.5, paveTex, [40, 1], 0, 7.2, 0.02);
+  mesh(rbox(80, 0.14, 0.2), '#a9a4b0', 0, 0.07, 1.0, G, 3); mesh(rbox(80, 0.14, 0.2), '#a9a4b0', 0, 0.07, 6.0, G, 3);
+  // building row along z = -1.2 (fronts face +z)
+  const bld = (x, w, h, col, seed) => { const b = new THREE.Group(); b.position.set(x, 0, -1.2 - 3); G.add(b); mesh(rbox(w, h, 6, 0.06), col, 0, h / 2, 0, b, 5);
+    const f = plane(b, w - 0.4, h - 3.6, basic('#ffffff', { map: windowTex(seed) }), 0, 3.4 + (h - 3.6) / 2, 3.02); f.userData.noOutline = true; return b; };
+  // Mt. Gox's building (centre): glass ground floor, logo sign
+  const gox = bld(0, 7, 14, '#3a3e52', 41);
+  mesh(rbox(6.4, 2.8, 0.1, 0.02), basic('#1a2a3a'), 0, 1.45, 3.0, gox, 3);
+  { const lob = canvasTex(512, 256, (x, w, h) => { x.fillStyle = '#ffe9b8'; x.fillRect(0, 0, w, h); x.fillStyle = '#c9b48e'; x.fillRect(0, h * 0.75, w, h * 0.25); x.fillStyle = '#7a6a52'; x.fillRect(w * 0.35, h * 0.3, w * 0.3, h * 0.45); });
+    const p = plane(gox, 6.2, 2.6, basic('#ffffff', { map: lob }), 0, 1.4, 3.06); p.userData.noOutline = true; G.userData.lobby = p; }
+  for (const gx of [-3.1, -1.0, 1.0, 3.1]) mesh(rbox(0.1, 2.8, 0.12), '#14121a', gx, 1.45, 3.08, gox, 2.5);
+  mesh(rbox(7.2, 0.3, 1.2, 0.03), '#2a2e40', 0, 3.05, 3.5, gox, 4);
+  G.userData.goxSign = neonSign(gox, 'MTGOX', '#2f9bff', 0, 3.75, 3.12, 0, 0.75);
+  G.userData.goxWin = gox.children[1];
+  // neighbours with vertical neon signs
+  const NEON = [['RAMEN', '#ff3b4a'], ['KARAOKE', '#ff3fa8'], ['HOTEL', '#3ff0ff'], ['24H', '#3ff07a'], ['BAR', '#ffb03f'], ['CAFE', '#c58aff']];
+  [[-7.6, 6, 18, '#2e2840', 2], [-13.6, 6, 11, '#342c48', 5], [-19.6, 6, 16, '#2a2238', 7], [7.6, 6, 10, '#2e2a44', 9], [13.6, 6, 20, '#36304e', 11], [19.6, 6, 13, '#2a2640', 13]].forEach(([x, w, h, c, s], i) => {
+    const b = bld(x, w, h, c, s); const [txt, col] = NEON[i]; const vs = neonSign(G, txt, col, x + (x < 0 ? 2.4 : -2.4), 5.5, -0.9, 0, 0.6); vs.m.rotation.z = Math.PI / 2; vs.g.scale.set(0.6 * 1.4, (120 * txt.length + 80) / 200 * 0.6 * 1.1, 1);
+    mesh(rbox(w - 0.6, 0.12, 1.0), '#1d1a26', x, 2.9, -0.7, G, 3); mesh(rbox(w - 0.8, 2.6, 0.1), basic(['#ffcf9a', '#ff9ad8', '#9af0ff', '#c8ffd0', '#ffd27a', '#e0c8ff'][i]), x, 1.4, -1.18, G, 2); });
+  // vending machines (glowing fronts with drink rows)
+  const vend = canvasTex(256, 512, (x, w, h) => { x.fillStyle = '#e8eef8'; x.fillRect(0, 0, w, h); x.fillStyle = '#1a2a4a'; x.fillRect(16, 16, w - 32, h * 0.62); const r = rng(77);
+    for (let j = 0; j < 4; j++) for (let i = 0; i < 5; i++) { x.fillStyle = ['#d7263d', '#2f6fe0', '#3fae5a', '#ffcf3f', '#ff7a14', '#ffffff'][Math.floor(r() * 6)]; x.beginPath(); x.roundRect(28 + i * 42, 34 + j * 72, 26, 54, 8); x.fill(); x.fillStyle = '#ff3b4a'; x.fillRect(30 + i * 42, 92 + j * 72, 22, 6); }
+    x.fillStyle = '#14121a'; x.fillRect(40, h * 0.8, w - 80, 50); });
+  for (const vx of [4.3, 5.3]) { mesh(rbox(0.95, 1.85, 0.75, 0.03), '#e8eef8', vx, 0.93, -0.75, G, 4); const f = plane(G, 0.86, 1.7, basic('#ffffff', { map: vend }), vx, 0.95, -0.37); f.userData.noOutline = true; glow(G, vx, 1.2, -0.1, '#cfe8ff', 1.6, 0.35); }
+  // street lamps, poles + sagging wires
+  for (const lx of [-5, 9]) { mesh(cyl(0.07, 0.09, 5, 8), '#3a3a44', lx, 2.5, 0.75, G, 3); mesh(rbox(0.9, 0.12, 0.3), '#3a3a44', lx, 5, 1.1, G, 3); mesh(rbox(0.5, 0.06, 0.24), basic('#fff2c8'), lx, 4.93, 1.3, G, 0); glow(G, lx, 4.85, 1.35, '#ffe0a0', 1.4, 0.6); }
+  const poles = [-16, -7, 3, 12]; for (const px of poles) { mesh(cyl(0.12, 0.16, 8.5, 8), '#8f8a86', px, 4.25, 0.8, G, 3); mesh(rbox(1.6, 0.1, 0.1), '#6a6560', px, 7.8, 0.8, G, 2.5); mesh(rbox(1.2, 0.1, 0.1), '#6a6560', px, 7.2, 0.8, G, 2.5); mesh(cyl(0.22, 0.22, 0.5, 10), '#5a5e68', px + 0.3, 6.6, 0.95, G, 2.5); }
+  for (let i = 0; i < poles.length - 1; i++) for (const [dy, dx] of [[7.8, -0.7], [7.8, 0.7], [7.2, -0.5], [7.2, 0.5]]) { const a = V(poles[i] + dx, dy, 0.8), b = V(poles[i + 1] + dx, dy, 0.8), m = a.clone().lerp(b, 0.5); m.y -= 0.6 + Math.abs(dx) * 0.3;
+    mesh(new THREE.TubeGeometry(new THREE.QuadraticBezierCurve3(a, m, b), 20, 0.018, 4), '#16141c', 0, 0, 0, G, 0); }
+  // bicycles + planters by the kerb
+  for (const bx of [-3.6, -2.9]) { const b = new THREE.Group(); b.position.set(bx, 0, 0.3); b.rotation.y = 0.3; G.add(b); for (const s of [-1, 1]) mesh(new THREE.TorusGeometry(0.3, 0.03, 6, 18), '#2a2a30', s * 0.45, 0.32, 0, b, 2); mesh(rbox(0.9, 0.04, 0.04), '#d7263d', 0, 0.55, 0, b, 2); mesh(rbox(0.04, 0.4, 0.04), '#d7263d', 0.2, 0.5, 0, b, 2); }
+  for (const px of [-2.2, 2.2]) { mesh(rbox(0.7, 0.5, 0.5, 0.04), '#5a5e68', px, 0.25, -0.75, G, 3); for (let k = 0; k < 4; k++) mesh(sph(0.2, 12), LEAF1, px - 0.22 + k * 0.15, 0.6, -0.75, G, 2.5); }
+  // snow
+  G.userData.snow = Array.from({ length: 90 }, (_, i) => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: '#ffffff', transparent: true, opacity: 0.85, depthWrite: false })); s.scale.setScalar(0.07); s.userData = { noOutline: true, a: Math.random(), b: Math.random(), c: Math.random() }; G.add(s); return s; });
+  // the protester's sign (beat 8)
+  { const sg = new THREE.Group(); G.add(sg); G.userData.sign = sg; mesh(cyl(0.025, 0.025, 1.3, 6), '#8a6a48', 0, 0.75, -0.02, sg, 2);
+    const t = canvasTex(512, 360, (x, w, h) => { x.fillStyle = '#f4efe4'; x.fillRect(0, 0, w, h); x.strokeStyle = '#14121a'; x.lineWidth = 10; x.strokeRect(6, 6, w - 12, h - 12); x.fillStyle = '#14121a'; x.textAlign = 'center'; x.font = '900 86px Poppins'; x.fillText('MTGOX', w / 2, 110); x.font = '900 62px Poppins'; x.fillText('WHERE IS', w / 2, 200); x.fillStyle = '#d7263d'; x.fillText('OUR MONEY?', w / 2, 285); });
+    mesh(rbox(0.86, 0.62, 0.03, 0.01), '#f4efe4', 0, 1.45, 0, sg, 3); const f = plane(sg, 0.82, 0.58, basic('#ffffff', { map: t }), 0, 1.45, 0.017); f.userData.noOutline = true; sg.position.set(0, -20, 0); }
+  // Japanese police car (white upper, black lower) for beat 15
+  const SEDAN = [[-2.2, 0.32], [2.2, 0.32], [2.28, 0.72], [1.25, 0.9], [0.55, 1.42], [-0.95, 1.44], [-1.65, 0.98], [-2.25, 0.92]];
+  const pc = profileCar(G, SEDAN, 4.4, 1.7, '#f2f2ee', { wheels: [[1.35, 0.82], [1.35, -0.82], [-1.35, 0.82], [-1.35, -0.82]], wr: 0.36 });
+  for (const s of [-1, 1]) { const st = new THREE.Mesh(new THREE.PlaneGeometry(4.3, 0.42), basic('#14121a')); st.position.set(0, 0.52, s * 0.905); if (s < 0) st.rotation.y = Math.PI; st.userData.noOutline = true; pc.root.add(st);
+    const gs = new THREE.Shape(); gs.moveTo(0.5, 0.98); gs.lineTo(1.15, 0.94); gs.lineTo(0.5, 1.36); gs.lineTo(-0.85, 1.38); gs.lineTo(-1.45, 1.0); gs.closePath(); const gm = new THREE.Mesh(new THREE.ShapeGeometry(gs), basic('#2a3550')); gm.position.z = s * 0.9; if (s < 0) gm.rotation.y = Math.PI, gm.scale.x = -1; gm.userData.noOutline = true; pc.root.add(gm); }
+  mesh(rbox(0.9, 0.12, 0.3), '#1d1a26', -0.2, 1.5, 0, pc.root, 2.5); pc.lr = mesh(rbox(0.8, 0.1, 0.26), basic('#ff2a3a'), -0.2, 1.58, 0, pc.root, 0); pc.light = glow(pc.root, -0.2, 1.7, 0, '#ff2a3a', 2.2, 0.8);
+  pc.root.position.set(0, -50, 0); G.userData.police = pc;
+  // a parked taxi
+  const taxi = profileCar(G, SEDAN, 4.4, 1.7, '#2b6a4a', { wheels: [[1.35, 0.82], [1.35, -0.82], [-1.35, 0.82], [-1.35, -0.82]], wr: 0.36 }); taxi.root.position.set(-9, 0, 2.0); mesh(rbox(0.4, 0.2, 0.3), basic('#ffd27a'), -0.2, 1.55, 0, taxi.root, 2);
+}
+const SCARD = { kolin: makeCard(STREET, 'kolin'), karp: makeCard(STREET, 'karpelesSuit'), cop1: makeCard(STREET, 'jpCop'), cop2: makeCard(STREET, 'jpCop'), walker1: makeCard(STREET, 'rep3'), walker2: makeCard(STREET, 'staffB'), cust: makeCard(STREET, 'cowork1') };
+
+// =====================================================================================================
+// OFFICE: Mt. Gox, Tokyo. Open plan, the trading wall screen, the "hot wallet" vault (a glass silo of
+// coins) with a leak pipe through the wall, the server rack, the forgotten old-wallet safe, a door.
+// =====================================================================================================
+{ const G = OFFICE, x0 = -5, x1 = 5, z0 = -4, z1 = 4, h = 3.2;
+  const wallM = toon('#ffffff', { map: officeWallTex });
+  const sh = shell(G, { x0, x1, z0, z1, h, wall: wallM, floor: toon('#ffffff', { map: carpetTex }), ceil: '#2a2e3e', skip: ['left'] });
+  // left wall with a door hole z -3.3..-2.3
+  wallWithHoleZ(G, wallM, z0, z1, x0, h, -3.3, -2.3, 2.2, 2.2);
+  mesh(rbox(0.12, 0.1, 1.2), '#5a4a3a', x0 + 0.02, 2.25, -2.8, G, 3); for (const dz of [-3.33, -2.27]) mesh(rbox(0.12, 2.2, 0.08), '#5a4a3a', x0 + 0.02, 1.1, dz, G, 3);
+  const hinge = new THREE.Group(); hinge.position.set(x0, 0, -2.32); G.add(hinge); mesh(rbox(0.05, 2.15, 0.96, 0.01), '#7a5a3a', 0.03, 1.08, -0.49, hinge, 3.5); mesh(sph(0.04, 8), '#d9b25a', 0.09, 1.05, -0.88, hinge, 2); G.userData.door = hinge;
+  plane(G, 3, 3, toon('#1a1824'), x0 - 1.4, 1.5, -2.8, 0, Math.PI / 2); plane(G, 3, 2, toon('#2a2830'), x0 - 0.8, 0.002, -2.8, -Math.PI / 2);
+  G.add(new THREE.HemisphereLight('#c8d0ff', '#3a3040', 0.85));
+  const top = new THREE.DirectionalLight('#fff2dc', 1.3); top.position.set(2, 8, 5); top.target.position.set(0, 0, -1); top.castShadow = true; top.shadow.mapSize.set(2048, 2048); Object.assign(top.shadow.camera, { left: -7, right: 7, top: 7, bottom: -7, near: 1, far: 20 }); top.shadow.bias = -0.0004; G.add(top, top.target);
+  const scrL = new THREE.PointLight('#5fd0ff', 6, 7, 1.4); scrL.position.set(-1, 1.9, -3.0); G.add(scrL); G.userData.scrL = scrL;
+  const vaultL = new THREE.PointLight('#ffc040', 6, 5, 1.4); vaultL.position.set(3.3, 1.5, -1.6); G.add(vaultL); G.userData.vaultL = vaultL;
+  for (const lz of [-2, 1.2]) for (const lx of [-2.5, 2.5]) { mesh(rbox(2.0, 0.05, 0.35, 0.01), '#cfd6e6', lx, h - 0.03, lz, G, 3); mesh(new THREE.PlaneGeometry(1.9, 0.28), basic('#f4f8ff'), lx, h - 0.06, lz, G, 0).rotation.x = Math.PI / 2; }
+  // wall screen (trading dashboard)
+  { mesh(rbox(2.8, 2.5, 0.12, 0.03), '#14121a', -1.2, 1.75, z0 + 0.07, G, 4.5); const g = screenMesh(G, 'wall', 1024, 906, 2.6, 2.3, -1.2, 1.75, z0 + 0.135, 0, false); glow(G, -1.2, 1.75, z0 + 0.6, '#5fd0ff', 5, 0.16); }
+  // logo plaque
+  { const t = canvasTex(512, 256, (x, w, hh) => { x.fillStyle = '#14213d'; x.beginPath(); x.roundRect(8, 8, w - 16, hh - 16, 30); x.fill(); x.lineWidth = 10; x.strokeStyle = '#2f9bff'; x.stroke(); x.fillStyle = '#ffffff'; x.font = '900 120px Poppins'; x.textAlign = 'center'; x.fillText('MTGOX', w / 2, 160); x.font = '700 30px Poppins'; x.fillStyle = '#9fc8ff'; x.fillText('BITCOIN EXCHANGE · TOKYO', w / 2, 212); });
+    const p = plane(G, 1.6, 0.8, basic('#ffffff', { map: t, transparent: true }), -4.2 + 0.6, 2.35, z0 + 0.02); p.userData.noOutline = true; }
+  // desks (people sit behind them facing the camera side, +z)
+  desk(G, 0.8, 1.0); desk(G, -1.6, 1.0, 0, '#4a4f63', '#3ff07a'); desk(G, -3.4, -0.4, 0, '#4a4f63', '#ffcf3f');
+  G.userData.kChair = chair(G, 0.8, 0.3, Math.PI); chair(G, -1.6, 0.3, Math.PI); chair(G, -3.4, -1.1, Math.PI);
+  // the vault: a glass silo of bitcoins on a steel plinth, HOT WALLET plate, pipe through the right wall
+  const VX = 3.3, VZ = -2.5; const vault = new THREE.Group(); vault.position.set(VX, 0, VZ); G.add(vault); G.userData.vault = vault;
+  mesh(cyl(0.95, 1.05, 0.35, 28), '#5a6070', 0, 0.175, 0, vault, 4.5); mesh(cyl(0.95, 0.95, 0.12, 28), '#7a8090', 0, 2.42, 0, vault, 4); mesh(cyl(0.2, 0.3, 0.2, 12), '#7a8090', 0, 2.58, 0, vault, 3);
+  for (let i = 0; i < 6; i++) { const a = i / 6 * Math.PI * 2; mesh(cyl(0.035, 0.035, 2.1, 6), '#5a6070', Math.cos(a) * 0.86, 1.35, Math.sin(a) * 0.86, vault, 2.5); }
+  const fill = new THREE.Group(); fill.position.y = 0.35; vault.add(fill); const goldTex = canvasTex(512, 256, (x, w, hh) => { x.fillStyle = '#e0a82a'; x.fillRect(0, 0, w, hh); const r = rng(17); for (let j = 0; j < 16; j++) for (let i = 0; i < 18; i++) { const cx = i * 30 + (j % 2) * 15 + r() * 4, cy = j * 16 + 8; x.fillStyle = r() < 0.5 ? '#ffd84a' : '#f2be32'; x.beginPath(); x.ellipse(cx, cy, 14, 7, 0, 0, 7); x.fill(); x.strokeStyle = '#a8761a'; x.lineWidth = 2; x.stroke(); } }, true); goldTex.repeat.set(2, 3);
+  const gold = mesh(cyl(0.82, 0.82, 1, 28), toon('#ffffff', { map: goldTex, emissive: '#5a4010', emissiveIntensity: 0.2 }), 0, 0.5, 0, fill, 3); G.userData.gold = fill;
+  const topCoins = new THREE.Group(); vault.add(topCoins); G.userData.topCoins = topCoins; { const r = rng(5); for (let i = 0; i < 26; i++) { const c = coin(topCoins, 1.1); const a = r() * 7, rr = Math.sqrt(r()) * 0.7; c.position.set(Math.cos(a) * rr, 0.03 + r() * 0.06, Math.sin(a) * rr); c.rotation.set(r() * 0.6, r() * 3, r() * 0.6); } }
+  const glass = new THREE.Mesh(cyl(0.9, 0.9, 2.05, 28, true), new THREE.MeshBasicMaterial({ color: '#bfe6ff', transparent: true, opacity: 0.16, side: THREE.DoubleSide, depthWrite: false })); glass.position.y = 1.375; glass.userData.noOutline = true; vault.add(glass);
+  glow(vault, 0, 1.2, 0.6, '#ffcf3f', 3.2, 0.25);
+  { const t = canvasTex(512, 128, (x, w, hh) => { x.fillStyle = '#14121a'; x.fillRect(0, 0, w, hh); x.strokeStyle = '#ffcf3f'; x.lineWidth = 8; x.strokeRect(6, 6, w - 12, hh - 12); x.fillStyle = '#ffcf3f'; x.font = '900 70px Poppins'; x.textAlign = 'center'; x.fillText('HOT WALLET', w / 2, 92); });
+    const p = plane(vault, 1.15, 0.29, basic('#ffffff', { map: t }), 0, 2.12, 0.93); p.userData.noOutline = true; }
+  // leak pipe from the plinth to the right wall, a dark hole in the wall
+  const P0 = V(VX + 0.95, 0.22, VZ), P1 = V(x1 - 0.02, 0.22, VZ); mesh(cyl(0.11, 0.11, P1.x - P0.x, 12).rotateZ(Math.PI / 2), '#6a7080', (P0.x + P1.x) / 2, 0.22, VZ, G, 3);
+  const hole = new THREE.Mesh(new THREE.CircleGeometry(0.22, 20), basic('#05030a')); hole.position.set(x1 - 0.01, 0.3, VZ); hole.rotation.y = -Math.PI / 2; hole.userData.noOutline = true; G.add(hole);
+  G.userData.leak = Array.from({ length: 10 }, () => coin(G, 0.8)); G.userData.leakPath = [P0.clone().setY(0.4), P1.clone().setY(0.4)];
+  // server rack + the admin terminal by the right wall
+  const rack = new THREE.Group(); rack.position.set(4.55, 0, -0.3); rack.rotation.y = -Math.PI / 2; G.add(rack); mesh(rbox(0.75, 2.0, 0.7, 0.03), '#16141c', 0, 1.0, 0, rack, 4.5);
+  G.userData.leds = []; for (let j = 0; j < 8; j++) { mesh(rbox(0.65, 0.16, 0.02), '#24222c', 0, 0.3 + j * 0.21, 0.36, rack, 2); for (let i = 0; i < 4; i++) { const l = mesh(rbox(0.03, 0.03, 0.01), basic(i % 2 ? '#3ff07a' : '#ffb03f'), 0.18 + i * 0.05, 0.3 + j * 0.21, 0.375, rack, 0); l.userData.ph = j * 1.7 + i * 0.9; G.userData.leds.push(l); } }
+  glow(rack, 0.25, 1.0, 0.5, '#3ff07a', 1.0, 0.25);
+  { const tb = new THREE.Group(); tb.position.set(4.35, 0, 1.0); G.add(tb); mesh(rbox(0.7, 0.06, 0.9), '#4a4f63', 0, 0.75, 0, tb, 4); for (const s of [-1, 1]) mesh(rbox(0.6, 0.73, 0.05), '#2e3242', 0, 0.37, s * 0.42, tb, 3);
+    const s = screenMesh(tb, 'term', 640, 400, 0.56, 0.35, 0.1, 1.1, 0, -Math.PI / 2); }
+  // the file + golden key that float off the server (beat 5)
+  { const fg = new THREE.Group(); G.add(fg); G.userData.file = fg; const t = canvasTex(256, 320, (x, w, hh) => { x.fillStyle = '#f4f6fb'; x.beginPath(); x.moveTo(10, 10); x.lineTo(180, 10); x.lineTo(246, 76); x.lineTo(246, 310); x.lineTo(10, 310); x.closePath(); x.fill(); x.lineWidth = 10; x.strokeStyle = '#14121a'; x.stroke(); x.fillStyle = '#ffcf3f'; x.fillRect(40, 110, 176, 120); x.fillStyle = '#14121a'; x.font = '900 36px monospace'; x.textAlign = 'center'; x.fillText('wallet', w / 2, 160); x.fillText('.dat', w / 2, 205); x.font = '900 30px monospace'; x.fillText('KEYS', w / 2, 280); });
+    const p = plane(fg, 0.42, 0.52, basic('#ffffff', { map: t, transparent: true, side: THREE.DoubleSide }), 0, 0, 0); p.userData.noOutline = true; glow(fg, 0, 0, -0.05, '#ffcf3f', 1.2, 0.5); fg.position.set(0, -20, 0); }
+  { const kg = new THREE.Group(); G.add(kg); G.userData.key = kg; const km = toon('#ffcf3f', { emissive: '#8a6a10', emissiveIntensity: 0.4 });
+    mesh(new THREE.TorusGeometry(0.12, 0.04, 8, 20), km, 0, 0, 0, kg, 3); mesh(rbox(0.36, 0.05, 0.05), km, 0.3, 0, 0, kg, 3); mesh(rbox(0.05, 0.1, 0.05), km, 0.42, -0.06, 0, kg, 2); mesh(rbox(0.05, 0.07, 0.05), km, 0.34, -0.05, 0, kg, 2); glow(kg, 0.15, 0, 0, '#ffcf3f', 1.0, 0.5); kg.position.set(0, -20, 0); }
+  // the forgotten old-wallet safe in the back-left corner (beat 10)
+  { const sf = new THREE.Group(); sf.position.set(-4.3, 0, -3.3); sf.rotation.y = 0.5; G.add(sf); mesh(rbox(0.9, 1.0, 0.8, 0.04), '#3a404c', 0, 0.5, 0, sf, 4.5); mesh(rbox(0.94, 0.08, 0.84, 0.02), '#2a2e38', 0, 0.04, 0, sf, 3); const dh = new THREE.Group(); dh.position.set(-0.45, 0.5, 0.41); sf.add(dh); mesh(rbox(0.88, 0.95, 0.06, 0.03), '#4c5361', 0.44, 0, 0, dh, 4); for (const hy2 of [-0.3, 0.3]) mesh(rbox(0.06, 0.12, 0.06, 0.01), '#c9ccd6', 0.02, hy2, 0.03, dh, 2); mesh(cyl(0.12, 0.12, 0.05, 16).rotateX(Math.PI / 2), '#c9ccd6', 0.44, 0.05, 0.05, dh, 2);
+    const t = canvasTex(256, 64, (x, w, hh) => { x.fillStyle = '#f4efe4'; x.fillRect(0, 0, w, hh); x.fillStyle = '#14121a'; x.font = '900 30px Poppins'; x.textAlign = 'center'; x.fillText('OLD WALLET', w / 2, 44); }); const lb = plane(dh, 0.55, 0.14, basic('#ffffff', { map: t }), 0.44, 0.3, 0.035); lb.userData.noOutline = true;
+    const ins = mesh(cyl(0.3, 0.3, 0.35, 18), toon('#ffcf3f', { emissive: '#b08410', emissiveIntensity: 0.7, roughness: 0.4, metalness: 0.3 }), 0, 0.45, 0.05, sf, 2); { const it = canvasTex(256, 256, (x, w, hh) => { x.fillStyle = '#1c1610'; x.fillRect(0, 0, w, hh); x.fillStyle = '#5a4a30'; x.fillRect(14, 120, w - 28, 8); for (let r2 = 0; r2 < 2; r2++) for (let k = 0; k < 4; k++) { const bx = 26 + k * 52 + (r2 % 2) * 20, by = 70 + r2 * 120; x.fillStyle = '#ffcf3f'; x.beginPath(); x.moveTo(bx, by + 40); x.lineTo(bx + 8, by); x.lineTo(bx + 42, by); x.lineTo(bx + 50, by + 40); x.closePath(); x.fill(); x.strokeStyle = '#a87a12'; x.lineWidth = 3; x.stroke(); x.fillStyle = '#fff2b0'; x.fillRect(bx + 12, by + 6, 20, 5); } }); const ip = plane(sf, 0.76, 0.84, basic('#ffffff', { map: it }), 0, 0.5, 0.402); ip.userData.noOutline = true; }
+    G.userData.safeDoor = dh; G.userData.safeGlow = glow(sf, 0, 0.6, 0.6, '#ffcf3f', 1.3, 0); for (let k = 0; k < 6; k++) mesh(rbox(0.7, 0.01, 0.7), '#8a8270', 0, 1.005 + k * 0.004, 0, sf, 0);
+    G.userData.dust = Array.from({ length: 20 }, (_, i) => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: '#e8dcc0', transparent: true, opacity: 0, depthWrite: false })); s.scale.setScalar(0.12); s.userData = { noOutline: true, k: i }; sf.add(s); return s; }); }
+  // plants, water cooler, whiteboard, boxes
+  for (const [px, pz] of [[-4.5, 3.5], [4.5, 3.5]]) { mesh(cyl(0.25, 0.2, 0.45, 12), '#e8e2d6', px, 0.23, pz, G, 3); for (let k = 0; k < 6; k++) { const lf = mesh(new THREE.ConeGeometry(0.12, 0.9, 6), '#3f8a46', px + Math.cos(k) * 0.12, 0.8, pz + Math.sin(k) * 0.12, G, 2.5); lf.rotation.set(Math.sin(k) * 0.4, 0, Math.cos(k) * 0.4); } }
+  mesh(rbox(0.35, 1.0, 0.35), '#e8eef8', 1.8, 0.5, -3.6, G, 3.5); mesh(cyl(0.16, 0.16, 0.45, 14), toon('#7fc8ff', { transparent: true, opacity: 0.8 }), 1.8, 1.24, -3.6, G, 3);
+  { const t = canvasTex(512, 320, (x, w, hh) => { x.fillStyle = '#f8f8f4'; x.fillRect(0, 0, w, hh); x.strokeStyle = '#2f6fe0'; x.lineWidth = 6; x.beginPath(); x.moveTo(40, 260); for (let i = 0; i < 10; i++) x.lineTo(40 + i * 45, 260 - i * i * 2.2); x.stroke(); x.fillStyle = '#d7263d'; x.font = '900 40px Poppins'; x.fillText('TO THE MOON?', 40, 60); });
+    const p = plane(G, 1.6, 1.0, toon('#ffffff', { map: t }), x0 + 0.02, 1.7, 1.2, 0, Math.PI / 2); p.userData.noOutline = true; mesh(rbox(0.04, 1.06, 1.66), '#9a9aa4', x0 + 0.01, 1.7, 1.2, G, 3); }
+  for (let k = 0; k < 3; k++) mesh(rbox(0.5, 0.35, 0.4, 0.02), '#c9a46a', -4.5 + k * 0.1, 0.18 + k * 0.35, 2.4, G, 3);
+}
+const OCARD = { karp: makeCard(OFFICE, 'karpeles', 1.72), karpSuit: makeCard(OFFICE, 'karpelesSuit', 1.72), staffA: makeCard(OFFICE, 'staffA'), staffB: makeCard(OFFICE, 'staffB'), thief: makeCard(OFFICE, 'thief', 1.75), cust: makeCard(OFFICE, 'cowork1') };
+
+// =====================================================================================================
+// PRESS: the bankruptcy press conference. Backdrop, table with microphones, rows of reporters with flashes.
+// =====================================================================================================
+{ const G = PRESS, x0 = -4.5, x1 = 4.5, z0 = -3.2, z1 = 4.5, h = 3.6;
+  const wallM = toon('#ffffff', { map: darkWallTex });
+  shell(G, { x0, x1, z0, z1, h, wall: wallM, floor: toon('#ffffff', { map: carpetTex }), ceil: '#1a1d2e' });
+  { const t = canvasTex(1024, 384, (x, w, hh) => { x.fillStyle = '#e8ecf4'; x.fillRect(0, 0, w, hh); x.fillStyle = '#1d2a4a'; x.fillRect(0, 0, w, 90); x.fillStyle = '#ffffff'; x.font = '900 56px Poppins'; x.textAlign = 'center'; x.fillText('PRESS CONFERENCE', w / 2, 66); x.fillStyle = '#1d2a4a'; x.font = '900 120px Poppins'; x.fillText('MTGOX', w / 2, 240); x.font = '700 44px Poppins'; x.fillText('TOKYO · FEBRUARY 2014', w / 2, 320); });
+    const p = plane(G, 6, 2.25, toon('#ffffff', { map: t }), 0, 2.2, z0 + 0.02); p.userData.noOutline = true; }
+  const tab = new THREE.Group(); tab.position.set(0, 0, -1.7); G.add(tab); mesh(rbox(4.0, 0.06, 0.9, 0.02), '#f4f4f0', 0, 0.76, 0, tab, 4.5); mesh(rbox(4.0, 0.72, 0.04), '#f4f4f0', 0, 0.38, 0.44, tab, 3.5);
+  mesh(rbox(4.02, 0.12, 0.05), '#1d2a4a', 0, 0.6, 0.46, tab, 0);
+  for (let i = 0; i < 9; i++) { const mx = -0.9 + i * 0.22 + (i % 2) * 0.03, mg = new THREE.Group(); mg.position.set(mx, 0.79, 0.25 - (i % 3) * 0.06); mg.rotation.x = -0.35 - (i % 3) * 0.1; tab.add(mg); mesh(cyl(0.012, 0.012, 0.2, 6), '#2a2a30', 0, 0.1, 0, mg, 1.5); mesh(sph(0.035, 10), ['#d7263d', '#2f6fe0', '#14121a', '#ffcf3f'][i % 4], 0, 0.21, 0, mg, 2); mesh(rbox(0.06, 0.05, 0.06), ['#ffffff', '#ffcf3f', '#3fae5a'][i % 3], 0, 0.15, 0, mg, 1.5); }
+  for (const nx of [-1.2, 0.3]) { mesh(rbox(0.4, 0.12, 0.06), '#ffffff', nx, 0.85, 0.32, tab, 2); }
+  for (const [px] of [[-1.2], [0.3]]) mesh(cyl(0.035, 0.03, 0.12, 10), toon('#cfe8ff', { transparent: true, opacity: 0.7 }), px + 0.35, 0.85, 0.1, tab, 1.5);
+  G.add(new THREE.HemisphereLight('#a8b0e0', '#2a2030', 0.75));
+  const key = new THREE.DirectionalLight('#fff2dc', 1.5); key.position.set(-3, 6, 6); key.target.position.set(0, 1, -2); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6, near: 1, far: 20 }); key.shadow.bias = -0.0004; G.add(key, key.target);
+  const flashL = new THREE.PointLight('#ffffff', 0, 9, 1.2); flashL.position.set(0, 2.2, 1.5); G.add(flashL); G.userData.flashL = flashL;
+  // reporters' cameras with flash heads; tripods at the back
+  G.userData.flashes = []; G.userData.reporterSpots = [];
+  for (let row = 0; row < 3; row++) for (let i = 0; i < 6; i++) { const x = -3.0 + i * 1.2 + (row % 2) * 0.55, z = 0.9 + row * 1.15; G.userData.reporterSpots.push(V(x, 0, z)); }
+  for (const tx of [-3.6, 3.6]) { const tp = new THREE.Group(); tp.position.set(tx, 0, 3.9); G.add(tp); for (let k = 0; k < 3; k++) { const l = mesh(cyl(0.015, 0.015, 1.6, 5), '#2a2a30', Math.cos(k * 2.1) * 0.2, 0.78, Math.sin(k * 2.1) * 0.2, tp, 1.5); l.rotation.set(Math.sin(k * 2.1) * 0.25, 0, -Math.cos(k * 2.1) * 0.25); } mesh(rbox(0.45, 0.3, 0.3, 0.03), '#1d1a26', 0, 1.7, 0, tp, 3); mesh(cyl(0.1, 0.12, 0.3, 12).rotateX(Math.PI / 2), '#14121a', 0, 1.7, -0.28, tp, 2.5); mesh(sph(0.03, 8), basic('#ff2a3a'), 0.15, 1.82, -0.15, tp, 0); }
+  for (let i = 0; i < 12; i++) G.userData.flashes.push(glow(G, 0, -9, 0, '#ffffff', 1.4, 0));
+}
+const REPK = ['rep1', 'rep2', 'rep3', 'staffA', 'kolin', 'rep2', 'rep1', 'rep3', 'staffB', 'rep1', 'rep3', 'rep2', 'analyst', 'rep1', 'rep2', 'rep3', 'rep1', 'staffA'];
+const PCARD = { karp: makeCard(PRESS, 'karpelesSuit', 1.72), lawyer: makeCard(PRESS, 'staffA', 1.72), reps: PRESS.userData.reporterSpots.map((p, i) => { const c = makeCard(PRESS, REPK[i], 1.62 + (i % 3) * 0.05); c.face = V(0, 0, -1); return c; }) };
+
+// =====================================================================================================
+// CARDS: Jed's room, 2007-2010. Desk against the back wall with a chunky monitor (the card-trading site,
+// then bitcoin), trading cards everywhere, a fantasy poster (our own dragon), card boxes, a window.
+// =====================================================================================================
+{ const G = CARDS, x0 = -3, x1 = 3, z0 = -2.6, z1 = 3.2, h = 2.9;
+  const wallM = toon('#ffffff', { map: canvasTex(512, 512, (x, w, hh) => { x.fillStyle = '#5a6a8a'; x.fillRect(0, 0, w, hh); const r = rng(9); for (let i = 0; i < 1500; i++) { x.fillStyle = `rgba(0,0,0,${r() * 0.06})`; x.fillRect(r() * w, r() * hh, 2, 2); } }, true) });
+  shell(G, { x0, x1, z0, z1, h, wall: wallM, floor: toon('#ffffff', { map: plankTex }), ceil: '#2a2e48', skip: ['right'] });
+  wallWithHoleZ(G, wallM, z0, z1, x1, h, -1.2, 0.8, 0.9, 2.3, -Math.PI / 2);
+  { const t = canvasTex(1024, 768, (x, w, hh) => { const g = x.createLinearGradient(0, 0, 0, hh); g.addColorStop(0, '#0d1a3a'); g.addColorStop(1, '#3a4a7a'); x.fillStyle = g; x.fillRect(0, 0, w, hh); const r = rng(4); for (let i = 0; i < 80; i++) { x.fillStyle = `rgba(255,255,255,${r()})`; x.fillRect(r() * w, r() * hh * 0.5, 2, 2); }
+      for (let i = 0; i < 7; i++) { const bx = i * 150 + r() * 30; x.fillStyle = '#1a2440'; x.beginPath(); x.moveTo(bx, hh); x.lineTo(bx, hh - 200); x.lineTo(bx + 60, hh - 260); x.lineTo(bx + 120, hh - 200); x.lineTo(bx + 120, hh); x.fill(); x.fillStyle = '#ffcf7a'; x.fillRect(bx + 44, hh - 150, 30, 34); }
+      x.fillStyle = '#fffbe8'; x.beginPath(); x.arc(w * 0.3, 140, 40, 0, 7); x.fill(); });
+    const p = plane(G, 9, 6.6, basic('#ffffff', { map: t }), x1 + 3.2, 1.6, -0.2, 0, -Math.PI / 2); p.userData.noOutline = true; }
+  for (const dz of [-1.24, 0.84]) mesh(rbox(0.08, 1.56, 0.08), '#e8e2d6', x1 - 0.03, 1.6, dz, G, 3); mesh(rbox(0.08, 0.08, 2.16), '#e8e2d6', x1 - 0.03, 2.34, -0.2, G, 3); mesh(rbox(0.25, 0.06, 2.3), '#e8e2d6', x1 - 0.1, 0.87, -0.2, G, 3);
+  G.add(new THREE.HemisphereLight('#8a9adf', '#3a2a30', 0.9));
+  const lamp = new THREE.PointLight('#ffd08a', 7, 6, 1.4); lamp.position.set(-1.4, 1.6, -1.8); G.add(lamp);
+  const moon = new THREE.DirectionalLight('#9fb4ff', 1.2); moon.position.set(8, 4, 0); moon.target.position.set(0, 0, 0); moon.castShadow = true; moon.shadow.mapSize.set(1536, 1536); Object.assign(moon.shadow.camera, { left: -5, right: 5, top: 5, bottom: -5, near: 1, far: 20 }); moon.shadow.bias = -0.0004; G.add(moon, moon.target);
+  const mglow = new THREE.PointLight('#9fe0ff', 4, 4, 1.5); mglow.position.set(0, 1.4, -1.6); G.add(mglow);
+  const dk = new THREE.Group(); dk.position.set(0, 0, -2.1); G.add(dk); mesh(rbox(2.4, 0.07, 0.9, 0.02), '#7a5a3a', 0, 0.76, 0, dk, 5); for (const s of [-1, 1]) mesh(rbox(0.07, 0.74, 0.8), '#5a3a22', s * 1.12, 0.37, 0, dk, 4);
+  // chunky 2007 monitor facing +z
+  mesh(rbox(0.75, 0.6, 0.5, 0.04), '#d9d4c4', 0, 1.15, -0.1, dk, 4); mesh(rbox(0.3, 0.06, 0.25), '#d9d4c4', 0, 0.82, -0.05, dk, 3); screenMesh(dk, 'site', 640, 480, 0.62, 0.47, 0, 1.15, 0.16, 0, false);
+  mesh(rbox(0.5, 0.025, 0.16, 0.01), '#d9d4c4', 0, 0.8, 0.3, dk, 3);
+  // trading cards: our own fantasy card designs
+  const cardTex = (seed) => canvasTex(128, 176, (x, w, hh) => { const r = rng(seed); const col = ['#d7263d', '#2f6fe0', '#3fae5a', '#14121a', '#f2f2ee'][seed % 5]; x.fillStyle = '#1a1418'; x.fillRect(0, 0, w, hh); x.fillStyle = col; x.fillRect(6, 6, w - 12, hh - 12); x.fillStyle = '#f4efe4'; x.fillRect(12, 12, w - 24, 18); x.fillStyle = `hsl(${r() * 360},60%,55%)`; x.fillRect(12, 34, w - 24, 70); x.fillStyle = '#ffffff'; x.beginPath(); x.arc(w / 2, 69, 22, 0, 7); x.fill(); x.fillStyle = col; x.beginPath(); for (let k = 0; k < 5; k++) { const a = k / 5 * 6.283 - 1.57; x.lineTo(w / 2 + Math.cos(a) * 16, 69 + Math.sin(a) * 16); } x.fill(); x.fillStyle = '#f4efe4'; x.fillRect(12, 110, w - 24, 52); });
+  const cTex = [0, 1, 2, 3, 4, 5, 6, 7].map(cardTex);
+  G.userData.tcards = []; { const r = rng(12); for (let i = 0; i < 16; i++) { const m = mesh(rbox(0.13, 0.004, 0.18, 0.004), toon('#ffffff', { map: cTex[i % 8] }), -1.0 + r() * 0.75 + (i > 8 ? 1.25 : 0), 0.802 + i * 0.0008, 0.05 + r() * 0.3, dk, i % 3 ? 0 : 1.5); m.rotation.y = (r() - 0.5) * 1.2; G.userData.tcards.push(m); } }
+  for (let k = 0; k < 4; k++) mesh(rbox(0.12, 0.17, 0.09, 0.01), ['#d7263d', '#2f6fe0', '#3fae5a', '#ffcf3f'][k], 0.7 + k * 0.14, 0.88, -0.25, dk, 2);
+  // the bitcoin that appears on the desk in 2010
+  const btc = coin(dk, 1.6); btc.rotation.x = Math.PI / 2; G.userData.btc = btc;
+  // poster + shelves + bed
+  { const t = canvasTex(384, 512, (x, w, hh) => { x.fillStyle = '#1a0c22'; x.fillRect(0, 0, w, hh); x.fillStyle = '#d7263d'; x.beginPath(); x.moveTo(60, 380); x.quadraticCurveTo(140, 120, 200, 200); x.quadraticCurveTo(250, 90, 330, 140); x.quadraticCurveTo(270, 200, 300, 300); x.quadraticCurveTo(200, 260, 160, 380); x.closePath(); x.fill(); x.fillStyle = '#ffcf3f'; x.beginPath(); x.arc(215, 190, 9, 0, 7); x.fill(); x.fillStyle = '#ffffff'; x.font = '900 52px Poppins'; x.textAlign = 'center'; x.fillText('DRAGON', w / 2, 440); x.fillStyle = '#ffcf3f'; x.font = '900 34px Poppins'; x.fillText('LORE', w / 2, 482); });
+    plane(G, 0.75, 1.0, toon('#ffffff', { map: t }), -1.8, 1.75, z0 + 0.01).userData.noOutline = true; }
+  for (const sy of [1.2, 1.7]) { mesh(rbox(1.0, 0.04, 0.25), '#5a3a22', 1.85, sy, z0 + 0.13, G, 3); for (let i = 0; i < 6; i++) mesh(rbox(0.1, 0.3, 0.22), ['#d7263d', '#2f6fe0', '#ffcf3f', '#3fae5a', '#c58aff', '#ff7a14'][(i + sy * 3) % 6 | 0], 1.45 + i * 0.14, sy + 0.17, z0 + 0.14, G, 2); }
+  mesh(rbox(1.4, 0.45, 2.0, 0.06), '#3a2a4a', -2.2, 0.22, 1.8, G, 4); mesh(rbox(1.35, 0.12, 1.9, 0.05), '#d9d4e8', -2.2, 0.5, 1.8, G, 3);
+  mesh(rbox(1.6, 0.02, 1.2, 0.01), '#6a2a3a', 0, 0.012, -0.7, G, 0);
+  G.userData.chair = chair(G, -0.85, -1.45, Math.PI, '#3a3a44');
+}
+const CCARD = { jed: makeCard(CARDS, 'mccaleb', 1.72) };
+
+// =====================================================================================================
+// CHAIN: the blockchain as a road of glowing glass blocks through the dark. Coins ride along it to the
+// BTC-e gate. Amateur detectives with a magnifier on a ledge; the two Russians at a console (beat 13).
+// =====================================================================================================
+{ const G = CHAIN;
+  skyDome(G, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#05030c'); g.addColorStop(0.45, '#120a26'); g.addColorStop(0.5, '#2a1a3a'); g.addColorStop(0.56, '#0a0814'); g.addColorStop(1, '#05030c'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    const r = rng(61); for (let i = 0; i < 500; i++) { x.fillStyle = `rgba(${r() < 0.5 ? '255,200,90' : '120,220,255'},${r() * 0.55})`; x.font = `${8 + r() * 10}px monospace`; x.fillText(r() < 0.5 ? '1' : '0', r() * w, r() * h * 0.5); } }, 90);
+  { const t = gridTex.clone(); t.needsUpdate = true; t.repeat.set(12, 20); plane(G, 48, 80, toon('#ffffff', { map: t }), 0, 0, -14, -Math.PI / 2); }
+  G.add(new THREE.HemisphereLight('#6a5aff', '#200a30', 1.1));
+  const key = new THREE.DirectionalLight('#ffd08a', 1.4); key.position.set(6, 10, 8); key.target.position.set(0, 0, -10); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); Object.assign(key.shadow.camera, { left: -20, right: 20, top: 30, bottom: -30, near: 1, far: 60 }); key.shadow.bias = -0.0005; G.add(key, key.target);
+  for (const [px, pz, c] of [[-3, 2, '#ffcf3f'], [3, -8, '#3ff0ff'], [-3, -18, '#ffcf3f'], [0, -30, '#ff3b4a']]) { const p = new THREE.PointLight(c, 8, 12, 1.4); p.position.set(px, 3, pz); G.add(p); }
+  // chain of blocks along a gentle S-curve
+  const curve = new THREE.CatmullRomCurve3([V(0, 1.3, 8), V(-1.2, 1.3, 2), V(1.0, 1.3, -5), V(-0.8, 1.3, -12), V(0.8, 1.3, -19), V(0, 1.3, -26)]); G.userData.curve = curve;
+  const blkTex = (n) => canvasTex(256, 256, (x, w, h) => { x.fillStyle = 'rgba(20,16,40,1)'; x.fillRect(0, 0, w, h); x.strokeStyle = '#ffcf3f'; x.lineWidth = 10; x.strokeRect(8, 8, w - 16, h - 16); x.fillStyle = '#ffcf3f'; x.font = '900 34px Poppins'; x.textAlign = 'center'; x.fillText('BLOCK', w / 2, 64); x.font = '900 40px monospace'; x.fillText('#' + (157000 + n * 1311), w / 2, 112); const r = rng(n + 3); x.font = '700 20px monospace'; x.fillStyle = '#9fe0ff'; for (let k = 0; k < 5; k++) { let s = ''; for (let j = 0; j < 14; j++) s += '0123456789abcdef'[Math.floor(r() * 16)]; x.fillText(s, w / 2, 150 + k * 22); } });
+  const blocks = []; for (let i = 0; i < 14; i++) { const u = i / 13, p = curve.getPoint(u), tg = curve.getTangent(u); const g = new THREE.Group(); g.position.copy(p); g.rotation.y = Math.atan2(tg.x, tg.z); G.add(g);
+    const m = mesh(rbox(1.1, 1.1, 1.1, 0.06), toon('#ffffff', { map: blkTex(i), emissive: '#2a2050', emissiveIntensity: 0.3 }), 0, 0, 0, g, 4); glow(g, 0, 0, 0, '#ffcf3f', 2.2, 0.18); mesh(cyl(0.05, 0.08, 1.3, 8), '#2a2540', 0, -0.7, 0, g, 3); blocks.push(g);
+    if (i < 13) { const q = curve.getPoint(u + 0.5 / 13); const l = mesh(new THREE.TorusGeometry(0.2, 0.06, 8, 16), toon('#c9ccd6'), q.x, q.y, q.z, G, 2.5); l.rotation.y = Math.atan2(tg.x, tg.z) + Math.PI / 2; } }
+  G.userData.blocks = blocks;
+  G.userData.coins = Array.from({ length: 18 }, () => { const c = coin(G, 2.2); return c; });
+  // the BTC-e gate at the end
+  const gate = new THREE.Group(); gate.position.set(0, 0, -29); G.add(gate); for (const s of [-1, 1]) mesh(rbox(0.6, 5, 0.6, 0.05), '#1d1a26', s * 3, 2.5, 0, gate, 5); mesh(rbox(6.8, 0.6, 0.6, 0.05), '#1d1a26', 0, 5.1, 0, gate, 5);
+  G.userData.gateSign = neonSign(gate, 'BTC-e', '#ff3b4a', 0, 4.4, 0.35, 0, 1.0); const inner = new THREE.Mesh(new THREE.PlaneGeometry(5.4, 4.6), basic('#3a0a14', { transparent: true, opacity: 0.85 })); inner.position.set(0, 2.3, -0.1); inner.userData.noOutline = true; gate.add(inner); glow(gate, 0, 2.3, 0.4, '#ff3b4a', 7, 0.3);
+  // detectives' ledge near the start, with a big magnifying glass
+  const ledge = new THREE.Group(); ledge.position.set(-3.2, 0, 3); G.add(ledge); mesh(rbox(2.6, 0.5, 1.6, 0.06), '#241f30', 0, 0.25, 0, ledge, 4.5); G.userData.ledge = ledge;
+  const mag = new THREE.Group(); G.add(mag); mesh(new THREE.TorusGeometry(0.42, 0.06, 10, 28), '#c9932a', 0, 0, 0, mag, 3); const lens = new THREE.Mesh(new THREE.CircleGeometry(0.4, 28), new THREE.MeshBasicMaterial({ color: '#cfefff', transparent: true, opacity: 0.25, side: THREE.DoubleSide, depthWrite: false })); lens.userData.noOutline = true; mag.add(lens); mesh(rbox(0.1, 0.7, 0.1, 0.03), '#5a3a22', 0.38, -0.62, 0, mag, 3).rotation.z = 0.6; G.userData.mag = mag;
+  // console for the two Russians, near the gate
+  const con = new THREE.Group(); con.position.set(3.6, 0, -24); con.rotation.y = -0.4; G.add(con); mesh(rbox(1.8, 0.9, 0.8, 0.05), '#241f30', 0, 0.45, 0, con, 4.5); for (const s of [-1, 1]) { mesh(rbox(0.6, 0.4, 0.04), '#14121a', s * 0.45, 1.25, -0.3, con, 2.5); mesh(new THREE.PlaneGeometry(0.54, 0.34), basic('#ff3b4a'), s * 0.45, 1.25, -0.275, con, 0); } glow(con, 0, 1.2, 0.2, '#ff3b4a', 2, 0.3);
+  // wallet nodes branching off the chain near the end
+  G.userData.nodes = []; for (let i = 0; i < 7; i++) { const p = curve.getPoint(0.72 + i * 0.035); const nd = mesh(sph(0.28, 14), toon('#ff3b4a', { emissive: '#ff3b4a', emissiveIntensity: 0.4 }), p.x + (i % 2 ? 2.4 : -2.4), 0.8 + (i % 3) * 0.6, p.z, G, 2.5); G.userData.nodes.push(nd); const a = p.clone(), b = nd.position.clone(); mesh(new THREE.TubeGeometry(new THREE.LineCurve3(a, b), 2, 0.03, 4), basic('#ff3b4a'), 0, 0, 0, G, 0); }
+}
+const KCARD = { det1: makeCard(CHAIN, 'cowork2', 1.68), det2: makeCard(CHAIN, 'analyst', 1.72), vin: makeCard(CHAIN, 'vinnik', 1.74), ru1: makeCard(CHAIN, 'hoodA', 1.7), ru2: makeCard(CHAIN, 'hoodC', 1.7) };
+
+// =====================================================================================================
+// BEACH: a village beach in northern Greece, summer. Sea at +z, sand, white houses with blue doors,
+// umbrellas + loungers, a coast road behind with the police car. A plane for 2025 (beat 14).
+// =====================================================================================================
+{ const G = BEACH;
+  skyDome(G, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#2a6ac9'); g.addColorStop(0.45, '#7ab8f0'); g.addColorStop(0.52, '#dff0ff'); g.addColorStop(0.56, '#5a9ad0'); g.addColorStop(1, '#2a5a90'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    const r = rng(41); x.fillStyle = 'rgba(255,255,255,.85)'; for (let i = 0; i < 12; i++) { const cx = r() * w, cy = h * (0.3 + r() * 0.15); for (let k = 0; k < 4; k++) { x.beginPath(); x.ellipse(cx + k * 22, cy + (k % 2) * 6, 40, 16, 0, 0, 7); x.fill(); } }
+    x.fillStyle = '#6a8a70'; x.beginPath(); x.moveTo(0, h * 0.555); for (let u = 0; u <= w; u += 40) x.lineTo(u, h * 0.555 - 30 - Math.sin(u * 0.01) * 25 - r() * 10); x.lineTo(w, h * 0.555); x.fill(); });
+  G.add(new THREE.HemisphereLight('#cfe6ff', '#c9a46a', 1.2));
+  const sun = new THREE.DirectionalLight('#fff2d0', 3.0); sun.position.set(-10, 14, 8); sun.target.position.set(0, 0, -2); sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -16, right: 16, top: 16, bottom: -16, near: 1, far: 60 }); sun.shadow.bias = -0.0004; sun.shadow.normalBias = 0.03; G.add(sun, sun.target);
+  { const t = sandTex.clone(); t.needsUpdate = true; t.repeat.set(16, 6); plane(G, 60, 16, toon('#ffffff', { map: t }), 0, 0, -2, -Math.PI / 2); }
+  const seaTex = canvasTex(512, 512, (x, w, h) => { x.fillStyle = '#2aa6c9'; x.fillRect(0, 0, w, h); x.strokeStyle = 'rgba(255,255,255,.35)'; x.lineWidth = 4; for (let j = 0; j < 10; j++) { x.beginPath(); for (let u = 0; u <= w; u += 16) x.lineTo(u, j * 52 + Math.sin(u * 0.05 + j) * 8); x.stroke(); } }, true);
+  seaTex.repeat.set(10, 4); const sea = plane(G, 80, 40, toon('#ffffff', { map: seaTex }), 0, 0.02, 26, -Math.PI / 2); G.userData.seaTex = seaTex;
+  const foam = plane(G, 60, 0.5, basic('#f4fbff', { transparent: true, opacity: 0.8 }), 0, 0.03, 6.2, -Math.PI / 2); foam.userData.noOutline = true; G.userData.foam = foam;
+  // coast road behind + white houses with blue doors and a blue dome
+  { const t = roadTex.clone(); t.needsUpdate = true; t.repeat.set(8, 1); plane(G, 60, 3.4, toon('#ffffff', { map: t }), 0, 0.01, -10.6, -Math.PI / 2); }
+  const wallM = toon('#ffffff', { map: stuccoTex }); const r = rng(9);
+  for (let i = 0; i < 9; i++) { const hx = -20 + i * 5 + r() * 1.2, hw = 3 + r() * 1.4, hh = 2.6 + r() * 2.2, hz = -15 - r() * 2; mesh(rbox(hw, hh, 3, 0.05), wallM, hx, hh / 2, hz, G, 4.5); mesh(rbox(0.8, 1.7, 0.06), '#2f6fe0', hx + (r() - 0.5), 0.85, hz + 1.52, G, 2.5);
+    for (const s of [-1, 1]) mesh(rbox(0.6, 0.6, 0.06), '#2f6fe0', hx + s * hw * 0.3, hh * 0.7, hz + 1.52, G, 2);
+    if (i === 4) { mesh(new THREE.SphereGeometry(1.1, 18, 10, 0, Math.PI * 2, 0, Math.PI / 2), toon('#2f6fe0'), hx, hh, hz, G, 4); mesh(cyl(0.04, 0.04, 0.8, 6), '#e8e2d6', hx, hh + 1.5, hz, G, 2); }
+    if (i % 3 === 1) for (let k = 0; k < 5; k++) mesh(sph(0.3, 12), k % 2 ? '#d7268d' : LEAF2, hx - hw / 2 + 0.3 + k * 0.35, hh + 0.1, hz + 1.4, G, 2.5); }
+  // olive trees
+  for (const [tx, tz] of [[-9, -7], [8, -6.5], [14, -8]]) { mesh(cyl(0.15, 0.22, 2.2, 8), '#7a5a3a', tx, 1.1, tz, G, 3); for (let k = 0; k < 5; k++) mesh(sph(0.8, 14), k % 2 ? LEAF3 : LEAF1, tx + Math.cos(k * 1.3) * 0.8, 2.4 + (k % 2) * 0.4, tz + Math.sin(k * 1.3) * 0.6, G, 3); }
+  // umbrellas + loungers (loungers face the sea, +z; Vinnik's is the middle one)
+  const umbTex = canvasTex(256, 64, (x, w, h) => { for (let i = 0; i < 10; i++) { x.fillStyle = i % 2 ? '#ffffff' : '#2f6fe0'; x.fillRect(i * 25.6, 0, 25.6, h); } });
+  G.userData.loungers = [];
+  for (const [lx, lz] of [[-5.2, 0.5], [-1.0, 0.2], [3.4, 0.6], [7.6, 0.3]]) { const g = new THREE.Group(); g.position.set(lx, 0, lz); G.add(g); mesh(rbox(0.7, 0.1, 1.8), '#f4efe4', 0, 0.35, 0, g, 3); mesh(rbox(0.7, 0.6, 0.1), '#f4efe4', 0, 0.62, -0.85, g, 3).rotation.x = 0.5; for (const [a, b] of [[-0.3, -0.8], [0.3, -0.8], [-0.3, 0.8], [0.3, 0.8]]) mesh(cyl(0.03, 0.03, 0.35, 6), '#c9ccd6', a, 0.17, b, g, 2);
+    mesh(new THREE.ConeGeometry(1.5, 0.5, 10, 1, true), toon('#ffffff', { map: umbTex, side: THREE.DoubleSide }), 0.9, 2.4, -0.4, g, 3); mesh(cyl(0.04, 0.04, 2.4, 8), '#e8e2d6', 0.9, 1.2, -0.4, g, 2); mesh(rbox(0.9, 0.04, 0.5), '#d7263d', 0, 0.42, 0.3, g, 0); G.userData.loungers.push(g); }
+  mesh(rbox(0.5, 0.45, 0.5), '#f4efe4', -0.1, 0.22, 1.3, G, 3); mesh(cyl(0.04, 0.05, 0.2, 10), toon('#ffcf3f', { transparent: true, opacity: 0.85 }), -0.1, 0.55, 1.3, G, 2);
+  // Greek police car
+  const SEDAN = [[-2.2, 0.32], [2.2, 0.32], [2.28, 0.72], [1.25, 0.9], [0.55, 1.42], [-0.95, 1.44], [-1.65, 0.98], [-2.25, 0.92]];
+  const pc = profileCar(G, SEDAN, 4.4, 1.7, '#f4f6fb', { wheels: [[1.35, 0.82], [1.35, -0.82], [-1.35, 0.82], [-1.35, -0.82]], wr: 0.36 });
+  for (const s of [-1, 1]) { const st = new THREE.Mesh(new THREE.PlaneGeometry(4.0, 0.2), basic('#2f6fe0')); st.position.set(0, 0.62, s * 0.905); if (s < 0) st.rotation.y = Math.PI; st.userData.noOutline = true; pc.root.add(st);
+    const gs = new THREE.Shape(); gs.moveTo(0.5, 0.98); gs.lineTo(1.15, 0.94); gs.lineTo(0.5, 1.36); gs.lineTo(-0.85, 1.38); gs.lineTo(-1.45, 1.0); gs.closePath(); const gm = new THREE.Mesh(new THREE.ShapeGeometry(gs), basic('#2a3550')); gm.position.z = s * 0.9; if (s < 0) gm.rotation.y = Math.PI, gm.scale.x = -1; gm.userData.noOutline = true; pc.root.add(gm); }
+  mesh(rbox(0.9, 0.12, 0.3), '#1d1a26', -0.2, 1.5, 0, pc.root, 2.5); pc.lb = mesh(rbox(0.8, 0.1, 0.26), basic('#2a6aff'), -0.2, 1.58, 0, pc.root, 0); pc.light = glow(pc.root, -0.2, 1.7, 0, '#2a6aff', 2.2, 0.8); pc.root.position.set(0, -50, 0); G.userData.police = pc;
+  // airliner (beat 14)
+  { const pl = new THREE.Group(); G.add(pl); G.userData.plane = pl; mesh(new THREE.CapsuleGeometry(0.5, 5, 6, 12).rotateZ(Math.PI / 2), '#f4f6fb', 0, 0, 0, pl, 4); mesh(rbox(1.4, 0.08, 7, 0.03), '#e8eef8', 0.2, -0.1, 0, pl, 3.5); mesh(rbox(0.9, 0.06, 2.4, 0.03), '#e8eef8', -2.6, 0.1, 0, pl, 3); mesh(rbox(0.9, 1.3, 0.08, 0.03), '#d7263d', -2.7, 0.7, 0, pl, 3); for (let k = 0; k < 14; k++) for (const sz of [-1, 1]) mesh(sph(0.06, 8), basic('#2a3550'), 2.2 - k * 0.32, 0.18, sz * 0.475, pl, 0);
+    for (const sz of [-1, 1]) { mesh(rbox(5.2, 0.1, 0.02), basic('#2f6fe0'), 0, -0.05, sz * 0.5, pl, 0); mesh(cyl(0.22, 0.2, 0.9, 14).rotateZ(Math.PI / 2), '#d9dee8', 0.7, -0.42, sz * 1.5, pl, 3); mesh(cyl(0.16, 0.16, 0.05, 14).rotateZ(Math.PI / 2), '#2a3550', 1.16, -0.42, sz * 1.5, pl, 0);
+      mesh(rbox(0.28, 0.12, 0.02), basic('#2a3550'), 2.85, 0.2, sz * 0.36, pl, 0); }
+    pl.position.set(0, -50, 0); }
+  // gulls
+  G.userData.gulls = Array.from({ length: 5 }, (_, i) => { const g = new THREE.Group(); G.add(g); for (const s of [-1, 1]) { const w = mesh(rbox(0.5, 0.03, 0.14), '#ffffff', s * 0.24, 0, 0, g, 2); w.rotation.z = s * 0.4; } return g; });
+}
+const BCARD = { vin: makeCard(BEACH, 'vinnikShades', 1.74), cop1: makeCard(BEACH, 'greekCop'), cop2: makeCard(BEACH, 'greekCop'), b1: makeCard(BEACH, 'staffB'), b2: makeCard(BEACH, 'cowork2'), b3: makeCard(BEACH, 'rep3') };
+
+// =====================================================================================================
+// CELL: a bare Tokyo detention cell. Bunk along the back wall, high window, bars at the front.
+// =====================================================================================================
+{ const G = CELL, x0 = -1.8, x1 = 1.8, z0 = -1.8, z1 = 1.8, h = 3.0;
+  const wallM = toon('#ffffff', { map: concreteTex });
+  shell(G, { x0, x1, z0, z1, h, wall: wallM, floor: toon('#ffffff', { map: concreteTex }), ceil: '#3a3e48', skip: ['front', 'back'] });
+  wallWithHoleX(G, wallM, x0, x1, z0, h, 0.6, 1.3, 0, 0); // full back wall (no hole: zero-size)
+  { const t = canvasTex(256, 128, (x, w, hh) => { x.fillStyle = '#20305a'; x.fillRect(0, 0, w, hh); x.fillStyle = '#f4f8ff'; x.beginPath(); x.arc(170, 50, 18, 0, 7); x.fill(); }); const p = plane(G, 0.7, 0.45, basic('#ffffff', { map: t }), 0.95, 2.35, z0 + 0.01); p.userData.noOutline = true; for (let i = 0; i < 4; i++) mesh(cyl(0.02, 0.02, 0.45, 6), '#2a2a30', 0.7 + i * 0.16, 2.35, z0 + 0.03, G, 2); mesh(rbox(0.78, 0.04, 0.06), '#2a2a30', 0.95, 2.1, z0 + 0.03, G, 2); }
+  for (let i = 0; i < 12; i++) mesh(cyl(0.025, 0.025, h, 8), '#3a3e48', x0 + 0.15 + i * 0.3, h / 2, z1 - 0.05, G, 2.5);
+  for (const by of [0.1, 1.2, h - 0.1]) mesh(rbox(x1 - x0, 0.06, 0.06), '#3a3e48', 0, by, z1 - 0.05, G, 2.5);
+  // bunk along the back wall, its long side facing the camera
+  mesh(rbox(2.0, 0.08, 0.85), '#4a4e58', -0.4, 0.45, z0 + 0.5, G, 4); for (const [bx, bz] of [[-1.35, 0.12], [0.55, 0.12], [-1.35, 0.88], [0.55, 0.88]]) mesh(cyl(0.025, 0.025, 0.45, 6), '#3a3e48', bx, 0.22, z0 + bz, G, 2);
+  mesh(rbox(1.95, 0.12, 0.8, 0.05), '#8a8070', -0.4, 0.55, z0 + 0.5, G, 3.5); mesh(rbox(0.45, 0.1, 0.3, 0.05), '#e8e2d6', -1.15, 0.66, z0 + 0.45, G, 3); mesh(rbox(0.7, 0.1, 0.6, 0.05), '#6a7890', 0.2, 0.64, z0 + 0.5, G, 3);
+  mesh(rbox(0.3, 0.02, 0.25), '#c9ccd6', 1.2, 0.012, -0.6, G, 2); mesh(cyl(0.05, 0.045, 0.1, 10), '#c9ccd6', 1.25, 0.07, -0.6, G, 2);
+  G.add(new THREE.HemisphereLight('#5a6a9a', '#1a1520', 0.7));
+  const moon = new THREE.DirectionalLight('#9fc0ff', 1.8); moon.position.set(2, 7, -7); moon.target.position.set(0, 0, 0.3); moon.castShadow = true; moon.shadow.mapSize.set(1024, 1024); Object.assign(moon.shadow.camera, { left: -3, right: 3, top: 3, bottom: -3, near: 1, far: 20 }); moon.shadow.bias = -0.0005; G.add(moon, moon.target);
+  const bulb = new THREE.PointLight('#ffd8a0', 3, 5, 1.5); bulb.position.set(0, 2.8, 0); G.add(bulb); mesh(sph(0.08, 10), basic('#fff2c8'), 0, 2.9, 0, G, 0);
+  plane(G, 8, 4, toon('#2a2e38'), 0, 2, z1 + 1.2, 0, Math.PI); plane(G, 8, 3, toon('#3a3e48'), 0, 0.002, z1 + 0.6, -Math.PI / 2);
+}
+const ECARD = { karp: makeCard(CELL, 'karpeles', 1.72) };
+
+// =====================================================================================================
+// TIME: video t -> voice. Hook (the press conference + the empty vault), one 1 s rewind, then the story.
+// =====================================================================================================
+const TL = await (await fetch('./timeline.json')).json();
+const B = TL.beats.map(b => b.start), HOOK_END = B[1], RW = 1.0, VEND = TL.duration;
+const DUR = VEND + RW + 0.2;
+const vt = v => v + (v >= HOOK_END - 1e-6 ? RW : 0);
+const VB = i => vt(B[i]);
+function WT(i, word, n = 1) { let c = 0; for (const w of TL.beats[i].words) if (w.w.replace(/[^A-Za-z0-9'_]/g, '').toLowerCase() === word.toLowerCase() && ++c === n) return vt(w.s); console.log('[c] missing word', i, word); return VB(i); }
+const WORDS = TL.beats.flatMap((b, i) => b.words.map(w => ({ ...w, s: vt(w.s), e: vt(w.e), i })));
+const lerpV = (a, b, k) => a.clone().lerp(b, k);
+const blinkAt = (t, ph = 0) => ((t + ph) % 3.4) < 0.11;
+const inB = (t, i) => t >= VB(i) && t < (i + 1 < B.length ? VB(i + 1) : DUR);
+const inBs = (t, ...is) => is.some(i => inB(t, i));
+const HIDE = V(0, -60, 0);
+const hideCard = c => { c.on = false; c.pos.copy(HIDE); };
+const showCard = (c, p, pose) => { c.on = true; c.pos.copy(p); c.pose = pose; };
+const path = (pts, k) => { const n = pts.length - 1, f = clamp(k) * n, i = Math.min(n - 1, Math.floor(f)); return lerpV(pts[i], pts[i + 1], f - i); };
+const pathLen = pts => { let L = 0; for (let i = 1; i < pts.length; i++) L += pts[i].distanceTo(pts[i - 1]); return L; };
+// walk along pts at speed (m/s) from t0; returns {p, walking, dir}
+function walkAlong(pts, t0, t, speed = 1.4) { const L = pathLen(pts), d = clamp((t - t0) * speed, 0, L); let acc = 0; for (let i = 1; i < pts.length; i++) { const s = pts[i].distanceTo(pts[i - 1]); if (acc + s >= d || i === pts.length - 1) { const k = s ? clamp((d - acc) / s) : 1; return { p: lerpV(pts[i - 1], pts[i], k), walking: t > t0 && d < L - 1e-3, dir: pts[i].x - pts[i - 1].x }; } acc += s; } return { p: pts[pts.length - 1].clone(), walking: false, dir: 0 }; }
+
+// ---------- screens ----------
+const mono = (x, size, col) => { x.font = `700 ${size}px monospace`; x.fillStyle = col; };
+function scan(x, w, h) { x.fillStyle = 'rgba(255,255,255,.035)'; for (let y = 0; y < h; y += 4) x.fillRect(0, y, w, 1); }
+function priceAt(t) { // a fake-but-shaped BTC price walk for the dashboard (only the crash numbers are spoken)
+  return 17.5 + Math.sin(t * 1.3) * 0.4 + Math.sin(t * 3.1) * 0.15; }
+function drawDash(x, w, h, t, mode, k = 1) { // the Mt. Gox wall screen
+  x.fillStyle = '#0b1020'; x.fillRect(0, 0, w, h); x.fillStyle = '#2f6fe0'; x.fillRect(0, 0, w, 64); x.fillStyle = '#fff'; x.font = '900 36px Poppins'; x.textAlign = 'left'; x.fillText('MTGOX · BTC/USD', 24, 45);
+  if (mode === 'blank') { x.fillStyle = '#000'; x.fillRect(0, 0, w, h); return; }
+  if (mode === 'chart' || mode === 'boom' || mode === 'crash') { // price line
+    x.strokeStyle = 'rgba(255,255,255,.08)'; x.lineWidth = 2; for (let i = 1; i < 10; i++) { x.beginPath(); x.moveTo(40, 80 + i * 80); x.lineTo(w - 40, 80 + i * 70); x.stroke(); }
+    const N = 60; x.lineWidth = 7; x.strokeStyle = mode === 'crash' && k > 0.05 ? '#ff3b4a' : '#3ff07a'; x.beginPath();
+    for (let i = 0; i <= N; i++) { const u = i / N; let y; if (mode === 'boom') y = 0.85 - 0.7 * Math.pow(u, 2.2) * k - 0.04 * Math.sin(u * 20 + t * 2);
+      else if (mode === 'crash') { const c = u > 0.62 ? clamp((u - 0.62) / 0.12) * k : 0; y = 0.3 - 0.05 * Math.sin(u * 18 + t) + c * 0.62; } else y = 0.45 - 0.08 * Math.sin(u * 14 + t * 1.5) - 0.05 * Math.sin(u * 31);
+      x.lineTo(40 + u * (w - 80), 230 + y * (h - 330)); } x.stroke();
+    x.textAlign = 'right'; x.font = '900 84px Poppins'; let price = '$' + priceAt(t).toFixed(2); if (mode === 'crash' && k > 0.05) price = '$' + Math.max(0.01, 17.5 * (1 - k)).toFixed(2); if (mode === 'boom') price = '$' + (5 + 26 * k).toFixed(2);
+    x.fillStyle = mode === 'crash' && k > 0.05 ? '#ff3b4a' : '#3ff07a'; x.font = '900 110px Poppins'; x.fillText(price, w / 2 + 260, 200); x.textAlign = 'left';
+    if (mode === 'boom' && k > 0.6) { x.fillStyle = '#ffcf3f'; x.font = '900 46px Poppins'; x.fillText('#1 EXCHANGE IN THE WORLD', 60, h - 40); } }
+  if (mode === 'balances') { x.font = '800 40px Poppins'; x.fillStyle = '#cfd6e6'; x.fillText('CUSTOMER BALANCES', 40, 130); mono(x, 34, '#3ff07a'); const r = rng(5);
+    for (let i = 0; i < 14; i++) { const v = (r() * 900 + 10).toFixed(2); x.fillStyle = '#cfd6e6'; x.fillText('user_' + (1000 + Math.floor(r() * 8999)), 60, 190 + i * 44); x.fillStyle = '#3ff07a'; x.fillText(v + ' BTC   OK', 460, 190 + i * 44); } }
+  if (mode === 'frozen') { x.fillStyle = '#c8102e'; x.fillRect(0, 64, w, h - 64); x.fillStyle = '#fff'; x.textAlign = 'center'; x.font = '900 86px Poppins'; x.fillText('WITHDRAWALS', w / 2, 400); x.fillText('HALTED', w / 2, 510); x.font = '700 44px Poppins'; x.fillText('"transaction malleability"', w / 2, 620); x.textAlign = 'left'; }
+  if (mode === 'missing') { x.fillStyle = '#14121a'; x.fillRect(0, 64, w, h - 64); x.textAlign = 'center'; x.fillStyle = '#ff3b4a'; x.font = '900 120px Poppins'; x.fillText(Math.floor(850000 * k).toLocaleString('en-US'), w / 2, 450); x.font = '900 70px Poppins'; x.fillText('BTC MISSING', w / 2, 560); x.textAlign = 'left'; }
+  if (mode === 'found') { x.fillStyle = '#14121a'; x.fillRect(0, 64, w, h - 64); x.textAlign = 'center'; x.fillStyle = '#ffcf3f'; x.font = '900 110px Poppins'; x.fillText('+' + Math.floor(200000 * k).toLocaleString('en-US'), w / 2, 430); x.font = '900 58px Poppins'; x.fillText('FOUND IN AN', w / 2, 530); x.fillText('OLD WALLET', w / 2, 600); x.textAlign = 'left'; }
+  if (mode === 'billions') { x.fillStyle = '#14121a'; x.fillRect(0, 64, w, h - 64); x.textAlign = 'center'; x.fillStyle = '#ffcf3f'; x.font = '900 90px Poppins'; x.fillText('850,000 BTC', w / 2, 330); x.fillStyle = '#ffffff'; x.font = '800 54px Poppins'; x.fillText('TODAY:', w / 2, 460); x.fillStyle = '#3ff07a'; x.font = '900 90px Poppins'; x.fillText('TENS OF', w / 2, 580); x.fillText('$ BILLIONS', w / 2, 680); x.textAlign = 'left'; }
+  scan(x, w, h); }
+function drawTerm(x, w, h, t, mode, k = 0) { x.fillStyle = '#07060d'; x.fillRect(0, 0, w, h); mono(x, 26, '#3ff07a');
+  if (mode === 'login') { x.fillText('> ssh admin@mtgox', 20, 50); x.fillText('> password: ********', 20, 90); x.fillStyle = k > 0.5 ? '#ff3b4a' : '#3ff07a'; x.fillText(k > 0.5 ? '> ACCESS GRANTED: old admin' : '> ...', 20, 130); if (k > 0.7) { x.fillStyle = '#ffcf3f'; x.fillText('> SELL 2,000 BTC @ MARKET', 20, 190); x.fillText('> SELL 2,000 BTC @ MARKET', 20, 230); } }
+  else if (mode === 'copy') { x.fillText('> cp wallet.dat /tmp/', 20, 50); x.fillStyle = '#14121a'; x.fillRect(20, 150, w - 40, 60); x.fillStyle = '#ffcf3f'; x.fillRect(24, 154, (w - 48) * clamp(k), 52); mono(x, 26, '#fff'); x.fillText('copying wallet.dat  ' + Math.floor(clamp(k) * 100) + '%', 30, 260); if (k >= 1) { x.fillStyle = '#ff3b4a'; x.fillText('> done. nobody noticed.', 20, 320); } }
+  else { const r = rng(3), n = Math.floor(t * 8); for (let i = 0; i < 12; i++) { const rr = rng(100 + n - 11 + i); let s = ''; for (let j = 0; j < 8 + rr() * 22; j++) s += 'abcdef0123456789{}();=<>/_$'[Math.floor(rr() * 27)]; x.fillText(s, 20, 34 + i * 30); } }
+  scan(x, w, h); }
+function drawSite(x, w, h, t, mode, k = 1) { // Jed's monitor: the card site, then bitcoin
+  x.fillStyle = '#f4f1e8'; x.fillRect(0, 0, w, h); x.fillStyle = mode === 'btc' ? '#2f6fe0' : '#7a2a8a'; x.fillRect(0, 0, w, 70); x.fillStyle = '#fff'; x.font = '900 42px Poppins'; x.fillText('mtgox.com', 20, 50);
+  if (mode === 'cards') { const words = [['M', 'agic'], ['T', 'he'], ['G', 'athering'], ['O', 'nline'], ['X', ' eXchange']]; words.forEach(([a, b], i) => { const s = clamp(k * 5 - i); if (s <= 0) return; x.globalAlpha = s; x.fillStyle = '#d7263d'; x.font = '900 56px Poppins'; x.fillText(a, 70, 140 + i * 62); x.fillStyle = '#14121a'; x.font = '800 44px Poppins'; x.fillText(b, 70 + x.measureText(a).width + 50, 140 + i * 62); x.globalAlpha = 1; }); }
+  if (mode === 'shop') { for (let i = 0; i < 6; i++) { const cx = 24 + (i % 3) * 205, cy = 90 + Math.floor(i / 3) * 190; x.fillStyle = ['#d7263d', '#2f6fe0', '#3fae5a', '#14121a', '#ffcf3f', '#c58aff'][i]; x.fillRect(cx, cy, 90, 126); x.fillStyle = '#fff'; x.fillRect(cx + 8, cy + 8, 74, 44); x.fillStyle = '#14121a'; x.font = '700 24px Poppins'; x.fillText('$' + (2 + i * 3) + '.00', cx + 100, cy + 40); x.fillText('BUY', cx + 100, cy + 80); } }
+  if (mode === 'btc') { x.fillStyle = '#14121a'; x.font = '900 52px Poppins'; x.fillText('BUY BITCOIN', 40, 150); x.font = '700 36px Poppins'; x.fillText('1 BTC = $0.07', 40, 210); x.fillStyle = '#ffcf3f'; x.beginPath(); x.arc(w - 140, 300, 110 * (0.8 + 0.2 * k), 0, 7); x.fill(); x.fillStyle = '#c9932a'; x.font = '900 130px Poppins'; x.textAlign = 'center'; x.fillText('B', w - 140, 345); x.textAlign = 'left'; x.fillStyle = '#3fae5a'; x.fillRect(40, 300, 230, 80); x.fillStyle = '#fff'; x.font = '900 40px Poppins'; x.fillText('TRADE', 80, 355); }
+  scan(x, w, h); }
+
+// =====================================================================================================
+// WORLD STATES
+// =====================================================================================================
+function snowFall(U, t, on, box) { U.snow.forEach(s => { s.visible = on; if (!on) return; const u = s.userData, kk = (u.a + t * (0.1 + u.c * 0.08)) % 1; s.position.set(box[0] + u.b * (box[1] - box[0]) + Math.sin(t + u.a * 9) * 0.2, 6 - kk * 6, box[2] + u.c * (box[3] - box[2])); }); }
+function streetState(t) {
+  const U = STREET.userData; for (const k of Object.keys(SCARD)) hideCard(SCARD[k]);
+  snowFall(U, t, inBs(t, 8, 15), [-8, 8, -1, 9]);
+  // the sign + windows go dark when the site goes blank
+  const blank = t > WT(8, 'blank') - 0.15 && t < VB(16); U.goxSign.set(!blank || (t < WT(8, 'blank') + 0.5 && Math.sin(t * 50) > 0.3));
+  U.lobby.material.color.set(blank ? '#4a4a55' : '#ffffff');
+  const pc = U.police; pc.root.position.set(0, -50, 0); U.sign.position.set(0, -20, 0);
+  // beat 2-3: night passers-by
+  if (inBs(t, 2, 3, 16, 17)) { const a = ((t * 0.9) % 16) - 8; showCard(SCARD.walker1, V(a, 0, 0.0), { walk: t * 3, expr: 'neutral', blink: blinkAt(t) }); SCARD.walker1.spin = 0;
+    const b = 8 - ((t * 0.8 + 5) % 16); showCard(SCARD.walker2, V(b, 0, 6.9), { walk: t * 3 + 1, expr: 'happy', blink: blinkAt(t, 1) }); SCARD.walker2.spin = Math.PI; }
+  // beat 8: Kolin walks in with his sign and plants himself by the door
+  if (inB(t, 8)) { const w = walkAlong([V(-6, 0, 0.1), V(-1.6, 0, -0.2)], VB(8) - 0.6, t, 1.5); const sw = Math.sin(t * 2.2) * 0.04;
+    showCard(SCARD.kolin, w.p, { walk: w.walking ? t * 3.2 : 0, expr: t > WT(8, 'blank') ? 'shocked' : 'angry', armR: [2.4, 0.5], armL: [2.2, 0.7], blink: blinkAt(t) });
+    U.sign.position.set(w.p.x + 0.05, 0.7, w.p.z - 0.1); U.sign.rotation.z = sw; }
+  // beat 15: police lead Karpelès out to the car
+  if (inB(t, 15)) { pc.root.position.set(-1.6, 0, 2.3); pc.root.rotation.y = 0; const fl = Math.floor(t * 6) % 2; pc.light.material.opacity = fl ? 0.95 : 0.2; pc.lr.material.color.set(fl ? '#ff2a3a' : '#5a1018');
+    const t0 = WT(15, 'Tokyo') - 0.4, pts = [V(0.3, 0, -1.0), V(0.3, 0, 0.6), V(-0.6, 0, 1.25)];
+    const w = walkAlong(pts, t0, t, 1.0); showCard(SCARD.karp, w.p, { walk: w.walking ? t * 2.6 : 0, cuffed: true, expr: 'neutral', sweat: 0.6, blink: blinkAt(t) });
+    showCard(SCARD.cop1, w.p.clone().add(V(-0.7, 0, -0.1)), { walk: w.walking ? t * 2.6 + 0.5 : 0, expr: 'neutral', armR: [1.4, 0.4], blink: blinkAt(t, 1) });
+    showCard(SCARD.cop2, w.p.clone().add(V(0.75, 0, -0.15)), { walk: w.walking ? t * 2.6 + 1 : 0, expr: 'neutral', armL: [1.4, 0.4], blink: blinkAt(t, 2) }); }
+  // beat 16: a customer checks a phone; the coins finally arrive
+  if (inB(t, 16)) { showCard(SCARD.cust, V(2.2, 0, 0.0), { expr: t > WT(16, 'began') ? 'delighted' : 'annoyed', armR: [2.6, 0.9], armL: [1.0, 1.2], blink: blinkAt(t) }); if (t > WT(16, 'Some')) SCARD.cust.pose.expr = 'annoyed'; }
+}
+const DOOR_T = () => WT(2, 'programmer') - 0.9; // Karpelès enters the office
+function officeState(t) {
+  const U = OFFICE.userData; for (const k of Object.keys(OCARD)) hideCard(OCARD[k]);
+  U.leds.forEach(l => l.material.color.set(Math.sin(t * 7 + l.userData.ph * 3) > 0.2 ? (l.userData.ph % 2 > 1 ? '#3ff07a' : '#ffb03f') : '#1a2a1a'));
+  // vault fill level: full until the drain (beat 6), nearly empty after; empty in the hook
+  const d0 = WT(6, 'leaked') - 0.3, d1 = WT(6, 'empty') + 0.2; let lvl = t < HOOK_END + RW ? 0.04 : 1 - 0.95 * sstep(d0, d1, t); if (t >= VB(5) && t < d0) lvl = 1;
+  U.gold.scale.y = Math.max(0.02, lvl * 1.9); U.topCoins.position.y = 0.35 + Math.max(0.02, lvl * 1.9); U.topCoins.visible = lvl > 0.1; U.vaultL.intensity = 1 + 5 * lvl;
+  // leaking coins along the pipe (beat 5 end .. beat 6), plus the hook
+  const leaking = (t > WT(5, 'spend') && t < VB(7)) || t < HOOK_END + RW; const [L0, L1] = U.leakPath;
+  U.leak.forEach((c, i) => { if (!leaking) { c.position.set(0, -9, 0); return; } const k = ((t * 0.55 + i / U.leak.length) % 1); c.position.copy(lerpV(L0, L1, k)); c.position.y += Math.abs(Math.sin(k * 18)) * 0.05; c.rotation.set(Math.PI / 2, 0, t * 5 + i); c.visible = k < 0.97; });
+  // the door: opens for the entrance
+  const dt = DOOR_T(); U.door.rotation.y = -1.45 * (sstep(dt - 0.4, dt + 0.2, t) - sstep(dt + 1.6, dt + 2.4, t));
+  // Karpelès: enters (beat 2), sits at his desk (beats 3-7, 10), in a suit at the end
+  const seat = V(0.8, 0, 0.3);
+  if (t >= dt - 0.3 && t < VB(3)) { const pts = [V(-5.6, 0, -2.8), V(-4.4, 0, -2.8), V(-1.0, 0, -2.6), V(2.1, 0, -1.4), V(1.5, 0, 0.3)]; const w = walkAlong(pts, dt, t, 1.9);
+    if (w.walking || t < dt + 3.5) { const hop = sstep(dt + pathLen(pts) / 1.9, dt + pathLen(pts) / 1.9 + 0.45, t); const p = lerpV(w.p, seat, hop); p.y = Math.sin(hop * Math.PI) * 0.12;
+      showCard(OCARD.karp, p, { walk: w.walking ? t * 3.4 : 0, sit: hop > 0.6 ? 1 : 0, expr: 'happy', blink: blinkAt(t) }); OCARD.karp.spin = 0; }
+    else showCard(OCARD.karp, seat, { sit: 1, expr: 'happy', blink: blinkAt(t) }); }
+  if (inBs(t, 3, 4, 6, 7, 10)) { let expr = 'neutral', arms = [1.0, 1.4]; if (inB(t, 3)) expr = t > WT(3, 'booming') ? 'delighted' : 'smug'; if (inB(t, 4)) expr = t > WT(4, 'crashed') ? 'shocked' : 'neutral'; if (inB(t, 7)) expr = t > WT(7, 'froze') ? 'shocked' : 'annoyed'; if (inB(t, 10)) expr = 'shocked';
+    showCard(OCARD.karp, seat, { sit: 1, expr, armR: arms, armL: arms, sweat: inB(t, 7) ? 1 : 0, blink: blinkAt(t) }); }
+  // staff at their desks (always busy)
+  if (t >= HOOK_END + RW && !inB(t, 17)) { showCard(OCARD.staffA, V(-1.6, 0, 0.3), { sit: 1, expr: inB(t, 4) && t > WT(4, 'crashed') ? 'shocked' : inB(t, 7) ? 'annoyed' : 'neutral', armR: [1.0, 1.4 + Math.sin(t * 9) * 0.1], armL: [1.0, 1.4], blink: blinkAt(t, 1) });
+    if (!inB(t, 10)) showCard(OCARD.staffB, V(-3.4, 0, -1.1), { sit: 1, expr: inB(t, 4) && t > WT(4, 'crashed') ? 'shocked' : 'neutral', armR: [1.0, 1.4], armL: [1.0, 1.4 + Math.sin(t * 8) * 0.1], blink: blinkAt(t, 2) }); }
+  // beat 10: staffB walks to the old safe, opens it, gold glow
+  const sd = Math.max(VB(10) + 0.05, WT(10, 'found') - 1.7); let open = 0;
+  if (inB(t, 10)) { const pts = [V(-3.4, 0, -1.1), V(-2.95, 0, -1.7), V(-3.0, 0, -2.6), V(-3.45, 0, -3.25)]; const w = walkAlong(pts, sd, t, 1.6); showCard(OCARD.staffB, w.p, { walk: w.walking ? t * 3.4 : 0, expr: t > WT(10, 'found') ? 'delighted' : 'neutral', armL: t > sd + 1.55 ? [2.0, 0.6] : [0.3, 0.2], blink: blinkAt(t, 2) }); OCARD.staffB.spin = 0; open = sstep(sd + 1.6, sd + 2.2, t); }
+  if (t > VB(10) + 0.01 && t >= VB(10)) open = Math.max(open, 0); if (t > VB(11)) open = 1;
+  U.safeDoor.rotation.y = -1.6 * open; U.safeGlow.material.opacity = 0; U.dust.forEach((s, i) => { const k = clamp((t - (sd + 1.7)) / 2.5); s.material.opacity = inB(t, 10) ? 0.5 * Math.sin(k * Math.PI) : 0; s.position.set(Math.cos(i * 2.3) * (0.3 + k), 0.6 + k * (0.5 + (i % 4) * 0.2), 0.5 + Math.sin(i * 1.7) * 0.4 * k); });
+  // the thief: the hook, the break-in (beat 4), the copy (beat 5)
+  const thiefOn = t < HOOK_END + RW || (inB(t, 4) && t > WT(4, 'Someone') - 0.2 && t < WT(4, 'In') + 0.2) || inB(t, 5);
+  if (thiefOn) showCard(OCARD.thief, V(3.85, 0, 1.85), { expr: 'smug', armL: [1.4, 1.2], armR: [1.4 + Math.sin(t * 10) * 0.08, 1.2], blink: blinkAt(t, 3) });
+  OCARD.thief.tint = null;
+  // file + key float out of the server rack (beat 5)
+  const cp = WT(5, 'copied'), ky = WT(5, 'keys'); U.file.position.set(0, -20, 0); U.key.position.set(0, -20, 0);
+  if (inB(t, 5) && t > cp - 0.2) { const k = sstep(cp, cp + 1.4, t); U.file.position.set(lerp(4.2, 3.6, k), 1.3 + 0.25 * k + Math.sin(t * 2) * 0.03, lerp(-0.3, 1.6, k)); U.file.rotation.y = -0.6 + 0.6 * k; }
+  if (inB(t, 5) && t > ky - 0.2) { const k = sstep(ky - 0.1, ky + 0.6, t); U.key.position.set(3.6, 2.05 + 0.1 * Math.sin(t * 3), 1.6); U.key.rotation.set(0, t * 1.5, 0); U.key.scale.setScalar(0.4 + 0.6 * k); }
+  // customers in beat 7 hammer the withdraw button (seen on the wall), Karpelès sweats
+  // wall screen
+  let mode = 'chart', k = 1;
+  if (t < HOOK_END + RW) mode = t > WT(0, 'Today') - 0.3 ? 'billions' : 'missing', k = 1;
+  else if (inB(t, 2)) mode = 'chart'; else if (inB(t, 3)) { mode = 'boom'; k = sstep(WT(3, 'booming') - 0.3, WT(3, 'trades'), t); }
+  else if (inB(t, 4)) { mode = 'crash'; k = sstep(WT(4, 'crashed') - 0.2, WT(4, 'cent'), t); if (t < WT(4, 'dumped')) k = 0; else k = Math.max(0.06 * sstep(WT(4, 'dumped'), WT(4, 'market'), t), k); }
+  else if (inB(t, 5)) mode = 'chart'; else if (inB(t, 6)) mode = t > WT(6, 'website') - 0.3 ? 'balances' : 'chart'; else if (inB(t, 7)) mode = t > WT(7, 'froze') - 0.15 ? 'frozen' : 'balances';
+  else if (inB(t, 8) || inB(t, 9)) mode = 'blank'; else if (inB(t, 10)) { mode = t > WT(10, 'found') - 0.2 ? 'found' : 'missing'; k = mode === 'found' ? sstep(WT(10, 'found'), WT(10, 'wallet'), t) : 1; } else if (inB(t, 17)) mode = 'missing';
+  drawDash(SCR.wall.x, 1024, 906, t, mode, k); SCR.wall.t.needsUpdate = true; U.scrL.color.set(mode === 'frozen' || (mode === 'crash' && k > 0.05) || mode === 'missing' ? '#ff4a5a' : '#5fd0ff');
+  let tm = 'code', tk = 0; if (inB(t, 4)) { tm = 'login'; tk = clamp((t - WT(4, 'Someone')) / 2); } if (inB(t, 5)) { tm = t > cp - 0.3 ? 'copy' : 'code'; tk = clamp((t - cp) / 1.6); }
+  drawTerm(SCR.term.x, 640, 400, t, tm, tk); SCR.term.t.needsUpdate = true;
+}
+function pressState(t) {
+  const U = PRESS.userData; hideCard(PCARD.karp); hideCard(PCARD.lawyer); PCARD.reps.forEach(hideCard);
+  const press = t < HOOK_END + RW || inB(t, 9); if (!press) return;
+  const base = t < HOOK_END + RW ? 0 : VB(9), bw = t < HOOK_END + RW ? WT(0, 'admitted') - 0.3 : WT(9, 'bowed') - 0.1;
+  const bow = sstep(bw, bw + 0.6, t) * (1 - sstep(bw + 2.6, bw + 3.2, t));
+  showCard(PCARD.karp, V(0.3, 0, -2.25), { bow, expr: 'annoyed', armR: [0.15, 0.05], armL: [0.15, 0.05], sweat: 0.8, blink: blinkAt(t), talk: bow < 0.2 && Math.sin(t * 14) > 0 ? 0.3 : 0 });
+  showCard(PCARD.lawyer, V(-1.2, 0, -2.25), { bow: sstep(bw + 0.15, bw + 0.75, t) * (1 - sstep(bw + 2.6, bw + 3.2, t)), expr: 'neutral', armR: [0.15, 0.05], armL: [0.15, 0.05], blink: blinkAt(t, 1) });
+  // reporters: arms up with cameras, random flashes
+  PCARD.reps.forEach((c, i) => { const p = U.reporterSpots[i]; showCard(c, p.clone().add(V(Math.sin(t * 0.8 + i) * 0.04, 0, 0)), { expr: i % 3 ? 'neutral' : 'shocked', armR: [1.9, 1.2 + Math.sin(t * 3 + i) * 0.1], armL: [1.8, 1.3], blink: blinkAt(t, i) }); });
+  let fl = 0; U.flashes.forEach((f, i) => { const r = rng(i * 31 + Math.floor(t * 7)); const sp = U.reporterSpots[(i * 5) % U.reporterSpots.length]; f.position.set(sp.x + 0.15, 1.95, sp.z - 0.3); const cd = Math.hypot(camera.position.x - PRESS.position.x - f.position.x, camera.position.z - f.position.z); const on = cd > 2.2 && r() < (bow > 0.3 ? 0.35 : 0.16); f.material.opacity = on ? 0.9 : 0; f.scale.setScalar(on ? 1.2 : 0.1); if (on) fl++; });
+  U.flashL.intensity = Math.min(4, fl * 1.2);
+}
+function cardsState(t) { const U = CARDS.userData; hideCard(CCARD.jed);
+  if (inBs(t, 1, 2)) { const shocked = false; showCard(CCARD.jed, V(-0.85, 0, -1.4), { sit: 1, expr: inB(t, 2) ? (t > WT(2, 'weird') ? 'delighted' : 'smug') : 'happy', armR: inB(t, 2) && t > WT(2, 'turned') ? [2.2, 0.6] : [1.0, 1.4], armL: [1.0, 1.4], blink: blinkAt(t) }); }
+  const m = inB(t, 1) ? (t < WT(1, 'started') - 0.1 ? 'cards' : 'shop') : (t < WT(2, 'turned') ? 'shop' : 'btc'); const k = inB(t, 1) ? sstep(WT(1, 'Magic') - 0.2, WT(1, 'eXchange') + 0.3, t) : sstep(WT(2, 'weird') - 0.3, WT(2, 'weird') + 0.5, t);
+  drawSite(SCR.site.x, 640, 480, t, m, k); SCR.site.t.needsUpdate = true;
+  const bk = inB(t, 2) ? sstep(WT(2, 'weird') - 0.2, WT(2, 'weird') + 0.5, t) : 0; U.btc.position.set(0.72, 0.85 + 0.25 * bk + Math.sin(t * 3) * 0.02 * bk, 0.2); U.btc.scale.setScalar(Math.max(0.001, 1.6 * bk)); U.btc.rotation.set(Math.PI / 2, 0, t * 2.5);
+  U.tcards.forEach((c, i) => { c.position.y = 0.802 + i * 0.0008 + (inB(t, 1) && t > WT(1, 'cards') - 0.2 ? Math.max(0, Math.sin((t - WT(1, 'cards')) * 6 - i * 0.4)) * 0.04 : 0); });
+}
+function chainState(t) { const U = CHAIN.userData; for (const k of Object.keys(KCARD)) hideCard(KCARD[k]);
+  U.blocks.forEach((b, i) => { b.position.y = 1.3 + Math.sin(t * 1.2 + i * 0.7) * 0.06; });
+  U.coins.forEach((c, i) => { const k = ((t * 0.045 + i / U.coins.length) % 1) * 0.98; const p = U.curve.getPoint(k); c.position.set(p.x, p.y + 0.95 + Math.sin(t * 3 + i) * 0.05, p.z); c.rotation.set(Math.PI / 2, 0, t * 3 + i); });
+  const gk = inB(t, 11) ? sstep(WT(11, 'BTCe') - 0.3, WT(11, 'BTCe') + 0.4, t) : 1; U.gateSign.set(gk > 0.5 || Math.sin(t * 40) > 0.4);
+  U.nodes.forEach((n, i) => { const on = inB(t, 11) ? t > WT(11, 'wallets') - 0.2 + i * 0.12 : true; n.scale.setScalar(on ? 1 + 0.1 * Math.sin(t * 5 + i) : 0.3); });
+  if (inB(t, 11) || inB(t, 13)) { showCard(KCARD.det1, V(-3.7, 0.5, 3.0), { expr: inB(t, 11) && t > WT(11, 'trail') ? 'shocked' : 'smug', armR: [2.2, 0.6], blink: blinkAt(t) }); showCard(KCARD.det2, V(-2.6, 0.5, 3.1), { expr: 'neutral', armL: [1.8, 0.9], blink: blinkAt(t, 1) });
+    U.mag.position.set(-2.15, 2.05, 3.25); U.mag.rotation.set(0, 0.3, Math.sin(t * 2) * 0.1); } else U.mag.position.set(0, -20, 0);
+  if (inB(t, 11) && t > WT(11, 'man') - 0.3) { showCard(KCARD.vin, V(1.4, 0, -27.2), { expr: 'smug', blink: blinkAt(t) }); KCARD.vin.tint = t > WT(11, 'Vinnik') - 0.1 ? '#ffffff' : '#2a2438'; }
+  if (inB(t, 13)) { showCard(KCARD.ru1, V(3.0, 0, -23.0), { expr: 'smug', armR: [1.1, 1.3], armL: [1.1, 1.3], blink: blinkAt(t) }); showCard(KCARD.ru2, V(4.4, 0, -23.4), { expr: 'neutral', armR: [1.1, 1.3], armL: [1.1, 1.3], blink: blinkAt(t, 2) }); }
+}
+function beachState(t) { const U = BEACH.userData; for (const k of Object.keys(BCARD)) hideCard(BCARD[k]);
+  U.seaTex.offset.set(t * 0.01, t * 0.02); U.foam.position.z = 6.2 + Math.sin(t * 0.9) * 0.35; U.foam.material.opacity = 0.55 + 0.3 * Math.sin(t * 0.9 + 1);
+  U.gulls.forEach((g, i) => { const a = t * 0.3 + i * 1.3; g.position.set(Math.cos(a) * (8 + i), 6 + i * 0.6 + Math.sin(t + i) * 0.3, 4 + Math.sin(a) * 4); g.rotation.y = -a; g.children.forEach((w, j) => w.rotation.z = (j ? -1 : 1) * (0.3 + 0.35 * Math.sin(t * 8 + i))); });
+  const pc = U.police; pc.root.position.set(0, -50, 0); U.plane.position.set(0, -50, 0);
+  if (inB(t, 12)) { // bathers, Vinnik relaxing, the police car rolls up the coast road, two officers walk down
+    showCard(BCARD.b1, V(-5.2, 0, 1.8), { expr: 'happy', blink: blinkAt(t, 2) }); showCard(BCARD.b2, V(7.0, 0, 2.6), { walk: t * 3, expr: 'happy', blink: blinkAt(t, 3) }); BCARD.b2.pos.x = 7 - ((t * 0.6) % 6);
+    const arr = VB(12) - 0.2; const ck = sstep(arr, arr + 1.8, t); pc.root.position.set(lerp(-26, -1.5, ck), 0, -10.5); pc.root.rotation.y = 0; const fl = Math.floor(t * 6) % 2; pc.light.material.opacity = fl ? 0.95 : 0.2;
+    const grab = WT(12, 'arrested'); const up = t > grab - 0.1;
+    const seat = V(-1.0, 0.0, 1.18); const sk = sstep(grab - 0.1, grab + 0.6, t); const vp = up ? lerpV(seat, V(-1.0, 0, 1.55), sk) : seat.clone(); if (up) vp.y = Math.sin(sk * Math.PI) * 0.06;
+    showCard(BCARD.vin, vp, { walk: up && sk < 1 ? t * 3.5 : 0, sit: up ? 0 : 1, expr: t > WT(12, 'walked') ? 'shocked' : 'smug', cuffed: t > grab + 0.5, armR: up ? [0.3, 0.2] : [2.6, 1.4], armL: up ? [0.3, 0.2] : [2.6, 1.4], sweat: up ? 1 : 0, blink: blinkAt(t) });
+    const wk = arr + 1.9; for (const [c, pts, ph] of [[BCARD.cop1, [V(-2.3, 0, -9.2), V(-1.9, 0, -3.0), V(-1.75, 0, 1.4)], 0], [BCARD.cop2, [V(0.7, 0, -9.2), V(0.5, 0, -3.0), V(0.45, 0, 0.6), V(-0.2, 0, 1.4)], 0.5]]) { const w = walkAlong(pts, wk, t, 3.0); showCard(c, w.p, { walk: w.walking ? t * 4 + ph : 0, expr: 'angry', armR: !w.walking ? [1.6, 0.5] : [0.4, 0.6], blink: blinkAt(t, ph) }); c.spin = 0; } }
+  if (inB(t, 14)) { const k = clamp((t - WT(14, 'swapped') + 0.3) / 3.2); U.plane.position.set(lerp(-22, 22, k), 12 + k * 2.5, -16); U.plane.rotation.set(0, 0, 0.08); }
+}
+function cellState(t) { hideCard(ECARD.karp); if (inB(t, 15) && t > WT(15, 'spent') - 0.6) showCard(ECARD.karp, V(-0.3, 0.02, -1.15), { sit: 1, expr: t > WT(15, 'Judges') ? 'annoyed' : 'sleep', armR: [0.4, 1.2], armL: [0.4, 1.2], blink: blinkAt(t) }); }
+
+// =====================================================================================================
+// SHOTS (a cut every ~2 s, every shot moving). Positions are in each set's local coordinates.
+// =====================================================================================================
+const sh = (set, p0, l0, f0, p1, l1, f1) => ({ set, f: k => ({ p: lerpV(p0, p1 || p0, k), l: lerpV(l0, l1 || l0, k), fov: lerp(f0, f1 ?? f0, k) }) });
+const orbit = (set, c, r, y, a0, a1, ly, fov) => ({ set, f: k => { const a = lerp(a0, a1, k); return { p: V(c.x + Math.sin(a) * r, y, c.z + Math.cos(a) * r), l: V(c.x, ly, c.z), fov }; } });
+const SHOTS = [];
+function buildShots() {
+  const S = (t, s) => SHOTS.push({ t, ...s });
+  const WALL = (zA, zB, dx = 0, f = 50) => sh('office', V(-1.2 + dx, 1.9, zA), V(-1.2, 1.78, -4), f, V(-1.2 - dx * 0.3, 1.88, zB), V(-1.2, 1.78, -4), f - 2);
+  const VAULT = (pA, pB, ly = 1.2, f = 46) => sh('office', pA, V(3.3, ly, -2.5), f, pB, V(3.3, ly, -2.5), f - 3);
+  // ---- hook: the press conference bow, the empty vault, the thief
+  S(0, sh('press', V(-0.8, 2.9, 4.3), V(0, 1.2, -2.2), 50, V(-0.4, 2.6, 3.6), V(0.1, 1.2, -2.2), 46));
+  S(WT(0, 'admitted') - 0.3, sh('press', V(-0.2, 1.9, 1.8), V(-0.45, 1.1, -2.25), 46, V(-0.3, 1.85, 1.4), V(-0.45, 1.1, -2.25), 42));
+  S(WT(0, 'eight') - 0.1, VAULT(V(0.4, 2.3, 2.6), V(0.9, 2.1, 2.0), 1.1, 50));
+  S(WT(0, 'gone') - 0.1, sh('press', V(-3.2, 2.9, 4.3), V(0.0, 1.1, -2.2), 44, V(-2.6, 2.7, 3.8), V(0.0, 1.1, -2.2), 40));
+  S(WT(0, 'Today') - 0.2, WALL(1.5, 1.0));
+  S(WT(0, 'And', 2) - 0.05, sh('office', V(1.4, 1.8, 3.7), V(3.9, 1.2, 1.3), 48, V(1.8, 1.75, 3.4), V(3.9, 1.2, 1.3), 44));
+  S(WT(0, 'inside') - 0.1, sh('office', V(2.2, 1.6, 3.6), V(3.85, 1.3, 1.75), 44, V(2.5, 1.55, 3.3), V(3.85, 1.3, 1.75), 40));
+  // ---- beat 1: the card room
+  S(VB(1), sh('cards', V(2.2, 2.3, 2.6), V(-0.3, 1.0, -1.6), 58, V(1.7, 2.1, 2.0), V(-0.2, 1.0, -1.6), 55));
+  S(WT(1, 'stands') - 0.1, sh('cards', V(0.0, 1.2, -0.25), V(0, 1.15, -1.95), 40, V(0.0, 1.18, -0.5), V(0, 1.15, -1.95), 38));
+  S(WT(1, 'Online') - 0.1, sh('cards', V(0.04, 1.22, -0.35), V(0.0, 1.15, -1.95), 40, V(0.0, 1.2, -0.55), V(0.0, 1.15, -1.95), 38));
+  S(WT(1, 'started') - 0.1, sh('cards', V(1.1, 1.35, -0.9), V(0.1, 0.8, -1.95), 46, V(0.9, 1.25, -1.1), V(0.1, 0.8, -1.95), 42));
+  S(WT(1, 'fantasy') - 0.1, sh('cards', V(-1.0, 1.6, -0.3), V(-1.8, 1.75, -2.6), 46, V(-1.3, 1.65, -0.8), V(-1.8, 1.75, -2.6), 42));
+  // ---- beat 2: bitcoin, the sale, Tokyo, Karpelès walks in
+  S(VB(2), sh('cards', V(0.9, 1.6, 1.2), V(-0.5, 1.0, -1.6), 50, V(0.6, 1.5, 0.6), V(-0.5, 1.0, -1.6), 46));
+  S(WT(2, 'turned') - 0.1, sh('cards', V(0.15, 1.25, -0.4), V(0.1, 1.15, -1.95), 44, V(0.1, 1.2, -0.7), V(0.1, 1.15, -1.95), 40));
+  S(WT(2, 'weird') - 0.1, sh('cards', V(1.3, 1.25, -1.0), V(0.72, 1.1, -1.9), 40, V(1.15, 1.2, -1.2), V(0.72, 1.12, -1.9), 36));
+  S(WT(2, 'Months') - 0.1, sh('street', V(-2, 1.2, 11), V(0, 4, -3), 58, V(-1, 6, 9), V(0, 5, -3), 56));
+  S(WT(2, 'programmer') - 0.15, sh('office', V(0.4, 1.75, 0.2), V(-4.4, 1.1, -2.8), 50, V(0.2, 1.7, -0.1), V(-2.2, 1.0, -2.4), 50));
+  S(WT(2, 'Mark') - 0.1, sh('office', V(2.4, 1.7, 3.2), V(1.1, 1.0, 0.0), 46, V(2.1, 1.65, 2.8), V(1.0, 1.0, 0.1), 44));
+  // ---- beat 3: TOKYO, 2011, the boom
+  S(VB(3), sh('office', V(0.9, 1.6, 2.5), V(0.8, 1.15, 0.3), 42, V(0.9, 1.55, 2.1), V(0.8, 1.15, 0.3), 38));
+  S(WT(3, 'booming') - 0.15, WALL(1.6, 1.0, 0.6));
+  S(WT(3, 'peak') - 0.1, sh('street', V(0, 1.5, 9), V(0, 3.6, -1), 52, V(0, 2.4, 6.5), V(0, 3.8, -1), 50));
+  S(WT(3, 'percent') - 0.1, orbit('office', V(-0.5, 0, -0.5), 3.9, 2.6, -0.6, 0.6, 1.0, 58));
+  // ---- beat 4: June 2011, the flash crash
+  S(VB(4), sh('office', V(3.0, 2.6, 3.6), V(1.0, 1.0, -1.5), 58, V(2.6, 2.3, 3.0), V(1.0, 1.0, -1.5), 56));
+  S(WT(4, 'Someone') - 0.15, sh('office', V(1.8, 1.7, 3.6), V(4.0, 1.2, 1.4), 46, V(2.2, 1.65, 3.2), V(4.1, 1.2, 1.4), 42));
+  S(WT(4, 'dumped') - 0.1, sh('office', V(2.85, 1.15, 1.0), V(4.45, 1.1, 1.0), 38, V(3.05, 1.13, 1.0), V(4.45, 1.1, 1.0), 34));
+  S(WT(4, 'In') - 0.1, WALL(1.6, 1.1, -0.5));
+  S(WT(4, 'crashed') - 0.2, { ...WALL(0.9, 0.5, 0.3, 50), shake: WT(4, 'crashed') });
+  S(WT(4, 'one') - 0.2, sh('office', V(-0.6, 1.5, 2.6), V(-1.6, 1.05, 0.3), 46, V(-0.9, 1.45, 2.2), V(-1.2, 1.05, 0.3), 44));
+  // ---- beat 5: the silent heist
+  S(VB(5), sh('office', V(1.0, 2.6, 3.4), V(4.0, 1.2, -0.5), 54, V(1.6, 2.4, 3.0), V(4.0, 1.2, -0.5), 50));
+  S(WT(5, 'September') - 0.1, sh('office', V(2.3, 1.5, 1.9), V(4.5, 1.2, -0.3), 46, V(2.7, 1.45, 1.3), V(4.5, 1.2, -0.3), 42));
+  S(WT(5, 'copied') - 0.15, sh('office', V(2.85, 1.15, 1.0), V(4.45, 1.1, 1.0), 38, V(3.05, 1.13, 1.0), V(4.45, 1.1, 1.0), 34));
+  S(WT(5, 'keys') - 0.2, sh('office', V(2.3, 1.9, 3.4), V(3.65, 1.75, 1.6), 42, V(2.7, 1.95, 3.0), V(3.65, 1.85, 1.6), 38));
+  S(WT(5, 'Whoever') - 0.1, VAULT(V(0.2, 1.9, 2.4), V(0.6, 1.8, 1.9), 1.3, 48));
+  // ---- beat 6: drip, drip
+  S(VB(6), sh('office', V(4.3, 0.85, -0.6), V(4.6, 0.3, -2.5), 42, V(4.35, 0.8, -0.9), V(4.7, 0.3, -2.5), 40));
+  S(WT(6, 'leaked') - 0.3, VAULT(V(0.0, 1.6, 2.6), V(0.4, 2.4, 2.2), 1.0, 50));
+  S(WT(6, 'batch') - 0.1, sh('office', V(4.0, 0.6, -1.2), V(4.8, 0.3, -2.5), 40, V(4.1, 0.55, -1.4), V(4.85, 0.3, -2.5), 36));
+  S(WT(6, 'Investigators') - 0.1, sh('office', V(2.0, 3.0, 0.6), V(3.3, 0.5, -2.5), 50, V(2.2, 2.95, 0.2), V(3.3, 0.5, -2.5), 46));
+  S(WT(6, 'empty') - 0.2, VAULT(V(1.0, 1.0, 1.6), V(1.3, 0.95, 1.2), 0.8, 46));
+  S(WT(6, 'website') - 0.2, WALL(1.5, 0.9, -0.4));
+  // ---- beat 7: withdrawals freeze
+  S(VB(7), sh('office', V(-2.0, 1.8, 3.4), V(0.2, 1.1, 0.3), 54, V(-1.6, 1.7, 3.0), V(0.4, 1.1, 0.3), 52));
+  S(WT(7, 'Withdrawals') - 0.15, { ...WALL(1.3, 0.7, 0.4), shake: WT(7, 'froze') });
+  S(WT(7, 'blamed') - 0.1, sh('office', V(1.0, 1.55, 2.2), V(0.8, 1.15, 0.3), 40, V(0.9, 1.5, 1.9), V(0.8, 1.15, 0.3), 36));
+  S(WT(7, 'called') - 0.1, sh('office', V(-2.4, 1.5, 2.6), V(-1.6, 1.1, 0.3), 46, V(-2.1, 1.5, 2.2), V(-1.5, 1.1, 0.3), 42));
+  // ---- beat 8: the protester, the site goes blank
+  S(VB(8), sh('street', V(-6, 1.3, 7), V(-3, 1.2, -0.5), 50, V(-4.5, 1.4, 6.0), V(-2, 1.2, -0.5), 48));
+  S(WT(8, 'stood') - 0.2, sh('street', V(-1.0, 1.4, 2.8), V(-1.6, 1.4, -0.2), 46, V(-1.2, 1.45, 2.3), V(-1.6, 1.45, -0.2), 42));
+  S(WT(8, 'sign') - 0.15, sh('street', V(-1.5, 1.6, 1.5), V(-1.55, 1.95, -0.1), 42, V(-1.5, 1.7, 1.2), V(-1.55, 2.0, -0.1), 38));
+  S(WT(8, 'February') - 0.1, sh('street', V(0, 1.2, 8), V(0, 3.8, -1), 52, V(0, 0.9, 6.5), V(0, 4.0, -1), 50));
+  S(WT(8, 'blank') - 0.35, WALL(1.6, 1.0));
+  // ---- beat 9: the bow
+  S(VB(9), sh('press', V(3.4, 2.9, 4.3), V(0, 1.2, -2.2), 52, V(2.8, 2.7, 3.8), V(0, 1.2, -2.2), 48));
+  S(WT(9, 'bowed') - 0.2, sh('press', V(-0.2, 1.9, 1.8), V(-0.45, 1.1, -2.25), 46, V(-0.3, 1.85, 1.4), V(-0.45, 1.1, -2.25), 42));
+  S(WT(9, 'apologized') - 0.1, sh('press', V(-1.9, 1.5, -0.4), V(0.2, 1.3, -2.2), 48, V(-1.6, 1.5, -0.7), V(0.2, 1.3, -2.2), 46));
+  S(WT(9, 'Eight') - 0.15, sh('press', V(0, 3.1, 4.3), V(0, 1.0, -2), 58, V(0, 2.9, 3.8), V(0, 1.1, -2), 54));
+  S(WT(9, 'bankrupt') - 0.4, VAULT(V(1.2, 2.9, 0.8), V(1.5, 2.85, 0.4), 0.6, 48));
+  // ---- beat 10: the forgotten wallet
+  S(VB(10), sh('office', V(-0.4, 1.9, 0.0), V(-3.8, 0.9, -2.8), 50, V(-0.7, 1.85, -0.4), V(-3.9, 0.9, -2.9), 48));
+  S(WT(10, 'found') - 0.2, sh('office', V(-2.2, 1.95, -0.3), V(-3.9, 0.75, -3.1), 50, V(-2.5, 1.85, -0.7), V(-3.9, 0.75, -3.1), 46));
+  S(WT(10, 'forgotten') - 0.15, WALL(1.6, 1.0, 0.5));
+  S(WT(10, 'still') - 0.15, VAULT(V(0.6, 1.9, 2.0), V(0.9, 1.8, 1.6), 0.8, 48));
+  // ---- beat 11: following the coins
+  S(VB(11), sh('chain', V(-6.5, 2.4, 7.5), V(-3, 1.6, 3), 50, V(-5.6, 2.3, 6.4), V(-3, 1.6, 3), 46));
+  S(WT(11, 'across') - 0.1, sh('chain', V(2.6, 3.0, 6), V(0, 1.3, -6), 56, V(2.4, 2.4, 1), V(0, 1.3, -12), 52));
+  S(WT(11, 'public') - 0.1, sh('chain', V(-3.2, 2.2, -2.6), V(0.6, 1.4, -6), 50, V(-2.8, 2.1, -3.6), V(0.4, 1.4, -7), 48));
+  S(WT(11, 'trail') - 0.1, sh('chain', V(0, 3.2, -10), V(0, 2.4, -29), 52, V(0, 2.8, -15), V(0, 2.6, -29), 50));
+  S(WT(11, 'Russian') - 0.15, sh('chain', V(-2.4, 2.4, -20.5), V(0, 3.8, -29), 50, V(-1.4, 2.2, -22), V(0, 3.8, -29), 48));
+  S(WT(11, 'wallets') - 0.15, sh('chain', V(5.5, 3.2, -14), V(0, 1.0, -21), 54, V(5.0, 3.0, -16), V(0, 1.0, -22), 52));
+  S(WT(11, 'man') - 0.2, sh('chain', V(0.6, 1.5, -23.6), V(1.4, 1.2, -27.2), 44, V(0.9, 1.45, -24.3), V(1.4, 1.2, -27.2), 40));
+  // ---- beat 12: the beach arrest
+  S(VB(12), sh('beach', V(-8, 4.5, 12), V(-1, 1, -2), 54, V(-5.5, 2.6, 9), V(-1, 1, -2), 52));
+  S(WT(12, 'holiday') - 0.1, sh('beach', V(-0.4, 1.1, 3.8), V(-1.0, 0.8, 0.4), 46, V(-0.6, 1.05, 3.3), V(-1.0, 0.8, 0.4), 42));
+  S(WT(12, 'beach') - 0.1, sh('beach', V(6, 1.6, 8), V(-4, 1.5, -12), 58, V(4, 1.6, 7), V(-4, 1.5, -12), 56));
+  S(WT(12, 'police') - 0.35, sh('beach', V(1.2, 1.5, 4.2), V(-1.2, 1.0, -5.5), 52, V(0.8, 1.5, 3.6), V(-1.0, 1.0, -3.0), 50));
+  S(WT(12, 'arrested') - 0.15, sh('beach', V(-3.0, 1.4, 5.0), V(-1.0, 1.0, 1.2), 48, V(-2.6, 1.4, 4.5), V(-1.0, 1.0, 1.3), 44));
+  S(WT(12, 'pleaded') - 0.1, sh('beach', V(-1.0, 1.5, 4.8), V(-1.0, 1.1, 1.4), 44, V(-1.0, 1.45, 4.2), V(-1.0, 1.1, 1.4), 40));
+  // ---- beat 13: the charges
+  S(VB(13), sh('chain', V(6.8, 1.9, -18.8), V(3.6, 1.3, -23.2), 50, V(6.4, 1.85, -19.5), V(3.7, 1.3, -23.2), 46));
+  S(WT(13, 'theft') - 0.1, sh('chain', V(2.6, 1.6, -19.6), V(3.7, 1.25, -23.2), 42, V(2.9, 1.55, -20.2), V(3.7, 1.25, -23.2), 38));
+  S(WT(13, 'least') - 0.15, sh('chain', V(0, 6, -6), V(0, 1.2, -24), 54, V(0, 4.5, -12), V(0, 1.2, -26), 52));
+  // ---- beat 14: walked free
+  S(VB(14), sh('beach', V(0.6, 1.0, 4.2), V(-1.0, 0.6, 0.4), 46, V(0.2, 1.0, 3.6), V(-1.0, 0.6, 0.4), 42));
+  S(WT(14, 'swapped') - 0.15, sh('beach', V(-2, 0.8, 8), V(-3, 12, -16), 60, V(-1, 0.8, 7), V(3, 13.5, -16), 58));
+  // ---- beat 15: Karpelès arrested, jail, verdict
+  S(VB(15), sh('street', V(4.5, 1.6, 7.5), V(0, 1.2, 0.0), 50, V(3.8, 1.6, 6.8), V(-0.3, 1.2, 0.3), 48));
+  S(WT(15, 'Tokyo') - 0.2, sh('street', V(2.6, 1.4, 2.6), V(0.0, 1.2, 0.2), 46, V(2.3, 1.4, 2.2), V(-0.4, 1.2, 0.8), 44));
+  S(WT(15, 'spent') - 0.2, sh('cell', V(0, 1.6, 3.2), V(-0.3, 1.0, -1.1), 50, V(0, 1.45, 2.4), V(-0.3, 0.95, -1.1), 46));
+  S(WT(15, 'year') - 0.1, sh('cell', V(0.9, 1.25, 1.2), V(-0.3, 0.95, -1.15), 46, V(0.7, 1.2, 0.9), V(-0.3, 0.95, -1.15), 42));
+  S(WT(15, 'Judges') - 0.1, sh('cell', V(-0.4, 1.4, 1.6), V(0.9, 2.3, -1.8), 50, V(-0.2, 1.35, 1.3), V(0.9, 2.3, -1.8), 48));
+  // ---- beat 16: repayments
+  S(VB(16), sh('street', V(-1.5, 3.8, 9), V(0, 2.4, -1), 56, V(-0.8, 2.0, 7), V(0, 2.2, -1), 52));
+  S(WT(16, 'Repayments') - 0.1, sh('street', V(3.0, 1.55, 3.4), V(2.2, 1.2, 0.0), 46, V(2.8, 1.5, 3.0), V(2.2, 1.25, 0.0), 42));
+  S(WT(16, 'Some') - 0.15, sh('street', V(1.2, 1.3, 3.4), V(2.2, 1.3, 0.0), 42, V(1.5, 1.3, 2.9), V(2.2, 1.3, 0.0), 38));
+  // ---- beat 17: the lesson
+  S(VB(17), VAULT(V(0.0, 1.8, 2.6), V(0.6, 1.6, 1.8), 0.9, 48));
+  S(WT(17, 'If') - 0.1, sh('office', V(0.2, 2.2, 3.6), V(1.6, 1.0, -1.6), 56, V(0.8, 2.1, 3.0), V(1.6, 1.0, -1.6), 54));
+  S(WT(17, 'Follow') - 0.1, sh('street', V(0, 1.0, 10), V(0, 3.6, -1), 52, V(0, 4.5, 8.5), V(0, 4.5, -1), 52));
+}
+
+// =====================================================================================================
+// 2D OVERLAYS
+// =====================================================================================================
+const OV = document.getElementById('ov').getContext('2d', { willReadFrequently: true }); // software canvas: an accelerated one can skip presenting a cleared frame on headless swiftshader (stale cards in chunk renders)
+function card2d(x, cx, cy, w, h, rot, sc, draw) { x.save(); x.translate(cx, cy); x.rotate(rot); x.scale(sc, sc); x.fillStyle = 'rgba(0,0,0,.35)'; x.beginPath(); x.roundRect(-w / 2 + 10, -h / 2 + 14, w, h, 22); x.fill(); draw(x, w, h); x.restore(); }
+const pop = (t, t0) => { const a = clamp((t - t0) / 0.22); return a <= 0 ? 0 : 1 + 0.12 * Math.sin(a * Math.PI); };
+function paper(c, cw, ch, col = '#f4efe4') { c.fillStyle = col; c.beginPath(); c.roundRect(-cw / 2, -ch / 2, cw, ch, 24); c.fill(); c.lineWidth = 8; c.strokeStyle = '#0e0b16'; c.stroke(); }
+function stamp(x, t, t0, text, col, cx, cy, rot = -0.12, size = 120) { const s = pop(t, t0); if (!s) return; x.save(); x.translate(cx, cy); x.rotate(rot); x.scale(s * (1 + 0.6 * Math.exp(-(t - t0) * 12)), s * (1 + 0.6 * Math.exp(-(t - t0) * 12))); x.font = `900 ${size}px Poppins`; x.textAlign = 'center'; x.textBaseline = 'middle'; const w = x.measureText(text).width + 60;
+  x.lineWidth = 14; x.strokeStyle = col; x.strokeRect(-w / 2, -size * 0.62, w, size * 1.24); x.fillStyle = col; x.fillText(text, 0, 6); x.restore(); }
+function overlays2d(t) { const x = OV; x.clearRect(0, 0, W, H); x.fillStyle = 'rgba(0,0,0,0.004)'; x.fillRect(0, 0, 2, 2); x.textAlign = 'left'; x.textBaseline = 'alphabetic';
+  // beat 3: the 70% pie
+  if (inB(t, 3) && t > WT(3, 'seventy') - 0.2) { const s = pop(t, WT(3, 'seventy') - 0.2), k = sstep(WT(3, 'seventy') - 0.2, WT(3, 'trades'), t); card2d(x, 540, 700, 620, 620, 0.03, s, (c, cw, ch) => { paper(c, cw, ch);
+    c.fillStyle = '#c9ccd6'; c.beginPath(); c.arc(0, -30, 210, 0, 7); c.fill(); c.fillStyle = '#2f6fe0'; c.beginPath(); c.moveTo(0, -30); c.arc(0, -30, 210, -Math.PI / 2, -Math.PI / 2 + 7 * 0.7 * k * 0.8976); c.closePath(); c.fill(); c.lineWidth = 8; c.strokeStyle = '#0e0b16'; c.beginPath(); c.arc(0, -30, 210, 0, 7); c.stroke();
+    c.fillStyle = '#ffffff'; c.font = '900 96px Poppins'; c.textAlign = 'center'; c.fillText(Math.round(70 * k) + '%', 30, 0); c.fillStyle = '#0e0b16'; c.font = '900 40px Poppins'; c.fillText('OF ALL BITCOIN TRADES', 0, 250); c.textAlign = 'left'; }); }
+  // beat 7: the flaw
+  if (inB(t, 7) && t > WT(7, 'called') - 0.2) { const s = pop(t, WT(7, 'called') - 0.2); card2d(x, 540, 640, 900, 360, -0.03, s, (c, cw, ch) => { paper(c, cw, ch); c.fillStyle = '#0e0b16'; c.font = '800 38px Poppins'; c.textAlign = 'center'; c.fillText('THE EXCUSE:', 0, -90); c.fillStyle = '#d7263d'; c.font = '900 74px Poppins'; c.fillText('TRANSACTION', 0, 0); c.fillText('MALLEABILITY', 0, 80); c.textAlign = 'left'; });
+    stamp(x, t, WT(7, 'malleability') + 0.35, 'REALLY?', '#d7263d', 760, 900, 0.16, 80); }
+  // beat 9: missing + bankrupt stamps
+  if (inB(t, 9)) { if (t > WT(9, 'Eight') - 0.1) { const s = pop(t, WT(9, 'Eight') - 0.1), k = sstep(WT(9, 'Eight') - 0.1, WT(9, 'missing'), t); card2d(x, 540, 620, 900, 300, 0.02, s, (c, cw, ch) => { paper(c, cw, ch, '#14121a'); c.fillStyle = '#ffcf3f'; c.font = '900 120px Poppins'; c.textAlign = 'center'; c.fillText(Math.floor(850000 * k).toLocaleString('en-US'), 0, 20); c.fillStyle = '#ffffff'; c.font = '900 48px Poppins'; c.fillText('BITCOINS MISSING', 0, 100); c.textAlign = 'left'; }); }
+    stamp(x, t, WT(9, 'bankrupt') - 0.05, 'BANKRUPT', '#d7263d', 540, 900, -0.14, 130); }
+  // beat 10: still gone
+  if (inB(t, 10) && t > WT(10, 'still') - 0.1) { const s = pop(t, WT(10, 'still') - 0.1); card2d(x, 540, 640, 900, 360, -0.02, s, (c, cw, ch) => { paper(c, cw, ch); c.textAlign = 'center'; c.fillStyle = '#3fae5a'; c.font = '900 60px Poppins'; c.fillText('FOUND: 200,000', 0, -60); c.fillStyle = '#d7263d'; c.font = '900 86px Poppins'; c.fillText('~650,000', 0, 50); c.fillStyle = '#0e0b16'; c.font = '900 46px Poppins'; c.fillText('STILL GONE', 0, 120); c.textAlign = 'left'; }); }
+  // beat 12: guilty plea
+  if (inB(t, 12) && t > WT(12, 'pleaded') - 0.1) stamp(x, t, WT(12, 'pleaded') - 0.1, 'GUILTY PLEA', '#d7263d', 540, 760, -0.1, 100);
+  // beat 13: the charge sheet
+  if (inB(t, 13) && t > WT(13, 'charged') - 0.2) { const s = pop(t, WT(13, 'charged') - 0.2), k = sstep(WT(13, 'least') - 0.1, WT(13, 'bitcoins'), t); card2d(x, 540, 700, 860, 640, 0.025, s, (c, cw, ch) => { paper(c, cw, ch, '#fbfaf6'); c.textAlign = 'center'; c.fillStyle = '#0e0b16'; c.font = '900 40px Poppins'; c.fillText('UNITED STATES', 0, -230); c.font = '700 34px Poppins'; c.fillText('v.', 0, -180); c.font = '900 44px Poppins'; c.fillText('TWO RUSSIAN NATIONALS', 0, -125);
+    c.fillStyle = '#c9ccd6'; for (let i = 0; i < 3; i++) c.fillRect(-330, -80 + i * 34, 660 - (i * 97 % 200), 14); c.fillStyle = '#5a5e70'; c.font = '800 34px Poppins'; c.fillText('STOLEN FROM MT. GOX:', 0, 90); c.fillStyle = '#d7263d'; c.font = '900 92px Poppins'; c.fillText(k > 0 ? Math.floor(647000 * k).toLocaleString('en-US') + ' BTC' : '???', 0, 190); c.textAlign = 'left'; }); }
+  // beat 14: prisoner swap
+  if (inB(t, 14) && t > WT(14, 'swapped') - 0.2) { const s = pop(t, WT(14, 'swapped') - 0.2); card2d(x, 540, 700, 860, 300, -0.03, s, (c, cw, ch) => { paper(c, cw, ch); c.textAlign = 'center'; c.fillStyle = '#0e0b16'; c.font = '900 70px Poppins'; c.fillText('PRISONER SWAP', 0, -10); c.fillStyle = '#2f6fe0'; c.font = '800 46px Poppins'; c.fillText('FEBRUARY 2025', 0, 70); c.textAlign = 'left'; }); }
+  // beat 15: the verdict (2019)
+  if (inB(t, 15) && t > WT(15, 'Judges') - 0.2) { const s = pop(t, WT(15, 'Judges') - 0.2); card2d(x, 540, 700, 920, 520, 0.02, s, (c, cw, ch) => { paper(c, cw, ch, '#fbfaf6'); c.textAlign = 'center'; c.fillStyle = '#0e0b16'; c.font = '900 46px Poppins'; c.fillText('TOKYO DISTRICT COURT · 2019', 0, -170);
+    const r1 = t > WT(15, 'embezzlement') - 0.1, r2 = t > WT(15, 'data') - 0.1; c.textAlign = 'left'; c.font = '800 44px Poppins'; c.fillStyle = '#0e0b16'; c.fillText('EMBEZZLEMENT', -400, -60); c.fillText('DATA TAMPERING', -400, 50);
+    c.textAlign = 'right'; c.font = '900 50px Poppins'; if (r1) { c.fillStyle = '#3fae5a'; c.fillText('NOT GUILTY', 400, -60); } if (r2) { c.fillStyle = '#d7263d'; c.fillText('GUILTY', 400, 50); c.fillStyle = '#5a5e70'; c.font = '800 36px Poppins'; c.textAlign = 'center'; c.fillText('suspended sentence', 0, 160); } c.textAlign = 'left'; }); }
+  // beat 16: repayments
+  if (inB(t, 16) && t > WT(16, 'began') - 0.2) { const s = pop(t, WT(16, 'began') - 0.2); card2d(x, 540, 640, 880, 400, -0.02, s, (c, cw, ch) => { paper(c, cw, ch); c.textAlign = 'center'; c.fillStyle = '#0e0b16'; c.font = '800 40px Poppins'; c.fillText('REPAYMENTS BEGIN', 0, -90); c.fillStyle = '#3fae5a'; c.font = '900 84px Poppins'; c.fillText('JULY 2024', 0, 0);
+    if (t > WT(16, 'Some') - 0.1) { c.fillStyle = '#d7263d'; c.font = '900 44px Poppins'; c.fillText('DEADLINE NOW: OCT 2027', 0, 100); } c.textAlign = 'left'; }); }
+  // beat 17: the lesson
+  if (inB(t, 17) && t > WT(17, 'If') - 0.1 && t < WT(17, 'Follow') + 0.3) { const fade = 1 - clamp((t - WT(17, 'Follow')) / 0.3); x.globalAlpha = fade;
+    const tips = [['If', 'NOT YOUR KEYS,', 'not your coins: an app', 'that holds your money', '#ffcf3f'], ['Keep', 'KEEP IT SMALL', 'only what you can', 'afford to lose', '#2f6fe0'], ['twofactor', 'TURN ON 2FA', 'a code as well as', 'your password', '#3fae5a']];
+    tips.forEach(([w, title, l1, l2, col], i) => { const s = pop(t, WT(17, w) - 0.15); if (!s) return; card2d(x, 540, 380 + i * 270, 920, 240, (i % 2 ? 1 : -1) * 0.025, s, (c, cw, ch) => { paper(c, cw, ch);
+      c.fillStyle = col; c.beginPath(); c.arc(-cw / 2 + 115, 0, 72, 0, 7); c.fill(); c.lineWidth = 7; c.strokeStyle = '#0e0b16'; c.stroke(); c.strokeStyle = '#fff'; c.fillStyle = '#fff'; c.lineWidth = 12;
+      if (i === 0) { c.beginPath(); c.arc(-cw / 2 + 92, -4, 22, 0, 7); c.stroke(); c.fillRect(-cw / 2 + 110, -10, 50, 12); c.fillRect(-cw / 2 + 140, -10, 10, 30); }
+      else if (i === 1) { c.font = '900 80px Poppins'; c.textAlign = 'center'; c.fillText('$', -cw / 2 + 115, 28); c.textAlign = 'left'; }
+      else { c.fillRect(-cw / 2 + 80, -6, 70, 50); c.beginPath(); c.arc(-cw / 2 + 115, -10, 24, Math.PI, 0); c.stroke(); }
+      c.fillStyle = '#0e0b16'; c.font = '900 50px Poppins'; c.fillText(title, -cw / 2 + 220, -34); c.fillStyle = '#3a3e48'; c.font = '700 36px Poppins'; c.fillText(l1, -cw / 2 + 220, 22); c.fillText(l2, -cw / 2 + 220, 68); }); });
+    x.globalAlpha = 1; }
+}
+
+// =====================================================================================================
+// post: crease lines + noir grade + grain + vignette
+// =====================================================================================================
+scene.traverse(o => { if (!o.isMesh || o.userData.isHull || o.userData.casterOnly) return; const mm = Array.isArray(o.material) ? o.material[0] : o.material; if (mm.isMeshBasicMaterial || mm.transparent) { o.castShadow = false; return; } o.castShadow = true; o.receiveShadow = true; });
+const rtColor = new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType });
+const rtNormal = new THREE.WebGLRenderTarget(W, H); rtNormal.depthTexture = new THREE.DepthTexture(W, H);
+const normalMat = new THREE.MeshNormalMaterial();
+const post = new THREE.ShaderMaterial({
+  uniforms: { tColor: { value: rtColor.texture }, tNormal: { value: rtNormal.texture }, tDepth: { value: rtNormal.depthTexture }, near: { value: camera.near }, far: { value: camera.far }, px: { value: new THREE.Vector2(1 / W, 1 / H) }, inkColor: { value: INK }, time: { value: 0 }, warm: { value: 0 }, expo: { value: 1 } },
+  vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
+  fragmentShader: `
+    uniform sampler2D tColor, tNormal, tDepth; uniform float near, far, time, warm, expo; uniform vec2 px; uniform vec3 inkColor; varying vec2 vUv;
+    float lin(vec2 uv){ float d = texture2D(tDepth, uv).x; float z = d * 2.0 - 1.0; return (2.0 * near * far) / (far + near - z * (far - near)); }
+    vec3 nrm(vec2 uv){ return texture2D(tNormal, uv).xyz * 2.0 - 1.0; }
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
+    void main(){
+      vec4 col = texture2D(tColor, vUv); col.rgb *= expo;
+      float dc = lin(vUv); vec3 nc = nrm(vUv); float e = 0.0;
+      vec2 o[8]; o[0]=vec2(1.8,0.); o[1]=vec2(-1.8,0.); o[2]=vec2(0.,1.8); o[3]=vec2(0.,-1.8); o[4]=vec2(1.3,1.3); o[5]=vec2(-1.3,1.3); o[6]=vec2(1.3,-1.3); o[7]=vec2(-1.3,-1.3);
+      for (int i = 0; i < 8; i++) { vec2 uv = vUv + o[i] * px; float dn = lin(uv); e = max(e, smoothstep(0.04, 0.08, (dn - dc) / dc));
+        e = max(e, smoothstep(0.45, 0.75, 1.0 - dot(nc, nrm(uv)))); }
+      float l = dot(col.rgb, vec3(0.299, 0.587, 0.114));
+      col.rgb = mix(vec3(l), col.rgb, 1.18);
+      col.rgb = (col.rgb - 0.5) * 1.06 + 0.5;
+      col.rgb += vec3(0.02, 0.005, -0.015) * smoothstep(0.5, 1.0, l) * warm;
+      vec2 q = vUv - 0.5; col.rgb *= 1.0 - 0.18 * smoothstep(0.4, 0.95, length(q * vec2(1.0, 0.72)));
+      gl_FragColor = vec4(max(col.rgb, 0.0), 1.0);
+      #include <tonemapping_fragment>
+      #include <colorspace_fragment>
+    }`,
+  depthTest: false, depthWrite: false });
+const postScene = new THREE.Scene(), postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+postScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post));
+function draw() {
+  const hidden = []; scene.traverse(o => { if ((o.isSprite || o.userData.noOutline || o.userData.noHull) && o.visible) { hidden.push(o); o.visible = false; } });
+  for (const G of Object.values(SETS)) if (G.visible) G.traverse(o => { if (o.userData.noHull && o.isMesh && hidden.includes(o)) o.visible = true; });
+  scene.overrideMaterial = normalMat; renderer.setClearColor(0x8080ff, 1);
+  renderer.setRenderTarget(rtNormal); renderer.clear(); renderer.render(scene, camera);
+  scene.overrideMaterial = null; hidden.forEach(o => o.visible = true);
+  const cvis = cards.filter(c => c.m.visible); if (cvis.length) { const keep = []; scene.traverse(o => { if (o.visible && o.isMesh) { keep.push(o); o.visible = false; } }); cvis.forEach(c => { c.m.visible = true; c.m.material = c.nmat; });
+    renderer.autoClear = false; renderer.render(scene, camera); renderer.autoClear = true; cvis.forEach(c => c.m.material = c.cmat); keep.forEach(o => o.visible = true); }
+  renderer.setClearColor(0x000000, 1); renderer.setRenderTarget(rtColor); renderer.clear(); renderer.render(scene, camera);
+  renderer.setRenderTarget(null); renderer.render(postScene, postCam);
+}
+// =====================================================================================================
+// captions + labels
+// =====================================================================================================
+const labelEl = document.getElementById('label'), capEl = document.querySelector('#cap span'), rwEl = document.getElementById('rw');
+const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const KEYW = /^(gox|mt|bitcoin|bitcoins|gone|thief|heist|keys|stolen|vault|empty|froze|blank|bankrupt|missing|forgotten|twist|btc-e|vinnik|police|arrested|guilty|jail|cent|crashed|crack|silent|seventy|billions|money|crime|2fa|two-factor)/i;
+function overlays(t) {
+  const inRW = t >= HOOK_END && t < HOOK_END + RW; rwEl.style.opacity = inRW ? 1 : 0;
+  let bi = 0; for (let i = 0; i < B.length; i++) if (t >= VB(i) - 0.05) bi = i; const lab = inRW ? '' : SCRIPT.beats[bi] && SCRIPT.beats[bi].label || '';
+  labelEl.innerHTML = esc(lab).replace(/\*(.+?)\*/g, '<span class="hot">$1</span>'); labelEl.style.opacity = lab ? 1 : 0;
+  if (inRW) { capEl.textContent = ''; return; }
+  let wi = -1; for (let i = 0; i < WORDS.length; i++) if (WORDS[i].s <= t + 0.14) wi = i; const wd = WORDS[wi];
+  if (!wd || t > wd.e + 0.5) { capEl.textContent = ''; return; }
+  const w = wd.w.replace(/[.,!?;:]+$/, ''); capEl.textContent = w.length > 13 ? w.replace(/_/g, '_​') : w; capEl.style.fontSize = w.length > 11 ? '72px' : '';
+  capEl.className = KEYW.test(w.replace(/['"]/g, '')) ? 'k' : '';
+  const a = clamp((t + 0.14 - wd.s) / 0.06); capEl.style.transform = `scale(${0.8 + 0.2 * a + 0.06 * Math.sin(a * Math.PI)})`;
+}
+
+// =====================================================================================================
+// frame
+// =====================================================================================================
+const FOG = { street: new THREE.Fog('#1a1430', 30, 90), office: null, press: null, cards: null, chain: new THREE.Fog('#0e0820', 10, 46), beach: new THREE.Fog('#cfe6ff', 40, 120), cell: null };
+// soft interior fill so smooth-shaded sets stay bright and crisp (reference look)
+for (const [G, k, c] of [[STREET, 0.8, '#dfe6ff'], [OFFICE, 1.15, '#fff4e6'], [PRESS, 1.0, '#fff4e6'], [CARDS, 1.0, '#fff4e6'], [CHAIN, 0.7, '#e6e0ff'], [BEACH, 0.45, '#fff8ec'], [CELL, 1.0, '#f0f2ff']]) G.add(new THREE.AmbientLight(c, k));
+const STATES = { street: [streetState, SCARD], office: [officeState, OCARD], press: [pressState, { k: PCARD.karp, l: PCARD.lawyer, ...PCARD.reps }], cards: [cardsState, CCARD], chain: [chainState, KCARD], beach: [beachState, BCARD], cell: [cellState, ECARD] };
+function renderFrame(t) {
+  let ct = t; if (t >= HOOK_END && t < HOOK_END + RW) ct = HOOK_END * (1 - sstep(HOOK_END, HOOK_END + RW, t)) - 0.0001;
+  let si = 0; for (let i = 0; i < SHOTS.length; i++) if (ct >= SHOTS[i].t) si = i;
+  const s = SHOTS[si], tEnd = SHOTS[si + 1] ? SHOTS[si + 1].t : DUR, k = clamp((ct - s.t) / Math.max(0.01, tEnd - s.t));
+  for (const [n, G] of Object.entries(SETS)) G.visible = n === s.set; const G = SETS[s.set]; scene.fog = FOG[s.set];
+  const c = s.f(k, ct);
+  let shake = 0; if (s.shake !== undefined && ct >= s.shake) shake = Math.exp(-(ct - s.shake) * 5) * 0.09;
+  camera.position.copy(c.p).add(G.position); camera.position.x += Math.sin(t * 1.1) * 0.012 + Math.sin(t * 37) * shake; camera.position.y += Math.sin(t * 1.7 + 1) * 0.008 + Math.cos(t * 41) * shake;
+  camera.lookAt(c.l.clone().add(G.position)); camera.fov = c.fov; camera.updateProjectionMatrix();
+  const wt = ct; // world time (the hook plays its own moment; the rewind runs it backwards)
+  for (const [n, [fn, cs]] of Object.entries(STATES)) { if (n === s.set) fn(wt); else for (const cd of Object.values(cs)) hideCard(cd); }
+  for (const cd of cards) updateCard(cd, t);
+  post.uniforms.time.value = (Math.floor(t * 30) % 97) * 0.37; post.uniforms.warm.value = s.set === 'beach' ? 1 : 0; post.uniforms.expo.value = { street: 1.05, office: 1.0, press: 1.0, cards: 1.0, chain: 1.1, beach: 1.0, cell: 1.05 }[s.set] || 1.0;
+  overlays(t); overlays2d(t);
+  draw();
+}
+buildShots(); SHOTS.sort((a, b) => a.t - b.t); await document.fonts.ready;
+window.renderFrame = renderFrame; window.DURATION = DUR; renderFrame(0.5); window.READY = true;
+window.DBG = { V, camera, SETS, SHOTS, VB, WT, B, cards };
+</script></body></html>

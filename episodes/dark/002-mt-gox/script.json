@@ -1,0 +1,236 @@
+{
+ "title": "The Bitcoin Bank That Lost 850,000 Bitcoins",
+ "channel": "dark-stories",
+ "style": "set",
+ "look": "noir-toon",
+ "noGary": true,
+ "voices": {
+  "narrator": "am_fenrir"
+ },
+ "speed": 1.1,
+ "tail": 1.2,
+ "pronounce": {
+  "Karpelès": "Karpuh-less",
+  "McCaleb": "Muh-kayleb",
+  "Vinnik": "Vinnick",
+  "BTC-e": "B T C E",
+  "eXchange": "exchange",
+  "2010": "twenty-ten",
+  "2011": "twenty-eleven",
+  "2013": "twenty-thirteen",
+  "2014": "twenty-fourteen",
+  "2015": "twenty-fifteen",
+  "2017": "twenty-seventeen",
+  "2023": "twenty-twenty-three",
+  "2024": "twenty-twenty-four",
+  "2025": "twenty-twenty-five",
+  "MtGox": "Mount Gocks",
+  "MtGox's": "Mount Gocks's"
+ },
+ "beats": [
+  {
+   "label": "850,000 BITCOIN. *GONE.*",
+   "hook": true,
+   "hold": 0.25,
+   "lines": [
+    {
+     "text": "In 2014, the biggest bitcoin exchange in the world admitted that eight hundred and fifty thousand bitcoins were gone. Today, that would be tens of billions of dollars. And the thief had been inside for years."
+    }
+   ]
+  },
+  {
+   "label": "THE *CARD GAME*",
+   "lines": [
+    {
+     "text": "Rewind. MtGox stands for Magic: The Gathering Online eXchange. It started as a website for trading fantasy game cards."
+    }
+   ]
+  },
+  {
+   "label": "2010: *BITCOIN*",
+   "lines": [
+    {
+     "text": "In 2010, its founder, Jed McCaleb, turned it into a place to buy a weird new internet money called bitcoin. Months later, he sold it to a French programmer living in Tokyo. Mark Karpelès."
+    }
+   ]
+  },
+  {
+   "label": "TOKYO, *2011*",
+   "lines": [
+    {
+     "text": "Karpelès had never run a bank. But bitcoin was booming, and at its peak, MtGox handled around seventy percent of the world's bitcoin trades."
+    }
+   ]
+  },
+  {
+   "label": "JUNE 19, *2011*",
+   "lines": [
+    {
+     "text": "Then came the first crack. Someone broke into an old admin account and dumped a mountain of bitcoin onto the market. In minutes, the price crashed from seventeen dollars, to one cent."
+    }
+   ]
+  },
+  {
+   "label": "THE *REAL* HEIST",
+   "lines": [
+    {
+     "text": "But the real heist was silent. In September 2011, someone copied the file that held the keys to MtGox's main bitcoin wallet. Whoever had that file could spend its coins."
+    }
+   ]
+  },
+  {
+   "label": "*DRIP.* *DRIP.* *DRIP.*",
+   "lines": [
+    {
+     "text": "So they did. Slowly. For years, coins leaked out of the vault, batch after batch. Investigators later found that by 2013, it was almost empty. And on the website, every balance still looked normal."
+    }
+   ]
+  },
+  {
+   "label": "FEBRUARY 7, *2014*",
+   "lines": [
+    {
+     "text": "Then customers tried to take their money out. Withdrawals froze. MtGox blamed a flaw in bitcoin itself, called transaction malleability."
+    }
+   ]
+  },
+  {
+   "label": "WHERE IS OUR *MONEY?*",
+   "lines": [
+    {
+     "text": "One customer flew in from London and stood outside the office with a sign. On February 24th, the website went blank."
+    }
+   ]
+  },
+  {
+   "label": "FEBRUARY 28, *2014*",
+   "hold": 0.4,
+   "lines": [
+    {
+     "text": "Four days later, Karpelès bowed before the cameras and apologized for weaknesses in the system. Eight hundred and fifty thousand bitcoins were missing. MtGox was bankrupt."
+    }
+   ]
+  },
+  {
+   "label": "*OOPS*",
+   "lines": [
+    {
+     "text": "Then, a twist. MtGox found two hundred thousand bitcoins in an old wallet it had forgotten about. That still left about six hundred and fifty thousand gone."
+    }
+   ]
+  },
+  {
+   "label": "FOLLOW THE *COINS*",
+   "lines": [
+    {
+     "text": "Amateur detectives traced the stolen coins across the blockchain, bitcoin's public record. The trail led to BTC-e, a shady Russian exchange, and to wallets linked to a man named Alexander Vinnik."
+    }
+   ]
+  },
+  {
+   "label": "GREECE, *JULY 2017*",
+   "lines": [
+    {
+     "text": "In July 2017, Vinnik was on holiday in a Greek beach village when police walked up and arrested him. He later pleaded guilty to laundering money through BTC-e."
+    }
+   ]
+  },
+  {
+   "label": "*647,000* BITCOIN",
+   "lines": [
+    {
+     "text": "In 2023, America charged two more Russians with the theft itself: at least six hundred and forty seven thousand bitcoins."
+    }
+   ]
+  },
+  {
+   "label": "SENT *HOME*",
+   "lines": [
+    {
+     "text": "And in 2025, Vinnik walked free, swapped for an American held in Russia."
+    }
+   ]
+  },
+  {
+   "label": "TOKYO, *2015*",
+   "lines": [
+    {
+     "text": "As for Karpelès, Tokyo police arrested him in 2015, and he spent almost a year in jail. Judges cleared him of embezzlement, but convicted him of tampering with data."
+    }
+   ]
+  },
+  {
+   "label": "*10 YEARS* LATER",
+   "lines": [
+    {
+     "text": "And the customers? Repayments finally began in July 2024, ten years after the collapse. Some are still waiting today."
+    }
+   ]
+  },
+  {
+   "label": "NOT YOUR KEYS, *NOT YOUR COINS*",
+   "lines": [
+    {
+     "text": "The biggest bitcoin heist ever was one copied file, and years of nobody checking. If an app holds your money, its security is your security. Keep only what you can afford to lose there, and turn on two-factor login. Follow for more true stories of internet crime."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "vars": {
+   "format": "dark_story",
+   "length": "long_short",
+   "voice": "am_fenrir",
+   "music": "orchestral_suspense",
+   "look": "noir-toon"
+  },
+  "hypothesis": "A crypto-heist story with a slow-burn mystery (the vault draining for years) holds viewers as well as the AlphaBay arrest story.",
+  "darknet_diaries": "Episode 9: Mt. Gox (darknetdiaries.com/episode/9)",
+  "facts": [
+   {
+    "claim": "Name from 'Magic: The Gathering Online eXchange'; Jed McCaleb turned it into a bitcoin exchange in 2010 and sold it to Mark Karpelès in March 2011",
+    "source": "https://www.coindesk.com/learn/mt-gox"
+   },
+   {
+    "claim": "Mt. Gox handled around 70% of the world's bitcoin trades at its peak",
+    "source": "https://thenextweb.com/news/a-brief-history-of-mt-gox-the-3b-bitcoin-tragedy-that-just-wont-end"
+   },
+   {
+    "claim": "19 June 2011: compromised account dumped coins, Mt. Gox price fell from about $17.50 to $0.01",
+    "source": "https://www.pcworld.com/article/486888/faked_bitcoins_caused_price_crash_exchange_reveals.html"
+   },
+   {
+    "claim": "Hot wallet private keys stolen in September 2011 (copied wallet.dat); coins drained steadily; Mt. Gox practically empty by 2013; stolen coins sent to wallets controlled by Vinnik",
+    "source": "https://blog.wizsec.jp/2017/07/breaking-open-mtgox-1.html"
+   },
+   {
+    "claim": "7 Feb 2014 withdrawals halted citing transaction malleability; site offline 24 Feb; 28 Feb bankruptcy filing, 750,000 customer + 100,000 own bitcoins missing; Karpelès bowed and apologized for 'weaknesses in the system'",
+    "source": "https://techcrunch.com/2014/02/28/mt-gox-files-for-bankruptcy/"
+   },
+   {
+    "claim": "Protester Kolin Burges flew from London and stood outside Mt. Gox's Tokyo office with a sign",
+    "source": "https://www.rollingstone.com/culture/culture-news/the-rise-and-fall-of-a-bitcoin-kingpin-43198/"
+   },
+   {
+    "claim": "March 2014: 200,000 BTC found in an old-format wallet used before June 2011",
+    "source": "https://www.cbsnews.com/news/mt-gox-finds-200000-missing-bitcoins/"
+   },
+   {
+    "claim": "Vinnik arrested in 2017 in a beachside village in northern Greece; pleaded guilty May 2024 to money laundering conspiracy over BTC-e; released Feb 2025 in exchange for Marc Fogel",
+    "source": "https://www.cbsnews.com/news/u-s-sends-cybercriminal-to-russia-in-prisoner-exchange/"
+   },
+   {
+    "claim": "June 2023: Bilyuchenko and Verner charged; theft of at least ~647,000 bitcoins from Mt. Gox, Sept 2011 to May 2014",
+    "source": "https://www.justice.gov/opa/pr/russian-nationals-charged-hacking-one-cryptocurrency-exchange-and-illicitly-operating-another"
+   },
+   {
+    "claim": "Karpelès arrested 1 Aug 2015 in Tokyo; released on bail ~11 months later; March 2019 cleared of embezzlement and breach of trust, convicted of falsifying data, 2.5 years suspended for 4 years",
+    "source": "https://www.nbcnews.com/news/world/japan-court-hands-mt-gox-founder-2-5-years-suspended-n983661"
+   },
+   {
+    "claim": "Repayments began July 2024; Oct 2026 the trustee moved the deadline to 31 Oct 2027 because many creditors were still unpaid",
+    "source": "https://cointelegraph.com/news/mt-gox-creditor-repayment-deadline-extended-2027"
+   }
+  ]
+ }
+}

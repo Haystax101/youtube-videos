@@ -15,8 +15,12 @@ python3 tools/qa.py EP_DIR [--page EP_DIR/page.html] [--stems EP_DIR/music.wav,E
 ```
 
 - `EP_DIR` is the episode or prototype folder; the video defaults to `EP_DIR/video.mp4` (`--video FILE` for another).
-- `--page` for set videos whose page has `window.SETCHECK` (continuity: clipping through furniture,
-  chairs seen from behind, pops). Always pass it when the page supports it.
+- The page of a set video is found automatically (the one `.html` in `EP_DIR`; `--page` for another).
+  `window.SETCHECK` pages get the continuity check (2D cards through furniture, chairs seen from behind,
+  pops); `window.QA` pages get the overlap check (3D characters through each other and through props, see
+  the make-set-video skill). A set page with neither hook FAILs, because nothing checked it.
+- Black-frame FAILs at a cut to a dark shot are false alarms: look at the frames before and after
+  (ffmpeg -ss T -frames:v 1) and say so in the delivery note rather than shipping a patched cut.
 - `--stems` for any separate music/SFX stems: static in a stem is a FAIL even when the mix hides it.
 - `--fix` patches one-frame black tiles into `video.fixed.mp4` (original audio kept). Deliver that file.
 

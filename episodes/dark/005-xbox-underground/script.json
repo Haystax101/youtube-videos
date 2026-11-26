@@ -1,0 +1,154 @@
+{
+ "title": "The Teenagers Who Stole the Next Xbox",
+ "channel": "dark-stories",
+ "style": "set",
+ "look": "smol-bright",
+ "noGary": true,
+ "voices": {
+  "narrator": "am_fenrir"
+ },
+ "speed": 1.1,
+ "tail": 1.2,
+ "pronounce": {
+  "Pokora": "Puh-kora",
+  "Redmond": "Red-mund",
+  "Durango": "Dur-ang-go",
+  "Lewiston": "Loo-iss-tun",
+  "Xbox": "ex-box",
+  "Xboxes": "ex-boxes",
+  "eBay": "ee-bay",
+  "FBI": "F B I",
+  "Apache": "uh-patchy"
+ },
+ "beats": [
+  {
+   "hook": true,
+   "lines": [
+    {
+     "text": "In twenty-thirteen, two young men walked into a secure building at Microsoft's headquarters, and walked out carrying the next Xbox. Nobody stopped them. And that wasn't even the worst part."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "Rewind. A few years earlier, a handful of teenagers met online. They lived in Canada, America and Australia, and they shared one obsession. Xbox."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "They started by cracking open their own consoles, to run games and code Microsoft never allowed. They called themselves the Xbox Underground."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "Then they went further. From their bedrooms, they slipped into the networks of the companies making the games. Epic. Valve. Activision. And Microsoft itself."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "They grabbed Call of Duty and Gears of War before release. And a break-in at a small studio handed them something stranger: Apache helicopter training software, built for the United States Army."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "Inside Microsoft, they found the biggest prize of all. Secret plans for the next Xbox, codenamed Durango. Enough to build their own copy, months before anyone could buy one."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "But plans weren't enough. They wanted the real thing. So in September twenty-thirteen, two accomplices used a copied badge to walk into a secure building in Redmond, and left with three unreleased Xbox development kits."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "They wandered the halls, and no one noticed. Prosecutors later valued everything the group took at between one hundred and two hundred million dollars."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "But the FBI was already on their trail. In March twenty-fourteen, the group's leader, David Pokora, a twenty-two year old from near Toronto, tried to cross the border into New York."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "At the crossing in Lewiston, he was arrested. Pokora pleaded guilty, in what the Justice Department believed was the first conviction of a foreign hacker for stealing American trade secrets."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "He got eighteen months in prison. Two other members got eighteen months and two years. The youngest, who helped plan the badge job, got probation."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "And one Australian member fled to the Czech Republic, where he's a citizen. America can't extradite him."
+    }
+   ]
+  },
+  {
+   "lines": [
+    {
+     "text": "It took a network break-in to find the next Xbox, but just one copied badge to carry it out the door. Badges get cloned, just like passwords get stolen. If someone follows you through a secure door at work, ask who they are. Follow for more true stories of internet crime."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "vars": {
+   "format": "dark_story",
+   "length": "long_short",
+   "voice": "am_fenrir",
+   "music": "playful_suspense",
+   "look": "smol-bright"
+  },
+  "hypothesis": "george's reference style (big-head 2.5D characters, bright detailed sets, dynamic camera, one-word captions, no label chips) beats the darker noir-toon look on the dark channel.",
+  "darknet_diaries": "Episodes 45 and 46: Xbox Underground (darknetdiaries.com/episode/45, /46)",
+  "facts": [
+   {
+    "claim": "Group breached Microsoft, Epic Games, Valve, Activision and Zombie Studios 2011-2013; took pre-release Call of Duty: Modern Warfare 3 and Gears of War 3, Xbox One technical data, and Apache helicopter training software made for the US Army; enough to build a counterfeit Xbox One",
+    "source": "https://www.justice.gov/archives/opa/pr/four-members-international-computer-hacking-ring-indicted-stealing-gaming-technology-apache"
+   },
+   {
+    "claim": "Loss valued between $100 million and $200 million",
+    "source": "https://www.theregister.co.uk/2015/04/24/microsoft_games_hack_ringleader/"
+   },
+   {
+    "claim": "September 2013: physical theft of three non-public Xbox One development kits from a secure building on Microsoft's Redmond campus, brokered by Alcala and Pokora, using a copied badge; they walked around undetected",
+    "source": "https://www.phishingforanswers.com/blog/how-gamers-used-xbox-to-hack-into-microsoft"
+   },
+   {
+    "claim": "Pokora, 22, of Mississauga, Ontario, viewed as the leader, arrested 28 March 2014 at the Lewiston, New York port of entry; DOJ: believed to be the first conviction of a foreign-based hacker for stealing US trade secrets",
+    "source": "https://www.justice.gov/usao/de/news/2014/09-30.html"
+   },
+   {
+    "claim": "Sentences: Pokora 18 months; Nesheiwat 18 months; Leroux 24 months; Alcala (youngest, 18 when charged) three years supervised release",
+    "source": "https://www.ballstatedaily.com/article/2016/04/news-hacking-student"
+   },
+   {
+    "claim": "Australian member (Dylan Wheeler) fled to the Czech Republic, holds Czech citizenship, cannot be extradited",
+    "source": "https://thehackernews.com/2015/04/game-hacking-group-arrested_2.html"
+   }
+  ]
+ }
+}

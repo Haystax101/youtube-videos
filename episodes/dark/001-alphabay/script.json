@@ -1,0 +1,180 @@
+{
+ "title": "The Dark Web King Caught By His Own Email Address",
+ "channel": "dark-stories",
+ "style": "set",
+ "look": "noir-toon",
+ "noGary": true,
+ "voices": {
+  "narrator": "am_fenrir"
+ },
+ "speed": 1.1,
+ "tail": 1.2,
+ "pronounce": {
+  "Cazes": "Kahz",
+  "Cazes's": "Kahz's",
+  "Alpha02": "Alpha-zero-two",
+  "Hansa": "Hahnsa",
+  "Pimp_Alex_91": "pimp alex ninety-one",
+  "Europol": "Yuro-pole",
+  "Liechtenstein": "Liktenstine",
+  "2014": "twenty-fourteen",
+  "2016": "twenty-sixteen",
+  "2017": "twenty-seventeen",
+  "2013": "twenty-thirteen",
+  "2008": "two thousand eight"
+ },
+ "beats": [
+  {
+   "label": "ONE EMAIL. *$1 BILLION.*",
+   "hook": true,
+   "hold": 0.25,
+   "lines": [
+    {
+     "text": "This man ran the biggest black market the internet had ever seen. And one email, sent years earlier, brought it all crashing down."
+    }
+   ]
+  },
+  {
+   "label": "QUEBEC, *2014*",
+   "lines": [
+    {
+     "text": "Rewind to 2014. Alexandre Cazes is a young computer guy from Quebec, Canada. Online, he calls himself Alpha02. And he has a plan: build the eBay of crime."
+    }
+   ]
+  },
+  {
+   "label": "THE *DARK WEB*",
+   "lines": [
+    {
+     "text": "He launches AlphaBay, a site you can only reach through Tor, a network that hides who and where you are. Drugs. Guns. Stolen cards. Hacking tools. All paid for in Bitcoin."
+    }
+   ]
+  },
+  {
+   "label": "*$1,000,000,000*",
+   "lines": [
+    {
+     "text": "It explodes. By 2017 it has over 200,000 users and 40,000 sellers, and Europol estimates at least a billion dollars has changed hands. Silk Road, the market the FBI shut down in 2013, had about 14,000 listings. AlphaBay has over 350,000."
+    }
+   ]
+  },
+  {
+   "label": "THE *KING*",
+   "hold": 0.5,
+   "lines": [
+    {
+     "text": "Cazes moves to Thailand. A villa. A Lamborghini. A hotel. Money in Cyprus, Liechtenstein and Antigua. He's sure nobody can touch him."
+    }
+   ]
+  },
+  {
+   "label": "THE *MISTAKE*",
+   "lines": [
+    {
+     "text": "But back in December 2014, when AlphaBay was brand new, every user got a welcome email. And hidden in its header was the sender's real address. Pimp_Alex_91, at Hotmail dot com."
+    }
+   ]
+  },
+  {
+   "label": "*FOUND*",
+   "lines": [
+    {
+     "text": "In December 2016, investigators spotted it. That address led to a LinkedIn profile, a computer repair business, and a forum post from 2008, signed Alpha02, with his real name."
+    }
+   ]
+  },
+  {
+   "label": "THE *TRAP*",
+   "lines": [
+    {
+     "text": "But arresting him wasn't enough. The FBI wanted his customers too. And Dutch police had found a way."
+    }
+   ]
+  },
+  {
+   "label": "HANSA: *UNDER NEW OWNERS*",
+   "lines": [
+    {
+     "text": "Hansa was another huge dark web market. On June 20th, 2017, German police arrested its two admins, and Dutch police quietly took over the site. They kept it running, as if nothing had changed. Then they rewired it. Every password, saved. Messages, copied before they were encrypted. Even the hidden location data in sellers' photos."
+    }
+   ]
+  },
+  {
+   "label": "BANGKOK, *JULY 5*",
+   "lines": [
+    {
+     "text": "Now it was time for the king. Police crashed a car into Cazes's gate. He came out to look, and they grabbed him. Inside, his laptop was open, unencrypted, and logged in to AlphaBay."
+    }
+   ]
+  },
+  {
+   "label": "*8X* NEW USERS",
+   "lines": [
+    {
+     "text": "AlphaBay went dark. Hundreds of thousands of buyers needed a new place to shop, and they flooded into Hansa. New sign-ups jumped eightfold. Straight into a market run by the police."
+    }
+   ]
+  },
+  {
+   "label": "JULY 12",
+   "hold": 0.6,
+   "lines": [
+    {
+     "text": "Cazes never saw how it ended. A week after his arrest, he was found dead in his cell. Thai police said he took his own life."
+    }
+   ]
+  },
+  {
+   "label": "*10,000* ADDRESSES",
+   "lines": [
+    {
+     "text": "On July 20th, the Dutch pulled the plug, with about ten thousand buyers' addresses to hand to Europol."
+    }
+   ]
+  },
+  {
+   "label": "THE *LESSON*",
+   "lines": [
+    {
+     "text": "The biggest black market in history, undone by one old email address. So keep your personal email out of everything else, and never reuse a password. Follow for more true stories of internet crime."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "vars": {
+   "format": "dark_story",
+   "length": "long_short",
+   "voice": "am_fenrir",
+   "music": "orchestral_suspense",
+   "look": "noir-toon"
+  },
+  "hypothesis": "A 2.5-3 min vertical true-crime story with a cut every ~2 s holds viewers like Afterhour Theory's hacker story.",
+  "facts": [
+   {
+    "claim": "AlphaBay: 200,000+ users, 40,000 vendors, 250,000+ drug listings and 100,000+ other listings; Silk Road had ~14,000 listings; Cazes arrested July 5 2017, apparent suicide July 12; assets in Thailand, Cyprus, Liechtenstein, Antigua; luxury vehicles, residences and a hotel",
+    "source": "https://www.justice.gov/archives/opa/pr/alphabay-largest-online-dark-market-shut-down"
+   },
+   {
+    "claim": "Conservative estimate USD 1 billion transacted since 2014; Dutch police took over Hansa 20 June 2017, shut 20 July 2017; eightfold increase in new Hansa members after AlphaBay closed; ~10,000 foreign buyer addresses passed to Europol; Hansa admins arrested in Germany",
+    "source": "https://www.europol.europa.eu/media-press/newsroom/news/massive-blow-to-criminal-dark-web-activities-after-globally-coordinated-operation"
+   },
+   {
+    "claim": "Pimp_Alex_91@hotmail.com in the header of AlphaBay's welcome email in Dec 2014, learned Dec 2016; also in password recovery; 2008 forum post by Alpha02 with the email and his name; logged in as admin when arrested",
+    "source": "https://www.vice.com/en/article/alleged-dark-web-kingpin-doxed-himself-with-his-personal-hotmail-address"
+   },
+   {
+    "claim": "Laptop open and unencrypted at arrest (forfeiture complaint, US v. Cazes, E.D. Cal. 1:17-cv-00967)",
+    "source": "https://www.justice.gov/archives/opa/press-release/file/982826/dl"
+   },
+   {
+    "claim": "Hansa takeover: passwords logged in plaintext, PGP convenience feature copied plaintext, photo metadata recorded; email also on LinkedIn and his repair business",
+    "source": "https://en.wikipedia.org/wiki/Operation_Bayonet_(darknet)"
+   },
+   {
+    "claim": "Police deliberately crashed a car into the gate of his villa to lure him outside",
+    "source": "Andy Greenberg, Tracers in the Dark (2022) / Wired excerpt"
+   }
+  ]
+ }
+}
