@@ -22,3 +22,8 @@ eel: slime | squelch | wet
 bed: bed creak | yawn | snoring | alarm clock
 squirrel: squirrel | chipmunk
 camera: camera shutter | beep | gps
+underwater: underwater ambience | underwater | hydrophone | underwater bubbles
+bubbles: bubbles | bubble | bubbling water | aquarium
+gulp: gulp | swallow | slurp | gulping
+stomach: stomach growl | stomach rumble | digestion | heartbeat
+lab: laboratory | electrical hum | machine hum | x-ray | buzzer | power up
