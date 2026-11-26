@@ -145,7 +145,7 @@ const clumpGeo = (() => { const g = []; for (let i = 0; i < 3; i++) { const p = 
   const out = new THREE.BufferGeometry(); const pos = [], uv = [], nor = [], idx = []; let o = 0; for (const q of g) { pos.push(...q.attributes.position.array); uv.push(...q.attributes.uv.array); nor.push(...q.attributes.normal.array); idx.push(...Array.from(q.index.array, v => v + o)); o += q.attributes.position.count; }
   out.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); out.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); out.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3)); out.setIndex(idx); return out; })();
 const trees = []; { const r = rng(21);
-  for (let i = 0; i < 5200; i++) { const x = -230 + r() * 400, z = (r() - 0.5) * 460; if (!inForest(x, z) || nearLoop(x, z, 5.2) || Math.hypot(x - FIRE.x, z - FIRE.z) < 9 || Math.hypot(x - CAMP.x, z - CAMP.z) < 14) continue;
+  for (let i = 0; i < 5200; i++) { const x = -230 + r() * 400, z = (r() - 0.5) * 460; if (!inForest(x, z) || nearLoop(x, z, 5.2) || Math.hypot(x - FIRE.x, z - FIRE.z) < 17 || Math.hypot(x - CAMP.x, z - CAMP.z) < 14) continue;
     trees.push({ x, z, s: 0.75 + r() * 0.75, pine: r() < 0.3, rot: r() * 6, lean: (r() - 0.5) * 0.06 }); } }
 inst(new THREE.CylinderGeometry(0.2, 0.42, 16, 10, 1).translate(0, 8, 0), barkMat, trees, (d, t) => { d.position.set(t.x, 0, t.z); d.rotation.set(t.lean, t.rot, t.lean); d.scale.set(t.s, t.s * (t.pine ? 1.1 : 1), t.s); });
 const beeches = trees.filter(t => !t.pine), pines = trees.filter(t => t.pine);
@@ -162,26 +162,28 @@ const fernTex = canvasTex(256, 256, (x, w, h) => { x.translate(w / 2, h); const 
     for (let y = -20; y > -220; y -= 12) { const L = 46 * (1 - Math.abs(y + 110) / 140); x.fillStyle = r() < 0.5 ? '#4d9136' : '#3f8030'; for (const s of [-1, 1]) { x.beginPath(); x.ellipse(s * L / 2, y, L / 2, 5, s * 0.3, 0, 7); x.fill(); } } x.restore(); } });
 const fernMat = new THREE.MeshStandardMaterial({ map: fernTex, alphaTest: 0.5, side: THREE.DoubleSide, roughness: 0.9 });
 const fernGeo = new THREE.PlaneGeometry(1.6, 1.6).translate(0, 0.8, 0), fernGeo2 = fernGeo.clone().rotateY(Math.PI / 2);
-const ferns = []; { const r = rng(33); for (let i = 0; i < 9000; i++) { const x = -150 + r() * 320, z = (r() - 0.5) * 300; if (!inForest(x, z) || nearLoop(x, z, 1.9) || Math.hypot(x - FIRE.x, z) < 4.2 || Math.hypot(x - CAMP.x, z - CAMP.z) < 10) continue; ferns.push({ x, z, s: 0.5 + r() * 0.9, rot: r() * 6 }); } }
+const ferns = []; { const r = rng(33); for (let i = 0; i < 9000; i++) { const x = -150 + r() * 320, z = (r() - 0.5) * 300; if (!inForest(x, z) || nearLoop(x, z, 3.6) || Math.hypot(x - FIRE.x, z) < 9 || Math.hypot(x - CAMP.x, z - CAMP.z) < 10) continue; ferns.push({ x, z, s: 0.5 + r() * 0.9, rot: r() * 6 }); } }
 for (const gg of [fernGeo, fernGeo2]) inst(gg, fernMat, ferns, (d, t) => { d.position.set(t.x, 0, t.z); d.rotation.set(0, t.rot, 0); d.scale.setScalar(t.s); }, false);
 const leafTex = canvasTex(256, 256, (x, w, h) => { x.fillStyle = '#3f7a31'; x.fillRect(0, 0, w, h); const r = rng(9); for (let i = 0; i < 1400; i++) { x.fillStyle = ['#2f6427', '#4f9238', '#6aa845', '#2a5a22', '#83bb52'][Math.floor(r() * 5)]; x.globalAlpha = 0.8; x.beginPath(); x.ellipse(r() * w, r() * h, 5 + r() * 7, 3 + r() * 4, r() * 3, 0, 7); x.fill(); } }, 3);
-const bushes = []; { const r = rng(41); for (let i = 0; i < 1600; i++) { const x = -150 + r() * 320, z = (r() - 0.5) * 300; if (!inForest(x, z) || nearLoop(x, z, 3.0) || Math.hypot(x - FIRE.x, z) < 6 || Math.hypot(x - CAMP.x, z - CAMP.z) < 10) continue; bushes.push({ x, z, s: 0.6 + r() * 0.8, rot: r() * 6 }); } }
+const bushes = []; { const r = rng(41); for (let i = 0; i < 1600; i++) { const x = -150 + r() * 320, z = (r() - 0.5) * 300; if (!inForest(x, z) || nearLoop(x, z, 4.2) || Math.hypot(x - FIRE.x, z) < 10 || Math.hypot(x - CAMP.x, z - CAMP.z) < 10) continue; bushes.push({ x, z, s: 0.6 + r() * 0.8, rot: r() * 6 }); } }
 inst(new THREE.IcosahedronGeometry(0.9, 1), std('#ffffff', { map: leafTex, flatShading: true }), bushes, (d, t) => { d.position.set(t.x, 0.45 * t.s, t.z); d.rotation.set(t.rot, t.rot, 0); d.scale.set(t.s * 1.3, t.s * 0.8, t.s); });
 // grass tufts (instanced blades) along the trail edges and all over the meadow
 const bladeGeo = (() => { const g = new THREE.BufferGeometry(); const pos = [], col = [], r = rng(44); for (let i = 0; i < 14; i++) { const a = r() * 6.28, d = r() * 0.25, x = Math.cos(a) * d, z = Math.sin(a) * d, h = 0.35 + r() * 0.4, lx = (r() - 0.5) * 0.25, lz = (r() - 0.5) * 0.25, w = 0.03;
   pos.push(x - w, 0, z, x + w, 0, z, x + lx, h, z + lz); const c1 = new THREE.Color('#3d6b25'), c2 = new THREE.Color(r() < 0.5 ? '#9cc45a' : '#7fae45'); col.push(...c1.toArray(), ...c1.toArray(), ...c2.toArray()); }
   g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.Float32BufferAttribute(col, 3)); g.computeVertexNormals(); return g; })();
 const bladeMat = new THREE.MeshStandardMaterial({ vertexColors: true, side: THREE.DoubleSide, roughness: 0.9 });
-const tufts = []; { const r = rng(45); for (let i = 0; i < 24000; i++) { const th = r() * 6.283, d = R + (r() < 0.5 ? -1 : 1) * (1.0 + r() * 3.5); tufts.push({ x: Math.cos(th) * d, z: Math.sin(th) * d, s: 0.7 + r() * 0.7, rot: r() * 6 }); }
-  for (let i = 0; i < 26000; i++) { const x = 170 + r() * 160, z = (r() - 0.5) * 140; tufts.push({ x, z, s: 0.8 + r() * 0.8, rot: r() * 6, y: groundY(x, z) }); } }
+const tufts = []; { const r = rng(45); for (let i = 0; i < 24000; i++) { const th = r() * 6.283, d = R + (r() < 0.5 ? -1 : 1) * (1.0 + r() * 3.5); if (Math.hypot(Math.cos(th) * d - FIRE.x, Math.sin(th) * d) < 3.5) continue; tufts.push({ x: Math.cos(th) * d, z: Math.sin(th) * d, s: 0.7 + r() * 0.7, rot: r() * 6 }); }
+  for (let i = 0; i < 26000; i++) { const x = 170 + r() * 160, z = (r() - 0.5) * 140; tufts.push({ x, z, s: 0.35 + r() * 0.35, rot: r() * 6, y: groundY(x, z) }); } }
 inst(bladeGeo, bladeMat, tufts, (d, t) => { d.position.set(t.x, t.y || 0, t.z); d.rotation.set(0, t.rot, 0); d.scale.setScalar(t.s); }, false);
 // Poly Haven plants (glTF) scattered around the trail and clearing
 const gltf = new GLTFLoader();
-for (const f of files('models/plants/').filter(f => f.endsWith('.gltf')).slice(0, 6)) {
+// only light photoscans (swiftshader renders on CPU): [file, instances]
+const PLANTS = [['models/plants/fern_02/fern_02.gltf', 120], ['models/plants/grass_bermuda_01/grass_bermuda_01.gltf', 300], ['models/plants/celandine_01/celandine_01.gltf', 60], ['models/plants/grass_medium_02/grass_medium_02.gltf', 80]];
+for (const [f, NI] of PLANTS.filter(([f]) => MAN.some(m => m.file === f))) {
   const g = await new Promise(res => gltf.load('/assets/' + f, res, undefined, () => res(null))); if (!g) continue;
   const meshes = []; g.scene.updateMatrixWorld(true); g.scene.traverse(o => { if (o.isMesh) meshes.push(o); });
-  const box = new THREE.Box3().setFromObject(g.scene), size = box.getSize(V(0, 0, 0)); const sc = size.y > 0 ? Math.min(2.5, 1.2 / Math.max(size.y, 0.1) * (size.y > 3 ? 2 : 1)) : 1;
-  const r = rng(f.length * 13), spots = []; for (let i = 0; i < 260; i++) { const th = r() * 6.283, d = R + (r() < 0.5 ? -1 : 1) * (2 + r() * 8); spots.push({ x: Math.cos(th) * d, z: Math.sin(th) * d, s: sc * (0.7 + r() * 0.7), rot: r() * 6 }); }
+  const box = new THREE.Box3().setFromObject(g.scene), size = box.getSize(V(0, 0, 0)); const sc = size.y > 0 ? Math.min(1.6, 0.8 / Math.max(size.y, 0.1)) : 1;
+  const r = rng(f.length * 13), spots = []; for (let i = 0; i < NI; i++) { const th = r() * 6.283, d = R + (r() < 0.5 ? -1 : 1) * (4 + r() * 9); if (Math.hypot(Math.cos(th) * d - FIRE.x, Math.sin(th) * d) < 9) continue; spots.push({ x: Math.cos(th) * d, z: Math.sin(th) * d, s: sc * (0.7 + r() * 0.7), rot: r() * 6 }); }
   for (const m of meshes) { const geo = m.geometry.clone().applyMatrix4(m.matrixWorld); inst(geo, m.material, spots, (d, t) => { d.position.set(t.x, 0, t.z); d.rotation.set(0, t.rot, 0); d.scale.setScalar(t.s); }); } }
 
 // light shafts in the forest
@@ -241,7 +243,7 @@ stick.position.set(0.95, 0.55, 0.2); stick.rotation.y = -0.4; fire.add(stick);
 
 // ---------- the scientists' camp at the forest edge ----------
 const camp = new THREE.Group(); camp.position.copy(CAMP); scene.add(camp);
-{ const canopy = new THREE.Mesh(new THREE.ConeGeometry(4.2, 1.4, 4, 1, true), std('#f2f2ee', { side: THREE.DoubleSide })); canopy.position.y = 3.1; canopy.rotation.y = Math.PI / 4; canopy.castShadow = true; camp.add(canopy);
+{ const canopy = new THREE.Mesh(new THREE.ConeGeometry(4.2, 1.4, 4, 1, true), std('#3f6f8f', { side: THREE.DoubleSide })); canopy.position.y = 3.1; canopy.rotation.y = Math.PI / 4; canopy.castShadow = true; camp.add(canopy);
   for (const [x, z] of [[-2.9, -2.9], [2.9, -2.9], [-2.9, 2.9], [2.9, 2.9]]) { const p = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.4), std('#9aa0a6', { metalness: 0.5 })); p.position.set(x, 1.2, z); camp.add(p); }
   const table = new THREE.Mesh(new THREE.BoxGeometry(2.6, 0.08, 1.1), std('#d9d4c8')); table.position.set(0, 0.9, 0); table.castShadow = true; camp.add(table);
   for (const [x, z] of [[-1.2, -0.45], [1.2, -0.45], [-1.2, 0.45], [1.2, 0.45]]) { const l = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.9), std('#555')); l.position.set(x, 0.45, z); camp.add(l); }
@@ -335,21 +337,21 @@ shot(WT(1, 'straight'), (t, u) => { const th = 2.26 + u * 0.4 / R; const p = kla
   look(frame(th, -2.4, -0.45, 1.5), p.clone().add(tangent(th).multiplyScalar(9)).add(V(0, 1.4, 0)), 50, 2.6, 0.012); });
 // AN HOUR LATER: time-lapse shadows, push through ferns to the fire, joy
 shot(WT(2, 'An'), (t, u) => { const th = 2.4 + u * 2.6 / R; const p = klausOn(th, t * 1.6, 'march', 'smug'); showPrints(0.5, th); tag('1 HOUR LATER', u);
-  look(frame(th, 1.4 + u * 2.6 * 0.9, 3.4, 0.9), p.clone().add(V(0, 0.9, 0)), 46, 3.6, 0.012); }, { whip: [1, 0], timelapse: true });
+  look(frame(th, 1.4 + u * 2.6 * 0.9, 2.2, 1.5), p.clone().add(V(0, 0.9, 0)), 46, 3.6, 0.012); }, { whip: [1, 0], timelapse: true });
 shot(WT(2, 'finds'), (t, u) => { const th = -0.22 + u * 0.8 / R; klausOn(th, t, 'walk', 'watch'); showPrints(th - 1.5, th); const k = ease(0, 1.4, u);
   look(V(FIRE.x + lerp(9, 4.5, k), lerp(0.5, 1.4, k), FIRE.z + lerp(5, 2.6, k)), V(FIRE.x - 0.3, 0.6, FIRE.z - 0.4), 46, lerp(10, 5, k), 0.012); });
 shot(WT(2, 'People'), (t, u) => { const p = klausOn(-0.08, t, 'cheer', 'joy', { lines: true, turn: 0 });
   look(frame(-0.08, 2.2 - u * 0.3, 0.2, 0.45), headOf(p).add(V(0, 0.1, 0)), 44, 2.2 - u * 0.3, 0.012, 0.14); });
 // NOBODY'S THERE: alone, then marching off (back), then towards us, then the second fire
-shot(WT(3, "Nobody's"), (t, u) => { const p = klausOn(-0.05, t, 'idle', 'glum', { turn: 0 }); look(V(FIRE.x + 11, 4.5, FIRE.z - 4 + u * 0.6), V(FIRE.x, 0.6, FIRE.z), 40, null, 0.012); });
-shot(WT(3, 'marches'), (t, u) => { const th = 0.02 + u * SPEED * 1.3 / R; const p = klausOn(th, t, 'march', 'angry'); showPrints(th - 0.6, th);
+shot(WT(3, "Nobody's"), (t, u) => { const p = klausOn(-0.05, t, 'idle', 'glum', { turn: 0 }); look(V(FIRE.x + 8, 3.6, FIRE.z - 4 + u * 0.6), V(FIRE.x, 0.6, FIRE.z), 40, null, 0.012); });
+shot(WT(3, 'marches'), (t, u) => { const th = 0.14 + u * SPEED * 1.3 / R; const p = klausOn(th, t, 'march', 'angry'); showPrints(th - 0.6, th);
   look(frame(th, -1.8 - u * 0.2, 0.0, 0.35), p.clone().add(V(0, 1.2, 0)).add(tangent(th).multiplyScalar(5)), 54, 1.9, 0.012); }, { whip: [-1, 0] });
 shot(WT(3, 'Dead'), (t, u) => { const th = 1.0 + u * SPEED * 1.3 / R; const p = klausOn(th, t, 'march', 'smug', { back: false }); showPrints(th - 1, th);
   look(frame(th, 3.0, 0.1, 0.25), headOf(p).add(V(0, -0.1, 0)), 44, 3.0, 0.012, -0.08); tag('DEAD STRAIGHT', u); });
 shot(WT(3, 'Another'), (t, u) => { const th = 1.4 + u * 4.2; klausOn(th, t, 'march', 'smug'); showPrints(-0.1, th); drawPath(routes.red, loopPts(0.02, th), 1, 2.4, 3.4, 1.8); look(V(2, 120 - u * 10, 24), V(0, 0, 0), 44, null, 0.0009, -u * 0.25); tag('1 HOUR LATER', u); }, { whip: [0, -1] });
 shot(WT(3, 'Another', 2), (t, u) => { const th = -0.22 + u * 0.8 / R; klausOn(th, t, 'walk', 'watch'); showPrints(-0.1, th); look(V(FIRE.x + 4.5, 1.4, FIRE.z + 2.6), V(FIRE.x - 0.3, 0.6, FIRE.z - 0.4), 46, 5, 0.012); });
 shot(WT(3, 'Same'), (t, u) => { const c = carve.getWorldPosition(V(0, 0, 0)), n = V(Math.cos(0.25), 0, -Math.sin(0.25)); look(c.clone().add(n.clone().multiplyScalar(1.15 - u * 0.2)).add(V(0.1, 0.15, 0.25)), c, 36, 1.15 - u * 0.2, 0.012); }, { whip: [1, 0] });
-shot(WT(3, 'Same', 2), (t, u) => { const s = sausage.getWorldPosition(V(0, 0, 0)); sausage.rotation.z = -0.5 * ease(0, 0.6, u); look(s.clone().add(V(0.4, 0.3 - u * 0.04, 1.7 - u * 0.2)), s.clone().add(V(0.05, -0.1, 0)), 34, 1.75 - u * 0.2, 0.012); });
+shot(WT(3, 'Same', 2), (t, u) => { const s = sausage.getWorldPosition(V(0, 0, 0)); sausage.rotation.z = -0.5 * ease(0, 0.6, u); look(s.clone().add(V(1.6 - u * 0.2, 0.35 - u * 0.04, 0.5)), s.clone().add(V(0.05, -0.1, 0)), 34, 1.7 - u * 0.2, 0.012); });
 // WAIT, THAT'S MY SAUSAGE: dolly zoom, then the crane up to the loop
 shot(WT(4, 'Wait'), (t, u) => { const p = klausOn(-0.06, t, 'idle', u < 0.6 ? 'shocked' : 'talk', { turn: 0 }); const k = ease(0, 1.4, u); const fov = lerp(28, 62, k), d = 1.25 * Math.tan(THREE.MathUtils.degToRad(28) / 2) / Math.tan(THREE.MathUtils.degToRad(fov) / 2) * 1.6;
   look(frame(-0.06, d, 0.15, 1.1), headOf(p), fov, d, 0.012); });
@@ -366,7 +368,7 @@ shot(WT(5, 'walk'), (t, u) => { vols.forEach((v, i) => { const p = CAMP.clone().
 // SUN vs CLOUDS: sun flare, green straight track; clouds roll in, red track loops; a volunteer whistles past his own prints
 shot(WT(6, 'When'), (t, u) => { weather(0); const k = ease(0, 1.6, u); drawPath(routes.green, sunnyTrack, ease(0, 1.5, u), 2.4, 3.4, 1.8);
   look(V(100, lerp(150, 175, k), 40), V(80, 0, -10), 46, null, 0.0008, 0.1); }, { whip: [0, -1] });
-shot(WT(6, 'Under'), (t, u) => { weather(ease(0, 1.0, u)); const k = ease(0, 1.4, u); look(V(40, 12, 60), V(lerp(-80, -60, k), lerp(220, 120, k), -500), 50, null, 0.004); }, { whip: [0, 1] });
+shot(WT(6, 'Under'), (t, u) => { weather(ease(0, 1.0, u)); const k = ease(0, 1.4, u); look(V(40, 34, 60), V(lerp(-80, -60, k), lerp(220, 120, k), -500), 50, null, 0.004); }, { whip: [0, 1] });
 shot(WT(6, 'looped'), (t, u) => { weather(1); drawPath(routes.red, cloudyTrack, ease(0, 2.2, u), 2.4, 3.4, 1.8); drawPath(routes.green, sunnyTrack, 1, 2.4, 3.4, 1.8); look(V(100, 175, 40), V(80, 0, -5), 46, null, 0.0008, -0.05); });
 shot(WT(6, 'without'), (t, u) => { weather(1); const th = 4.4 + u * SPEED / R; const pos = onLoop(th); place(vols[0], pos, 'walk', 'talksmug', t, tangent(th)); showPrints(4.3, 4.3 + 6.0); look(frame(th, 2.6 - u * 0.2, 1.3, 0.6), headOf(pos).add(V(0, -0.3, 0)), 40, 2.8, 0.014); });
 // BLINDFOLDED: close-up, then circles from above, then "20 m"
@@ -379,19 +381,19 @@ shot(WT(7, 'twenty'), (t, u) => { weather(0); const b = blindLoops[2], c = MEAD.
   place(vols[2], p, 'walk', 'worried', t, V(-Math.sin(th), 0, Math.cos(th)), { blind: true }); drawPath(routes.yellow, [c.clone().add(V(-b.r * 2, 0, 0)), c.clone().add(V(b.r * 2, 0, 0))].map(q => q.setY(groundY(q.x, q.z))), 1, 0.25, 0.6, 0.25, 0.15);
   drawPath(routes.blue, loopPts(0, 6.283, b.r * 2, c.x, c.z).map(q => q.setY(groundY(q.x, q.z))), 1, 0.45, 0.8, 0.5, 0.1); look(c.clone().add(V(-4, 9, 20)), c.clone().add(V(0, 0, 0)), 46, null, 0.003); tag('20 METRES', u); });
 // WHY: not leg length (myth sticker), tiny errors pile up and curl the path
-shot(WT(8, 'And'), (t, u) => { weather(0); const p = MEAD.clone().add(V(30, 0, 10)); p.y = groundY(p.x, p.z); place(vols[3], p, 'hips', 'talksmug', t, null, { turn: 0 }); look(p.clone().add(V(0, 0.45, 2.2)), p.clone().add(V(0, 0.5, 0)), 44, 2.2, 0.003); tag('LONGER LEG? MYTH', u, true); }, { whip: [-1, 0] });
+shot(WT(8, 'And'), (t, u) => { weather(0); const p = MEAD.clone().add(V(30, 0, 10)); p.y = groundY(p.x, p.z); place(vols[3], p, 'hips', 'talksmug', t, null, { turn: 0 }); look(p.clone().add(V(0.3, 0.75, 2.6)), p.clone().add(V(0, 0.62, 0)), 44, 2.6, 0.003); tag('LONGER LEG? MYTH', u, true); }, { whip: [-1, 0] });
 shot(WT(8, 'With'), (t, u) => { weather(0); const k = ease(0, 3.6, u); drawPath(routes.yellow, driftTrack, k, 0.9, 1.4, 0.7, 0.2); const tip = driftTrack[Math.min(driftTrack.length - 1, Math.floor(k * (driftTrack.length - 1)))];
   place(vols[3], V(tip.x, groundY(tip.x, tip.z), tip.z), 'walk', 'smug', t, V(0, 0, 1)); look(tip.clone().add(V(0, 34 + u * 2, 10)), tip.clone().add(V(0, 0, -2)), 48, null, 0.002, u * 0.05); });
 shot(WT(8, 'curl'), (t, u) => { weather(0); drawPath(routes.yellow, driftTrack, 1, 0.9, 1.4, 0.7, 0.2); const c = driftTrack[200]; look(c.clone().add(V(Math.cos(u * 1.4) * 30, 60, Math.sin(u * 1.4) * 30)), c, 50, null, 0.002, u * 0.5); });
 // THE TIP: Klaus on the ridge spots the church; walks; "Landmark. Got it."; he picked a squirrel
 const RIDGE = V(MEAD.x + 40, 0, -10); RIDGE.y = groundY(RIDGE.x, RIDGE.z);
-shot(WT(9, 'So'), (t, u) => { weather(0); place(klaus, RIDGE, 'point', 'smug', u * 1.5, null, { back: true }); look(RIDGE.clone().add(V(-4.2, 1.2, 2.4)), RIDGE.clone().lerp(TOWER, 0.25).setY(16), 40, 4.5, 0.0015); }, { whip: [1, 0] });
+shot(WT(9, 'So'), (t, u) => { weather(0); place(klaus, RIDGE, 'point', 'smug', u * 1.5, null, { back: true }); const dir = TOWER.clone().sub(RIDGE).setY(0).normalize(), side = V(-dir.z, 0, dir.x); look(RIDGE.clone().add(dir.clone().multiplyScalar(-2.6 - u * 0.4)).add(side.clone().multiplyScalar(0.9)).add(V(0, 1.35, 0)), RIDGE.clone().add(dir.clone().multiplyScalar(40)).add(side.clone().multiplyScalar(-6)).setY(RIDGE.y + 6), 44, 2.8, 0.0015); }, { whip: [1, 0] });
 shot(WT(9, 'walk'), (t, u) => { weather(0); const dir = TOWER.clone().sub(RIDGE).setY(0).normalize(); const p = RIDGE.clone().add(dir.clone().multiplyScalar(u * 1.4)); p.y = groundY(p.x, p.z); place(klaus, p, 'march', 'smug', t, dir);
-  look(p.clone().add(dir.clone().multiplyScalar(-3)).add(V(0, 1.8, 0)), p.clone().add(dir.clone().multiplyScalar(30)).setY(12), 46, 3.2, 0.0015); });
+  look(p.clone().add(dir.clone().multiplyScalar(-3)).add(V(0, 1.8, 0)), p.clone().add(dir.clone().multiplyScalar(30)).setY(p.y + 5), 46, 3.2, 0.0015); });
 shot(WT(9, 'Landmark'), (t, u) => { weather(0); const p = RIDGE.clone().add(V(4, 0, -1)); p.y = groundY(p.x, p.z); place(klaus, p, 'thumb', 'talksmug', t, null, { turn: 10 }); look(p.clone().add(V(1.9, 1.05, 0.4)), headOf(p), 38, 1.95, 0.0015, 0.05); }, { whip: [-1, 0] });
 shot(WT(9, 'Klaus', 1), (t, u) => { weather(0); const tt = u; const sq = squirrelPath(tt), sv = squirrelPath(tt + 0.05).sub(sq); sq.y = groundY(sq.x, sq.z); place(squirrel, sq, 'run', '', t, sv);
   const kp = squirrelPath(tt - 0.55); kp.y = groundY(kp.x, kp.z); const kv = squirrelPath(tt - 0.5).sub(kp); place(klaus, kp, 'march', 'smug', t, kv);
-  look(sq.clone().add(V(0.5, 0.25, 3.0)), sq.clone().add(V(-1.2, 0.5, 0)), 50, 3.0, 0.002, -0.05); }, { whip: [1, 0] });
+  const mid = sq.clone().lerp(kp, 0.5), dv = sq.clone().sub(kp).setY(0).normalize(), pv = V(-dv.z, 0, dv.x); look(mid.clone().add(pv.multiplyScalar(6.0)).add(V(0, 1.1, 0)), mid.clone().add(V(0, 0.5, 0)), 44, 6.0, 0.002, -0.05); }, { whip: [1, 0] });
 // CTA: pull up into the sky over Klaus zig-zagging after the squirrel
 shot(WT(10, 'Follow'), (t, u) => { weather(0); const tt = 1.4 + u; const sq = squirrelPath(tt); sq.y = groundY(sq.x, sq.z); place(squirrel, sq, 'run', '', t, squirrelPath(tt + 0.05).sub(sq));
   const kp = squirrelPath(tt - 0.55); kp.y = groundY(kp.x, kp.z); place(klaus, kp, 'march', 'joy', t, squirrelPath(tt - 0.5).sub(kp)); const pts = []; for (let s = 0; s <= tt - 0.55; s += 0.05) { const q = squirrelPath(s); q.y = groundY(q.x, q.z); pts.push(q); } drawPath(routes.red, pts, 1, 0.5, 0.8, 0.45, 0.15);

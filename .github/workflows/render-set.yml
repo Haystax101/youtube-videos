@@ -57,6 +57,18 @@ jobs:
           npm ci
           npm install --no-save playwright@1.63.0
           npx playwright install --with-deps chromium
+      - name: Fetch release assets
+        env:
+          EP: ${{ needs.plan.outputs.ep }}
+        # EP/assets.txt lists "TAG FILE.tar" lines (e.g. "assets-v1 assets.tar", "sfx-v1 sfx.tar"); each is untarred at the repo root
+        run: |
+          test -f "$EP/assets.txt" || exit 0
+          grep -v '^#' "$EP/assets.txt" | while read -r tag file; do
+            [ -n "$tag" ] || continue
+            curl -sSLf -o "/tmp/$file" "https://github.com/${{ github.repository }}/releases/download/$tag/$file" || { echo "missing $tag/$file"; continue; }
+            tar -xf "/tmp/$file" && rm "/tmp/$file"
+          done
+          du -sh assets || true
       - name: Render my chunks
         env:
           EP: ${{ needs.plan.outputs.ep }}
@@ -97,6 +109,18 @@ jobs:
           pattern: chunks-*
           merge-multiple: true
           path: ${{ needs.plan.outputs.ep }}/chunks
+      - name: Fetch release assets
+        env:
+          EP: ${{ needs.plan.outputs.ep }}
+        # EP/assets.txt lists "TAG FILE.tar" lines (e.g. "assets-v1 assets.tar", "sfx-v1 sfx.tar"); each is untarred at the repo root
+        run: |
+          test -f "$EP/assets.txt" || exit 0
+          grep -v '^#' "$EP/assets.txt" | while read -r tag file; do
+            [ -n "$tag" ] || continue
+            curl -sSLf -o "/tmp/$file" "https://github.com/${{ github.repository }}/releases/download/$tag/$file" || { echo "missing $tag/$file"; continue; }
+            tar -xf "/tmp/$file" && rm "/tmp/$file"
+          done
+          du -sh assets || true
       - name: Join video
         run: node pipeline/render_set.cjs "$EP" --join-only && test -f "$EP/silent.mp4"
       - name: Audio

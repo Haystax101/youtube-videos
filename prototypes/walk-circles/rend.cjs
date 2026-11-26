@@ -13,7 +13,7 @@ async function open() { const b = await chromium.launch({ args: ['--use-gl=angle
 (async () => {
   const [mode, a1, a2] = process.argv.slice(2);
   if (mode === 'stills') { const w = await open(); const dir = path.join(__dirname, 'stills'); fs.mkdirSync(dir, { recursive: true });
-    for (const s of a1.split(',')) { const t0 = Date.now(); await w.p.evaluate(t => window.renderFrame(t), +s); await w.st.screenshot({ path: path.join(dir, `s_${s}.jpg`), type: 'jpeg', quality: 85 }); console.log(s, Date.now() - t0, 'ms'); }
+    for (const s of a1.split(',')) { const t0 = Date.now(); await w.p.evaluate(t => window.renderFrame(t), +s); await w.st.screenshot({ path: path.join(dir, `s_${s}.jpg`), type: 'jpeg', quality: 85, timeout: 180000 }); console.log(s, Date.now() - t0, 'ms'); }
     await w.b.close(); server.close(); return; }
   const out = a1, N = +(a2 || 4); const probe = await open(); const total = Math.round(probe.dur * FPS); await probe.b.close(); const per = Math.ceil(total / N);
   await Promise.all([...Array(N)].map(async (_, k) => { const w = await open(); const from = k * per, n = Math.min(per, total - from);

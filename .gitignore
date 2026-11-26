@@ -7,3 +7,4 @@ episodes/*/*/still_*.jpg
 .render_tmp/
 __pycache__/
 assets/
+prototypes/*/qv/
