@@ -1,0 +1,55 @@
+{
+ "video": "prototypes/shiratori/video.fixed.mp4",
+ "duration": 48.62,
+ "result": "FAIL",
+ "checks": [
+  {
+   "check": "black",
+   "status": "FAIL",
+   "detail": "patched -> video.fixed.mp4 (deliver that file). one-frame black glitch at 1.53-1.53s (29% dark), 14.57-14.57s (52% dark), 16.07-16.07s (38% dark), 34.60-34.60s (50% dark) -> rerun with --fix, or re-render those chunks"
+  },
+  {
+   "check": "dark",
+   "status": "WARN",
+   "detail": "dark stretch at 26.63-28.13s (86% dark): fine if the shot is meant to be dark, a bug if the camera is inside a wall or prop"
+  },
+  {
+   "check": "freeze",
+   "status": "PASS",
+   "detail": "picture keeps moving"
+  },
+  {
+   "check": "loudness",
+   "status": "WARN",
+   "detail": "-15.8 LUFS, true peak -4.4 dBTP (want -14 +/- 1.5, <= -1) -> fix: ffmpeg loudnorm=I=-14:TP=-1.5 two-pass on the mix"
+  },
+  {
+   "check": "clipping",
+   "status": "FAIL",
+   "detail": "music.wav: 0 noisy window(s) | audio.sfx.wav: 5 noisy window(s): 19.50s, 28.50s, 34.50s, 35.25s, 43.00s | AUDIO PROBLEMS"
+  },
+  {
+   "check": "hiss",
+   "status": "PASS",
+   "detail": "no broadband static"
+  },
+  {
+   "check": "silence",
+   "status": "PASS",
+   "detail": "no dead air"
+  },
+  {
+   "check": "balance",
+   "status": "WARN",
+   "detail": "narration -19.7 LUFS, music+SFX -24.7 LUFS: voice 5.0 LU on top (want >= 8)"
+  },
+  {
+   "check": "length",
+   "status": "PASS",
+   "detail": "48.6 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
+  }
+ ],
+ "contact_sheet": "prototypes/shiratori/qa/contact.jpg",
+ "review": null,
+ "review_mtime": 1795734236.5604384
+}
