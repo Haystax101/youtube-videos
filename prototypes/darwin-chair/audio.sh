@@ -9,7 +9,7 @@ if [ ! -f "$EP/voice.wav" ]; then   # Kokoro narrator + Qwen character lines cut
   python3 "$HERE/hybrid_voice.py" "$EP"
 fi
 if [ ! -d "$REPO/assets/sfx" ]; then
-  (cd "$REPO" && curl -sSfL -o /tmp/sfx.tar https://github.com/Haystax101/youtube-videos/releases/download/sfx-darwin-chair/sfx.tar && tar -xf /tmp/sfx.tar) || echo "no sfx release; using synthesised fallbacks"
+  (cd "$REPO" && curl -sSfL -o /tmp/sfx.tar https://github.com/Haystax101/youtube-videos/releases/download/sfx-darwin-chair/sfx.tar && mkdir -p /tmp/sfxsrc && tar -xf /tmp/sfx.tar -C /tmp/sfxsrc && python3 "$HERE/curate_sfx.py" /tmp/sfxsrc/assets/sfx) || echo "no sfx release; using synthesised fallbacks"
 fi
 python3 "$HERE/score.py" "$EP"
 python3 "$HERE/mixbed.py" "$EP"
