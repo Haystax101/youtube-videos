@@ -1,1 +1,2 @@
 prototypes/beet-tyres
+# v2: rust close-up, thermometer shot, bolts

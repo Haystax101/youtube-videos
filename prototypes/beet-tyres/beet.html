@@ -195,7 +195,7 @@ const T = new THREE.Group(); scene.add(T);
 const TILT = new THREE.Group(); TILT.position.set(0, 0, 3.1); T.add(TILT);
 const BODY = new THREE.Group(); BODY.position.set(0, 0, -3.1); TILT.add(BODY);
 const RED = std('#d8352a', { roughness: 0.38, metalness: 0.05 }), REDD = std('#a8261e', { roughness: 0.45 });
-const CREAM = std('#f4efe2', { roughness: 0.5 }), BLACK = std('#26272b', { roughness: 0.7 }), CHROME = std('#d9dde3', { roughness: 0.2, metalness: 0.9 });
+const CREAM = std('#f4efe2', { roughness: 0.5 }), BLACK = std('#26272b', { roughness: 0.7 }), CHROME = std('#c9ced6', { roughness: 0.3, metalness: 0.35 });
 const tex = (draw, w = 256, h = 256, rx = 1, ry = rx) => canvasTex(w, h, draw, rx, ry);
 add(new THREE.Mesh(rbox(1.3, 0.5, 4.6, 0.12), BLACK), 0, 0.95, 0.9, BODY);
 add(new THREE.Mesh(rbox(1.25, 1.0, 2.6, 0.22, 5), RED), 0, 1.55, 2.45, BODY);
@@ -210,7 +210,10 @@ const HUBR = new THREE.MeshStandardMaterial({ map: rustTex, roughness: 0.5 });
 let rustDrawn = -1;
 function drawRust(k) { const q = Math.round(k * 40) / 40; if (q === rustDrawn) return; rustDrawn = q; const x = rustCv.getContext('2d'), r = rng(9);
   x.fillStyle = '#f4efe2'; x.fillRect(0, 0, 256, 256);
-  for (let i = 0; i < 700; i++) { const a = r() * 6.28, d = 128 * Math.sqrt(r()), s = 1.5 + r() * 5, th = r(); if (th > q) continue; x.fillStyle = ['#b5562a', '#8f3d1c', '#cf7a3a', '#6e2e16'][i % 4]; x.globalAlpha = 0.85; const px = 128 + Math.cos(a) * d, py = 128 + Math.sin(a) * d; x.beginPath(); x.ellipse(px, py, s, s * 0.8, r() * 3, 0, 7); x.fill(); if (i % 9 === 0) { x.globalAlpha = 0.5; x.fillRect(px - 1.5, py, 3, 10 + r() * 26); } }
+  const blot = (px, py, rad, col, al) => { const g = x.createRadialGradient(px, py, 0, px, py, rad); g.addColorStop(0, col); g.addColorStop(1, 'rgba(0,0,0,0)'); x.globalAlpha = al; x.fillStyle = g; x.beginPath(); x.arc(px, py, rad, 0, 7); x.fill(); };
+  for (let i = 0; i < 26; i++) { const a = r() * 6.28, d = 30 + 95 * Math.sqrt(r()), th = r(), rad = 14 + r() * 26; if (th > q) continue; blot(128 + Math.cos(a) * d, 128 + Math.sin(a) * d, rad, ['#a44a22', '#8a3a1a', '#c06a34'][i % 3], 0.75); }
+  for (let b = 0; b < 8; b++) { const a = b / 8 * 6.283, px = 128 + Math.sin(a) * 74, py = 128 + Math.cos(a) * 74; if (b / 8 > q * 1.2) continue; blot(px, py, 20, '#7a3216', 0.9); x.globalAlpha = 0.55; x.strokeStyle = '#8a3a1a'; x.lineWidth = 5; x.lineCap = 'round'; x.beginPath(); x.moveTo(px, py); x.lineTo(px + Math.sin(a) * 30, py + Math.cos(a) * 30); x.stroke(); }
+  x.globalAlpha = 0.8 * q; x.strokeStyle = '#7a3216'; x.lineWidth = 10; x.beginPath(); x.arc(128, 128, 122, 0, 7); x.stroke();
   x.globalAlpha = 1; rustTex.needsUpdate = true; HUBR.color.set('#ffffff').lerp(new THREE.Color('#c98352'), q * 0.85); }
 drawRust(0);
 const wheels = [];
@@ -337,7 +340,7 @@ flakeGeo.setAttribute('position', new THREE.BufferAttribute(flakePos, 3));
 const flakeTex = canvasTex(32, 32, (x) => { const g = x.createRadialGradient(16, 16, 1, 16, 16, 15); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 32, 32); });
 const flakes = new THREE.Points(flakeGeo, new THREE.PointsMaterial({ size: 0.07, map: flakeTex, transparent: true, depthWrite: false, opacity: 0 })); scene.add(flakes);
 // a thermometer post by the tank (winter beats)
-const THERMO = new THREE.Group(); THERMO.position.set(-3.0, 0, -34.6); scene.add(THERMO);
+const THERMO = new THREE.Group(); THERMO.position.set(-3.3, 0, -36.2); THERMO.rotation.y = -1.28; scene.add(THERMO);
 { add(new THREE.Mesh(new THREE.BoxGeometry(0.1, 1.6, 0.1), std('#8a5d3a')), 0, 0.8, 0, THERMO);
   const tt = canvasTex(128, 512, (x, w, h) => { x.fillStyle = '#ffffff'; x.beginPath(); x.roundRect(14, 8, 100, 496, 40); x.fill(); x.lineWidth = 8; x.strokeStyle = '#141414'; x.stroke(); x.fillStyle = '#141414'; for (let y = 60; y < 420; y += 30) x.fillRect(80, y, 22, 5); x.fillStyle = '#3d7fe0'; x.beginPath(); x.arc(64, 440, 36, 0, 7); x.fill(); x.fillRect(52, 330, 24, 110); });
   add(new THREE.Mesh(new THREE.PlaneGeometry(0.3, 1.2), std('#ffffff', { map: tt, roughness: 0.5 })), 0, 1.2, 0.06, THERMO); }
@@ -379,7 +382,7 @@ function state(w) {
   s.brine = w > T_EATS && w < T_BEET ? ease(T_EATS, T_EATS + 2, w) : 0;
   s.ibc = w > T_BEET - 0.3 && w < T_PAY; s.sack = w > T_SALT - 0.3 && w < T_FAC;
   s.pumping = w > T_BEET && w < T_PAY - 0.5;
-  s.thermo = w > T_COLD - 1 && w < T_PAY ? 1 : 0;
+  s.thermo = w > T_COLD - 1 && w < T_GENTLE - 0.1 ? 1 : 0;
   return s; }
 // standing-farmer pose and spot per beat
 function farmerStand(w) {
@@ -406,11 +409,11 @@ const SHOTS = [
   [T_WINTER - 0.15, (w, u) => ({ p: V(-9 + u * 1.2, 4.5 - u * 0.6, -27 - u * 0.4), l: V(-1, 1.2, -36), fov: 50 })],
   [T_FREEZE, (w, u) => ({ p: V(-5.6 + u * 0.3, 1.05, -36.9), l: V(-1.36, 0.95, -37.25), fov: 58 })],
   [T_SALT - 0.1, (w, u) => ({ p: V(-6.0 + u * 0.25, 1.4, -36.9), l: V(-1.36, 0.9, -37.0), fov: 58 })],
-  [T_EATS, (w, u) => ({ p: V(-3.4 + u * 0.35, 0.95, -35.4 + u * 0.1), l: V(-1.2, 0.95, -36.05), fov: lerp(42, 34, ease(0, 2.5, u)) })],
+  [T_EATS, (w, u) => ({ p: V(-4.3 + u * 0.3, 1.05, -35.6 + u * 0.05), l: V(-1.2, 0.92, -36.05), fov: lerp(44, 38, ease(0, 2.5, u)) })],
   [T_FAC - 0.05, (w, u) => ({ p: V(FAC.x - 40 + u * 3, 11 - u * 1.2, FAC.z + 34 - u * 2.5), l: V(FAC.x - 10, 4.5, FAC.z + 8), fov: 54 })],
   [T_BEET - 0.05, (w, u) => ({ p: V(-8.4 + u * 0.35, 1.5 - u * 0.03, -36.1), l: V(-1.6, 0.92, -36.15), fov: 60 - u * 0.8 })],
   [T_HEAVY, (w, u) => ({ p: V(-5.8 + u * 0.3, 1.1, -36.5), l: V(-1.36, 0.95, -36.95), fov: 56 })],
-  [T_COLD, (w, u) => ({ p: V(-6.4 + u * 0.2, 1.5, -32.4 - u * 0.2), l: V(-2.2, 1.0, -35.4), fov: 56 })],
+  [T_COLD, (w, u) => ({ p: V(-6.3 + u * 0.15, 1.45, -35.3 - u * 0.15), l: V(-2.9, 1.05, -37.0), fov: 50 })],
   [T_GENTLE, (w, u) => ({ p: V(-4.9 + u * 0.3, 1.05, -37.0), l: V(-1.36, 0.95, -37.0), fov: 56 })],
   [T_PAY - 0.05, (w, u) => { const a = 0.75 - u * 0.2; return { p: V(Math.cos(a) * 12.5, 3.0, tp().z + 2 + Math.sin(a) * 12.5), l: V(0, 1.6, tp().z + 2.2), fov: 52 }; }],
   [WT(7, 'technically') - 0.3, (w, u) => ({ p: V(0.55, 2.88, tp().z + 1.0 - u * 0.05), l: V(-0.05, 2.58, tp().z - 0.45), fov: 62 })],
