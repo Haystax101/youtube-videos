@@ -1,0 +1,138 @@
+{
+ "title": "The Phone Hackers Who Ran Up $55 Million On Other People's Lines",
+ "channel": "dark-stories",
+ "style": "set",
+ "look": "noir-toon",
+ "noGary": true,
+ "voices": {
+  "narrator": "am_fenrir"
+ },
+ "speed": 1.1,
+ "tail": 1.2,
+ "pronounce": {
+  "2005": "two thousand five",
+  "2007": "two thousand seven",
+  "2011": "twenty-eleven",
+  "Brescia": "Bresha",
+  "AT&T": "A T and T",
+  "2,500": "two thousand five hundred",
+  "Kwan": "Kwahn",
+  "Kwan's": "Kwahn's"
+ },
+ "experiment": {
+  "vars": {
+   "format": "dark_story",
+   "length": "long_short",
+   "voice": "am_fenrir",
+   "music": "orchestral_suspense",
+   "look": "noir-toon"
+  },
+  "hypothesis": "Phone-phreaking crime ring told from a Manila apartment to Italian call shops; default-password takeaway.",
+  "facts": [
+   {
+    "claim": "Nusier, Kwan, Gomez hacked PBX systems of large corporations via brute force, often default passwords; sold access to Pakistani financiers running call centers in Italy; paid about $100 per hacked system; over 12 million minutes worth more than $55 million in US alone; 2,500+ victim corporations in US, Canada, Australia, Europe; March 2007 Philippine police arrested seven incl. Kwan, seized dozens of notebooks of numbers and access codes; indictment unsealed June 12 2009 in New Jersey; Italian police searched about 10 locations and arrested five; conduct Oct 2005 - Dec 2008",
+    "source": "https://archives.fbi.gov/archives/newark/press-releases/2009/nk061209.htm"
+   },
+   {
+    "claim": "Nov 2011 FBI and Philippine CIDG arrested four incl. Paul Michael Kwan in Manila; premium-rate scam targeting AT&T customers; almost $2m losses; police said the group paying them was the one the FBI tied to financing the 2008 Mumbai attacks",
+    "source": "https://www.theguardian.com/technology/2011/nov/28/philippines-arrests-phone-scam-hacking"
+   },
+   {
+    "claim": "How the scheme worked: phreakers dialled US businesses after hours from the Philippines, found DISA numbers, brute-forced default passcodes; call centers charged per minute for low-cost international calls; 2011 scheme used premium-rate numbers",
+    "source": "https://arstechnica.com/tech-policy/2011/11/how-filipino-phreakers-turned-pbx-systems-into-cash-machines-for-terrorists/"
+   }
+  ]
+ },
+ "beats": [
+  {
+   "label": "*$55 MILLION* IN CALLS",
+   "lines": [
+    {
+     "text": "These hackers never broke into a computer. Armed with just a telephone, they ran up fifty-five million dollars in calls, on other people's phone lines."
+    }
+   ],
+   "hook": true,
+   "hold": 0.25
+  },
+  {
+   "label": "MANILA, *2005*",
+   "lines": [
+    {
+     "text": "Rewind to 2005. In Manila, a young man named Paul Michael Kwan spends his days on the phone. While America sleeps, he dials American companies, one number after another."
+    }
+   ]
+  },
+  {
+   "label": "THE *BACK DOOR*",
+   "lines": [
+    {
+     "text": "Big offices run their own phone systems. Staff can dial in from outside, punch in a code, and call anywhere in the world on the company's bill. And on thousands of systems, that code was still the factory default."
+    }
+   ]
+  },
+  {
+   "label": "*$100* A SYSTEM",
+   "lines": [
+    {
+     "text": "Every time Kwan's crew cracked one, they wrote the number and the code in a notebook, and sold it for about a hundred dollars."
+    }
+   ]
+  },
+  {
+   "label": "BRESCIA, *ITALY*",
+   "lines": [
+    {
+     "text": "The buyers ran cheap call shops in Italy, where customers paid by the minute to call abroad. Those calls were routed through the hacked phone systems of American companies. Twelve million minutes. More than fifty-five million dollars."
+    }
+   ]
+  },
+  {
+   "label": "*2,500* VICTIMS",
+   "lines": [
+    {
+     "text": "More than two thousand five hundred organisations were hit, in America, Canada, Australia and Europe. Most only found out when the bill arrived."
+    }
+   ]
+  },
+  {
+   "label": "THE *RAID*",
+   "lines": [
+    {
+     "text": "In March 2007, Philippine police raided the crew and seized dozens of notebooks, full of phone numbers and access codes. Kwan was arrested."
+    }
+   ]
+  },
+  {
+   "label": "*CHARGED*",
+   "lines": [
+    {
+     "text": "Two years later, American prosecutors indicted him, and Italian police raided ten call shops in a single morning, arresting the men who had paid him."
+    }
+   ]
+  },
+  {
+   "label": "*ROUND TWO*",
+   "lines": [
+    {
+     "text": "But Kwan went back to work. This time, the hacked lines dialled premium rate numbers overseas, the kind that charge by the minute, and the money flowed back to whoever ran them. AT&T customers were hit for almost two million dollars."
+    }
+   ]
+  },
+  {
+   "label": "MANILA, *2011*",
+   "lines": [
+    {
+     "text": "In November 2011, the FBI and Philippine police arrested Kwan again, with three others. Police said the money led to the same group that had helped fund the Mumbai terror attacks."
+    }
+   ]
+  },
+  {
+   "label": "THE *LESSON*",
+   "lines": [
+    {
+     "text": "All of it worked because nobody changed a default password. So check yours: your router, your voicemail, your smart camera. If it still has the password it came with, change it today. Follow for more true stories of hackers and heists."
+    }
+   ]
+  }
+ ]
+}
