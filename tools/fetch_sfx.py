@@ -70,13 +70,15 @@ def commons(folder, q, n):
     return got
 
 # ---------------- Freesound (CC0 only, public previews) ----------------
-FS = 'https://freesound.org'
+FS = 'https://freesound.org'; DBG = []
 def freesound(folder, q, n):
     url = f'{FS}/search/?q={urllib.parse.quote_plus(q)}&f=license%3A%22Creative+Commons+0%22&s=Downloads+desc'
     html = get(url, False) or ''; got = 0
     # each result carries its sound page link and its preview mp3 (data-mp3 / -hq.mp3 urls)
     pages = list(dict.fromkeys(re.findall(r'href="(/people/[^/"]+/sounds/\d+/)"', html)))
-    mp3s = list(dict.fromkeys(re.findall(r'(https://cdn\.freesound\.org/previews/[^"\' ]+?-hq\.mp3)', html)))
+    mp3s = list(dict.fromkeys(m.replace('-lq.', '-hq.') for m in re.findall(r'(https?://cdn\.freesound\.org/previews/[^"\'\s]+?\.(?:mp3|ogg))', html)))
+    if not mp3s and not DBG:
+        DBG.append(1); i = html.find('preview'); print('freesound debug: len', len(html), 'title', re.findall(r'<title>(.*?)</title>', html, re.S)[:1], 'snippet', html[max(0, i - 200): i + 300].replace('\n', ' '), flush=True)
     for i, m in enumerate(mp3s[: n * 2]):
         time.sleep(0.7)
         if save(folder, os.path.basename(m), get(m), FS + (pages[i] if i < len(pages) else ''), 'CC0', ''):
