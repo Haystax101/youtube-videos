@@ -143,12 +143,15 @@
  },
  "qwen_speakers": {
   "narrator": [
-   "Aiden"
+   "George"
   ],
   "hiker": "Ryan"
  },
  "qwen_instruct": {
   "narrator": "Lively, amused storytelling with punchy comic timing, brisk pace.",
   "hiker": "Cheerful, overconfident and a bit loud."
+ },
+ "qwen_clone": {
+  "George": "voices/george.wav"
  }
 }

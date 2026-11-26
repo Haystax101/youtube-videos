@@ -5,6 +5,9 @@ script.json:
   "qwen_speakers": {"narrator": ["Ryan", "Dolce", "Arthur"], "hiker": "Aiden"}
       narrator may be a list (A/B/C test: one full voice-over per name); character speakers are one name.
   "qwen_instruct": {"narrator": "Lively, amused storytelling.", "hiker": "Overconfident, a bit loud."}  (optional)
+  "qwen_clone": {"George": "voices/george.wav"}  (optional: a narrator name that is a cloned voice, from a
+      reference clip the speaker gave permission for; voice.yml decrypts voices/*.wav.enc with the VOICE_KEY
+      secret and transcribes the clip with faster-whisper, or give {"ref": ..., "text": ...})
   "qwen_speed": 1.1   (optional tempo change after synthesis; a line can set "speed")
   "pronounce": {"bow": "bough"}  (spoken text only; captions keep the real word)
 
@@ -25,6 +28,7 @@ model = Qwen3TTSModel.from_pretrained(MODEL, device_map='cpu', dtype=torch.float
 SUPPORTED = list(model.get_supported_speakers() or [])
 print('supported speakers:', ', '.join(SUPPORTED), flush=True)
 if sys.argv[1] == '--list': sys.exit(0)
+CLONES = {}
 def resolve(name, fallback=()):
     for n in [name, *fallback]:
         for s in SUPPORTED:
@@ -35,7 +39,18 @@ EP = sys.argv[1]; script = json.load(open(f'{EP}/script.json'))
 SPK = script.get('qwen_speakers', {'narrator': ['Ryan']}); INS = script.get('qwen_instruct', {})
 narrators = SPK['narrator'] if isinstance(SPK['narrator'], list) else [SPK['narrator']]
 wanted = sys.argv[2] if len(sys.argv) > 2 else narrators[0]
+CL = script.get('qwen_clone', {})
 narrator = resolve(wanted)
+if wanted in CL:  # cloned narrator: Base model + a voice-clone prompt from the reference clip
+    c = CL[wanted] if isinstance(CL[wanted], dict) else {'ref': CL[wanted]}
+    ref = os.path.join(os.path.dirname(__file__), '..', c['ref']); text = c.get('text')
+    if not text:
+        from faster_whisper import WhisperModel
+        segs, _ = WhisperModel('small.en', device='cpu', compute_type='int8').transcribe(ref)
+        text = ' '.join(x.text.strip() for x in segs); print('reference transcript:', text, flush=True)
+    base = Qwen3TTSModel.from_pretrained('Qwen/Qwen3-TTS-12Hz-1.7B-Base', device_map='cpu', dtype=torch.float32)
+    CLONES[wanted] = (base, base.create_voice_clone_prompt(ref_audio=ref, ref_text=text))
+    narrator = wanted
 if not narrator: sys.exit(f'speaker {wanted!r} not in the library: {SUPPORTED}')
 cast = {'narrator': narrator}
 for role, name in SPK.items():
@@ -58,9 +73,12 @@ for i, beat in enumerate(script['beats']):
         role = line.get('speaker', 'narrator'); spk = cast.get(role, narrator)
         for sent in split_sentences(line['text']):
             torch.manual_seed(11 + len(audio))
-            kw = dict(text=spoken(sent), language='English', speaker=spk, **gen)
-            if INS.get(role) and '0.6B' not in MODEL: kw['instruct'] = INS[role]
-            wavs, sr = model.generate_custom_voice(**kw)
+            if spk in CLONES:
+                cm, cp = CLONES[spk]; wavs, sr = cm.generate_voice_clone(text=spoken(sent), language='English', voice_clone_prompt=cp, **gen)
+            else:
+                kw = dict(text=spoken(sent), language='English', speaker=spk, **gen)
+                if INS.get(role) and '0.6B' not in MODEL: kw['instruct'] = INS[role]
+                wavs, sr = model.generate_custom_voice(**kw)
             w = np.asarray(wavs[0], dtype=np.float32)
             if SR is None: SR = sr; audio.append(sil(0.15))
             nz = np.where(np.abs(w) > 0.01)[0]; w = w[max(0, nz[0] - int(0.03 * sr)): nz[-1] + int(0.06 * sr)] if len(nz) else w

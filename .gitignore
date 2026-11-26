@@ -8,3 +8,4 @@ episodes/*/*/still_*.jpg
 __pycache__/
 assets/
 prototypes/*/qv/
+voices/*.wav
