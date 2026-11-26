@@ -1,5 +1,4 @@
 {
- "002-never-sleeping": [],
  "004-sitting-all-day": [
   {
    "text": "Yooooo",
@@ -10,5 +9,11 @@
  "006-bee-stings": [],
  "007-groom-of-the-stool": {
   "error": 404
- }
+ },
+ "009-only-energy-drinks": [
+  {
+   "text": "Ow really \ud83d\ude02\ud83d\ude02",
+   "likes": 0
+  }
+ ]
 }

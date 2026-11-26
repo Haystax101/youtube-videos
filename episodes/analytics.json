@@ -1,16 +1,16 @@
 {
- "fetchedAt": "2026-11-25T13:11:47Z",
+ "fetchedAt": "2026-11-26T05:48:32Z",
  "channel": {
-  "viewCount": "27761",
-  "subscriberCount": "32",
+  "viewCount": "30300",
+  "subscriberCount": "38",
   "hiddenSubscriberCount": false,
-  "videoCount": "16"
+  "videoCount": "19"
  },
  "videos": {
   "8kcCSMVfMvI": {
    "episode": "001-face-mask",
    "public": {
-    "viewCount": "1068",
+    "viewCount": "1106",
     "likeCount": "10",
     "dislikeCount": "0",
     "favoriteCount": "0",
@@ -29,7 +29,7 @@
   "TJv37NpCV8I": {
    "episode": "002-never-sleeping",
    "public": {
-    "viewCount": "270",
+    "viewCount": "503",
     "likeCount": "6",
     "dislikeCount": "0",
     "favoriteCount": "0",
@@ -50,7 +50,7 @@
   "K4vsHNDnBVU": {
    "episode": "004-sitting-all-day",
    "public": {
-    "viewCount": "1119",
+    "viewCount": "1120",
     "likeCount": "15",
     "dislikeCount": "0",
     "favoriteCount": "0",
@@ -72,8 +72,8 @@
   "xAi8c9w5K4Y": {
    "episode": "005-sun-goes-out",
    "public": {
-    "viewCount": "281",
-    "likeCount": "1",
+    "viewCount": "627",
+    "likeCount": "2",
     "dislikeCount": "0",
     "favoriteCount": "0",
     "commentCount": "0"
@@ -84,8 +84,8 @@
   "nTrRvSX_3bg": {
    "episode": "006-bee-stings",
    "public": {
-    "viewCount": "1200",
-    "likeCount": "14",
+    "viewCount": "1208",
+    "likeCount": "15",
     "dislikeCount": "0",
     "favoriteCount": "0",
     "commentCount": "0"
@@ -117,11 +117,11 @@
   "FDYRS7UzGMo": {
    "episode": "009-only-energy-drinks",
    "public": {
-    "viewCount": "12",
-    "likeCount": "0",
+    "viewCount": "784",
+    "likeCount": "10",
     "dislikeCount": "0",
     "favoriteCount": "0",
-    "commentCount": "0"
+    "commentCount": "1"
    },
    "privacy": "public",
    "retention": [],

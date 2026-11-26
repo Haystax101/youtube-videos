@@ -1,0 +1,140 @@
+{
+ "title": "What happens when a fish swallows an eel alive?",
+ "style": "lowpoly",
+ "look": "cel",
+ "speed": 1.12,
+ "character": {
+  "poly": "smooth"
+ },
+ "noGary": true,
+ "voices": {
+  "narrator": "af_bella"
+ },
+ "music": {
+  "mood": "hype"
+ },
+ "keywords": [
+  "eel",
+  "eels",
+  "gills",
+  "gill",
+  "stomach",
+  "backwards",
+  "x-ray",
+  "thirteen",
+  "nine",
+  "escape",
+  "fifty-six"
+ ],
+ "beats": [
+  {
+   "label": "SWALLOWED *ALIVE*",
+   "hook": true,
+   "scene": "underwater",
+   "fx": "eel_tail",
+   "camera": "crane",
+   "lines": [
+    {
+     "text": "What happens when a fish swallows an eel alive? It doesn't always stay down."
+    }
+   ]
+  },
+  {
+   "label": "SECOND 1",
+   "scene": "underwater",
+   "fx": "eel_swim",
+   "camera": "dolly",
+   "lines": [
+    {
+     "text": "Japanese scientists fed young eels to a hungry predator fish, and filmed it on X-ray."
+    }
+   ]
+  },
+  {
+   "label": "SECOND 10",
+   "scene": "underwater",
+   "fx": "eel_inside",
+   "camera": "push",
+   "lines": [
+    {
+     "text": "Inside the stomach, most eels didn't give up. They swam backwards, up towards the gills."
+    }
+   ]
+  },
+  {
+   "label": "SECOND 30",
+   "scene": "underwater",
+   "fx": "eel_tail",
+   "camera": "crane",
+   "lines": [
+    {
+     "text": "Thirteen poked their tails out through the gill slit."
+    }
+   ]
+  },
+  {
+   "label": "SECOND 56",
+   "scene": "underwater",
+   "fx": "eel_escape",
+   "camera": "orbit",
+   "lines": [
+    {
+     "text": "Nine wriggled all the way out and swam off. On average it took them fifty-six seconds."
+    }
+   ]
+  },
+  {
+   "label": "*ESCAPED*",
+   "scene": "underwater",
+   "fx": "eel_free",
+   "camera": "crane_up",
+   "lines": [
+    {
+     "text": "It's the only fish known to escape a stomach. Follow for more interesting cartoons."
+    }
+   ]
+  }
+ ],
+ "experiment": {
+  "note": "FIRST no-Gary Short (george 2026-11-25): animal fact told straight, new underwater set, predator fish with X-ray mode, segmented eel. Hypothesis: a pure animal 'wait, what?' holds as well as Gary stories.",
+  "vars": {
+   "music": "hype",
+   "ending_cta": "follow",
+   "narrator": "af_bella",
+   "speed": 1.12,
+   "hook_form": "question",
+   "character_poly": "smooth",
+   "ending": "survives",
+   "premise": "absurd_event",
+   "style": "lowpoly",
+   "look": "cel",
+   "format": "no_gary",
+   "source": "fish#574"
+  },
+  "scores": {
+   "fact": 5,
+   "arc": 4,
+   "hook": 5,
+   "pace": 4,
+   "craft": 4
+  },
+  "facts": [
+   {
+    "claim": "Hasegawa et al. (Current Biology, 2024) filmed juvenile Japanese eels eaten by dark sleeper fish (Odontobutis obscura) with X-ray video",
+    "source": "https://www.eurekalert.org/news-releases/1056826 ; https://www.sciencedaily.com/releases/2024/09/240909113034.htm"
+   },
+   {
+    "claim": "Of 32 eels swallowed, 28 tried to escape by moving back up the gut towards the gills; 13 got their tails out of a gill, 9 escaped completely",
+    "source": "https://www.smithsonianmag.com/smart-news/watch-eels-make-a-great-escape-from-a-fishs-stomach-after-being-swallowed-alive-180985055/"
+   },
+   {
+    "claim": "Escapers took 56 seconds on average",
+    "source": "https://newser.com/story/355979/this-slippery-eel-can-escape-predators-stomach-in-a-minute.html ; https://www.sciencealert.com/amazing-footage-shows-how-eels-escape-death-after-being-swallowed"
+   },
+   {
+    "claim": "Japanese eel is the only fish confirmed to escape a predator's digestive tract after capture (Hasegawa to New Scientist)",
+    "source": "https://www.smithsonianmag.com/smart-news/watch-eels-make-a-great-escape-from-a-fishs-stomach-after-being-swallowed-alive-180985055/"
+   }
+  ]
+ }
+}

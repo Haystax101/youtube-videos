@@ -12,6 +12,9 @@
 | 009 | 2026-11-25 | Drinking only energy drinks | - | lowpoly life change, cold open slumped in a sea of cans, hook label "ONLY ENERGY DRINKS? HOW LONG?", 29.5 s, speed 1.2 | | dies / shenanigans |
 | 010 | 2026-11-25 | Testing your own parachute off the Eiffel Tower (true story, Franz Reichelt 1912) | - | STYLE TEST storybook #2: true-history story, hook "WOULD YOU JUMP?", policeman dialogue, 28.2 s (fixed length vs 007's 34 s) | | dies / shenanigans |
 | 011 | 2026-11-25 | Eiffel Tower parachute v2 (rewrite of 010 with the new script skill) | - | STYLE TEST storybook #3 + SCRIPT TEST: goal (prize), joke, death, turn (Kotelnikov's backpack parachute stops a car); sourced facts; 30.6 s. Post instead of 010 | | dies / follow |
+| 012 | 2026-11-26 | Sheltering under a manchineel tree in the rain (Fish #313) | - | new beach set + manchineel tree, rain fx, apple; dare hook, chiptune, bf_emma, speed 1.28, chunky Gary | | survives / comment_next |
+| 013 | 2026-11-26 | A fish swallows an eel and it escapes through the gills (Fish #574) | - | FIRST no-Gary Short: underwater set, predator fish with X-ray, segmented eel; question hook, hype, af_bella, speed 1.12 | | survives / follow |
+| 014 | 2026-11-26 | Never getting out of bed (Dallas bed-rest study; Fish #443 lead) | - | new bedroom set, lie + jog poses; number-first hook, epic, am_fenrir, speed 1.2, low poly | | better / shenanigans |
 
 ## Style locked to low-poly (george, 2026-11-25)
 
@@ -45,3 +48,9 @@ absurd premise, and titles that name it matter more than style. Rules updated in
 Retention still null from the API (lag). Public views: 006 bees 1177 and 004 sitting 1095 (both
 lowpoly, short, vivid premise) lead; 001 643; 005 paper 237; 002 noir 195. Keep lowpoly + absurd
 premise as the base; storybook gets a second test (010) at the 25-30 s length before judging it.
+
+## 2026-11-26 analytics take
+
+Retention/avg % viewed still null from the Analytics API, so no test can be judged yet. Public views: 006 bees 1,208, 004
+sitting 1,120, 001 face mask 1,106, 009 energy drinks 784 (in ~1 day), 005 sun 627, 002 noir 503. Every lowpoly
+Short is in the top four; 009 is the fastest riser. Today: first no-Gary Short (013), first female narrators on lowpoly.
