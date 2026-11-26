@@ -1,0 +1,11 @@
+# Curated recorded effects for mixeel.py, taken from release sfx-v1 (CC0 Freesound previews; sources in its sfx-manifest.json).
+# Build assets/sfx/<folder>/<i>_<file>.wav from these (leading silence trimmed). Picked for low spectral flatness (tonal, not hiss).
+underwater: underwater/435683_8175042_hq underwater/349885_2205380_hq
+bubbles: bubbles/702996_14953219_hq bubbles/250296_4497553_hq bubbles/676310_14687392_hq
+stomach: stomach/696008_15109036_hq stomach/523824_2061858_hq
+squelch: stomach/811274_17472248_hq stomach/52293_627019_hq stomach/696405_15109036_hq
+lab: lab/877444_19181807_hq lab/805191_17325486_hq
+whoosh: whoosh/234555_4238641_hq whoosh/585257_4530936_hq whoosh/794818_5828667_hq
+gulp: gulp/531755_11537497_hq gulp/568043_12771108_hq
+cartoon: cartoon/517634_8031303_hq cartoon/685426_5383810_hq
+water: water/124544_276157_hq
