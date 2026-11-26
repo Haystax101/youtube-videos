@@ -89,9 +89,8 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      use pluck, lofi, musicbox or none for Shorts.
      Narrator arms include female and softer voices (george, 2026-11-25): af_heart, af_bella,
      af_nicole (soft) and bf_emma alongside the male ones.
-     **Qwen3-TTS voices (george, 2026-11-26):** free open model only; A/B test Ryan vs Aiden (Dolce and
-     Arthur are paid-API only, declined). As soon as the Qwen voice job is on main (see `qwen_voice` in the
-     experiments backlog for how to call it), start that test for the daily Shorts. Likewise `voices.narrator`, `speed`, and the hook wording for `hook_form` (the hook still
+     **Narration stays on Kokoro (george, 2026-11-26 12:00):** the Qwen narrator test is dropped (he
+     wasn't impressed); keep A/B testing Kokoro voices. Qwen may still voice short character lines. Likewise `voices.narrator`, `speed`, and the hook wording for `hook_form` (the hook still
      speaks to the viewer in the first 2 seconds).
    - Record `experiment.vars`: every assigned arm plus `ending` (dies / survives / better),
      `premise` (life_change / beneficial / absurd_event / true_history) and `style`, and fill
