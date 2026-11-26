@@ -6,6 +6,12 @@ const cityTex = night => canvasTex(2048, 1024, (x, w, h) => { const g = x.create
   const rr = rng(33); for (let layer = 0; layer < 2; layer++) { let u = -10; while (u < w) { const bw = 80 + rr() * 160, bh = 300 + rr() * 500 - layer * 120; x.fillStyle = night ? ['#141a34', '#0c1026'][layer] : ['#9aa8b8', '#7a8898'][layer]; x.fillRect(u, h - bh, bw, bh);
       for (let j = 0; j < bh / 30 - 1; j++) for (let i = 0; i < bw / 22 - 1; i++) { const v = rr(); x.fillStyle = night ? (v < 0.25 ? 'rgba(255,220,150,.85)' : 'rgba(40,50,90,.6)') : 'rgba(255,255,255,.25)'; x.fillRect(u + 8 + i * 22, h - bh + 12 + j * 30, 11, 16); } u += bw + 8; } } });
 const CITY_N = cityTex(true), CITY_D = cityTex(false);
+const OKEY = canvasTex(400, 220, (c, w, h) => { c.fillStyle = '#2a2c38'; c.fillRect(0, 0, w, h);
+  c.fillStyle = '#1f3a2a'; c.beginPath(); c.roundRect(14, 14, 160, 48, 8); c.fill(); c.fillStyle = '#7dff9a'; c.font = '700 22px monospace'; c.fillText('LINE 2  INTL', 22, 46);
+  const k = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#']; k.forEach((n, i) => { const x = 22 + (i % 3) * 52, y = 76 + Math.floor(i / 3) * 36; c.fillStyle = '#f4efe4'; c.beginPath(); c.roundRect(x, y, 44, 30, 6); c.fill(); c.fillStyle = '#14121a'; c.font = '900 22px Poppins'; c.textAlign = 'center'; c.fillText(n, x + 22, y + 23); c.textAlign = 'left'; });
+  for (let i = 0; i < 4; i++) { c.fillStyle = ['#d7263d', '#2f6fe0', '#ffcf3f', '#3ff07a'][i]; c.beginPath(); c.roundRect(200, 20 + i * 48, 180, 38, 8); c.fill(); c.fillStyle = i >= 2 ? '#14121a' : '#fff'; c.font = '900 20px Poppins'; c.fillText(['HOLD', 'TRANSFER', 'VOICEMAIL', 'LINE 1'][i], 214, 46 + i * 48); } });
+const CALLLOG = canvasTex(512, 300, (c, w, h) => { c.fillStyle = '#0f2a5a'; c.fillRect(0, 0, w, h); c.fillStyle = '#2f6fe0'; c.fillRect(0, 0, w, 40); c.fillStyle = '#fff'; c.font = '900 22px Poppins'; c.fillText('CALL LOG · EXT 2214', 14, 28);
+  const r = rng(77); c.font = '600 18px monospace'; for (let j = 0; j < 9; j++) { const y = 66 + j * 26; if (j % 2) { c.fillStyle = 'rgba(255,255,255,.06)'; c.fillRect(0, y - 18, w, 26); } c.fillStyle = '#cfe0ff'; c.fillText('+' + ['63', '39', '882', '44', '1'][j % 5] + ' ' + Math.floor(r() * 900 + 100) + ' ' + Math.floor(r() * 9000 + 1000), 14, y); c.fillText(Math.floor(r() * 59) + ':' + String(Math.floor(r() * 59)).padStart(2, '0'), 300, y); c.fillStyle = '#ffcf3f'; c.fillText('$' + (r() * 90 + 5).toFixed(2), 400, y); } });
 { const G = OFFICE, U = G.userData, x0 = -6, x1 = 6, z0 = -6, z1 = 5, h = 3;
   const wallM = toon('#ffffff', { map: canvasTex(512, 512, (x, w, h2) => { x.fillStyle = '#cfd2da'; x.fillRect(0, 0, w, h2); x.fillStyle = '#b8bcc8'; x.fillRect(0, h2 * 0.9, w, h2 * 0.1); const r = rng(41); for (let i = 0; i < 1200; i++) { x.fillStyle = `rgba(0,0,0,${r() * 0.05})`; x.fillRect(r() * w, r() * h2, 2, 2); } }, true) });
   shell(G, { x0, x1, z0, z1, h, wall: wallM, floor: toon('#ffffff', { map: carpetTex }), ceil: '#d8dae2', skip: ['back'] });
@@ -21,10 +27,15 @@ const CITY_N = cityTex(true), CITY_D = cityTex(false);
   U.leds = []; U.deskPhones = [];
   for (const dz of [-2.8, 0.4]) for (const dx of [-4.2, -1.4, 1.4]) { const d = new THREE.Group(); d.position.set(dx, 0, dz); G.add(d);
     mesh(rbox(2.0, 0.06, 0.9, 0.02), '#e8e2d6', 0, 0.74, 0, d, 4); for (const s of [-1, 1]) mesh(rbox(0.06, 0.72, 0.8), '#8a8f9e', s * 0.95, 0.36, 0, d, 3);
-    mesh(rbox(2.0, 0.55, 0.05, 0.01), '#5a7aa8', 0, 1.02, -0.47, d, 3); mesh(rbox(0.6, 0.38, 0.04, 0.01), '#14121a', -0.35, 1.08, -0.25, d, 3); mesh(rbox(0.05, 0.2, 0.05), '#14121a', -0.35, 0.86, -0.27, d, 1.5); mesh(new THREE.PlaneGeometry(0.55, 0.33), basic('#3a5ab0'), -0.35, 1.08, -0.228, d, 0);
-    const ph = deskPhone(d, 0.55, 0.77, 0.05, -0.2, '#2a2c38'); U.leds.push(ph.led); U.deskPhones.push(ph);
+    mesh(rbox(2.0, 0.55, 0.05, 0.01), '#5a7aa8', 0, 1.02, -0.47, d, 3); mesh(rbox(0.6, 0.38, 0.04, 0.01), '#14121a', -0.35, 1.08, -0.25, d, 3); mesh(rbox(0.05, 0.2, 0.05), '#14121a', -0.35, 0.86, -0.27, d, 1.5); mesh(new THREE.PlaneGeometry(0.55, 0.33), basic('#ffffff', { map: CALLLOG }), -0.35, 1.08, -0.228, d, 0);
+    const ph = deskPhone(d, 0.55, 0.77, 0.05, -0.2, '#3a3e48', OKEY); U.leds.push(ph.led); U.deskPhones.push(ph);
     const ch = new THREE.Group(); ch.position.set(0, 0, 0.75); d.add(ch); mesh(rbox(0.5, 0.06, 0.5), '#2a2c38', 0, 0.48, 0, ch, 3); mesh(rbox(0.5, 0.6, 0.06), '#2a2c38', 0, 0.82, 0.25, ch, 3); mesh(cyl(0.03, 0.03, 0.45, 6), '#5a5e68', 0, 0.24, 0, ch, 2);
     for (let k = 0; k < 2; k++) mesh(rbox(0.22, 0.004, 0.3), '#f4efe4', 0.2 - k * 0.08, 0.775 + k * 0.004, 0.15, d, 0); }
+  // a desk lamp + mug on the front-left desk (the phone close-ups)
+  { const L = new THREE.Group(); L.position.set(-2.05, 0.77, 0.3); G.add(L); mesh(cyl(0.09, 0.1, 0.03, 16), '#14121a', 0, 0.015, 0, L, 2); const arm = mesh(cyl(0.012, 0.012, 0.42, 8), '#14121a', 0.06, 0.22, 0, L, 1.5); arm.rotation.z = -0.3;
+    const sh2 = mesh(new THREE.ConeGeometry(0.1, 0.14, 16, 1, true), toon('#1f8a5a', { side: THREE.DoubleSide }), 0.17, 0.42, 0.02, L, 2); sh2.rotation.z = -0.9; mesh(sph(0.035, 10), basic('#fff2c8'), 0.2, 0.39, 0.02, L, 0);
+    const ll = new THREE.PointLight('#ffc878', 2.6, 2.4, 1.4); ll.position.set(0.3, 0.3, 0.05); L.add(ll); glow(L, 0.22, 0.36, 0.02, '#ffd890', 0.5, 0.45);
+    mesh(cyl(0.04, 0.035, 0.1, 12), '#d7263d', 0.62, 0.05, 0.28, L, 1.5); }
   // the PBX rack, back-right corner
   { const r = new THREE.Group(); r.position.set(4.4, 0, -4.6); G.add(r); U.rack = r;
     mesh(rbox(1.0, 2.1, 0.8, 0.02), '#2a2c38', 0, 1.05, 0, r, 4.5); mesh(rbox(0.9, 2.0, 0.04), '#14121a', 0, 1.05, 0.39, r, 2);

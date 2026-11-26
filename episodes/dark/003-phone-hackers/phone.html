@@ -189,8 +189,8 @@ function profileCar(G, pts, len, width, col, o = {}) { // pts: side profile in (
 const tileTex = canvasTex(512, 512, (x, w, h) => { const r = rng(21); for (let j = 0; j < 8; j++) for (let i = 0; i < 8; i++) { x.fillStyle = `hsl(35,${18 + r() * 8}%,${70 + r() * 8}%)`; x.fillRect(i * 64, j * 64, 64, 64); } x.strokeStyle = 'rgba(90,70,50,.35)'; x.lineWidth = 3; for (let i = 0; i <= 8; i++) { x.beginPath(); x.moveTo(i * 64, 0); x.lineTo(i * 64, h); x.stroke(); x.beginPath(); x.moveTo(0, i * 64); x.lineTo(w, i * 64); x.stroke(); } }, true);
 const paintTex = canvasTex(512, 512, (x, w, h) => { const r = rng(22); x.fillStyle = '#9cc7b4'; x.fillRect(0, 0, w, h); for (let i = 0; i < 1400; i++) { x.fillStyle = `rgba(${r() < 0.5 ? '40,70,60' : '255,255,255'},${0.03 + r() * 0.05})`; x.fillRect(r() * w, r() * h, 3 + r() * 5, 3 + r() * 5); } x.fillStyle = 'rgba(60,90,80,.35)'; x.fillRect(0, h - 36, w, 36); }, true);
 const skylineTex = canvasTex(2048, 1024, (x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#5fb4f0'); g.addColorStop(0.6, '#bfe3f5'); g.addColorStop(1, '#f2e6c8'); x.fillStyle = g; x.fillRect(0, 0, w, h);
-  x.fillStyle = '#fff6d0'; x.beginPath(); x.arc(1600, 220, 70, 0, 7); x.fill(); x.fillStyle = 'rgba(255,255,255,.85)'; for (const [cx, cy, s] of [[300, 180, 1], [900, 120, 1.3], [1400, 300, 0.8]]) { for (let k = 0; k < 4; k++) { x.beginPath(); x.arc(cx + k * 60 * s, cy + (k % 2) * 16, 50 * s, 0, 7); x.fill(); } }
-  const r = rng(23); for (let layer = 0; layer < 3; layer++) { let u = -20; while (u < w) { const bw = 70 + r() * 140, bh = (200 + r() * 420) * (1 - layer * 0.25); const col = ['#8aa0b8', '#6a8098', '#4a5a70'][layer]; x.fillStyle = col; x.fillRect(u, h - bh - layer * 10, bw, bh + 20);
+  x.fillStyle = '#fff6d0'; x.beginPath(); x.arc(1600, 220, 70, 0, 7); x.fill(); for (const [cx, cy, s] of [[260, 200, 1], [880, 140, 1.25], [1380, 330, 0.8], [1850, 170, 0.9]]) { x.fillStyle = 'rgba(255,255,255,.92)'; x.beginPath(); x.ellipse(cx, cy, 150 * s, 34 * s, 0, 0, 7); x.fill(); for (const [dx, dy, r] of [[-80, -18, 46], [-20, -40, 62], [50, -26, 50], [105, -10, 34]]) { x.beginPath(); x.ellipse(cx + dx * s, cy + dy * s, r * s * 1.25, r * s * 0.85, 0, 0, 7); x.fill(); } x.fillStyle = 'rgba(150,190,225,.35)'; x.beginPath(); x.ellipse(cx + 10 * s, cy + 12 * s, 130 * s, 16 * s, 0, 0, 7); x.fill(); }
+  const r = rng(23); for (let layer = 0; layer < 3; layer++) { let u = -20; while (u < w) { const bw = 70 + r() * 140, bh = (200 + r() * 420) * (1 - layer * 0.25); const col = [['#9ab8d0', '#b8a8c8', '#a8c8c0'], ['#e0a878', '#7aa0c0', '#d88a6a', '#88b0a0'], ['#c8644a', '#3a6a8a', '#e8b860', '#5a8a6a', '#b85a6a']][layer][Math.floor(r() * (3 + layer))]; x.fillStyle = col; x.fillRect(u, h - bh - layer * 10, bw, bh + 20);
       x.fillStyle = layer === 2 ? 'rgba(255,240,200,.35)' : 'rgba(255,255,255,.18)'; for (let j = 0; j < bh / 34 - 1; j++) for (let i = 0; i < bw / 26 - 1; i++) if (r() < 0.7) x.fillRect(u + 10 + i * 26, h - bh - layer * 10 + 14 + j * 34, 12, 18); u += bw + 6; } } });
 { const G = APT, U = G.userData, x0 = -4, x1 = 4, z0 = -4, z1 = 4, h = 3;
   const wallM = toon('#ffffff', { map: paintTex }); wallM.map.repeat.set(2, 1);
@@ -259,6 +259,12 @@ const cityTex = night => canvasTex(2048, 1024, (x, w, h) => { const g = x.create
   const rr = rng(33); for (let layer = 0; layer < 2; layer++) { let u = -10; while (u < w) { const bw = 80 + rr() * 160, bh = 300 + rr() * 500 - layer * 120; x.fillStyle = night ? ['#141a34', '#0c1026'][layer] : ['#9aa8b8', '#7a8898'][layer]; x.fillRect(u, h - bh, bw, bh);
       for (let j = 0; j < bh / 30 - 1; j++) for (let i = 0; i < bw / 22 - 1; i++) { const v = rr(); x.fillStyle = night ? (v < 0.25 ? 'rgba(255,220,150,.85)' : 'rgba(40,50,90,.6)') : 'rgba(255,255,255,.25)'; x.fillRect(u + 8 + i * 22, h - bh + 12 + j * 30, 11, 16); } u += bw + 8; } } });
 const CITY_N = cityTex(true), CITY_D = cityTex(false);
+const OKEY = canvasTex(400, 220, (c, w, h) => { c.fillStyle = '#2a2c38'; c.fillRect(0, 0, w, h);
+  c.fillStyle = '#1f3a2a'; c.beginPath(); c.roundRect(14, 14, 160, 48, 8); c.fill(); c.fillStyle = '#7dff9a'; c.font = '700 22px monospace'; c.fillText('LINE 2  INTL', 22, 46);
+  const k = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '0', '#']; k.forEach((n, i) => { const x = 22 + (i % 3) * 52, y = 76 + Math.floor(i / 3) * 36; c.fillStyle = '#f4efe4'; c.beginPath(); c.roundRect(x, y, 44, 30, 6); c.fill(); c.fillStyle = '#14121a'; c.font = '900 22px Poppins'; c.textAlign = 'center'; c.fillText(n, x + 22, y + 23); c.textAlign = 'left'; });
+  for (let i = 0; i < 4; i++) { c.fillStyle = ['#d7263d', '#2f6fe0', '#ffcf3f', '#3ff07a'][i]; c.beginPath(); c.roundRect(200, 20 + i * 48, 180, 38, 8); c.fill(); c.fillStyle = i >= 2 ? '#14121a' : '#fff'; c.font = '900 20px Poppins'; c.fillText(['HOLD', 'TRANSFER', 'VOICEMAIL', 'LINE 1'][i], 214, 46 + i * 48); } });
+const CALLLOG = canvasTex(512, 300, (c, w, h) => { c.fillStyle = '#0f2a5a'; c.fillRect(0, 0, w, h); c.fillStyle = '#2f6fe0'; c.fillRect(0, 0, w, 40); c.fillStyle = '#fff'; c.font = '900 22px Poppins'; c.fillText('CALL LOG · EXT 2214', 14, 28);
+  const r = rng(77); c.font = '600 18px monospace'; for (let j = 0; j < 9; j++) { const y = 66 + j * 26; if (j % 2) { c.fillStyle = 'rgba(255,255,255,.06)'; c.fillRect(0, y - 18, w, 26); } c.fillStyle = '#cfe0ff'; c.fillText('+' + ['63', '39', '882', '44', '1'][j % 5] + ' ' + Math.floor(r() * 900 + 100) + ' ' + Math.floor(r() * 9000 + 1000), 14, y); c.fillText(Math.floor(r() * 59) + ':' + String(Math.floor(r() * 59)).padStart(2, '0'), 300, y); c.fillStyle = '#ffcf3f'; c.fillText('$' + (r() * 90 + 5).toFixed(2), 400, y); } });
 { const G = OFFICE, U = G.userData, x0 = -6, x1 = 6, z0 = -6, z1 = 5, h = 3;
   const wallM = toon('#ffffff', { map: canvasTex(512, 512, (x, w, h2) => { x.fillStyle = '#cfd2da'; x.fillRect(0, 0, w, h2); x.fillStyle = '#b8bcc8'; x.fillRect(0, h2 * 0.9, w, h2 * 0.1); const r = rng(41); for (let i = 0; i < 1200; i++) { x.fillStyle = `rgba(0,0,0,${r() * 0.05})`; x.fillRect(r() * w, r() * h2, 2, 2); } }, true) });
   shell(G, { x0, x1, z0, z1, h, wall: wallM, floor: toon('#ffffff', { map: carpetTex }), ceil: '#d8dae2', skip: ['back'] });
@@ -274,10 +280,15 @@ const CITY_N = cityTex(true), CITY_D = cityTex(false);
   U.leds = []; U.deskPhones = [];
   for (const dz of [-2.8, 0.4]) for (const dx of [-4.2, -1.4, 1.4]) { const d = new THREE.Group(); d.position.set(dx, 0, dz); G.add(d);
     mesh(rbox(2.0, 0.06, 0.9, 0.02), '#e8e2d6', 0, 0.74, 0, d, 4); for (const s of [-1, 1]) mesh(rbox(0.06, 0.72, 0.8), '#8a8f9e', s * 0.95, 0.36, 0, d, 3);
-    mesh(rbox(2.0, 0.55, 0.05, 0.01), '#5a7aa8', 0, 1.02, -0.47, d, 3); mesh(rbox(0.6, 0.38, 0.04, 0.01), '#14121a', -0.35, 1.08, -0.25, d, 3); mesh(rbox(0.05, 0.2, 0.05), '#14121a', -0.35, 0.86, -0.27, d, 1.5); mesh(new THREE.PlaneGeometry(0.55, 0.33), basic('#3a5ab0'), -0.35, 1.08, -0.228, d, 0);
-    const ph = deskPhone(d, 0.55, 0.77, 0.05, -0.2, '#2a2c38'); U.leds.push(ph.led); U.deskPhones.push(ph);
+    mesh(rbox(2.0, 0.55, 0.05, 0.01), '#5a7aa8', 0, 1.02, -0.47, d, 3); mesh(rbox(0.6, 0.38, 0.04, 0.01), '#14121a', -0.35, 1.08, -0.25, d, 3); mesh(rbox(0.05, 0.2, 0.05), '#14121a', -0.35, 0.86, -0.27, d, 1.5); mesh(new THREE.PlaneGeometry(0.55, 0.33), basic('#ffffff', { map: CALLLOG }), -0.35, 1.08, -0.228, d, 0);
+    const ph = deskPhone(d, 0.55, 0.77, 0.05, -0.2, '#3a3e48', OKEY); U.leds.push(ph.led); U.deskPhones.push(ph);
     const ch = new THREE.Group(); ch.position.set(0, 0, 0.75); d.add(ch); mesh(rbox(0.5, 0.06, 0.5), '#2a2c38', 0, 0.48, 0, ch, 3); mesh(rbox(0.5, 0.6, 0.06), '#2a2c38', 0, 0.82, 0.25, ch, 3); mesh(cyl(0.03, 0.03, 0.45, 6), '#5a5e68', 0, 0.24, 0, ch, 2);
     for (let k = 0; k < 2; k++) mesh(rbox(0.22, 0.004, 0.3), '#f4efe4', 0.2 - k * 0.08, 0.775 + k * 0.004, 0.15, d, 0); }
+  // a desk lamp + mug on the front-left desk (the phone close-ups)
+  { const L = new THREE.Group(); L.position.set(-2.05, 0.77, 0.3); G.add(L); mesh(cyl(0.09, 0.1, 0.03, 16), '#14121a', 0, 0.015, 0, L, 2); const arm = mesh(cyl(0.012, 0.012, 0.42, 8), '#14121a', 0.06, 0.22, 0, L, 1.5); arm.rotation.z = -0.3;
+    const sh2 = mesh(new THREE.ConeGeometry(0.1, 0.14, 16, 1, true), toon('#1f8a5a', { side: THREE.DoubleSide }), 0.17, 0.42, 0.02, L, 2); sh2.rotation.z = -0.9; mesh(sph(0.035, 10), basic('#fff2c8'), 0.2, 0.39, 0.02, L, 0);
+    const ll = new THREE.PointLight('#ffc878', 2.6, 2.4, 1.4); ll.position.set(0.3, 0.3, 0.05); L.add(ll); glow(L, 0.22, 0.36, 0.02, '#ffd890', 0.5, 0.45);
+    mesh(cyl(0.04, 0.035, 0.1, 12), '#d7263d', 0.62, 0.05, 0.28, L, 1.5); }
   // the PBX rack, back-right corner
   { const r = new THREE.Group(); r.position.set(4.4, 0, -4.6); G.add(r); U.rack = r;
     mesh(rbox(1.0, 2.1, 0.8, 0.02), '#2a2c38', 0, 1.05, 0, r, 4.5); mesh(rbox(0.9, 2.0, 0.04), '#14121a', 0, 1.05, 0.39, r, 2);
@@ -377,7 +388,8 @@ const PLACES = { manila: [121, 14.6], ny: [-74, 40.7], nj: [-74.4, 40.2], la: [-
 { const G = MAP, U = G.userData;
   const mt = canvasTex(2048, 1024, (x, w, h) => { const g = x.createRadialGradient(w / 2, h / 2, 50, w / 2, h / 2, w * 0.6); g.addColorStop(0, '#13305a'); g.addColorStop(1, '#081428'); x.fillStyle = g; x.fillRect(0, 0, w, h);
     x.strokeStyle = 'rgba(95,208,255,.14)'; x.lineWidth = 2; for (let lo = -180; lo <= 180; lo += 15) { const px = (lo + 180) / 360 * w; x.beginPath(); x.moveTo(px, 0); x.lineTo(px, h); x.stroke(); } for (let la = -60; la <= 80; la += 15) { const py = (80 - la) / 140 * h; x.beginPath(); x.moveTo(0, py); x.lineTo(w, py); x.stroke(); }
-    for (const poly of CONT) { x.beginPath(); poly.forEach(([lo, la], i) => { const px = (lo + 180) / 360 * w, py = (80 - la) / 140 * h; i ? x.lineTo(px, py) : x.moveTo(px, py); }); x.closePath(); x.fillStyle = '#2f6a8a'; x.fill(); x.lineWidth = 6; x.strokeStyle = '#7fd8ff'; x.stroke(); }
+    for (const poly of CONT) { x.beginPath(); poly.forEach(([lo, la], i) => { const px = (lo + 180) / 360 * w, py = (80 - la) / 140 * h; i ? x.lineTo(px, py) : x.moveTo(px, py); }); x.closePath(); x.fillStyle = '#2a7aa8'; x.fill(); x.lineWidth = 6; x.strokeStyle = '#8fe4ff'; x.stroke(); }
+    { const r = rng(91); for (const poly of CONT) { const xs = poly.map(q => q[0]), ys = poly.map(q => q[1]); for (let i = 0; i < 40; i++) { const lo = Math.min(...xs) + r() * (Math.max(...xs) - Math.min(...xs)), la = Math.min(...ys) + r() * (Math.max(...ys) - Math.min(...ys)); const px = (lo + 180) / 360 * w, py = (80 - la) / 140 * h; x.beginPath(); poly.forEach(([a, b], j) => { const qx = (a + 180) / 360 * w, qy = (80 - b) / 140 * h; j ? x.lineTo(qx, qy) : x.moveTo(qx, qy); }); x.closePath(); if (!x.isPointInPath(px, py)) continue; x.fillStyle = r() < 0.3 ? 'rgba(255,214,120,.95)' : 'rgba(190,240,255,.8)'; x.beginPath(); x.arc(px, py, 2 + r() * 3, 0, 7); x.fill(); } } }
     x.fillStyle = 'rgba(255,255,255,.05)'; for (let y = 0; y < h; y += 6) x.fillRect(0, y, w, 2); });
   const tbl = mesh(rbox(8.6, 0.8, 4.6, 0.02), '#1a1d2e', 0, 0.45, 0, G, 5); mesh(rbox(8.8, 0.06, 4.8, 0.01), '#3a3e58', 0, 0.87, 0, G, 3);
   const mp = new THREE.Mesh(new THREE.PlaneGeometry(8, 4), basic('#ffffff', { map: mt })); mp.rotation.x = -Math.PI / 2; mp.position.y = 0.905; mp.userData.noOutline = true; G.add(mp);
@@ -390,14 +402,14 @@ const PLACES = { manila: [121, 14.6], ny: [-74, 40.7], nj: [-74.4, 40.2], la: [-
     mesh(new THREE.ConeGeometry(0.05, 0.16, 10).rotateX(Math.PI), col, 0, 0.1, 0, p, 1.5); mesh(sph(0.055, 12), col, 0, 0.2, 0, p, 1.5); const gl = glow(p, 0, 0.12, 0, col, 0.6, 0.6); p.scale.setScalar(0.001); U.pins[k] = p; }
   // arcs
   U.arcs = {}; const arc = (key, a, b, col, hgt = 0.5) => { const A = LL(...PLACES[a]), Bp = LL(...PLACES[b]); const mid = A.clone().lerp(Bp, 0.5); mid.y += hgt + A.distanceTo(Bp) * 0.22;
-    const curve = new THREE.QuadraticBezierCurve3(A.clone().setY(1.0), mid, Bp.clone().setY(1.0)); const geo = new THREE.TubeGeometry(curve, 80, 0.018, 6); const m = new THREE.Mesh(geo, basic(col)); m.userData.noOutline = true; G.add(m); geo.setDrawRange(0, 0); U.arcs[key] = { m, geo, curve }; };
+    const curve = new THREE.QuadraticBezierCurve3(A.clone().setY(1.0), mid, Bp.clone().setY(1.0)); const geo = new THREE.TubeGeometry(curve, 80, 0.026, 6); const m = new THREE.Mesh(geo, basic(col)); m.userData.noOutline = true; G.add(m); geo.setDrawRange(0, 0); U.arcs[key] = { m, geo, curve }; };
   arc('mnl_ny', 'manila', 'ny', '#ff3b4a', 0.6); arc('mnl_nj', 'manila', 'nj', '#ff3b4a', 0.3); arc('mnl_la', 'manila', 'la', '#ff3b4a', 0.2); arc('mnl_chi', 'manila', 'chi', '#ff3b4a', 0.4);
   arc('bre_ny', 'bre', 'ny', '#3ff07a', 0.3); arc('ny_mnl2', 'ny', 'manila', '#ffcf3f', 0.9); arc('ny_world', 'ny', 'syd', '#ffcf3f', 0.4); arc('ny_lon', 'ny', 'lon', '#ffcf3f', 0.2);
   arc('ny_prem', 'ny', 'prem', '#ffcf3f', 0.4); arc('prem_mnl', 'prem', 'manila', '#ffcf3f', 0.3); arc('mnl_mum', 'manila', 'mum', '#ff8a3a', 0.25);
   U.coins = []; for (let i = 0; i < 10; i++) { const c = mesh(cyl(0.07, 0.07, 0.02, 16).rotateX(Math.PI / 2), '#ffcf3f', 0, -5, 0, G, 2); U.coins.push(c); }
   // label tiles that float above key pins
   U.tags = {}; for (const [k, txt, col] of [['manila', 'MANILA', '#ff3b4a'], ['bre', 'BRESCIA', '#3ff07a'], ['ny', 'USA', '#5fd0ff'], ['prem', 'PREMIUM LINES', '#ffcf3f']]) { const tc = textCanvas(512, 128, (c, w, hh) => { c.fillStyle = 'rgba(8,6,16,.88)'; c.beginPath(); c.roundRect(4, 4, w - 8, hh - 8, 24); c.fill(); c.lineWidth = 8; c.strokeStyle = col; c.stroke(); c.fillStyle = '#fff'; c.font = '900 64px Poppins'; c.textAlign = 'center'; c.fillText(txt, w / 2, 88); }); tc.update();
-    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tc.t, depthTest: false })); s.scale.set(0.8, 0.2, 1); s.position.copy(LL(...PLACES[k])).add(V(0, 0.55, 0)); s.userData.noOutline = true; s.renderOrder = 5; G.add(s); s.visible = false; U.tags[k] = s; }
+    const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: tc.t, depthTest: false, sizeAttenuation: false })); s.scale.set(0.2, 0.05, 1); s.position.copy(LL(...PLACES[k])).add(V(0, 0.42, 0)); s.userData.noOutline = true; s.renderOrder = 5; G.add(s); s.visible = false; U.tags[k] = s; }
 }
 
 // ---------- FBI: the Newark field office. Big wall screen (SCR.wall), an evidence board on the right wall (SCR.board),
@@ -465,7 +477,9 @@ function drawWall(x, w, h, t, mode, k = 1) { x.fillStyle = '#0b1020'; x.fillRect
   if (mode === 'indict') { x.fillText('U.S. DISTRICT COURT · NEW JERSEY', w / 2, 38); x.fillStyle = '#ffffff'; x.font = '900 52px Poppins'; x.fillText('UNITED STATES', w / 2, 150); x.fillStyle = '#9fb0d0'; x.font = '800 40px Poppins'; x.fillText('v.', w / 2, 205); x.fillStyle = '#ffffff'; x.font = '900 52px Poppins'; x.fillText('PAUL MICHAEL KWAN', w / 2, 265);
     if (k > 0) { x.globalAlpha = clamp(k * 2); x.fillStyle = '#d7263d'; x.beginPath(); x.roundRect(w / 2 - 260, 320, 520, 110, 18); x.fill(); x.fillStyle = '#fff'; x.font = '900 72px Poppins'; x.fillText('INDICTED', w / 2, 400); x.globalAlpha = 1; x.fillStyle = '#cfd6e6'; x.font = '800 32px Poppins'; x.fillText('2009 · WIRE FRAUD CONSPIRACY', w / 2, 490); } }
   if (mode === 'premium') { x.fillText('FBI · NEWARK · CASE FILE', w / 2, 38); x.fillStyle = '#ffcf3f'; x.font = '900 80px Poppins'; x.fillText('PREMIUM LINES', w / 2, 170); x.fillStyle = '#cfd6e6'; x.font = '800 34px Poppins'; x.fillText('hacked phones dial · pay-per-minute numbers', w / 2, 240);
-    const bars = [0.3, 0.45, 0.6, 0.8, 1.0]; bars.forEach((b, i) => { const hh = 220 * b * clamp(k * 5 - i); x.fillStyle = '#ffcf3f'; x.fillRect(w / 2 - 260 + i * 110, 540 - hh, 80, hh); }); }
+    x.fillStyle = 'rgba(255,255,255,.18)'; x.fillRect(w / 2 - 300, 520, 600, 4); x.font = '800 22px Poppins'; x.fillStyle = '#9aa6c0'; x.fillText('PAYOUT PER HOUR OF CALLS', w / 2, 300);
+    const bars = [0.3, 0.45, 0.6, 0.8, 1.0], lab = ['+881', '+882', '+870', '+979', '+900']; bars.forEach((b, i) => { const g = clamp(k * 5 - i), hh = 170 * b * g, bx = w / 2 - 270 + i * 112; x.fillStyle = ['#ffcf3f', '#ffb03f', '#ff8a3a', '#ff5f4a', '#ff3b4a'][i]; x.beginPath(); x.roundRect(bx, 520 - hh, 86, hh, 8); x.fill();
+      x.fillStyle = '#ffffff'; x.font = '800 22px Poppins'; x.fillText(lab[i], bx + 43, 552); if (g > 0.6) { x.fillStyle = '#ffcf3f'; x.font = '900 26px Poppins'; x.fillText('$' + Math.round(40 + b * 260 * g), bx + 43, 510 - hh); } }); }
   if (mode === 'arrest') { x.fillText('FBI · NEWARK · CASE FILE', w / 2, 38); x.fillStyle = '#ff3b4a'; x.font = '900 86px Poppins'; x.fillText('ARRESTED', w / 2, 180); x.fillStyle = '#ffffff'; x.font = '900 52px Poppins'; x.fillText('MANILA · NOVEMBER 2011', w / 2, 260); x.fillStyle = '#cfd6e6'; x.font = '800 34px Poppins'; x.fillText('4 suspects · joint FBI / Philippine police', w / 2, 330); }
   x.textAlign = 'left'; scan(x, w, h); }
 function drawBoard(x, w, h, t, n) { x.fillStyle = '#b8814a'; x.fillRect(0, 0, w, h); const r = rng(9); for (let i = 0; i < 2500; i++) { x.fillStyle = r() < 0.5 ? 'rgba(110,60,25,.35)' : 'rgba(255,215,160,.3)'; x.fillRect(r() * w, r() * h, 3, 3); }
@@ -574,7 +588,7 @@ function fbiState(t) { Object.values(FCARD).forEach(hideCard);
   let n = 4; if (inB(t, 9)) n = 4 + clamp((t - WT(9, 'Police') + 0.2) / 0.9) * 0.99 + (t > WT(9, 'Mumbai') - 0.3 ? 0.01 : 0); if (inB(t, 7)) n = 3.99; drawBoard(SCR.board.x, 1024, 640, t, Math.min(5, n)); SCR.board.t.needsUpdate = true;
   showCard(FCARD.agentM, V(2.5, 0, 1.4), { expr: inB(t, 9) ? 'neutral' : 'smug', armL: inB(t, 9) && t > WT(9, 'Police') ? [2.0, 0.3] : DOWN, blink: blinkAt(t) });
   showCard(FCARD.agentF, V(-2.4, 0, -0.9), { expr: 'neutral', armR: [1.4, 0.8], blink: blinkAt(t, 1) });
-  if (inB(t, 7)) showCard(FCARD.pros, V(-0.9, 0, -2.2), { expr: t > WT(7, 'indicted') ? 'smug' : 'neutral', armR: t > WT(7, 'indicted') - 0.2 && t < WT(7, 'Italian') ? [2.2, 0.3] : DOWN, blink: blinkAt(t, 2) });
+  if (inB(t, 7)) showCard(FCARD.pros, V(-1.35, 0, -2.0), { expr: t > WT(7, 'indicted') ? 'smug' : 'neutral', armR: t > WT(7, 'indicted') - 0.2 && t < WT(7, 'Italian') ? [2.2, 0.3] : DOWN, blink: blinkAt(t, 2) });
 }
 
 // =====================================================================================================
@@ -597,19 +611,19 @@ function buildShots() {
   S(WT(0, 'million') - 0.1, sh('shop', V(0.3, 2.6, 9.5), V(0, 2.6, 0), 54, V(0.1, 1.8, 6.8), V(0, 2.4, 0), 52));
   S(WT(0, 'other') - 0.1, sh('office', V(-4.8, 2.3, 4.2), V(1.5, 0.9, -3.5), 56, V(-3.8, 2.0, 3.4), V(1.5, 0.9, -3.5), 54));
   // ---- beat 1: Manila 2005
-  S(VB(1), sh('apt', V(-0.75, 1.75, -3.0), V(-0.75, 2.4, -16), 54, V(-0.75, 1.7, -3.6), V(-0.75, 2.4, -16), 52));
+  S(VB(1), sh('apt', V(-0.56, 1.62, -3.55), V(-0.9, 2.6, -16), 54, V(-0.56, 1.7, -3.74), V(-0.6, 2.9, -16), 52));
   S(WT(1, 'young') - 0.1, sh('apt', V(2.8, 2.2, 3.6), V(-0.4, 0.9, -2), 56, V(2.2, 1.9, 2.6), V(-0.2, 0.9, -2), 54));
   S(WT(1, 'Paul') - 0.1, sh('apt', V(0.75, 1.35, 0.35), KW, 44, V(0.5, 1.3, -0.15), KW, 40));
   S(WT(1, 'spends') - 0.1, orbit('apt', V(0.2, 0, -1.9), 3.0, 1.6, -0.5, 0.25, 1.0, 50));
   S(WT(1, 'While') - 0.1, sh('apt', V(-2.5, 1.95, -1.35), V(-2.52, 2.05, -4), 42, V(-2.5, 2.0, -1.9), V(-2.52, 2.05, -4), 40));
   S(WT(1, 'America') - 0.05, sh('office', V(-4.8, 2.3, 4.2), V(1.5, 0.9, -3.5), 56, V(-4.0, 1.6, 3.0), V(1.5, 0.9, -3.5), 54));
   S(WT(1, 'dials') - 0.15, keypad(-0.05));
-  S(WT(1, 'one') - 0.1, sh('map', V(1.8, 3.4, 2.8), V(1.6, 0.9, -0.9), 52, V(0.5, 7.2, 5.4), V(0.5, 0.9, -0.6), 54));
+  S(WT(1, 'one') - 0.1, sh('map', V(4.7, 2.2, 0.35), V(0.2, 1.0, -1.1), 52, V(4.6, 3.0, 0.9), V(-0.4, 0.9, -1.4), 54));
   // ---- beat 2: the back door
   S(VB(2), sh('office', V(1.2, 1.7, -0.2), V(4.4, 1.3, -4.4), 50, V(2.2, 1.65, -1.6), V(4.4, 1.3, -4.4), 48));
   S(WT(2, 'Staff') - 0.1, sh('office', V(4.0, 1.25, -2.4), V(4.4, 1.0, -4.2), 50, V(4.1, 1.15, -2.9), V(4.4, 1.0, -4.2), 46));
   S(WT(2, 'punch') - 0.15, pbx(0.06));
-  S(WT(2, 'call') - 0.1, sh('map', V(-1.6, 1.6, 1.6), V(-0.6, 1.2, -0.8), 50, V(-0.4, 2.6, 3.0), V(0.0, 1.1, -0.9), 54));
+  S(WT(2, 'call') - 0.1, sh('map', V(-4.0, 2.2, 0.2), V(0.0, 1.0, -1.1), 52, V(-4.2, 3.0, 0.9), V(0.4, 0.9, -0.8), 54));
   S(WT(2, "company's") - 0.1, sh('office', V(-0.6, 1.2, 1.25), V(-0.85, 0.85, 0.45), 44, V(-0.75, 1.15, 1.0), V(-0.85, 0.85, 0.45), 40));
   S(WT(2, 'thousands') - 0.1, orbit('office', V(0, 0, -1.2), 5.2, 2.5, -0.7, -0.2, 1.0, 56));
   S(WT(2, 'that') - 0.1, pbx(-0.05));
@@ -622,7 +636,7 @@ function buildShots() {
   S(VB(4), sh('shop', V(-3, 1.7, 9.5), V(0, 2.8, 0), 54, V(0, 1.75, 8.2), V(0, 2.6, 0), 52));
   S(WT(4, 'where') - 0.1, sh('shop', V(-1.2, 2.0, -0.6), V(4.4, 1.3, -4.6), 56, V(-0.6, 1.8, -1.8), V(4.4, 1.3, -5.2), 52));
   S(WT(4, 'minute') - 0.1, sh('shop', V(-2.9, 2.35, -2.2), V(-4.08, 2.6, -3.0), 42, V(-3.1, 2.4, -2.5), V(-4.08, 2.62, -3.0), 38));
-  S(WT(4, 'Those') - 0.1, sh('map', V(0.9, 1.8, 1.2), V(-0.4, 1.2, -1.0), 50, V(-0.6, 2.4, 2.0), V(-0.9, 1.1, -0.9), 52));
+  S(WT(4, 'Those') - 0.1, sh('map', V(2.3, 1.9, -0.55), V(-1.4, 0.95, -1.0), 50, V(2.5, 2.6, -0.4), V(-1.6, 0.9, -1.0), 52));
   S(WT(4, 'American') - 0.1, sh('map', V(-1.6, 2.0, 1.4), V(-1.6, 0.9, -0.8), 52, V(-1.9, 4.6, 4.0), V(-0.4, 0.9, -0.5), 54));
   S(WT(4, 'Twelve') - 0.1, orbit('shop', V(0, 0, -4.2), 3.6, 2.0, 0.6, -0.4, 1.2, 56));
   S(WT(4, 'More') - 0.1, sh('apt', V(2.6, 2.3, 3.5), V(-0.3, 0.9, -2), 56, V(2.0, 1.9, 2.4), V(-0.2, 0.9, -2), 54));
@@ -634,32 +648,32 @@ function buildShots() {
   S(WT(5, 'Most') - 0.15, sh('office', V(0.4, 1.55, 2.2), V(0, 1.05, -1.25), 46, V(0.25, 1.45, 1.5), V(0, 1.05, -1.25), 42));
   // ---- beat 6: the raid, 2007
   S(VB(6), sh('apt', V(2.35, 1.82, -2.55), V(2.4, 1.85, -4), 40, V(2.3, 1.82, -2.85), V(2.4, 1.85, -4), 38));
-  S(WT(6, 'Philippine') - 0.1, sh('apt', V(0.8, 1.55, 3.0), V(4, 1.1, 1.3), 50, V(1.2, 1.5, 2.8), V(4, 1.1, 1.3), 48));
-  S(WT(6, 'raided') - 0.15, { ...sh('apt', V(0.0, 1.6, 3.3), V(3.6, 1.1, 1.2), 54, V(-0.3, 1.6, 3.0), V(2.0, 1.1, 0.0), 52), shake: WT(6, 'raided') });
+  S(WT(6, 'Philippine') - 0.1, sh('apt', V(3.3, 1.55, 0.9), V(0.2, 1.0, -2.3), 46, V(3.0, 1.5, 0.5), V(0.2, 1.0, -2.3), 44));
+  S(WT(6, 'raided') - 0.15, { ...sh('apt', V(-0.4, 1.75, 3.8), V(3.6, 1.1, 1.2), 58, V(-0.7, 1.75, 3.6), V(2.0, 1.0, 0.0), 56), shake: WT(6, 'raided') });
   S(WT(6, 'seized') - 0.1, sh('apt', V(0.9, 1.6, 1.5), V(-0.6, 1.0, -1.4), 46, V(0.5, 1.55, 1.1), V(-0.6, 1.0, -1.4), 44));
   S(WT(6, 'full') - 0.1, sh('apt', V(-2.0, 1.7, 1.4), V(-2.7, 1.0, -1.0), 48, V(-1.8, 1.6, 0.9), V(-2.7, 1.0, -1.0), 46));
   S(WT(6, 'Kwan') - 0.15, sh('apt', V(0.9, 1.4, 0.6), V(0.6, 1.0, -2.45), 44, V(0.75, 1.35, 0.1), V(0.6, 1.0, -2.45), 40));
   // ---- beat 7: indicted, Italy raids
   S(VB(7), sh('fbi', V(-2.4, 2.0, 3.2), V(0, 1.8, -4), 52, V(-1.5, 1.9, 2.4), V(0, 1.8, -4), 48));
-  S(WT(7, 'indicted') - 0.15, sh('fbi', V(0.3, 2.0, 2.4), V(0, 1.85, -4), 50, V(0.1, 1.95, 1.6), V(0, 1.85, -4), 48));
+  S(WT(7, 'indicted') - 0.15, sh('fbi', V(0.6, 1.7, 2.6), V(0.25, 1.45, -4), 50, V(0.5, 1.65, 1.8), V(0.25, 1.45, -4), 48));
   S(WT(7, 'Italian') - 0.1, sh('shop', V(2.6, 1.6, 9.5), V(0, 1.6, 0), 54, V(1.6, 1.6, 7.6), V(0, 1.6, 0), 52));
   S(WT(7, 'ten') - 0.1, sh('shop', V(-3.0, 1.4, 5.5), V(0, 1.6, 0), 52, V(-1.8, 4.0, 8.0), V(0, 1.4, -1), 54));
   S(WT(7, 'single') - 0.1, sh('shop', V(0, 1.9, -0.3), V(0, 1.3, -7), 56, V(0, 1.8, -1.6), V(0, 1.3, -7), 52));
-  S(WT(7, 'arresting') - 0.1, sh('shop', V(0.6, 1.6, -2.4), V(0.35, 1.0, -6.0), 50, V(0.45, 1.55, -3.0), V(0.35, 1.0, -6.0), 48));
+  S(WT(7, 'arresting') - 0.1, sh('shop', V(0.55, 1.15, -2.1), V(0.35, 0.5, -6.0), 60, V(0.45, 1.1, -2.6), V(0.35, 0.5, -6.0), 58));
   // ---- beat 8: round two, premium lines
   S(VB(8), sh('apt', V(-0.4, 1.5, 0.6), KW, 46, V(-0.1, 1.4, 0.0), KW, 42));
   S(WT(8, 'This') - 0.1, sh('office', V(-0.6, 1.2, 1.25), V(-0.85, 0.85, 0.45), 44, V(-0.75, 1.15, 1.0), V(-0.85, 0.85, 0.45), 40));
   S(WT(8, 'premium') - 0.1, pbx(0.04));
-  S(WT(8, 'kind') - 0.1, sh('fbi', V(0.3, 2.0, 2.6), V(0, 1.85, -4), 50, V(0.1, 1.95, 1.8), V(0, 1.85, -4), 48));
-  S(WT(8, 'money') - 0.1, sh('map', V(1.0, 2.4, 2.6), V(0.8, 1.0, -0.6), 52, V(2.2, 1.9, 1.4), V(2.3, 1.0, -0.6), 50));
+  S(WT(8, 'kind') - 0.1, sh('fbi', V(0.0, 1.75, 3.6), V(0, 1.55, -4), 54, V(0.0, 1.72, 3.0), V(0, 1.55, -4), 52));
+  S(WT(8, 'money') - 0.1, sh('map', V(-0.6, 2.4, 3.1), V(1.3, 1.0, 0.1), 60, V(-0.2, 2.9, 3.5), V(1.4, 0.95, 0.1), 58));
   S(WT(8, 'ATT') - 0.1, sh('office', V(-4.8, 2.3, 4.2), V(1.5, 0.9, -3.5), 56, V(-3.8, 2.0, 3.4), V(1.5, 0.9, -3.5), 54));
   // ---- beat 9: arrested again, 2011
   S(VB(9), sh('apt', V(2.35, 1.82, -2.55), V(2.4, 1.85, -4), 40, V(2.3, 1.82, -2.85), V(2.4, 1.85, -4), 38));
-  S(WT(9, 'the') - 0.1, { ...sh('apt', V(0.0, 1.6, 3.3), V(3.6, 1.1, 1.2), 54, V(-0.3, 1.6, 3.0), V(2.0, 1.1, 0.0), 52), shake: WT(9, 'FBI') - 0.05 });
+  S(WT(9, 'the') - 0.1, { ...sh('apt', V(-0.4, 1.75, 3.8), V(3.6, 1.1, 1.2), 58, V(-0.7, 1.75, 3.6), V(2.0, 1.0, 0.0), 56), shake: WT(9, 'FBI') - 0.05 });
   S(WT(9, 'arrested') - 0.15, sh('apt', V(0.9, 1.4, 0.6), V(0.6, 1.0, -2.45), 44, V(0.75, 1.35, 0.1), V(0.6, 1.0, -2.45), 40));
   S(WT(9, 'with') - 0.1, sh('apt', V(-0.8, 1.6, 2.4), V(-2.6, 1.0, -0.8), 50, V(-1.0, 1.55, 1.8), V(-2.8, 1.0, -0.8), 48));
   S(WT(9, 'Police') - 0.1, sh('fbi', V(0.8, 1.75, 0.6), V(3.96, 1.6, -0.4), 50, V(1.3, 1.72, 0.2), V(3.96, 1.6, -0.4), 46));
-  S(WT(9, 'Mumbai') - 0.2, sh('fbi', V(1.4, 1.45, 0.2), V(3.96, 1.3, 0.63), 46, V(1.7, 1.45, 0.3), V(3.96, 1.3, 0.63), 44));
+  S(WT(9, 'Mumbai') - 0.2, sh('fbi', V(1.6, 1.15, 0.6), V(3.96, 1.1, 0.63), 44, V(1.8, 1.15, 0.62), V(3.96, 1.1, 0.63), 42));
   // ---- beat 10: the lesson
   S(VB(10), pbx(0.05));
   S(WT(10, 'nobody') - 0.1, sh('map', V(-0.2, 4.6, 4.6), V(0.4, 0.9, -0.8), 54, V(0.4, 6.0, 6.0), V(0.4, 0.9, -0.6), 56));
