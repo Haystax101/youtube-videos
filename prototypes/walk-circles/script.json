@@ -1,21 +1,153 @@
 {
- "title": "Why lost people walk in circles (opening test)",
+ "title": "Why lost people walk in circles",
  "style": "set3d",
  "noGary": true,
- "voices": {"narrator": "am_michael"},
+ "voices": {
+  "narrator": "am_michael",
+  "hiker": "am_puck"
+ },
  "speed": 1.25,
  "tail": 0.6,
+ "qwen": {
+  "narrator": "A warm, confident American male narrator in his thirties with a friendly, slightly amused storytelling tone. Clear diction, brisk and lively pace, expressive like a popular YouTube explainer telling a funny true story.",
+  "hiker": "A cheerful, slightly goofy middle-aged German man speaking English with a light German accent. Overconfident and enthusiastic, a bit loud."
+ },
+ "qwen_candidates": {
+  "A_deep": "A deep, rich American male voice with a dramatic, cinematic storytelling style, confident and punchy, medium-fast pace.",
+  "B_playful": "A playful, high-energy young American male narrator, fast-paced and expressive with comic timing, like a viral short-video storyteller.",
+  "C_british": "A dry, witty British male narrator in his forties, calm but amused, crisp diction, like a clever documentary host."
+ },
  "beats": [
-  {"lines": [{"text": "This hiker is walking in a perfectly straight line. At least, that's what he thinks."}], "hold": 0.05},
-  {"lines": [{"text": "He's lost in a German forest, so he picks a direction and commits. No turning. No stopping."}], "hold": 0.05},
-  {"lines": [{"text": "An hour later, he finds a campfire. Someone's been here! Help is close!"}], "hold": 0.05},
-  {"lines": [{"text": "He marches on, dead straight. Another hour. Another campfire. Same log. Same sad sausage."}], "hold": 0.05},
-  {"lines": [{"text": "It's his campfire. He's been walking in circles."}], "hold": 0.25},
-  {"lines": [{"text": "And scientists say you would too."}], "hold": 0.1}
+  {
+   "id": "hook",
+   "lines": [
+    {
+     "text": "Get lost in a forest, and your own legs will secretly walk you in a giant circle."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "meet",
+   "lines": [
+    {
+     "text": "Meet Klaus. He's lost in a German forest."
+    },
+    {
+     "speaker": "hiker",
+     "text": "Easy. I'll just walk in a straight line."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "fire1",
+   "lines": [
+    {
+     "text": "An hour later, he finds a campfire."
+    },
+    {
+     "speaker": "hiker",
+     "text": "People! I'm saved!"
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "again",
+   "lines": [
+    {
+     "text": "Nobody's there, so he marches on. Dead straight. Another hour. Another campfire. Same log. Same sad sausage."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "his",
+   "lines": [
+    {
+     "speaker": "hiker",
+     "text": "Wait. That's my sausage."
+    },
+    {
+     "text": "He's been walking in circles."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "study",
+   "lines": [
+    {
+     "text": "In 2009, scientists tested this. They sent people into a German forest with GPS trackers and told them to walk straight."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "clouds",
+   "lines": [
+    {
+     "text": "When the sun was out, they managed it. Under clouds, they looped back over their own path, without noticing."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "blind",
+   "lines": [
+    {
+     "text": "Blindfolded in an open field, some walked circles just twenty metres wide."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "why",
+   "lines": [
+    {
+     "text": "And it isn't one leg being longer. With nothing to steer by, tiny errors in your sense of straight pile up, and curl you round."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "tip",
+   "lines": [
+    {
+     "text": "So if you're ever lost, aim at a landmark far ahead, walk to it, then pick another."
+    },
+    {
+     "speaker": "hiker",
+     "text": "Landmark. Got it."
+    },
+    {
+     "text": "Klaus picked a squirrel."
+    }
+   ],
+   "hold": 0.08
+  },
+  {
+   "id": "cta",
+   "lines": [
+    {
+     "text": "Follow for more interesting cartoons."
+    }
+   ],
+   "hold": 0.08
+  }
  ],
  "experiment": {
   "hypothesis": "Ricks Clips structure: a comic escalating story with the science reveal later, a cut every ~2 s across several small sets, face close-ups, near-continuous narration.",
-  "facts": ["Souman, Frissen, Sreenivasa & Ernst, 'Walking straight into circles', Current Biology 19:1538 (2009): GPS-tracked walkers in the Bienwald forest (Germany) and the Sahara walked in circles when the sun was hidden, repeatedly crossing their own path without noticing; with the sun or moon visible they kept fairly straight; blindfolded walkers made circles as small as 20 m across. https://www.mpg.de/596269/pressrelease200908171"],
-  "vars": {"format": "no_gary", "style": "set3d", "edit": "fast_cuts", "fish_ep": 589}
+  "facts": [
+   "Souman, Frissen, Sreenivasa & Ernst, 'Walking straight into circles', Current Biology 19:1538 (2009): GPS-tracked walkers in the Bienwald forest (Germany) and the Sahara walked in circles when the sun was hidden, repeatedly crossing their own path without noticing; with the sun or moon visible they kept fairly straight; blindfolded walkers made circles as small as 20 m across. https://www.mpg.de/596269/pressrelease200908171"
+  ],
+  "vars": {
+   "format": "no_gary",
+   "style": "set3d",
+   "edit": "fast_cuts",
+   "fish_ep": 589,
+   "voice": "qwen_designed"
+  }
  }
 }

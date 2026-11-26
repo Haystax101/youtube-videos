@@ -14,7 +14,6 @@ import json, re, sys
 from pathlib import Path
 import numpy as np
 import soundfile as sf
-from kokoro_onnx import Kokoro
 
 ROOT = Path(__file__).resolve().parent.parent
 SR = 24000
@@ -45,6 +44,7 @@ def silence(sec):
 
 
 def main(ep_dir: str):
+    from kokoro_onnx import Kokoro  # imported here so other voice engines can reuse the helpers
     ep = Path(ep_dir)
     script = json.loads((ep / "script.json").read_text())
     voices = {**VOICES, **script.get("voices", {})}
