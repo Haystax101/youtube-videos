@@ -17,6 +17,8 @@ Checks (each one PASS / WARN / FAIL):
   hiss       tools/hiss_scan.py on the final audio: 1 s+ runs of broadband noise (the "static" george heard)
   flicker    tools/check_flicker.py: one-frame pops (z-fighting, flashing facades, swimming shadows); the worst
              isolated ones go to EP/qa/flicker.jpg (before / pop / after) for the Claude review
+  vanish     tools/check_vanish.py: labels, captions, cards or props that blink out for a frame and come back
+             (also when it alternates every other frame); strip in EP/qa/vanish.jpg
   silence    ffmpeg silencedetect: dead air of 1.2 s+ inside the video
   balance    if EP/voice.wav exists: narration vs everything else under it (want >= 8 LU louder)
   length     portrait videos: warn outside 20-180 s
@@ -167,6 +169,14 @@ if iso:
     big = [(t, n) for t, n in iso if n > 5000]   # > ~4% of the picture popping for one frame: a field or wall vanished
     add('flicker', 'FAIL' if big else 'WARN', (f'{len(big)} big one-frame pop(s) at ' + ', '.join(f'{t:.2f}s' for t, _ in big[:6]) + ' (z-fighting / a surface vanishing: see the No glitching in motion rules in make-set-video). ' if big else '') + f'{len(iso)} one-frame pop(s), worst at ' + ', '.join(f'{t:.2f}s' for t, _ in iso[:8]) + ' -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine')
 else: add('flicker', 'PASS', f'no isolated one-frame pops ({len(ev)} frames with sustained motion like particles)')
+
+# ---- labels / cards / props vanishing for a frame (check_flicker masks the label bands; this doesn't)
+r = run([sys.executable, os.path.join(ROOT, 'tools', 'check_vanish.py'), video_for_rest, '--strip', os.path.join(out_dir, 'vanish.jpg')])
+rng_ = re.findall(r'^\s*([\d.]+)-\s*([\d.]+)s\s+worst ([\d.]+)s\s+(\d+) px', r.stdout, re.M)
+big = [x for x in rng_ if int(x[3]) > 1500]
+if big: add('vanish', 'FAIL', 'labels/cards blink out at ' + ', '.join(f'{float(a_):.1f}-{float(b_):.1f}s' for a_, b_, _, _ in big[:8]) + ' -> qa/vanish.jpg (vanished edges in green); usually two overlays fighting (z-order / depthTest on label planes) or a label toggled every other frame')
+elif rng_: add('vanish', 'WARN', f'{len(rng_)} small blink(s) at ' + ', '.join(f'{float(w):.1f}s' for _, _, w, _ in rng_[:8]) + ' -> qa/vanish.jpg: an eye blink or a light is fine, a label or prop is not')
+else: add('vanish', 'PASS', 'nothing blinks out for a frame')
 
 # ---- length (Shorts)
 if H > W and dur < 180: add('length', 'PASS' if 20 <= dur <= 180 else 'WARN', f'{dur:.1f} s (daily Shorts aim for 25-31 s; set videos up to 3 min)')
