@@ -112,12 +112,11 @@
     {
       "var": "qwen_voice",
       "arms": [
-        "qwen:Ryan",
-        "qwen:Dolce",
-        "qwen:Arthur"
+        "qwen_ryan",
+        "qwen_aiden"
       ],
-      "needs": "Qwen3-TTS library voices running (being set up on GitHub jobs by the 'Match MiloQ-style 3D animation' thread). When it lands, add these three as narrator arms (or start this as its own A/B/C test) and voice those Shorts with Qwen instead of Kokoro.",
-      "why": "george 2026-11-26: use Qwen3 library voices rather than cloning; A/B/C test Ryan, Dolce and Arthur"
+      "needs": "Qwen3-TTS voice job from branch claude/project-thread-lazv6b merged to main (.github/workflows/voice.yml, tools/retime_voice.py). Then: script.json \"qwen_speakers\": {\"narrator\": [\"Ryan\"]} (or Aiden), write the episode folder as line 1 of voice-request.txt and push; download voice_<Name>.wav + timeline_<Name>.json from the voice-<slug>-<run id> pre-release with curl (~10-15 min per voice); retime with tools/retime_voice.py IN.wav IN.json voice.wav timeline.json --tempo 1.3 --maxp 0.25; then mix.py as usual. Record experiment var voice.",
+      "why": "george 2026-11-26 10:30: stay free; Ryan vs Aiden (Dolce/Arthur are paid-API only, declined)"
     },
     {
       "var": "captions",
