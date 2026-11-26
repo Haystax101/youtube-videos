@@ -271,7 +271,7 @@ const LAB = newSet('lab', 100); const LB = {};
   const zP = 0.5; LB.zP = zP;
   const glass = new THREE.MeshStandardMaterial({ color: '#cfe8ff', transparent: true, opacity: 0.18, roughness: 0.05, metalness: 0.1, depthWrite: false });
   for (const [x0, x1] of [[-5, 1.9], [3.1, 5]]) { const cx = (x0 + x1) / 2, ww = x1 - x0; plane(G, ww, h, glass, cx, h / 2, zP); mesh(box(ww, 0.08, 0.08), '#9aa0aa', cx, h - 0.04, zP, G); mesh(box(ww, 0.1, 0.1), '#9aa0aa', cx, 0.05, zP, G); for (let x = x0; x <= x1 + 0.01; x += 1.2) mesh(box(0.06, h, 0.08), '#9aa0aa', x, h / 2, zP, G);
-    mesh(box(ww, 0.14, 0.02), basic('#3b6fd6'), cx, 1.3, zP + 0.02, G); }
+    mesh(box(ww, 0.14, 0.02), basic('#3b6fd6'), cx, 1.3, zP + 0.045, G); }
   // the door: frame + leaf that slides
   mesh(box(0.1, h, 0.14), '#5a6070', 1.9, h / 2, zP, G); mesh(box(0.1, h, 0.14), '#5a6070', 3.1, h / 2, zP, G); mesh(box(1.3, 0.8, 0.14), '#5a6070', 2.5, h - 0.4, zP, G);
   LB.door = mesh(rbox(1.1, 2.15, 0.06, 0.02), std('#3a4252', { roughness: 0.4, metalness: 0.3 }), 2.5, 1.08, zP, G);
@@ -685,7 +685,7 @@ function buildShots() {
   S(WT(3, 'Epic') - 0.05, sh('bedroom', V(D.x - 0.33, 1.18, D.z + 0.5), mon, 38, V(D.x - 0.33, 1.18, D.z + 0.44), mon, 36, { whip: 1 }));
   S(WT(3, 'Valve') - 0.05, sh('bedroom', V(D.x - 0.45, 1.2, D.z + 0.52), mon, 38, V(D.x - 0.4, 1.18, D.z + 0.45), mon, 36, { whip: 1 }));
   S(WT(3, 'Activision') - 0.05, sh('bedroom', V(D.x - 0.2, 1.16, D.z + 0.52), mon, 38, V(D.x - 0.25, 1.17, D.z + 0.45), mon, 36, { whip: 1 }));
-  S(WT(3, 'And') - 0.05, sh('campus', V(-6, 0.6, 10), V(0, 6, -8), 50, V(-4, 0.8, 7), V(0, 6.5, -8), 46, { whip: 1 }));
+  S(WT(3, 'And') - 0.05, sh('campus', V(-1.6, 0.6, 10), V(0, 6, -8), 50, V(-1.1, 0.8, 7), V(0, 6.5, -8), 46, { whip: 1 }));
   // ---- beat 4: games, studio, helicopter sim
   S(VB(4), overShoulder());
   S(WT(4, 'Gears') - 0.1, kidFace());
