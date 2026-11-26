@@ -94,7 +94,10 @@ c = rec('water', 0, 0.8); place(fx, c if c is not None else whoosh(), WT('free',
 # stats: a soft tick per eel appearing, dings for 13 and 9
 for i in range(32): t = tt(0.03); place(fx, np.sin(2 * np.pi * 2200 * t) * np.exp(-t * 160), BS('stats') + i * 0.035, 0.25)
 # mix
-venv = lp(np.abs(pad(voice)), 2400); duck = 1 - 0.55 * np.clip(venv / (venv.max() * 0.25), 0, 1)
-mix = pad(voice) + pad(m) * 0.36 * duck + 0.15 * np.tanh(fx[:N] * 0.18 / 0.15)
+venv = lp(np.abs(pad(voice)), 2400); duck = 1 - 0.6 * np.clip(venv / (venv.max() * 0.25), 0, 1)
+mix = pad(voice) + pad(m) * 0.3 * duck + 0.15 * np.tanh(fx[:N] * 0.18 / 0.15)
+V, M, X = pad(voice), pad(m) * 0.3 * duck, 0.15 * np.tanh(fx[:N] * 0.18 / 0.15); sp = lp(np.abs(V), 2400) > 0.01
+db = lambda x: round(20 * np.log10(np.sqrt(np.mean(x ** 2)) + 1e-9), 1)
+print('levels dB (speech / pauses): voice', db(V[sp]), '| music', db(M[sp]), '/', db(M[~sp]), '| sfx', db(X[sp]), '/', db(X[~sp]))
 mix /= np.abs(mix).max() * 1.05; sf.write(f'{here}/audio.mix.wav', mix.astype(np.float32), SR)
 json.dump(sorted(set(USED)), open(f'{here}/sfx_used.json', 'w'), indent=1); print('audio', round(N / SR, 2), 's; recorded sfx used:', len(set(USED)))
