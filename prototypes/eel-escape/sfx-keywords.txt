@@ -1,0 +1,11 @@
+underwater: underwater ambience | underwater | hydrophone | underwater bubbles
+bubbles: bubbles | bubble | bubbling water | aquarium
+water: water splash | splash | river stream | water movement
+gulp: gulp | swallow | slurp | gulping
+stomach: stomach growl | stomach rumble | digestion | heartbeat
+squelch: squelch | slime | squish | wet
+whoosh: whoosh | swoosh | swish
+cartoon: pop | boing | cartoon pop | squeak
+lab: laboratory | electrical hum | machine hum | x-ray | power up
+beep: beep | camera beep | electronic beep | camera shutter
+rewind: tape rewind | rewind | vhs rewind | record scratch
