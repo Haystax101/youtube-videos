@@ -52,8 +52,11 @@ function oval(x, cx, cy, rx, ry, fill, lw = 10) { x.beginPath(); x.ellipse(cx, c
 function limb(x, pts, w, col) { x.lineCap = 'round'; x.lineJoin = 'round'; x.beginPath(); x.moveTo(pts[0][0], pts[0][1]); for (const p of pts.slice(1)) x.lineTo(p[0], p[1]); x.strokeStyle = INK; x.lineWidth = w + 14; x.stroke(); x.strokeStyle = col; x.lineWidth = w; x.stroke(); }
 function shade(x, path, col) { x.save(); path(); x.clip(); x.fillStyle = col; x.beginPath(); x.ellipse(...arguments[3]); x.fill(); x.restore(); }
 
+// Faces match the approved Syracuse / walking-in-circles people (people2d.js): pale pearly heads with a soft
+// side shade, white eyes with heavy lids, no blush. george, 26 Nov 2026.
+const HEAD = '#f5efe4', HEAD_S = '#e0d3c0';
 export function drawChar(x, kind, P, t) {
-  const K = KINDS[kind], W = 512, cx = 256; x.clearRect(0, 0, W, 768);
+  const K = { ...KINDS[kind], skin: HEAD }, W = 512, cx = 256; x.clearRect(0, 0, W, 768);
   const sit = !!P.sit, lady = !!K.dress;
   const bob = P.walk ? Math.abs(Math.sin(P.walk * Math.PI)) * 10 : 0;
   const hipY = sit ? 535 : 545 - bob, bodyCy = sit ? 440 : 440 - bob, bodyRy = 120, bodyRx = 108;
@@ -136,7 +139,7 @@ export function drawChar(x, kind, P, t) {
   // ears
   if (!K.hood) for (const s of [-1, 1]) { oval(x, hx + s * (headR - 4), hy + 12, 22, 28, K.skin, 8); }
   oval(x, hx, hy, headR, headR * 0.98, K.skin, 11);
-  x.save(); x.beginPath(); x.ellipse(hx, hy, headR, headR * 0.98, 0, 0, 7); x.clip(); x.fillStyle = 'rgba(160,60,40,.16)'; x.beginPath(); x.ellipse(hx + headR * 0.95, hy + 30, headR * 0.5, headR * 1.3, 0, 0, 7); x.fill(); x.restore();
+  x.save(); x.beginPath(); x.ellipse(hx, hy, headR, headR * 0.98, 0, 0, 7); x.clip(); x.fillStyle = HEAD_S; x.beginPath(); x.ellipse(hx + 112, hy + 22, 70, 132, 0, 0, 7); x.fill(); x.restore(); oval(x, hx, hy, headR, headR * 0.98, null, 11);
   if (K.stubble) { x.save(); x.beginPath(); x.ellipse(hx, hy, headR, headR * 0.98, 0, 0, 7); x.clip(); x.fillStyle = 'rgba(40,30,30,.16)'; x.beginPath(); x.ellipse(hx, hy + headR * 0.75, headR * 0.85, headR * 0.5, 0, 0, 7); x.fill(); x.restore(); }
   if (K.earrings) for (const s of [-1, 1]) oval(x, hx + s * (headR + 2), hy + 46, 7, 7, '#ffcf3f', 4);
   // hair
@@ -166,11 +169,13 @@ export function drawChar(x, kind, P, t) {
   } else if (E === 'sleep' || blink) {
     for (const s of [-1, 1]) { x.beginPath(); x.arc(hx + s * ex, ey - 4, 15, Math.PI * 0.1, Math.PI * 0.9); x.lineWidth = 8; x.lineCap = 'round'; x.strokeStyle = INK; x.stroke(); }
   } else {
-    const big = E === 'shocked' ? 1.35 : 1, sq = E === 'angry' || E === 'annoyed' || E === 'smug' ? 0.72 : 1;
-    for (const s of [-1, 1]) { if (E === 'shocked') oval(x, hx + s * ex, ey, 24, 28, '#ffffff', 6);
-      x.beginPath(); x.ellipse(hx + s * ex, ey, 12 * big, 17 * big * sq, 0, 0, 7); x.fillStyle = INK; x.fill();
-      x.beginPath(); x.arc(hx + s * ex + 4, ey - 6 * sq, 4.5, 0, 7); x.fillStyle = '#fff'; x.fill(); }
-    if (E === 'smug' || E === 'annoyed') for (const s of [-1, 1]) { x.fillStyle = K.skin; x.fillRect(hx + s * ex - 18, ey - 26, 36, 14); x.beginPath(); x.moveTo(hx + s * ex - 18, ey - 10); x.lineTo(hx + s * ex + 18, ey - 10); x.lineWidth = 6; x.strokeStyle = INK; x.stroke(); }
+    const lid0 = { neutral: 0.3, shocked: 0, angry: 0.35, annoyed: 0.45, smug: 0.5 }[E] ?? 0.3, look = E === 'shocked' ? [0, -6] : [3, 0];
+    for (const s of [-1, 1]) { const exx = hx + s * ex, eyy = ey - 4;
+      oval(x, exx, eyy, 24, 28, '#ffffff', 5);
+      x.beginPath(); x.ellipse(exx + look[0], eyy + 4 + look[1], 9, 11, 0, 0, 7); x.fillStyle = INK; x.fill();
+      if (lid0) { x.save(); x.beginPath(); x.ellipse(exx, eyy, 24, 28, 0, 0, 7); x.clip(); x.fillStyle = HEAD; x.fillRect(exx - 28, eyy - 32, 56, 58 * lid0); x.restore();
+        x.beginPath(); x.moveTo(exx - 25, eyy - 28 + 56 * lid0); x.lineTo(exx + 25, eyy - 28 + 56 * lid0); x.lineWidth = 6; x.strokeStyle = INK; x.stroke();
+        x.beginPath(); x.ellipse(exx, eyy, 24, 28, 0, 0, 7); x.lineWidth = 5; x.stroke(); } }
   }
   if (K.glasses) { for (const s of [-1, 1]) { x.beginPath(); x.arc(hx + s * ex, ey, 31, 0, 7); x.lineWidth = 8; x.strokeStyle = INK; x.stroke(); } x.beginPath(); x.moveTo(hx - 10, ey - 4); x.lineTo(hx + 10, ey - 4); x.stroke(); for (const s of [-1, 1]) { x.beginPath(); x.moveTo(hx + s * 71, ey - 6); x.lineTo(hx + s * (headR - 6), ey - 12); x.stroke(); } }
   if (K.shades) { x.fillStyle = '#0d0b14'; for (const s of [-1, 1]) { x.beginPath(); x.roundRect(hx + s * ex - 30, ey - 20, 60, 38, 12); x.fill(); x.lineWidth = 6; x.strokeStyle = INK; x.stroke(); x.fillStyle = 'rgba(255,255,255,.35)'; x.fillRect(hx + s * ex - 20, ey - 12, 14, 6); x.fillStyle = '#0d0b14'; } x.lineWidth = 7; x.beginPath(); x.moveTo(hx - 10, ey - 6); x.lineTo(hx + 10, ey - 6); x.stroke(); }
@@ -181,8 +186,7 @@ export function drawChar(x, kind, P, t) {
   for (const s of [-1, 1]) { const bx = hx + s * ex, by = ey - 36 + brow[0] - (K.glasses ? 4 : 0), r = s * brow[1];
     x.save(); x.translate(bx, by); x.rotate(-r); x.beginPath(); x.moveTo(-20, 3); x.quadraticCurveTo(0, -7, 20, 3); x.lineWidth = kind === 'darwin' || kind === 'critic' ? 15 : 11; x.strokeStyle = INK; x.stroke(); x.lineWidth -= 6; x.strokeStyle = bc; x.stroke(); x.restore(); }
   // cheeks + nose
-  x.fillStyle = K.cheeks || 'rgba(255,120,120,.38)'; if (K.cheeks) x.globalAlpha = 0.55; for (const s of [-1, 1]) { x.beginPath(); x.ellipse(hx + s * 72, ey + 40, 18, 12, 0, 0, 7); x.fill(); } x.globalAlpha = 1;
-  x.beginPath(); x.arc(hx + 4, ey + 30, 11, Math.PI * 0.15, Math.PI * 1.05); x.lineWidth = 6; x.strokeStyle = INK; x.stroke();
+    x.beginPath(); x.arc(hx + 4, ey + 30, 11, Math.PI * 0.15, Math.PI * 1.05); x.lineWidth = 6; x.strokeStyle = INK; x.stroke();
   // moustache
   if (K.tache === 'walrus') { x.beginPath(); x.moveTo(hx - 62, ey + 70); x.quadraticCurveTo(hx - 30, ey + 28, hx, ey + 46); x.quadraticCurveTo(hx + 30, ey + 28, hx + 62, ey + 70); x.quadraticCurveTo(hx + 30, ey + 60, hx, ey + 62); x.quadraticCurveTo(hx - 30, ey + 60, hx - 62, ey + 70); x.fillStyle = K.hair; x.fill(); x.lineWidth = 6; x.strokeStyle = INK; x.stroke(); }
   // mouth
