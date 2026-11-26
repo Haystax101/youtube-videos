@@ -1,0 +1,803 @@
+{
+ "duration": 38.863,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 4.059,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Why",
+     "s": 0.15,
+     "e": 0.353,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 0.353,
+     "e": 0.55,
+     "speaker": "narrator"
+    },
+    {
+     "w": "this",
+     "s": 0.55,
+     "e": 0.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "farmer",
+     "s": 0.76,
+     "e": 1.167,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pumping",
+     "s": 1.167,
+     "e": 1.581,
+     "speaker": "narrator"
+    },
+    {
+     "w": "vegetable",
+     "s": 1.581,
+     "e": 2.192,
+     "speaker": "narrator"
+    },
+    {
+     "w": "juice",
+     "s": 2.192,
+     "e": 2.409,
+     "speaker": "narrator"
+    },
+    {
+     "w": "into",
+     "s": 2.409,
+     "e": 2.802,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 2.802,
+     "e": 3.005,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tractor",
+     "s": 3.005,
+     "e": 3.419,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tyres?",
+     "s": 3.419,
+     "e": 3.819,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 4.059,
+   "end": 10.178,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "A",
+     "s": 4.059,
+     "e": 4.265,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tractor",
+     "s": 4.265,
+     "e": 4.713,
+     "speaker": "narrator"
+    },
+    {
+     "w": "needs",
+     "s": 4.713,
+     "e": 4.948,
+     "speaker": "narrator"
+    },
+    {
+     "w": "heavy",
+     "s": 4.948,
+     "e": 5.381,
+     "speaker": "narrator"
+    },
+    {
+     "w": "back",
+     "s": 5.381,
+     "e": 5.609,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wheels.",
+     "s": 5.609,
+     "e": 5.851,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Too",
+     "s": 5.991,
+     "e": 6.186,
+     "speaker": "narrator"
+    },
+    {
+     "w": "light,",
+     "s": 6.186,
+     "e": 6.498,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 6.498,
+     "e": 6.692,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 6.692,
+     "e": 6.893,
+     "speaker": "narrator"
+    },
+    {
+     "w": "spin",
+     "s": 6.893,
+     "e": 7.094,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 7.094,
+     "e": 7.281,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 7.281,
+     "e": 7.476,
+     "speaker": "narrator"
+    },
+    {
+     "w": "mud,",
+     "s": 7.476,
+     "e": 7.775,
+     "speaker": "narrator"
+    },
+    {
+     "w": "or",
+     "s": 7.775,
+     "e": 7.962,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 7.962,
+     "e": 8.157,
+     "speaker": "narrator"
+    },
+    {
+     "w": "whole",
+     "s": 8.157,
+     "e": 8.364,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thing",
+     "s": 8.364,
+     "e": 8.572,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tips",
+     "s": 8.572,
+     "e": 8.772,
+     "speaker": "narrator"
+    },
+    {
+     "w": "up",
+     "s": 8.772,
+     "e": 8.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "when",
+     "s": 8.96,
+     "e": 9.161,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 9.161,
+     "e": 9.349,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lifts",
+     "s": 9.349,
+     "e": 9.556,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 9.556,
+     "e": 9.737,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bale.",
+     "s": 9.737,
+     "e": 9.938,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 10.178,
+   "end": 13.447,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 10.178,
+     "e": 10.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "farmers",
+     "s": 10.36,
+     "e": 10.742,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fill",
+     "s": 10.742,
+     "e": 10.937,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 10.937,
+     "e": 11.125,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tyres",
+     "s": 11.125,
+     "e": 11.495,
+     "speaker": "narrator"
+    },
+    {
+     "w": "about",
+     "s": 11.495,
+     "e": 11.865,
+     "speaker": "narrator"
+    },
+    {
+     "w": "three",
+     "s": 11.865,
+     "e": 12.066,
+     "speaker": "narrator"
+    },
+    {
+     "w": "quarters",
+     "s": 12.066,
+     "e": 12.455,
+     "speaker": "narrator"
+    },
+    {
+     "w": "full",
+     "s": 12.455,
+     "e": 12.649,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 12.649,
+     "e": 12.831,
+     "speaker": "narrator"
+    },
+    {
+     "w": "liquid.",
+     "s": 12.831,
+     "e": 13.207,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 13.447,
+   "end": 16.729,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Water",
+     "s": 13.447,
+     "e": 13.972,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 13.972,
+     "e": 14.229,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cheap.",
+     "s": 14.229,
+     "e": 14.514,
+     "speaker": "narrator"
+    },
+    {
+     "w": "But",
+     "s": 14.654,
+     "e": 14.848,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 14.848,
+     "e": 15.035,
+     "speaker": "narrator"
+    },
+    {
+     "w": "winter,",
+     "s": 15.035,
+     "e": 15.527,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 15.527,
+     "e": 15.714,
+     "speaker": "narrator"
+    },
+    {
+     "w": "freezes",
+     "s": 15.714,
+     "e": 16.108,
+     "speaker": "narrator"
+    },
+    {
+     "w": "solid.",
+     "s": 16.108,
+     "e": 16.489,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 16.729,
+   "end": 22.762,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 16.729,
+     "e": 16.955,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 16.955,
+     "e": 17.198,
+     "speaker": "narrator"
+    },
+    {
+     "w": "added",
+     "s": 17.198,
+     "e": 17.659,
+     "speaker": "narrator"
+    },
+    {
+     "w": "salt,",
+     "s": 17.659,
+     "e": 18.028,
+     "speaker": "narrator"
+    },
+    {
+     "w": "calcium",
+     "s": 18.028,
+     "e": 18.505,
+     "speaker": "narrator"
+    },
+    {
+     "w": "chloride.",
+     "s": 18.505,
+     "e": 18.99,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 19.13,
+     "e": 19.337,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stops",
+     "s": 19.337,
+     "e": 19.565,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 19.565,
+     "e": 19.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "freezing,",
+     "s": 19.78,
+     "e": 20.338,
+     "speaker": "narrator"
+    },
+    {
+     "w": "but",
+     "s": 20.338,
+     "e": 20.552,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 20.552,
+     "e": 20.759,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eats",
+     "s": 20.759,
+     "e": 20.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 20.98,
+     "e": 21.194,
+     "speaker": "narrator"
+    },
+    {
+     "w": "steel",
+     "s": 21.194,
+     "e": 21.423,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wheels",
+     "s": 21.423,
+     "e": 21.658,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 21.658,
+     "e": 21.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 21.88,
+     "e": 22.094,
+     "speaker": "narrator"
+    },
+    {
+     "w": "inside.",
+     "s": 22.094,
+     "e": 22.522,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 22.762,
+   "end": 25.605,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Then",
+     "s": 22.762,
+     "e": 22.952,
+     "speaker": "narrator"
+    },
+    {
+     "w": "someone",
+     "s": 22.952,
+     "e": 23.327,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tried",
+     "s": 23.327,
+     "e": 23.523,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 23.523,
+     "e": 23.707,
+     "speaker": "narrator"
+    },
+    {
+     "w": "leftovers",
+     "s": 23.707,
+     "e": 24.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 24.26,
+     "e": 24.45,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sugar",
+     "s": 24.45,
+     "e": 24.812,
+     "speaker": "narrator"
+    },
+    {
+     "w": "factories.",
+     "s": 24.812,
+     "e": 25.365,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 25.605,
+   "end": 32.427,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Sugar",
+     "s": 25.605,
+     "e": 26.182,
+     "speaker": "narrator"
+    },
+    {
+     "w": "beet",
+     "s": 26.182,
+     "e": 26.486,
+     "speaker": "narrator"
+    },
+    {
+     "w": "juice.",
+     "s": 26.486,
+     "e": 26.799,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It's",
+     "s": 26.939,
+     "e": 27.147,
+     "speaker": "narrator"
+    },
+    {
+     "w": "heavier",
+     "s": 27.147,
+     "e": 27.569,
+     "speaker": "narrator"
+    },
+    {
+     "w": "than",
+     "s": 27.569,
+     "e": 27.784,
+     "speaker": "narrator"
+    },
+    {
+     "w": "water,",
+     "s": 27.784,
+     "e": 28.304,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 28.304,
+     "e": 28.504,
+     "speaker": "narrator"
+    },
+    {
+     "w": "doesn't",
+     "s": 28.504,
+     "e": 28.733,
+     "speaker": "narrator"
+    },
+    {
+     "w": "freeze",
+     "s": 28.733,
+     "e": 28.962,
+     "speaker": "narrator"
+    },
+    {
+     "w": "until",
+     "s": 28.962,
+     "e": 29.37,
+     "speaker": "narrator"
+    },
+    {
+     "w": "about",
+     "s": 29.37,
+     "e": 29.778,
+     "speaker": "narrator"
+    },
+    {
+     "w": "minus",
+     "s": 29.778,
+     "e": 30.186,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thirty",
+     "s": 30.186,
+     "e": 30.601,
+     "speaker": "narrator"
+    },
+    {
+     "w": "seven,",
+     "s": 30.601,
+     "e": 31.121,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 31.121,
+     "e": 31.329,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it's",
+     "s": 31.329,
+     "e": 31.537,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gentle",
+     "s": 31.537,
+     "e": 31.765,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 31.765,
+     "e": 31.966,
+     "speaker": "narrator"
+    },
+    {
+     "w": "steel.",
+     "s": 31.966,
+     "e": 32.187,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 7,
+   "start": 32.427,
+   "end": 36.117,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 32.427,
+     "e": 32.597,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 32.597,
+     "e": 32.773,
+     "speaker": "narrator"
+    },
+    {
+     "w": "heaviest",
+     "s": 32.773,
+     "e": 33.137,
+     "speaker": "narrator"
+    },
+    {
+     "w": "part",
+     "s": 33.137,
+     "e": 33.319,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 33.319,
+     "e": 33.488,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 33.488,
+     "e": 33.67,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tractor",
+     "s": 33.67,
+     "e": 34.028,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is,",
+     "s": 34.028,
+     "e": 34.293,
+     "speaker": "narrator"
+    },
+    {
+     "w": "technically,",
+     "s": 34.293,
+     "e": 35.085,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 35.085,
+     "e": 35.249,
+     "speaker": "narrator"
+    },
+    {
+     "w": "vegetable.",
+     "s": 35.249,
+     "e": 35.777,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 8,
+   "start": 36.117,
+   "end": 38.063,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Comment",
+     "s": 36.117,
+     "e": 36.543,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 36.543,
+     "e": 36.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 36.76,
+     "e": 36.97,
+     "speaker": "narrator"
+    },
+    {
+     "w": "want",
+     "s": 36.97,
+     "e": 37.187,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 37.187,
+     "e": 37.39,
+     "speaker": "narrator"
+    },
+    {
+     "w": "know",
+     "s": 37.39,
+     "e": 37.606,
+     "speaker": "narrator"
+    },
+    {
+     "w": "next.",
+     "s": 37.606,
+     "e": 37.823,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}
