@@ -22,6 +22,7 @@ if vsr != SR:
 m, _ = sf.read(f'{EP}/music.wav'); N = max(len(voice), len(m)) + SR
 def pad(x): return np.pad(x, (0, max(0, N - len(x))))[:N]
 fx = np.zeros(N + 10 * SR)
+FXG = 0.09  # real CC0 recordings (sfx-v1) are much hotter than the old synth stand-ins: keeps them >= 6 dB under the voice
 SFX = os.path.join(REPO, 'assets', 'sfx'); cache = {}; used = []
 def load(folder, k=0, maxlen=None):
     files = sorted(f for f in glob.glob(f'{SFX}/{folder}/**/*', recursive=True) if f.lower().endswith(('.wav', '.ogg', '.flac', '.mp3')) and not os.path.basename(f).startswith('._'))
@@ -82,13 +83,14 @@ put('whoosh', B[11] + 0.5, 0.9); bed('street', WT(11, 'heart'), N / SR - 0.2, 0.
 bed('footsteps_forest', WT(11, 'heart'), N / SR - 0.3, 0.35)
 
 venv = np.convolve(np.abs(pad(voice)), np.ones(2400) / 2400, 'same'); duck = 1 - 0.55 * np.clip(venv / (venv.max() * 0.25), 0, 1)
-mix = pad(voice) + pad(m) * 0.36 * duck + 0.15 * np.tanh(fx[:N] * 0.18 / 0.15)
+mix = pad(voice) + pad(m) * 0.36 * duck + 0.15 * np.tanh(fx[:N] * FXG / 0.15)
 # insert the rewind after the hook: reversed, pitched-up slice of the music + tape squeal
 H = int((B[1] - 0.05) * SR); R = int(RW * SR)
 src = pad(m)[max(0, H - 2 * R):H][::-1]; idx = np.linspace(0, len(src) - 1, R).astype(int); rw = src[idx] * 0.5
 t = tt(RW); squeal = np.sin(2 * np.pi * np.cumsum(900 + 1400 * t) / SR) * 0.08 * np.sin(np.pi * t / RW); rw = rw + squeal
 fade = np.linspace(1, 0, int(0.05 * SR)); rw[-len(fade):] *= fade
 mix = np.concatenate([mix[:H], rw, mix[H:]])
+sf.write(f'{EP}/sfx.stem.wav', (0.15 * np.tanh(fx[:N] * FXG / 0.15)).astype(np.float32), SR)
 mix /= np.abs(mix).max() * 1.05; sf.write(f'{EP}/audio.mix.wav', mix.astype(np.float32), SR)
 json.dump(used, open(f'{EP}/sfx-used.json', 'w'), indent=1)
 print('audio', round(len(mix) / SR, 2), 's; sfx files used:', len(used))
