@@ -1,2 +1,2 @@
 prototypes/walk-circles
-# narrator Aiden (Klaus Ryan)
+# George (cloned with permission), Klaus = Ryan
