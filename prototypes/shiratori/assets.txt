@@ -1,0 +1,2 @@
+# shiratori v1
+sfx-v1 sfx.tar

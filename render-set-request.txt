@@ -1,2 +1,1 @@
-prototypes/beet-tyres
-# v3: motion glitch fixes
+prototypes/shiratori
