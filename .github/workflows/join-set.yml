@@ -1,0 +1,96 @@
+name: Join set video from an earlier run
+
+# Re-joins (or re-publishes the chunks of) a render-set.yml run whose join step failed, without
+# re-rendering: downloads that run's chunk artifacts (kept 3 days), checks out the commit it rendered,
+# builds the audio, muxes and publishes the video.
+# Start it by writing "RUN_ID [chunks]" into join-request.txt and pushing (any branch).
+#   RUN_ID          join + audio + publish video.mp4 to render-<slug>-<RUN_ID>-j
+#   RUN_ID chunks   just publish the chunks as chunks.tar to chunks-<slug>-<RUN_ID> (a session joins locally)
+on:
+  push:
+    paths: [join-request.txt]
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  join:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          read -r RUN MODE < join-request.txt
+          case "$RUN" in ''|*[!0-9]*) echo "bad run id"; exit 1 ;; esac
+          SHA=$(gh api "repos/${{ github.repository }}/actions/runs/$RUN" --jq .head_sha)
+          echo "RUN=$RUN" >> "$GITHUB_ENV"; echo "MODE=${MODE:-video}" >> "$GITHUB_ENV"; echo "SHA=$SHA" >> "$GITHUB_ENV"
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.SHA }}
+      - name: Episode
+        run: |
+          EP="$(head -n1 render-set-request.txt | tr -d '[:space:]')"
+          case "$EP" in episodes/*|prototypes/*) ;; *) echo "bad episode path: $EP"; exit 1 ;; esac
+          case "$EP" in *..*) echo "bad episode path: $EP"; exit 1 ;; esac
+          echo "EP=$EP" >> "$GITHUB_ENV"
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: chunks-*
+          merge-multiple: true
+          path: ${{ env.EP }}/chunks
+          run-id: ${{ env.RUN }}
+          github-token: ${{ github.token }}
+      - name: Publish chunks only
+        if: env.MODE == 'chunks'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="chunks-$(basename "$EP")-$RUN"; ls "$EP/chunks" | wc -l
+          tar -cf chunks.tar -C "$EP" chunks
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --prerelease --title "Chunks $TAG" --notes "chunks of run $RUN" --target "${{ github.event.repository.default_branch }}"
+          gh release upload "$TAG" chunks.tar --clobber
+      - uses: actions/setup-node@v4
+        if: env.MODE == 'video'
+        with:
+          node-version: 22
+      - uses: actions/setup-python@v5
+        if: env.MODE == 'video'
+        with:
+          python-version: "3.12"
+      - name: Cache models
+        if: env.MODE == 'video'
+        uses: actions/cache@v4
+        with:
+          path: models
+          key: models-kokoro-v1.0-generaluser-gs
+      - name: Install
+        if: env.MODE == 'video'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          ./setup.sh
+          npm install --no-save playwright@1.63.0
+          npx playwright install --with-deps chromium
+      - name: Fetch release assets
+        if: env.MODE == 'video'
+        run: |
+          test -f "$EP/assets.txt" || exit 0
+          grep -v '^#' "$EP/assets.txt" | while read -r tag file; do
+            [ -n "$tag" ] || continue
+            curl -sSLf -o "/tmp/$file" "https://github.com/${{ github.repository }}/releases/download/$tag/$file" || { echo "missing $tag/$file"; continue; }
+            tar -xf "/tmp/$file" && rm "/tmp/$file"
+          done
+      - name: Join, audio, mux, publish
+        if: env.MODE == 'video'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node pipeline/render_set.cjs "$EP" --join-only && test -f "$EP/silent.mp4"
+          bash "$EP/audio.sh" "$EP"
+          ffmpeg -y -loglevel error -i "$EP/silent.mp4" -i "$EP/audio.norm.wav" -c:v copy -c:a aac -b:a 192k -shortest "$EP/video.mp4"
+          TAG="render-$(basename "$EP")-$RUN-j"
+          gh release create "$TAG" "$EP/video.mp4" "$EP/silent.mp4" --prerelease --title "Render: $(basename "$EP") (run $RUN)" \
+            --notes "Joined from run $RUN" --target "${{ github.event.repository.default_branch }}"

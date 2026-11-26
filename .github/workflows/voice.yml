@@ -94,4 +94,4 @@ jobs:
           ls out/* >/dev/null 2>&1 || { echo "no voices made"; exit 1; }
           NAME="$(basename "$EP")"; TAG="voice-$NAME-${{ github.run_id }}"
           gh release create "$TAG" out/* --prerelease \
-            --title "Voice: $NAME" --notes "Qwen3-TTS library voices, run ${{ github.run_id }}" --target "${{ github.sha }}"
+            --title "Voice: $NAME" --notes "Qwen3-TTS library voices, run ${{ github.run_id }}" --target "${{ github.event.repository.default_branch }}"

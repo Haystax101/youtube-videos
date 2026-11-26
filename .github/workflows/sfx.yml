@@ -34,6 +34,6 @@ jobs:
           tar -cf sfx.tar assets/sfx
           ls -la sfx.tar
           TAG="sfx-v1"
-          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --prerelease --title "CC0 sound effects" --notes "CC0 / public-domain sound effects fetched by tools/fetch_sfx.py; see manifest.json for each file's source and licence." --target "${{ github.sha }}"
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --prerelease --title "CC0 sound effects" --notes "CC0 / public-domain sound effects fetched by tools/fetch_sfx.py; see manifest.json for each file's source and licence." --target "${{ github.event.repository.default_branch }}"
           cp assets/sfx/manifest.json sfx-manifest.json
           gh release upload "$TAG" sfx.tar sfx-manifest.json --clobber

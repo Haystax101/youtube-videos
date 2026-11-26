@@ -86,7 +86,7 @@ jobs:
           EP: ${{ needs.plan.outputs.ep }}
         run: |
           TAG="chunks-$(basename "$EP")-${{ github.run_id }}"
-          gh release create "$TAG" --prerelease --title "Chunks $TAG" --notes "partial render chunks" --target "${{ github.sha }}" 2>/dev/null || true
+          gh release create "$TAG" --prerelease --title "Chunks $TAG" --notes "partial render chunks" --target "${{ github.event.repository.default_branch }}" 2>/dev/null || true
           tar -cf "part${{ matrix.part }}.tar" -C "$EP" chunks
           for k in 1 2 3; do gh release upload "$TAG" "part${{ matrix.part }}.tar" --clobber && break; sleep 5; done
       - uses: actions/upload-artifact@v4
@@ -151,7 +151,7 @@ jobs:
         run: |
           NAME="$(basename "$EP")"; TAG="render-$NAME-${{ github.run_id }}"
           gh release create "$TAG" "$EP/video.mp4" --prerelease \
-            --title "Render: $NAME" --notes "Rendered by run ${{ github.run_id }} on $PARTS machines" --target "${{ github.sha }}"
+            --title "Render: $NAME" --notes "Rendered by run ${{ github.run_id }} on $PARTS machines" --target "${{ github.event.repository.default_branch }}"
           gh release list --limit 100 --json tagName,isPrerelease,createdAt \
             --jq '[.[] | select(.isPrerelease and (.tagName|startswith("render-")))] | sort_by(.createdAt) | reverse | .[3:][] | .tagName' |
             while read -r old; do gh release delete "$old" --cleanup-tag --yes; done
