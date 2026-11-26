@@ -45,12 +45,16 @@ bed('forest', B[6]['start'], meadow, 0.7, air)
 bed('wind', meadow, N / SR, 0.7, air)
 bed('wind', W(6, 'Under'), meadow, 0.9, air)
 # ---- footsteps while someone walks (recorded leaf/grass steps, else synthesised)
-def step(): t = tt(0.12); return bp(rng.normal(0, 1, len(t)), 14, 2) * np.exp(-t * 35) * 0.5
+def step():  # soft, muffled forest-floor step: a low thud plus a quiet leafy rustle (george: the old clicks were harsh)
+    t = tt(0.16); env = (1 - np.exp(-t * 400)) * np.exp(-t * 28)
+    thump = lp(rng.normal(0, 1, len(t)), 90) * 6 * env
+    rustle = bp(rng.normal(0, 1, len(t)), 40, 12) * 0.5 * np.exp(-t * 18) * (1 - np.exp(-t * 60))
+    x = thump + rustle; return x / (np.abs(x).max() + 1e-9) * 0.22
 def steps(a, b, g=0.9):
     s = lib.segment('footsteps_forest', b - a)
     if s is not None: place(s, a, g); return
     t = a
-    while t < b: place(step(), t, 0.8 + rng.random() * 0.4); t += 0.42
+    while t < b: place(step(), t, 0.6 + rng.random() * 0.3); t += 0.42 + rng.uniform(-0.03, 0.03)
 for a, b in [(W(0, 'legs') - 0.3, W(0, 'giant')), (W(1, 'straight') - 0.2, B[2]['start'] + 1.6), (W(3, 'marches'), W(3, 'Another', 2) + 1.0),
              (W(5, 'They'), W(5, 'straight') + 0.4), (W(6, 'without'), B[6]['end']), (meadow, meadow + 1.6), (W(9, 'walk'), W(9, 'Landmark')), (W(9, 'Klaus'), N / SR - 1)]:
     steps(a, b)
