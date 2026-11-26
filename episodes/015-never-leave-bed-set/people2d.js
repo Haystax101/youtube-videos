@@ -251,17 +251,17 @@ export function drawPerson(ctx, W, H, kindName, poseName, expr, t, seed = 0, opt
   if (opts.lines) { g.strokeStyle = 'rgba(255,255,255,.95)'; g.lineCap = 'round'; for (let i = 0; i < 9; i++) { const a = -Math.PI / 2 + (i - 4) * 0.33, r0 = 470 + ((t * 600 + i * 97) % 120), r1 = r0 + 90; g.lineWidth = 10; g.beginPath(); g.moveTo(Math.cos(a) * r0, -420 + Math.sin(a) * r0 * 0.9); g.lineTo(Math.cos(a) * r1, -420 + Math.sin(a) * r1 * 0.9); g.stroke(); } }
   g.translate(0, -p.jump);
   // legs
-  stick([-36, -130 + p.bob], [-40, -80], [-40, -60 - p.lf]); stick([36, -130 + p.bob], [40, -80], [40, -60 - p.rf]);
-  boot(-42, -1, p.lf); boot(42, 1, p.rf);
+  if (!opts.headOnly) { stick([-36, -130 + p.bob], [-40, -80], [-40, -60 - p.lf]); stick([36, -130 + p.bob], [40, -80], [40, -60 - p.rf]);
+  boot(-42, -1, p.lf); boot(42, 1, p.rf); }
   g.save(); g.translate(0, p.bob); g.rotate(p.lean);
   if (p.spear) { g.strokeStyle = INK; g.lineWidth = 18; g.beginPath(); g.moveTo(150, 40); g.lineTo(150, -860); g.stroke(); g.strokeStyle = '#8f5e36'; g.lineWidth = 9; g.stroke(); P(() => { g.moveTo(150, -950); g.lineTo(176, -860); g.lineTo(124, -860); g.closePath(); }, '#c9ced6', 5); }
   if (K.pack) P(() => g.roundRect(-150, -400, 300, 280, 40), '#8a5a2e', 7);
-  bodyBlock(K);
+  if (!opts.headOnly) bodyBlock(K);
   if (K.pack) { P(() => g.roundRect(-74, -372, 22, 220, 8), '#6b4422', 5); P(() => g.roundRect(52, -372, 22, 220, 8), '#6b4422', 5); }
   if (p.cup) { P(() => { g.moveTo(170, -520 - 40); g.lineTo(230, -560); g.quadraticCurveTo(226, -500, 200, -490); g.lineTo(200, -460); g.lineTo(220, -450); g.lineTo(180, -450); g.lineTo(200, -460); g.lineTo(200, -490); g.quadraticCurveTo(174, -500, 170, -560); g.closePath(); }, '#e0b04a', 5); }
   if (p.stick) { g.strokeStyle = INK; g.lineWidth = 12; g.beginPath(); g.moveTo(200, -150); g.lineTo(260, 0); g.stroke(); g.strokeStyle = '#8f5e36'; g.lineWidth = 6; g.stroke(); }
   // arms
-  for (const [side, d] of [[p.l, -1], [p.r, 1]]) {
+  if (!opts.headOnly || opts.arms) for (const [side, d] of [[p.l, -1], [p.r, 1]]) {
     const sh = [d * 104, -356];
     P(() => g.roundRect(sh[0] - 26, sh[1] - 14, 52, 60, 16), d > 0 ? K.clothS : K.cloth, 6);
     stick([sh[0], sh[1] + 30], side[1], side[0]);

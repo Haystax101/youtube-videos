@@ -128,11 +128,12 @@ function finishPeople() { for (const P of people) { if (!P.m.visible || !P.pend)
   const s = o.s || 1; P.m.scale.setScalar(s);
   const yaw = Math.atan2(cam.position.x - pos.x, cam.position.z - pos.z); _q1.setFromEuler(new THREE.Euler(0, yaw, 0));
   let flip = !!o.flip; if (o.vel) { const right = V(1, 0, 0).applyQuaternion(cam.quaternion); flip = o.vel.dot(right) < 0; }
-  if (o.lie) { const y = o.lie.clone().normalize(); let z = cam.position.clone().sub(pos); z.sub(y.clone().multiplyScalar(z.dot(y))); if (z.y < 0) z.y = 0; z.normalize(); const x = y.clone().cross(z); _m.makeBasis(x, y, z); _q2.setFromRotationMatrix(_m);
+  if (o.tuck) { P.m.quaternion.copy(cam.quaternion); const up = V(0, 1, 0).applyQuaternion(cam.quaternion); P.m.position.copy(o.tuck).sub(up.multiplyScalar(0.534 * CARD_H * s)).add(V(0, 0, 0).sub(cam.getWorldDirection(V(0, 0, 0))).multiplyScalar(0.05)); }
+  else if (o.lie) { const y = o.lie.clone().normalize(); let z = cam.position.clone().sub(pos); z.sub(y.clone().multiplyScalar(z.dot(y))); if (z.y < 0) z.y = 0; z.normalize(); const x = y.clone().cross(z); _m.makeBasis(x, y, z); _q2.setFromRotationMatrix(_m);
     const k = o.fall == null ? 1 : o.fall; P.m.quaternion.copy(_q1).slerp(_q2, k); }
   else P.m.quaternion.copy(_q1);
-  const pt = Math.round(t * 30) / 30, key = [P.kindNow, pose, expr, pt, flip, o.lines, o.blanket, o.pale, o.stubble].join('|');
-  if (key !== P.last) { drawPerson(P.ctx, CW, CH, P.kindNow, pose, expr, pt, P.seed || 0, { flip, ...o }); P.tex.needsUpdate = true; P.last = key; } } }
+  const pt = Math.round(t * 30) / 30, key = [P.kindNow, pose, expr, pt, flip, o.lines, o.blanket, o.pale, o.stubble, !!o.tuck, o.arms].join('|');
+  if (key !== P.last) { drawPerson(P.ctx, CW, CH, P.kindNow, pose, expr, pt, P.seed || 0, { flip, ...o, headOnly: !!o.tuck, blanket: o.tuck ? null : o.blanket }); P.tex.needsUpdate = true; P.last = key; } } }
 const gary = person('gary', 0.3), doc = person('doc', 1.1), doc2 = person('doc2', 2.2);
 const subs = ['sub1', 'sub2', 'sub3', 'sub4'].map((k, i) => person(k, 3 + i * 1.3));
 const olds = ['old1', 'old2', 'old3', 'old4'].map((k, i) => person(k, 9 + i * 1.7));
@@ -445,11 +446,21 @@ function labMood(m) { // '1966' | '1996' | '1950'
   lab96.visible = m === '1996'; banner50.visible = calWard.visible = m === '1950'; }
 
 // ---------- character helpers ----------
-const bedPos = (G, c, top, up = 0.2) => at(G, c.x, top + up, c.z + 1.0); // card origin = foot end; card lies along -z (head to pillow)
+const bedPos = (G, c, top, up = 0.2) => at(G, c.x, top + up, c.z + 1.0); // card origin = foot end (used for the jump out of bed)
 const HEAD_BACK = V(0, 0, -1);
-function garyInBed(t, pose, expr, o = {}) { place(gary, bedPos(BED, BEDC, MAT_TOP, 0.2).add(V(0, 0, -0.1)), pose, expr, t, { lie: HEAD_BACK, blanket: o.noBlanket ? null : '#f0b43c', ...o }); }
-function subInBed(P, i, t, pose, expr, o = {}) { const b = LBEDS[i]; place(P, bedPos(LAB, b, LMAT, 0.1).add(V(0, 0, -0.15)), pose, expr, t, { lie: HEAD_BACK, blanket: '#dfe6ee', ...o }); }
-function garyHead() { const P = gary; const y = V(0, 1, 0).applyQuaternion(P.m.quaternion); return P.m.position.clone().add(y.multiplyScalar(CARD_H * 0.53 * (P.pend?.o?.s || 1))); }
+// sleepers are tucked in: a 3D body-shaped mound under the sheet, and only the head (and arms when waving) above it
+const lumpGeo = new THREE.CapsuleGeometry(0.21, 1.05, 6, 14).rotateX(Math.PI / 2); const lumpGeo2 = new THREE.SphereGeometry(0.16, 12, 8);
+const lumps = []; function lump(pos, dir, mat) { let L = lumps.find(l => !l.used); if (!L) { const g = new THREE.Group(); const body = new THREE.Mesh(lumpGeo, mat); body.castShadow = body.receiveShadow = true; g.add(body);
+    const feet = new THREE.Mesh(lumpGeo2, mat); feet.castShadow = true; g.add(feet); scene.add(g); L = { g, body, feet }; lumps.push(L); }
+  L.used = true; L.g.visible = true; L.body.material = L.feet.material = mat; L.g.position.copy(pos); L.g.lookAt(pos.clone().add(dir)); L.body.scale.set(1.25, 0.55, 1); L.body.position.set(0, 0, 0); L.feet.position.set(-0.12, 0.05, 0.62); L.feet.scale.set(1, 0.9, 1); return L; }
+const duvetM = BED.getObjectByName('duvet').material, sheetM = std('#dfe6ee'), sheet50 = std('#e8e2d2'), nasaSheet = std('#8fb5e8');
+const ARMS = /^(cheer|stretch|eat|thumb)$/;
+function garyHead() { return at(BED, BEDC.x, MAT_TOP + 0.2, BEDC.z - 0.74); }
+function garyInBed(t, pose, expr, o = {}) { lump(at(BED, BEDC.x, MAT_TOP + 0.07, BEDC.z + 0.05), V(0, 0, 1), duvetM); place(gary, garyHead(), pose, expr, t, { tuck: garyHead(), arms: ARMS.test(pose), noShadow: true, ...o }); }
+function subHead(i) { const b = LBEDS[i]; return at(LAB, b.x, LMAT + 0.2, b.z - 0.7); }
+function subInBed(P, i, t, pose, expr, o = {}) { const b = LBEDS[i]; lump(at(LAB, b.x, LMAT + 0.0, b.z + 0.12), V(0, 0, 1), o.blanket === '#e8e2d2' ? sheet50 : sheetM); place(P, subHead(i), pose, expr, t, { tuck: subHead(i), arms: ARMS.test(pose), noShadow: true, ...o }); }
+function nasaInBed(t, pose, expr, o = {}) { const top = tbed.userData.top; top.updateMatrixWorld(true); const h = top.localToWorld(V(0, 0.26, -0.7)), c = top.localToWorld(V(0, 0.1, 0.15)), d = top.localToWorld(V(0, 0.1, 1.15)).sub(c);
+  lump(c, d, nasaSheet); place(gary, h, pose, expr, t, { tuck: h, arms: ARMS.test(pose), noShadow: true, ...o }); }
 let flashAge = 0;
 const LABSUBS = () => [gary, ...subs]; // Gary is the subject in bed 3 (index 2)
 
@@ -464,7 +475,7 @@ const SHOTS = [
   { at: WT(0, 'worse'), f: (v, u) => { useSet('BED'); bedMood('month2'); bedMood('night'); mess.visible = true; garyInBed(v, 'idle', 'sick', { pale: true, stubble: true }); shake = 0;
     const a = 0.6 + u * 0.35; look(at(BED, BEDC.x + 0.6 + Math.cos(a) * 0.3, RM.h - 0.08, BEDC.z + 1.0 + Math.sin(a) * 0.3), at(BED, BEDC.x, MAT_TOP, BEDC.z - 0.3), 80, { roll: u * 0.25 }); } },
   { at: WT(0, 'thirty'), f: (v, u) => { useSet('BED'); bedMood('month2'); bedMood('night'); mess.visible = true; garyInBed(v, 'idle', 'shocked', { pale: true, stubble: u < 0.45, kind: u > 0.45 ? 'garyold' : 'gary' }); flashAge = u > 0.45 && u < 0.6 ? 1 - (u - 0.45) / 0.15 : 0;
-    const head = garyHead(); look(head.clone().add(V(0.75 - u * 0.12, 0.45, 0.55)), head, 36, { focus: 1.0 - u * 0.1 }); } },
+    const head = garyHead(); look(head.clone().add(V(1.05 - u * 0.15, 0.5, 0.85)), head, 36, { focus: 1.45 - u * 0.15 }); } },
   // ===== DAY 1: morning bliss
   { at: B(1).start, f: (v, u) => { useSet('BED'); bedMood('day'); curtains(0.55); calendar('1', 'DAY'); garyInBed(v, 'stretch', 'joy', { noBlanket: false });
     const k = ease(0, 2.2, u); look(at(BED, lerp(-2.0, -1.4, k), lerp(2.5, 1.5, k), lerp(2.3, 1.6, k)), at(BED, BEDC.x, 0.7, BEDC.z - 0.2), 52); } },
@@ -509,12 +520,12 @@ const SHOTS = [
     const k = ease(0, 2, u); const hd = garyHead(); look(hd.clone().add(V(lerp(1.6, 0.9, k), lerp(1.3, 0.7, k), lerp(1.6, 0.9, k))), hd, 50, { roll: 0.12 }); } },
   { at: WT(6, 'bones'), f: (v, u) => { useSet('NAS'); drawXray(ease(0.1, 1.4, u)); const c = at(NAS, -NB.w / 2 + 0.12, 1.75, 0.4); look(c.clone().add(V(3.3 - u * 0.4, -0.1, 0.35)), c.clone().add(V(0, -0.08, 0)), 44, { roll: 0.04 }); } },
   // ===== NASA: $18,000 to lie down for 70 days
-  { at: B(7).start, f: (v, u) => { useSet('NAS'); const top = tbed.userData.top; const p = at(NAS, 0, 0.78, -0.6); place(gary, p.clone().add(V(0, 0.08, 1.0)), 'idle', 'smug', v, { lie: V(0, Math.sin(TILT) * -1, -1), blanket: '#8fb5e8' });
+  { at: B(7).start, f: (v, u) => { useSet('NAS'); nasaInBed(v, 'idle', 'smug');
     place(extra[0], at(NAS, -1.4, 0, 0.6), 'clip', 'watch', v, { kind: 'nasa' }); place(extra[1], at(NAS, 1.7, 0, 0.5), 'talk', 'smug', v); drawECG(v);
     const k = ease(0, 2, u); look(at(NAS, lerp(-3.8, -2.2, k), lerp(2.6, 1.6, k), lerp(3.6, 2.4, k)), at(NAS, 0, 0.8, -0.6), 50); } },
-  { at: WT(7, 'eighteen'), f: (v, u) => { useSet('NAS'); showBills(u, true); const p = at(NAS, 0, 0.78, -0.6); place(gary, p.clone().add(V(0, 0.08, 1.0)), 'cheer', 'joy', v, { lie: V(0, 0.1, -1), blanket: '#8fb5e8', lines: true });
+  { at: WT(7, 'eighteen'), f: (v, u) => { useSet('NAS'); showBills(u, true); nasaInBed(v, 'cheer', 'joy', { lines: true });
     look(at(NAS, 0.3, 3.0 - u * 0.3, 0.3), at(NAS, 0, 0.7, -0.6), 66, { roll: 0.3 - u * 0.15 }); } },
-  { at: WT(7, 'seventy'), f: (v, u) => { useSet('NAS'); showBills(u + 2, true); const p = at(NAS, 0, 0.78, -0.6); place(gary, p.clone().add(V(0, 0.08, 1.0)), 'idle', 'sleep', v, { lie: V(0, 0.1, -1), blanket: '#8fb5e8' }); protractor.visible = true;
+  { at: WT(7, 'seventy'), f: (v, u) => { useSet('NAS'); showBills(u + 2, true); nasaInBed(v, 'idle', 'sleep'); protractor.visible = true;
     look(at(NAS, 4.2, 1.0, -0.6 + Math.sin(u * 0.6) * 0.4), at(NAS, 0, 0.85, -0.6), 40); } },
   // ===== 30 YEARS LATER (1996): the same men come back
   { at: B(8).start, f: (v, u) => { useSet('LAB', 'cool'); labMood('1996'); const ps = [gary, ...olds]; ps.forEach((P, i) => place(P, at(LAB, -6.2 + u * 1.1 + i * 0.9, 0, 1.6 + (i % 2) * 0.5), 'walk', 'grump', v + i, { vel: V(1, 0, 0), kind: i === 0 ? 'garyold' : undefined }));
@@ -539,8 +550,8 @@ const SHOTS = [
     drip.position.set(-0.9, 0, zz - 0.05); look(at(COR, 0.15, 0.6, zz - 3.0), at(COR, 0, 1.2, zz), 48, { focus: 3.0 }); } },
   // ===== GET UP: he leaps out of bed, throws open the curtains, runs out into the morning
   { at: B(11).start, f: (v, u) => { useSet('BED'); bedMood('morning'); const open = ease(0.6, 1.2, u); curtains(open); calendar('1', 'DAY');
-    const jump = ease(0, 0.4, u); const g = VL(bedPos(BED, BEDC, MAT_TOP, 0.22).add(V(0, 0, -0.1)), at(BED, R - 0.9, 0, WIN.z), jump);
-    if (jump < 1) place(gary, g, 'cheer', 'joy', v, { lie: HEAD_BACK, fall: 1 - jump, blanket: jump < 0.3 ? '#f0b43c' : null }); else place(gary, at(BED, R - 0.85, 0, WIN.z), 'curtain', 'joy', u - 0.6);
+    if (u < 0.25) garyInBed(v, 'cheer', 'joy'); else { const j = ease(0.25, 0.6, u); const g = VL(at(BED, BEDC.x + 0.5, MAT_TOP, BEDC.z + 0.2), at(BED, R - 0.85, 0, WIN.z), j); g.y += Math.sin(j * Math.PI) * 0.5;
+      place(gary, g, j < 1 ? 'cheer' : 'curtain', 'joy', j < 1 ? v : u - 0.6); lump(at(BED, BEDC.x, MAT_TOP - 0.06, BEDC.z + 0.05), V(0, 0, 1), duvetM); }
     renderer.toneMappingExposure = 1 + open * 0.5; bloom.strength = 0.3 + open * 0.5; shafts.forEach(s => s.material.opacity = 0.1 + open * 0.25);
     look(at(BED, -1.6 + u * 0.2, 1.3, 1.9), at(BED, 1.6, 1.2, -0.3), 54); } },
   { at: WT(11, 'heart'), f: (v, u) => { useSet('STR'); const z = 2 - u * 2.6; place(gary, at(STR, -5, 0.15, z), 'run', 'joy', v, { vel: V(0, 0, -1) });
@@ -572,7 +583,7 @@ window.renderFrame = (t) => {
   TT = t; let v = voiceT(t), rw = 0;
   if (v == null) { rw = (t - HOOK_END) / RW; v = HOOK_END * (1 - ease(0, 1, rw)); }
   const si = shotAt(v), S = SHOTS[si], u = v - S.at;
-  people.forEach(P => { P.m.visible = P.sh.visible = false; }); easel.visible = true; bills.count = 0; cells.count = 0; bars.forEach(g => g.visible = false); protractor.visible = false; shake = 0; renderer.toneMappingExposure = 1;
+  people.forEach(P => { P.m.visible = P.sh.visible = false; }); lumps.forEach(l => { l.used = false; l.g.visible = false; }); easel.visible = true; bills.count = 0; cells.count = 0; bars.forEach(g => g.visible = false); protractor.visible = false; shake = 0; renderer.toneMappingExposure = 1;
   S.f(v, u); cam.updateMatrixWorld(); finishPeople();
   // ambient motion
   reels.forEach((r, i) => r.rotation.z = t * (i % 2 ? 3 : -2)); blinkers.forEach((b, i) => b.visible = Math.sin(t * 6 + i * 1.7) > 0); if (SETS.LAB.visible) drawECG(t);
