@@ -9,3 +9,9 @@ __pycache__/
 assets/
 prototypes/*/qv/
 voices/*.wav
+prototypes/*/chunks/
+prototypes/*/stills/
+prototypes/*/out/
+prototypes/*/*.log
+prototypes/*/contact.jpg
+prototypes/*/parts.txt
