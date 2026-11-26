@@ -382,7 +382,7 @@ function state(w) {
   s.brine = w > T_EATS && w < T_BEET ? ease(T_EATS, T_EATS + 2, w) : 0;
   s.ibc = w > T_BEET - 0.3 && w < T_PAY; s.sack = w > T_SALT - 0.3 && w < T_FAC;
   s.pumping = w > T_BEET && w < T_PAY - 0.5;
-  s.thermo = w > T_COLD - 1 && w < T_GENTLE - 0.1 ? 1 : 0;
+  s.thermo = w > T_COLD - 1 && w < T_GENTLE - 0.1 && !hookMode ? 1 : 0;
   return s; }
 // standing-farmer pose and spot per beat
 function farmerStand(w) {

@@ -15,7 +15,7 @@ async function open() { const b = await chromium.launch({ args: ['--use-gl=angle
   if (mode === 'stills') { const w = await open(); const dir = path.join(__dirname, 'stills'); fs.mkdirSync(dir, { recursive: true });
     for (const s of a1.split(',')) { const t0 = Date.now(); await w.p.evaluate(t => window.renderFrame(t), +s); await w.st.screenshot({ path: path.join(dir, `s_${s}.jpg`), type: 'jpeg', quality: 85, timeout: 180000 }); console.log(s, Date.now() - t0, 'ms'); }
     await w.b.close(); server.close(); return; }
-  const out = a1, N = +(a2 || 4); const probe = await open(); const total = Math.round(probe.dur * FPS); await probe.b.close(); const per = Math.ceil(total / N);
+  const out = a1, N = +(a2 || 4); const probe = await open(); const total = process.env.TMAX ? Math.round(+process.env.TMAX * FPS) : Math.round(probe.dur * FPS); await probe.b.close(); const per = Math.ceil(total / N);
   await Promise.all([...Array(N)].map(async (_, k) => { const w = await open(); const from = k * per, n = Math.min(per, total - from);
     const ff = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', '30', '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', path.join(__dirname, `part${k}.mp4`)], { stdio: ['pipe', 'inherit', 'inherit'] });
     const done = new Promise(r => ff.on('close', r)); const t0 = Date.now();
