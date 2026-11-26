@@ -1,0 +1,90 @@
+name: Voice with Qwen3-TTS
+
+# Voices an episode with Qwen3-TTS library voices (tools/qwen_voice.py, CustomVoice model), one runner
+# per narrator in script.json "qwen_speakers.narrator" (an A/B/C voice test runs in parallel), and
+# publishes voice_<NAME>.wav + timeline_<NAME>.json for each to the pre-release voice-<slug>-<run id>.
+# Start it by writing the episode folder into voice-request.txt and pushing (any branch).
+on:
+  push:
+    paths: [voice-request.txt]
+  workflow_dispatch:
+    inputs:
+      episode:
+        description: "Episode folder"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      ep: ${{ steps.p.outputs.ep }}
+      voices: ${{ steps.p.outputs.voices }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        env:
+          INPUT_EP: ${{ inputs.episode }}
+        run: |
+          EP="${INPUT_EP:-$(head -n1 voice-request.txt | tr -d '[:space:]')}"
+          case "$EP" in episodes/*|prototypes/*) ;; *) echo "bad episode path: $EP"; exit 1 ;; esac
+          case "$EP" in *..*) echo "bad episode path: $EP"; exit 1 ;; esac
+          test -f "$EP/script.json"
+          echo "ep=$EP" >> "$GITHUB_OUTPUT"
+          echo "voices=$(python3 -c "import json,sys;n=json.load(open(sys.argv[1])).get('qwen_speakers',{}).get('narrator',['Ryan']);print(json.dumps(n if isinstance(n,list) else [n]))" "$EP/script.json")" >> "$GITHUB_OUTPUT"
+  voice:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    strategy:
+      fail-fast: false
+      matrix:
+        voice: ${{ fromJson(needs.plan.outputs.voices) }}
+    env:
+      EP: ${{ needs.plan.outputs.ep }}
+      VOICE: ${{ matrix.voice }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Cache models
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: hf-qwen3-tts-customvoice-1.7b-v1
+      - name: Install
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq sox libsox-dev ffmpeg
+          pip install --index-url https://download.pytorch.org/whl/cpu torch torchaudio
+          pip install -U qwen-tts soundfile librosa
+      - name: Voice
+        run: python3 tools/qwen_voice.py "$EP" "$VOICE"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: voice-${{ matrix.voice }}
+          path: |
+            ${{ env.EP }}/voice_${{ matrix.voice }}.wav
+            ${{ env.EP }}/timeline_${{ matrix.voice }}.json
+  publish:
+    needs: [plan, voice]
+    if: always() && needs.plan.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EP: ${{ needs.plan.outputs.ep }}
+        run: |
+          ls -la out
+          ls out/* >/dev/null 2>&1 || { echo "no voices made"; exit 1; }
+          NAME="$(basename "$EP")"; TAG="voice-$NAME-${{ github.run_id }}"
+          gh release create "$TAG" out/* --prerelease \
+            --title "Voice: $NAME" --notes "Qwen3-TTS library voices, run ${{ github.run_id }}" --target "${{ github.sha }}"
