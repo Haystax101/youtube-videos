@@ -3,7 +3,7 @@
 taiko, choir, woodwinds) with a different cue per scene. All times are VIDEO seconds.
 Usage: python3 score.py EP_DIR  -> EP_DIR/music.wav"""
 import sys, json, numpy as np, soundfile as sf
-sys.path.insert(0, '/home/user/youtube-videos/pipeline')
+import os; REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')); sys.path.insert(0, f'{REPO}/pipeline')
 from sf2 import SoundFont, reverb
 SR = 24000
 here = sys.argv[1]
@@ -12,7 +12,7 @@ HOOK_END, RW = tl['beats'][1]['start'], 1.0
 W = lambda w: w + RW                      # world time -> video time
 GAP1, GAP2 = 1.2, 0.8
 T_END = tl['duration'] + RW + GAP1 + GAP2 + 1.2
-F = SoundFont('/home/user/youtube-videos/models/GeneralUser-GS.sf2', SR)
+F = SoundFont(f'{REPO}/models/GeneralUser-GS.sf2', SR)
 out = np.zeros(int((T_END + 4) * SR))
 STR, SLOW, TREM, PIZZ, CELLO, TIMP, CHOIR, HIT, TPT, TBN, TUBA, HORN, BRASS, OBOE, BSN, CLAR, FLUTE, TAIKO = 48, 49, 44, 45, 42, 47, 52, 55, 56, 57, 58, 60, 61, 68, 70, 71, 73, 116
 

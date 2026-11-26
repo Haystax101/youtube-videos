@@ -1,7 +1,7 @@
 """Audio for the Archimedes claw prototype: voice (with a 1 s gap for the rewind), music whose
 mood follows the scene, and synthesised sound effects. Times below are VIDEO seconds."""
 import sys, json, numpy as np, soundfile as sf
-sys.path.insert(0, '/home/user/youtube-videos/pipeline')
+import os; REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')); sys.path.insert(0, f'{REPO}/pipeline')
 from mix import SR, place as _place, thud, boom, clack, whoosh, mood_track, music, MOODS
 rng = np.random.default_rng(5)
 def place(buf, clip, at, g):
