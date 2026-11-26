@@ -5,7 +5,7 @@
  "noGary": false,
  "qwen_speakers": {
   "narrator": [
-   "Ryan"
+   "George2"
   ],
   "doctor": "Uncle_Fu",
   "gary": "Aiden",
@@ -17,7 +17,7 @@
   "gary": "Cocky, cheerful young man, very sure of himself.",
   "oldgary": "Grumpy, tired old man, groaning."
  },
- "qwen_speed": 1.06,
+ "qwen_speed": 1.0,
  "tail": 1.0,
  "beats": [
   {
@@ -184,5 +184,11 @@
  "voices": {
   "narrator": "am_michael"
  },
- "speed": 1.2
+ "speed": 1.2,
+ "qwen_clone": {
+  "George2": "voices/george2.wav"
+ },
+ "pronounce": {
+  "1966": "nineteen sixty-six"
+ }
 }

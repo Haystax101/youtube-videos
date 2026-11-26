@@ -59,7 +59,14 @@ jobs:
         run: |
           sudo apt-get update -qq && sudo apt-get install -y -qq sox libsox-dev ffmpeg
           pip install --index-url https://download.pytorch.org/whl/cpu torch torchaudio
-          pip install -U qwen-tts soundfile librosa
+          pip install -U qwen-tts soundfile librosa faster-whisper
+      - name: Decrypt cloned-voice references
+        env:
+          VOICE_KEY: ${{ secrets.VOICE_KEY }}
+        run: |
+          [ -n "$VOICE_KEY" ] || { echo "no VOICE_KEY secret; cloned voices unavailable"; exit 0; }
+          for f in voices/*.wav.enc; do [ -f "$f" ] || continue
+            printf '%s' "$VOICE_KEY" | openssl enc -d -aes-256-cbc -pbkdf2 -in "$f" -out "${f%.enc}" -pass stdin; done
       - name: Voice
         run: python3 tools/qwen_voice.py "$EP" "$VOICE"
       - uses: actions/upload-artifact@v4
@@ -87,4 +94,4 @@ jobs:
           ls out/* >/dev/null 2>&1 || { echo "no voices made"; exit 1; }
           NAME="$(basename "$EP")"; TAG="voice-$NAME-${{ github.run_id }}"
           gh release create "$TAG" out/* --prerelease \
-            --title "Voice: $NAME" --notes "Qwen3-TTS library voices, run ${{ github.run_id }}" --target "${{ github.sha }}"
+            --title "Voice: $NAME" --notes "Qwen3-TTS library voices, run ${{ github.run_id }}" --target "${{ github.event.repository.default_branch }}"
