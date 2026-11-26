@@ -1,0 +1,39 @@
+name: Fetch CC0 sound effects
+
+# Downloads recorded CC0 / public-domain sound effects (Wikimedia Commons, Kenney, OpenGameArt) for the
+# keywords in sfx-keywords.txt with tools/fetch_sfx.py, and publishes sfx.tar + manifest.json on the
+# release "sfx-v1" (untar into the repo root: files land in assets/sfx/<folder>/*.wav).
+# Start it by changing sfx-keywords.txt and pushing (any branch).
+on:
+  push:
+    paths: [sfx-keywords.txt]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sfx-v1
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Fetch
+        run: python3 tools/fetch_sfx.py assets/sfx
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tar -cf sfx.tar assets/sfx
+          ls -la sfx.tar
+          TAG="sfx-v1"
+          gh release view "$TAG" >/dev/null 2>&1 || gh release create "$TAG" --prerelease --title "CC0 sound effects" --notes "CC0 / public-domain sound effects fetched by tools/fetch_sfx.py; see manifest.json for each file's source and licence." --target "${{ github.sha }}"
+          cp assets/sfx/manifest.json sfx-manifest.json
+          gh release upload "$TAG" sfx.tar sfx-manifest.json --clobber
