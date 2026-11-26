@@ -100,6 +100,21 @@ Stills can look perfect while the moving video shimmers, so every set page needs
 - **Check motion, not just stills:** run `python3 tools/check_flicker.py VIDEO` (one-frame pops) and look at
   6 consecutive frames from a few shots before delivering.
 
+### Characters move like 3D (george, 26 Nov: "even though the characters are technically 2d... they should still act like they're 3d")
+
+Use `web/lib/stage2d.js` in every set page (import it; don't copy it):
+- **Walking:** `walkAlong(route, k, step)` gives the position and `walk` = steps taken, driven by distance, so
+  feet don't slide when the walk eases in or out and the legs stop when the card stops. Pass it as `pose.walk`.
+  Route walks round furniture; never a straight line through it.
+- **Sitting:** `anchorSeat(chair, { seatY, front })` once per chair, then `seatOn(card, chair, camera)` with
+  `pose.sit = 1` (bent legs over the seat edge) and `chair.rotation.y = faceCam(chair, camera, wobble)`: a flat
+  card can't be seen from behind, so the chair faces the camera. Get up to the front of the seat first, then walk.
+- **Self-check:** `window.SETCHECK = makeSetCheck({ sets, cards, movers, camera, render, shotSet })`, then
+  `python3 tools/qa.py EP --page EP/page.html` (or `node tools/set_check.cjs EP/page.html 0.05`) must report 0
+  on-screen problems: cards inside furniture, chairs seen from behind with someone in them, props hitting
+  things, teleports. `tools/tests/stage2d.html` is a worked example that shows each failure once.
+- Every character and camera starts inside the room's walls; entrances come through an opened door.
+
 ## Story and script
 
 - **Length is whatever fits.** Archimedes is 1:17 and george was happy with that. Don't pad, and
