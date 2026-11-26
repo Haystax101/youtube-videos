@@ -300,9 +300,9 @@ const SCARD = { kolin: makeCard(STREET, 'kolin'), karp: makeCard(STREET, 'karpel
   { const kg = new THREE.Group(); G.add(kg); G.userData.key = kg; const km = toon('#ffcf3f', { emissive: '#8a6a10', emissiveIntensity: 0.4 });
     mesh(new THREE.TorusGeometry(0.12, 0.04, 8, 20), km, 0, 0, 0, kg, 3); mesh(rbox(0.36, 0.05, 0.05), km, 0.3, 0, 0, kg, 3); mesh(rbox(0.05, 0.1, 0.05), km, 0.42, -0.06, 0, kg, 2); mesh(rbox(0.05, 0.07, 0.05), km, 0.34, -0.05, 0, kg, 2); glow(kg, 0.15, 0, 0, '#ffcf3f', 1.0, 0.5); kg.position.set(0, -20, 0); }
   // the forgotten old-wallet safe in the back-left corner (beat 10)
-  { const sf = new THREE.Group(); sf.position.set(-4.3, 0, -3.3); sf.rotation.y = 0.5; G.add(sf); mesh(rbox(0.9, 1.0, 0.8, 0.04), '#4a4e40', 0, 0.5, 0, sf, 4.5); const dh = new THREE.Group(); dh.position.set(-0.45, 0.5, 0.41); sf.add(dh); mesh(rbox(0.88, 0.95, 0.06, 0.03), '#5a5e4a', 0.44, 0, 0, dh, 4); mesh(cyl(0.12, 0.12, 0.05, 16).rotateX(Math.PI / 2), '#c9ccd6', 0.44, 0.05, 0.05, dh, 2);
+  { const sf = new THREE.Group(); sf.position.set(-4.3, 0, -3.3); sf.rotation.y = 0.5; G.add(sf); mesh(rbox(0.9, 1.0, 0.8, 0.04), '#3a404c', 0, 0.5, 0, sf, 4.5); mesh(rbox(0.94, 0.08, 0.84, 0.02), '#2a2e38', 0, 0.04, 0, sf, 3); const dh = new THREE.Group(); dh.position.set(-0.45, 0.5, 0.41); sf.add(dh); mesh(rbox(0.88, 0.95, 0.06, 0.03), '#4c5361', 0.44, 0, 0, dh, 4); for (const hy2 of [-0.3, 0.3]) mesh(rbox(0.06, 0.12, 0.06, 0.01), '#c9ccd6', 0.02, hy2, 0.03, dh, 2); mesh(cyl(0.12, 0.12, 0.05, 16).rotateX(Math.PI / 2), '#c9ccd6', 0.44, 0.05, 0.05, dh, 2);
     const t = canvasTex(256, 64, (x, w, hh) => { x.fillStyle = '#f4efe4'; x.fillRect(0, 0, w, hh); x.fillStyle = '#14121a'; x.font = '900 30px Poppins'; x.textAlign = 'center'; x.fillText('OLD WALLET', w / 2, 44); }); const lb = plane(dh, 0.55, 0.14, basic('#ffffff', { map: t }), 0.44, 0.3, 0.035); lb.userData.noOutline = true;
-    const ins = mesh(cyl(0.3, 0.3, 0.35, 18), toon('#ffcf3f', { emissive: '#7a5a10', emissiveIntensity: 0.4 }), 0, 0.45, 0.05, sf, 2); G.userData.safeDoor = dh; G.userData.safeGlow = glow(sf, 0, 0.6, 0.6, '#ffcf3f', 2.2, 0); for (let k = 0; k < 6; k++) mesh(rbox(0.7, 0.01, 0.7), '#8a8270', 0, 1.005 + k * 0.004, 0, sf, 0);
+    const ins = mesh(cyl(0.3, 0.3, 0.35, 18), toon('#ffcf3f', { emissive: '#7a5a10', emissiveIntensity: 0.4 }), 0, 0.45, 0.05, sf, 2); G.userData.safeDoor = dh; G.userData.safeGlow = glow(sf, 0, 0.6, 0.6, '#ffcf3f', 1.3, 0); for (let k = 0; k < 6; k++) mesh(rbox(0.7, 0.01, 0.7), '#8a8270', 0, 1.005 + k * 0.004, 0, sf, 0);
     G.userData.dust = Array.from({ length: 20 }, (_, i) => { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: '#e8dcc0', transparent: true, opacity: 0, depthWrite: false })); s.scale.setScalar(0.12); s.userData = { noOutline: true, k: i }; sf.add(s); return s; }); }
   // plants, water cooler, whiteboard, boxes
   for (const [px, pz] of [[-4.5, 3.5], [4.5, 3.5]]) { mesh(cyl(0.25, 0.2, 0.45, 12), '#e8e2d6', px, 0.23, pz, G, 3); for (let k = 0; k < 6; k++) { const lf = mesh(new THREE.ConeGeometry(0.12, 0.9, 6), '#3f8a46', px + Math.cos(k) * 0.12, 0.8, pz + Math.sin(k) * 0.12, G, 2.5); lf.rotation.set(Math.sin(k) * 0.4, 0, Math.cos(k) * 0.4); } }
@@ -444,7 +444,10 @@ const KCARD = { det1: makeCard(CHAIN, 'cowork2', 1.68), det2: makeCard(CHAIN, 'a
     const gs = new THREE.Shape(); gs.moveTo(0.5, 0.98); gs.lineTo(1.15, 0.94); gs.lineTo(0.5, 1.36); gs.lineTo(-0.85, 1.38); gs.lineTo(-1.45, 1.0); gs.closePath(); const gm = new THREE.Mesh(new THREE.ShapeGeometry(gs), basic('#2a3550')); gm.position.z = s * 0.9; if (s < 0) gm.rotation.y = Math.PI, gm.scale.x = -1; gm.userData.noOutline = true; pc.root.add(gm); }
   mesh(rbox(0.9, 0.12, 0.3), '#1d1a26', -0.2, 1.5, 0, pc.root, 2.5); pc.lb = mesh(rbox(0.8, 0.1, 0.26), basic('#2a6aff'), -0.2, 1.58, 0, pc.root, 0); pc.light = glow(pc.root, -0.2, 1.7, 0, '#2a6aff', 2.2, 0.8); pc.root.position.set(0, -50, 0); G.userData.police = pc;
   // airliner (beat 14)
-  { const pl = new THREE.Group(); G.add(pl); G.userData.plane = pl; mesh(new THREE.CapsuleGeometry(0.5, 5, 6, 12).rotateZ(Math.PI / 2), '#f4f6fb', 0, 0, 0, pl, 4); mesh(rbox(1.4, 0.08, 7, 0.03), '#e8eef8', 0.2, -0.1, 0, pl, 3.5); mesh(rbox(0.9, 0.06, 2.4, 0.03), '#e8eef8', -2.6, 0.1, 0, pl, 3); mesh(rbox(0.9, 1.3, 0.08, 0.03), '#d7263d', -2.7, 0.7, 0, pl, 3); for (let k = 0; k < 8; k++) mesh(sph(0.07, 8), basic('#2a3550'), 1.8 - k * 0.45, 0.2, 0.47, pl, 0); pl.position.set(0, -50, 0); }
+  { const pl = new THREE.Group(); G.add(pl); G.userData.plane = pl; mesh(new THREE.CapsuleGeometry(0.5, 5, 6, 12).rotateZ(Math.PI / 2), '#f4f6fb', 0, 0, 0, pl, 4); mesh(rbox(1.4, 0.08, 7, 0.03), '#e8eef8', 0.2, -0.1, 0, pl, 3.5); mesh(rbox(0.9, 0.06, 2.4, 0.03), '#e8eef8', -2.6, 0.1, 0, pl, 3); mesh(rbox(0.9, 1.3, 0.08, 0.03), '#d7263d', -2.7, 0.7, 0, pl, 3); for (let k = 0; k < 14; k++) for (const sz of [-1, 1]) mesh(sph(0.06, 8), basic('#2a3550'), 2.2 - k * 0.32, 0.18, sz * 0.475, pl, 0);
+    for (const sz of [-1, 1]) { mesh(rbox(5.2, 0.1, 0.02), basic('#2f6fe0'), 0, -0.05, sz * 0.5, pl, 0); mesh(cyl(0.22, 0.2, 0.9, 14).rotateZ(Math.PI / 2), '#d9dee8', 0.7, -0.42, sz * 1.5, pl, 3); mesh(cyl(0.16, 0.16, 0.05, 14).rotateZ(Math.PI / 2), '#2a3550', 1.16, -0.42, sz * 1.5, pl, 0);
+      mesh(rbox(0.28, 0.12, 0.02), basic('#2a3550'), 2.85, 0.2, sz * 0.36, pl, 0); }
+    pl.position.set(0, -50, 0); }
   // gulls
   G.userData.gulls = Array.from({ length: 5 }, (_, i) => { const g = new THREE.Group(); G.add(g); for (const s of [-1, 1]) { const w = mesh(rbox(0.5, 0.03, 0.14), '#ffffff', s * 0.24, 0, 0, g, 2); w.rotation.z = s * 0.4; } return g; });
 }
@@ -583,11 +586,11 @@ function officeState(t) {
   const sd = Math.max(VB(10) + 0.05, WT(10, 'found') - 1.7); let open = 0;
   if (inB(t, 10)) { const pts = [V(-3.4, 0, -1.1), V(-2.95, 0, -1.7), V(-3.0, 0, -2.6), V(-3.45, 0, -3.25)]; const w = walkAlong(pts, sd, t, 1.6); showCard(OCARD.staffB, w.p, { walk: w.walking ? t * 3.4 : 0, expr: t > WT(10, 'found') ? 'delighted' : 'neutral', armL: t > sd + 1.55 ? [2.0, 0.6] : [0.3, 0.2], blink: blinkAt(t, 2) }); OCARD.staffB.spin = 0; open = sstep(sd + 1.6, sd + 2.2, t); }
   if (t > VB(10) + 0.01 && t >= VB(10)) open = Math.max(open, 0); if (t > VB(11)) open = 1;
-  U.safeDoor.rotation.y = -1.6 * open; U.safeGlow.material.opacity = 0.6 * open; U.dust.forEach((s, i) => { const k = clamp((t - (sd + 1.7)) / 2.5); s.material.opacity = inB(t, 10) ? 0.5 * Math.sin(k * Math.PI) : 0; s.position.set(Math.cos(i * 2.3) * (0.3 + k), 0.6 + k * (0.5 + (i % 4) * 0.2), 0.5 + Math.sin(i * 1.7) * 0.4 * k); });
+  U.safeDoor.rotation.y = -1.6 * open; U.safeGlow.material.opacity = 0.3 * open; U.dust.forEach((s, i) => { const k = clamp((t - (sd + 1.7)) / 2.5); s.material.opacity = inB(t, 10) ? 0.5 * Math.sin(k * Math.PI) : 0; s.position.set(Math.cos(i * 2.3) * (0.3 + k), 0.6 + k * (0.5 + (i % 4) * 0.2), 0.5 + Math.sin(i * 1.7) * 0.4 * k); });
   // the thief: the hook, the break-in (beat 4), the copy (beat 5)
   const thiefOn = t < HOOK_END + RW || (inB(t, 4) && t > WT(4, 'Someone') - 0.2 && t < WT(4, 'In') + 0.2) || inB(t, 5);
   if (thiefOn) showCard(OCARD.thief, V(3.85, 0, 1.85), { expr: 'smug', armL: [1.4, 1.2], armR: [1.4 + Math.sin(t * 10) * 0.08, 1.2], blink: blinkAt(t, 3) });
-  OCARD.thief.tint = '#9a90b8';
+  OCARD.thief.tint = null;
   // file + key float out of the server rack (beat 5)
   const cp = WT(5, 'copied'), ky = WT(5, 'keys'); U.file.position.set(0, -20, 0); U.key.position.set(0, -20, 0);
   if (inB(t, 5) && t > cp - 0.2) { const k = sstep(cp, cp + 1.4, t); U.file.position.set(lerp(4.2, 3.6, k), 1.3 + 0.25 * k + Math.sin(t * 2) * 0.03, lerp(-0.3, 1.6, k)); U.file.rotation.y = -0.6 + 0.6 * k; }
@@ -641,10 +644,10 @@ function beachState(t) { const U = BEACH.userData; for (const k of Object.keys(B
     showCard(BCARD.b1, V(-5.2, 0, 1.8), { expr: 'happy', blink: blinkAt(t, 2) }); showCard(BCARD.b2, V(7.0, 0, 2.6), { walk: t * 3, expr: 'happy', blink: blinkAt(t, 3) }); BCARD.b2.pos.x = 7 - ((t * 0.6) % 6);
     const arr = VB(12) - 0.2; const ck = sstep(arr, arr + 1.8, t); pc.root.position.set(lerp(-26, -1.5, ck), 0, -10.5); pc.root.rotation.y = 0; const fl = Math.floor(t * 6) % 2; pc.light.material.opacity = fl ? 0.95 : 0.2;
     const grab = WT(12, 'arrested'); const up = t > grab - 0.1;
-    const seat = V(-1.0, 0.2, 0.4); const sk = sstep(grab - 0.1, grab + 0.6, t); const vp = up ? lerpV(seat, V(-1.0, 0, 1.4), sk) : seat; if (up) vp.y = 0.2 * (1 - sk) + Math.sin(sk * Math.PI) * 0.06;
+    const seat = V(-1.0, 0.0, 1.18); const sk = sstep(grab - 0.1, grab + 0.6, t); const vp = up ? lerpV(seat, V(-1.0, 0, 1.55), sk) : seat.clone(); if (up) vp.y = Math.sin(sk * Math.PI) * 0.06;
     showCard(BCARD.vin, vp, { walk: up && sk < 1 ? t * 3.5 : 0, sit: up ? 0 : 1, expr: t > WT(12, 'walked') ? 'shocked' : 'smug', cuffed: t > grab + 0.5, armR: up ? [0.3, 0.2] : [2.6, 1.4], armL: up ? [0.3, 0.2] : [2.6, 1.4], sweat: up ? 1 : 0, blink: blinkAt(t) });
     const wk = arr + 1.9; for (const [c, pts, ph] of [[BCARD.cop1, [V(-2.3, 0, -9.2), V(-1.9, 0, -3.0), V(-1.75, 0, 1.4)], 0], [BCARD.cop2, [V(0.7, 0, -9.2), V(0.5, 0, -3.0), V(0.45, 0, 0.6), V(-0.2, 0, 1.4)], 0.5]]) { const w = walkAlong(pts, wk, t, 3.0); showCard(c, w.p, { walk: w.walking ? t * 4 + ph : 0, expr: 'angry', armR: !w.walking ? [1.6, 0.5] : [0.4, 0.6], blink: blinkAt(t, ph) }); c.spin = 0; } }
-  if (inB(t, 14)) { const k = clamp((t - WT(14, 'swapped') + 0.3) / 3.2); U.plane.position.set(lerp(-16, 16, k), 9 + k * 2, -4); U.plane.rotation.set(0, 0, 0.08); }
+  if (inB(t, 14)) { const k = clamp((t - WT(14, 'swapped') + 0.3) / 3.2); U.plane.position.set(lerp(-22, 22, k), 12 + k * 2.5, -16); U.plane.rotation.set(0, 0, 0.08); }
 }
 function cellState(t) { hideCard(ECARD.karp); if (inB(t, 15) && t > WT(15, 'spent') - 0.6) showCard(ECARD.karp, V(-0.3, 0.02, -1.15), { sit: 1, expr: t > WT(15, 'Judges') ? 'annoyed' : 'sleep', armR: [0.4, 1.2], armL: [0.4, 1.2], blink: blinkAt(t) }); }
 
@@ -723,7 +726,7 @@ function buildShots() {
   S(WT(9, 'bankrupt') - 0.4, VAULT(V(1.2, 2.9, 0.8), V(1.5, 2.85, 0.4), 0.6, 48));
   // ---- beat 10: the forgotten wallet
   S(VB(10), sh('office', V(-0.4, 1.9, 0.0), V(-3.8, 0.9, -2.8), 50, V(-0.7, 1.85, -0.4), V(-3.9, 0.9, -2.9), 48));
-  S(WT(10, 'found') - 0.2, sh('office', V(-2.6, 1.4, -0.9), V(-4.0, 0.7, -3.2), 44, V(-2.8, 1.35, -1.2), V(-4.0, 0.7, -3.2), 40));
+  S(WT(10, 'found') - 0.2, sh('office', V(-1.9, 1.55, -0.2), V(-4.0, 0.75, -3.1), 46, V(-2.2, 1.5, -0.6), V(-4.0, 0.75, -3.1), 42));
   S(WT(10, 'forgotten') - 0.15, WALL(1.6, 1.0, 0.5));
   S(WT(10, 'still') - 0.15, VAULT(V(0.6, 1.9, 2.0), V(0.9, 1.8, 1.6), 0.8, 48));
   // ---- beat 11: following the coins
@@ -747,7 +750,7 @@ function buildShots() {
   S(WT(13, 'least') - 0.15, sh('chain', V(0, 6, -6), V(0, 1.2, -24), 54, V(0, 4.5, -12), V(0, 1.2, -26), 52));
   // ---- beat 14: walked free
   S(VB(14), sh('beach', V(0.6, 1.0, 4.2), V(-1.0, 0.6, 0.4), 46, V(0.2, 1.0, 3.6), V(-1.0, 0.6, 0.4), 42));
-  S(WT(14, 'swapped') - 0.15, sh('beach', V(-2, 0.8, 8), V(0, 9, -4), 60, V(-1, 0.8, 7), V(0, 10, -4), 58));
+  S(WT(14, 'swapped') - 0.15, sh('beach', V(-2, 0.8, 8), V(-3, 12, -16), 60, V(-1, 0.8, 7), V(3, 13.5, -16), 58));
   // ---- beat 15: Karpelès arrested, jail, verdict
   S(VB(15), sh('street', V(4.5, 1.6, 7.5), V(0, 1.2, 0.0), 50, V(3.8, 1.6, 6.8), V(-0.3, 1.2, 0.3), 48));
   S(WT(15, 'Tokyo') - 0.2, sh('street', V(2.6, 1.4, 2.6), V(0.0, 1.2, 0.2), 46, V(2.3, 1.4, 2.2), V(-0.4, 1.2, 0.8), 44));
@@ -820,15 +823,15 @@ const rtColor = new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.Half
 const rtNormal = new THREE.WebGLRenderTarget(W, H); rtNormal.depthTexture = new THREE.DepthTexture(W, H);
 const normalMat = new THREE.MeshNormalMaterial();
 const post = new THREE.ShaderMaterial({
-  uniforms: { tColor: { value: rtColor.texture }, tNormal: { value: rtNormal.texture }, tDepth: { value: rtNormal.depthTexture }, near: { value: camera.near }, far: { value: camera.far }, px: { value: new THREE.Vector2(1 / W, 1 / H) }, inkColor: { value: INK }, time: { value: 0 }, warm: { value: 0 } },
+  uniforms: { tColor: { value: rtColor.texture }, tNormal: { value: rtNormal.texture }, tDepth: { value: rtNormal.depthTexture }, near: { value: camera.near }, far: { value: camera.far }, px: { value: new THREE.Vector2(1 / W, 1 / H) }, inkColor: { value: INK }, time: { value: 0 }, warm: { value: 0 }, expo: { value: 1 } },
   vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }',
   fragmentShader: `
-    uniform sampler2D tColor, tNormal, tDepth; uniform float near, far, time, warm; uniform vec2 px; uniform vec3 inkColor; varying vec2 vUv;
+    uniform sampler2D tColor, tNormal, tDepth; uniform float near, far, time, warm, expo; uniform vec2 px; uniform vec3 inkColor; varying vec2 vUv;
     float lin(vec2 uv){ float d = texture2D(tDepth, uv).x; float z = d * 2.0 - 1.0; return (2.0 * near * far) / (far + near - z * (far - near)); }
     vec3 nrm(vec2 uv){ return texture2D(tNormal, uv).xyz * 2.0 - 1.0; }
     float hash(vec2 p){ return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453); }
     void main(){
-      vec4 col = texture2D(tColor, vUv);
+      vec4 col = texture2D(tColor, vUv); col.rgb *= expo;
       float mx = max(max(col.r, col.g), col.b); if (mx > 1.0) col.rgb = mix(col.rgb / mx, vec3(1.0), clamp((mx - 1.0) * 0.04, 0.0, 0.08));
       float dc = lin(vUv); vec3 nc = nrm(vUv); float e = 0.0;
       vec2 o[8]; o[0]=vec2(1.8,0.); o[1]=vec2(-1.8,0.); o[2]=vec2(0.,1.8); o[3]=vec2(0.,-1.8); o[4]=vec2(1.3,1.3); o[5]=vec2(-1.3,1.3); o[6]=vec2(1.3,-1.3); o[7]=vec2(-1.3,-1.3);
@@ -836,11 +839,11 @@ const post = new THREE.ShaderMaterial({
         e = max(e, smoothstep(0.45, 0.75, 1.0 - dot(nc, nrm(uv)))); }
       col.rgb = mix(col.rgb, inkColor, e * 0.9);
       float l = dot(col.rgb, vec3(0.299, 0.587, 0.114));
-      col.rgb = mix(vec3(l), col.rgb, 1.12);
-      col.rgb = (col.rgb - 0.5) * 1.1 + 0.5;
-      col.rgb += vec3(0.03, 0.005, -0.02) * smoothstep(0.5, 1.0, l) * (1.0 + warm) + vec3(-0.015, 0.0, 0.045) * (1.0 - smoothstep(0.0, 0.5, l));
-      vec2 q = vUv - 0.5; col.rgb *= 1.0 - 0.42 * smoothstep(0.3, 0.85, length(q * vec2(1.0, 0.72)));
-      col.rgb += (hash(vUv * 1000.0 + time) - 0.5) * 0.045;
+      col.rgb = mix(vec3(l), col.rgb, 1.32);
+      col.rgb = (col.rgb - 0.5) * 1.06 + 0.52;
+      col.rgb += vec3(0.03, 0.005, -0.02) * smoothstep(0.5, 1.0, l) * (1.0 + warm) + vec3(-0.01, 0.0, 0.025) * (1.0 - smoothstep(0.0, 0.5, l));
+      vec2 q = vUv - 0.5; col.rgb *= 1.0 - 0.26 * smoothstep(0.35, 0.9, length(q * vec2(1.0, 0.72)));
+      col.rgb += (hash(vUv * 1000.0 + time) - 0.5) * 0.02;
       gl_FragColor = vec4(clamp(col.rgb, 0.0, 1.0), 1.0);
       #include <colorspace_fragment>
     }`,
@@ -893,7 +896,7 @@ function renderFrame(t) {
   const wt = ct; // world time (the hook plays its own moment; the rewind runs it backwards)
   for (const [n, [fn, cs]] of Object.entries(STATES)) { if (n === s.set) fn(wt); else for (const cd of Object.values(cs)) hideCard(cd); }
   for (const cd of cards) updateCard(cd, t);
-  post.uniforms.time.value = (Math.floor(t * 30) % 97) * 0.37; post.uniforms.warm.value = s.set === 'beach' ? 1 : 0;
+  post.uniforms.time.value = (Math.floor(t * 30) % 97) * 0.37; post.uniforms.warm.value = s.set === 'beach' ? 1 : 0; post.uniforms.expo.value = { street: 1.2, office: 1.35, press: 1.3, cards: 1.2, chain: 1.15, beach: 1.0, cell: 1.35 }[s.set] || 1.2;
   overlays(t); overlays2d(t);
   draw();
 }
