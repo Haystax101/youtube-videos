@@ -32,7 +32,7 @@ const port = server.address().port;
 async function open() {
   const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const p = await b.newPage({ viewport: { width: 1080, height: 1920 } });
-  p.on('pageerror', e => console.log('ERR', e.message)); p.on('console', m => { if (m.type() === 'error') console.log('[c]', m.text()); });
+  p.setDefaultTimeout(600000); p.on('pageerror', e => console.log('ERR', e.message)); p.on('console', m => { if (m.type() === 'error') console.log('[c]', m.text()); });
   await p.goto(`http://localhost:${port}${PAGE}`); await p.waitForFunction('window.READY', null, { timeout: 180000 });
   const vp = await p.evaluate(() => { const r = document.getElementById('stage').getBoundingClientRect(); return [r.width, r.height]; });
   if (vp[0] !== 1080) await p.setViewportSize({ width: vp[0], height: vp[1] });
@@ -61,7 +61,7 @@ const ff = (a) => spawnSync('ffmpeg', ['-y', '-loglevel', 'error', ...a], { stdi
     while (todo.length) { const i = todo.shift(); const [f0, f1] = chunkSpan(i); const tmp = cfile(i) + '.part.mp4';
       const enc = spawn('ffmpeg', ['-y', '-loglevel', 'error', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', ...ENC, tmp], { stdio: ['pipe', 'inherit', 'inherit'] });
       const closed = new Promise(r => enc.on('close', r));
-      for (let f = f0; f < f1; f++) { await w.p.evaluate(t => window.renderFrame(t), f / FPS); const buf = await w.p.screenshot({ type: 'jpeg', quality: 92 });
+      for (let f = f0; f < f1; f++) { await w.p.evaluate(t => window.renderFrame(t), f / FPS); const buf = await w.p.screenshot({ type: 'jpeg', quality: 92, timeout: 600000 });
         if (!enc.stdin.write(buf)) await new Promise(r => enc.stdin.once('drain', r)); }
       enc.stdin.end(); await closed; fs.renameSync(tmp, cfile(i)); done++;
       console.log(`chunk ${i} done (${done} this run, ${((Date.now() - t0) / 1000).toFixed(0)}s)`); }
