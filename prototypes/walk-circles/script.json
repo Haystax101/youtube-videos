@@ -143,7 +143,8 @@
  },
  "qwen_speakers": {
   "narrator": [
-   "George"
+   "George1",
+   "George2"
   ],
   "hiker": "Ryan"
  },
@@ -152,6 +153,8 @@
   "hiker": "Cheerful, overconfident and a bit loud."
  },
  "qwen_clone": {
-  "George": "voices/george.wav"
+  "George": "voices/george.wav",
+  "George1": "voices/george1.wav",
+  "George2": "voices/george2.wav"
  }
 }

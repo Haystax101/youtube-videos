@@ -1,2 +1,2 @@
 prototypes/walk-circles
-# George (cloned with permission), Klaus = Ryan
+# George voice-1 and voice-2 clones
