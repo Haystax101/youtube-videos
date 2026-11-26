@@ -134,7 +134,10 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
 5. If the idea needs new props, rooms, accessories or fx, add them to the style's renderer
    (`web/lowpoly.js` for lowpoly, `web/scene.js` for cartoon) and list them in README's
    vocabulary. Build what the idea needs; don't force reuse of the same rooms every video.
-6. `python3 pipeline/tts.py EP && python3 pipeline/mix.py EP`, then render stills
+6. Narration must spell out exactly what is spoken (george, 2026-11-26: "Mt. Gox" was read as a
+   sentence end): no abbreviations with periods, digits, symbols or bare acronyms, and phonetic
+   `pronounce` entries for names. `tts.py` runs `tools/lint_voice.py` first and stops on errors.
+   `python3 pipeline/tts.py EP && python3 pipeline/mix.py EP`, then render stills
    (`NODE_PATH=$(npm root -g) node pipeline/render.mjs EP --stills 1,8,15,...`) and look
    at them. Fix anything broken (overlaps, missing props, text off screen) before the
    full render. **Quality bar** (george, 2026-11-26): the successful channels look high

@@ -54,6 +54,13 @@ viewer nothing at stake. Instead:
   soft yes/no about a historical person or object.
 - Test: would a stranger scrolling past feel they must know the answer? If not, rewrite it.
 
+**Write exactly what is spoken (george, 26 Nov 20:46):** "Mt. Gox" was read as the end of a sentence.
+Narration text is TTS input, not prose: no abbreviations with periods ("Mount Gox", "Doctor"), no
+digits ("nineteen sixty-six", "three point five percent"), no symbols, acronyms either spelled as
+spoken or given a phonetic entry in script.json `pronounce` ({"Gox": "gocks"}), and phonetic spellings
+for every unusual name. `python3 tools/lint_voice.py EP` checks this, and `pipeline/tts.py` refuses to
+voice a script that fails it. Captions show the same text, so pick wording that reads well too.
+
 ## 3. Arc: five moves in ~78 words
 
 | Move | Beats | Job |
