@@ -39,7 +39,7 @@ forest_end, meadow = B[5]['start'], B[7]['start']
 def bed(folder, a, b, g, synth):
     x = lib.bed(folder, b - a) if b > a else None
     place(fade(x if x is not None else synth(b - a)), a, g)
-def air(d): x = bp(rng.normal(0, 1, int(d * SR)), 60, 6); return x / np.abs(x).max() * 0.25
+def air(d): return None  # no synthetic noise beds: filtered noise read as static (george, 26 Nov); beds only from recordings
 bed('forest', 0, forest_end, 0.9, air); bed('birds', 0, forest_end, 0.5, lambda d: None)
 bed('forest', B[6]['start'], meadow, 0.7, air)
 bed('wind', meadow, N / SR, 0.7, air)
@@ -58,8 +58,7 @@ for a, b in [(W(0, 'legs') - 0.3, W(0, 'giant')), (W(1, 'straight') - 0.2, B[2][
 for a, b in [(W(2, 'finds'), W(3, 'marches')), (W(3, 'Another', 2), B[4]['end'])]:
     c = lib.segment('fire', b - a)
     if c is not None: place(c, a, 0.8)
-    else:
-        for at in rng.uniform(a, b, int((b - a) * 9)): t = tt(0.03); place(rng.normal(0, 1, len(t)) * np.exp(-t * 200) * 0.35, at)
+    # no synthetic crackle fallback: random noise ticks sound like static
 # ---- whooshes on the whip pans and big camera moves
 def wh(at, g=0.8): x = lib.get('whoosh', maxlen=1.2); place(x if x is not None else whoosh(), at - 0.18, g)
 for at in [W(0, 'legs'), W(0, 'giant'), W(1, 'Easy'), W(2, 'An'), W(3, 'marches'), W(3, 'Another'), W(3, 'Same'), W(4, 'He\'s'),

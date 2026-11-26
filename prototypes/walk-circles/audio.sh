@@ -15,6 +15,8 @@ if [ "$A" = hybrid ]; then
 else
   fetch "$A" "$B"
   python3 "$REPO/tools/retime_voice.py" "$EP/qv/voice_$B.wav" "$EP/qv/timeline_$B.json" "$EP/voice.wav" "$EP/qv/timeline_check.json" --tempo "${C:-1.3}" --maxp 0.25
+  case "$B" in George*)  # cloned voices copy the phone recording's hiss: denoise
+    ffmpeg -y -loglevel error -i "$EP/voice.wav" -af "highpass=f=70,afftdn=nr=24:nf=-40:tn=1,lowpass=f=10000" "$EP/voice.dn.wav" && mv "$EP/voice.dn.wav" "$EP/voice.wav" ;; esac
 fi
 python3 "$HERE/score.py" "$EP"
 python3 "$HERE/mixcircles.py" "$EP"
