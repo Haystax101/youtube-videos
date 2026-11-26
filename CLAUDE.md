@@ -22,7 +22,12 @@ YouTube step and just deliver the file. Never print or commit these values.
 
 ## Daily episode procedure
 
-**Shorts per day: 3** (george, 2026-11-24; may go to 5 if retention holds). Each run repeats
+**Quality over quantity (george, 2026-11-26 18:31):** "having a higher quality threshold is really
+important ... I'm happy to reduce the number we put out". Every Short must clear the quality bar in
+step 6 before it is delivered. If one doesn't, fix it or drop it and deliver fewer that day; say in
+the post which concept was held back and why. Never ship a weak Short to hit the count.
+
+**Shorts per day: up to 3** (george, 2026-11-24; fewer when the quality bar needs it). Each run repeats
 steps 2-7 once per Short: every one a different concept with its own episode number, its
 own experiment knobs (vary them across the day's Shorts so each run tests several ideas),
 then deliver them all in one post (step 8),
@@ -116,6 +121,10 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      voice, pacing, endings, rooms, props, cameras). Prefer the full sets (kitchen, street,
      studio) and moving cameras (crane, crane_up, dolly, orbit, truck, back) for at least a
      couple of beats per Short. Record `look` in `experiment.vars`.
+   - **Faces and sets (george, 2026-11-26):** keep the pearly-white faces we already use (the
+     characters in Archimedes/Syracuse and walk-in-circles are the reference; this is not a new
+     style), and make scenes super detailed with angular environments (strong shapes and hard
+     edges, layered detail at every distance). See the `make-set-video` skill.
    - **Character poly level** (active test `character_poly`, george 2026-11-25: "a/b different
      characters"): set `"character": {"poly": ARM}` (chunky, low, smooth) as assigned.
 5. If the idea needs new props, rooms, accessories or fx, add them to the style's renderer
@@ -124,6 +133,12 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
 6. `python3 pipeline/tts.py EP && python3 pipeline/mix.py EP`, then render stills
    (`NODE_PATH=$(npm root -g) node pipeline/render.mjs EP --stills 1,8,15,...`) and look
    at them. Fix anything broken (overlaps, missing props, text off screen) before the
+   full render. **Quality bar** (george, 2026-11-26): the successful channels look high
+   fidelity and vibrant and NEVER show an asset that looks unrealistic, only stylised. Check
+   every still: colours rich and saturated, lighting that shapes forms, detailed sets, every
+   prop and creature clearly readable as what it is in one consistent stylised look (no blobs,
+   placeholder boxes, mismatched photoreal pieces, broken proportions). If anything fails,
+   improve it or drop the Short. Then the
    full render: `NODE_PATH=$(npm root -g) node pipeline/render.mjs EP` (~8 min).
 7. Append a row to `episodes/LOG.md`, commit the script and any code changes to `main`
    (never commit .mp4/.wav), push.
@@ -167,8 +182,9 @@ Length is flexible, roughly 6-12 minutes; stop when the idea runs out, don't pad
    wait for it in a background command (a 10-minute video takes roughly 2-3 hours), then
    download the video from the pre-release it creates (tag `render-NNN-slug-RUN_ID`):
    `curl -sSL -o EP/video.mp4 https://github.com/Haystax101/youtube-videos/releases/download/TAG/video.mp4`
-   (`gh release download` uses GraphQL and fails here). The workflow keeps only the 3
-   newest render pre-releases; Claude sessions cannot delete releases.
+   (`gh release download` uses GraphQL and fails here). The workflows prune render pre-releases
+   but always keep the 12 newest and anything under 24 hours old, so download within a day;
+   Claude sessions cannot delete releases.
    Measured speed on Actions: about 16 s of render per second of 1080p video.
    (`gh workflow run` and GraphQL are not available from Claude sessions.)
    If Actions fails, render locally with `--workers 4` instead.

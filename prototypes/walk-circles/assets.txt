@@ -1,0 +1,2 @@
+assets-v1 assets.tar
+sfx-v1 sfx.tar

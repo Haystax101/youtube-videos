@@ -122,6 +122,8 @@ def oga(folder, q, n):
 if __name__ == '__main__':
     os.makedirs(OUT, exist_ok=True)
     kw = [l.split(':', 1) for l in open('sfx-keywords.txt') if ':' in l and not l.startswith('#')]
+    k, n = map(int, os.environ.get('SFX_SHARD', '0/1').split('/'))  # CI splits the folders over n runners
+    kw = kw[k::n]
     for folder, qs in kw:
         folder = slug(folder)
         for q in [x.strip() for x in qs.split('|') if x.strip()][:3]:
@@ -129,7 +131,8 @@ if __name__ == '__main__':
             print(f'[{folder}] freesound "{q}": {got}', flush=True)
             if got == 0 and USE_COMMONS:
                 got = commons(folder, q, 2); print(f'[{folder}] commons "{q}": {got}', flush=True)
-    for s in ['impact-sounds', 'rpg-audio', 'interface-sounds', 'casino-audio', 'sci-fi-sounds', 'digital-audio', 'music-jingles']:
+        json.dump(man, open(os.path.join(OUT, 'manifest.json'), 'w'), indent=1)  # keep what we have if CI times out
+    for s in ([] if k else ['impact-sounds', 'rpg-audio', 'interface-sounds', 'casino-audio', 'sci-fi-sounds', 'digital-audio', 'music-jingles']):
         kenney(s)
     json.dump(man, open(os.path.join(OUT, 'manifest.json'), 'w'), indent=1)
     by = {}

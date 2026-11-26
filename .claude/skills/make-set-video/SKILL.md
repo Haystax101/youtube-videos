@@ -11,6 +11,13 @@ Copy that folder as the starting point. Don't start from an empty page.
 
 ## The look
 
+**Quality bar (george, 26 Nov 18:31): quality over quantity.** The successful channels are high
+fidelity, vibrant, and NEVER show an asset that looks unrealistic, only stylised. Every model,
+character and effect must read instantly as what it is, in one consistent stylised look: no
+placeholder primitives, lumpy blobs, mismatched photoreal pieces or odd proportions. Colours are
+rich and saturated, lighting shapes every form. If a scene or prop can't reach this bar, cut it or
+rebuild it; george would rather post fewer videos than weaker ones.
+
 - **One big persistent world.** Build one set per video in three.js 0.170: a castle, a harbour, a
   lab, a body. Use one camera and no cuts. The camera is always moving, with eased pushes, slides
   and cranes between targets.
@@ -26,6 +33,15 @@ Copy that folder as the starting point. Don't start from an empty page.
   - Use your own designs: thick outline, big readable expressions, period outfits. Never copy
     another creator's characters.
   - Add new kinds and poses there. Cards more than 35 m from the camera redraw at 8 fps.
+  - **Keep the pearly-white faces we already use** (george, 26 Nov: they "always tend to do well").
+    This is not a new style: reuse the existing designs in `people2d.js` from Archimedes/Syracuse
+    (`prototypes/archimedes-claw`) and walk-in-circles (Klaus and the hikers) as the reference for
+    every new character.
+- **Super-detailed, angular environments** (george, 26 Nov: "if we get our scene design super
+  detailed and choose quite angular environments, i think that's how we will thrive"). Choose
+  settings with strong shapes and hard edges (cliffs, castles, canyons, rooftops, ships, labs,
+  stairwells, machinery) over soft open fields, and fill them with layered detail at every
+  distance: foreground props, mid-ground structure, background silhouettes.
 - **Dense, living set.**
   - Crowds on walls and crews on ships, background ships and gulls.
   - Defenders who cheer when something works.
@@ -37,6 +53,13 @@ Copy that folder as the starting point. Don't start from an empty page.
   - Projectiles leave from the arm tip.
   - george spotted the claw clipping the castle in v1. Check every moving part against what it
     swings past.
+- **Detailed water and scenery.** george (26 Nov, rewatching Archimedes): "the sea could've been more
+  detailed". Give water real surface detail (layered normal-mapped waves, foam at hulls and rocks,
+  spray, light glints), and use the CC0 textures, HDRIs and plant models in release `assets-v1`
+  (`EP/assets.txt` makes render-set.yml fetch them). Keep photoscans light: swiftshader renders on CPU,
+  so use models under ~10k triangles and a few hundred instances.
+- **Keep the camera clear.** Vegetation and props keep a clear band around the paths cameras fly
+  along, and a clearing around close-up props, or low shots end up inside ferns and grass.
 - **Time jumps clear the stage.** After "MONTHS LATER", anything that belonged to the earlier
   scene (wrecks, debris, oars, swimmers) sinks or fades away during the label change. v2's
   leftover floating oars at the end "looked a little silly".
@@ -96,6 +119,12 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
   - Sound effects ×0.18 through a `0.15·tanh` soft limit. In v1 they were "WAY too loud".
   - Then `loudnorm I=-14 TP=-1.5`.
   - Ambience (waves, crickets at night) stays quiet.
+- **Recorded effects, not synthesised.** george found the synthesised sfx "crude". Use recorded CC0
+  sounds from release `sfx-v1` (`tools/fetch_sfx.py`; add keywords to `sfx-keywords.txt`) through
+  `pipeline/sfxlib.py`: ambience beds, footsteps, fire, whooshes on whip pans, impacts on turns.
+- **Character voices.** Let characters say a line or two in their own voice: Qwen3-TTS via
+  `tools/qwen_voice.py` (`"qwen_speakers"` in script.json, GitHub job voice.yml), then
+  `tools/retime_voice.py` to bring Qwen's slow read up to pace.
 - **The rewind** gets a reversed, pitched slice of the music plus a tape squeal, and nothing else.
 
 ## Workflow
@@ -123,6 +152,11 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
    Deliver to `/mnt/project-files/gary-tries-it/<slug>/`.
 
 ## Pre-delivery checklist (every note george has given)
+
+- [ ] Quality bar: high fidelity and vibrant, and no asset anywhere looks unrealistic or unfinished, only stylised. Otherwise fix or cut it before delivery.
+
+- [ ] `python3 tools/check_frames.py video.mp4` reports no dark patches. It catches the camera inside grass or trunks and one-frame black glitch rectangles; george spotted one at 13 s. Move cameras that sit inside geometry and re-render with `--redo`; for one-frame black tiles (a swiftshader glitch that can recur on re-render) use `--fix OUT.mp4`, which swaps in the previous frame.
+- [ ] Characters use the same pearly-white faces as Syracuse and walk-in-circles, and the set is detailed and angular.
 
 - [ ] The rewind appears once, after the hook, and nowhere else.
 - [ ] The ending is a payoff and a CTA, with no carried-over "you survived".

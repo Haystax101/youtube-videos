@@ -6,3 +6,12 @@ episodes/*/still_*.jpg
 episodes/*/*/still_*.jpg
 .render_tmp/
 __pycache__/
+assets/
+prototypes/*/qv/
+voices/*.wav
+prototypes/*/chunks/
+prototypes/*/stills/
+prototypes/*/out/
+prototypes/*/*.log
+prototypes/*/contact.jpg
+prototypes/*/parts.txt

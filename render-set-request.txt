@@ -1,2 +1,2 @@
 episodes/dark/002-mt-gox
-# rerun 2: release was pruned before download
+# rerun 3: overlay canvas fix (stale cards in chunk renders)

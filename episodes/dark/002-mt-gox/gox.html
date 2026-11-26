@@ -774,13 +774,13 @@ function buildShots() {
 // =====================================================================================================
 // 2D OVERLAYS
 // =====================================================================================================
-const OV = document.getElementById('ov').getContext('2d');
+const OV = document.getElementById('ov').getContext('2d', { willReadFrequently: true }); // software canvas: an accelerated one can skip presenting a cleared frame on headless swiftshader (stale cards in chunk renders)
 function card2d(x, cx, cy, w, h, rot, sc, draw) { x.save(); x.translate(cx, cy); x.rotate(rot); x.scale(sc, sc); x.fillStyle = 'rgba(0,0,0,.35)'; x.beginPath(); x.roundRect(-w / 2 + 10, -h / 2 + 14, w, h, 22); x.fill(); draw(x, w, h); x.restore(); }
 const pop = (t, t0) => { const a = clamp((t - t0) / 0.22); return a <= 0 ? 0 : 1 + 0.12 * Math.sin(a * Math.PI); };
 function paper(c, cw, ch, col = '#f4efe4') { c.fillStyle = col; c.beginPath(); c.roundRect(-cw / 2, -ch / 2, cw, ch, 24); c.fill(); c.lineWidth = 8; c.strokeStyle = '#0e0b16'; c.stroke(); }
 function stamp(x, t, t0, text, col, cx, cy, rot = -0.12, size = 120) { const s = pop(t, t0); if (!s) return; x.save(); x.translate(cx, cy); x.rotate(rot); x.scale(s * (1 + 0.6 * Math.exp(-(t - t0) * 12)), s * (1 + 0.6 * Math.exp(-(t - t0) * 12))); x.font = `900 ${size}px Poppins`; x.textAlign = 'center'; x.textBaseline = 'middle'; const w = x.measureText(text).width + 60;
   x.lineWidth = 14; x.strokeStyle = col; x.strokeRect(-w / 2, -size * 0.62, w, size * 1.24); x.fillStyle = col; x.fillText(text, 0, 6); x.restore(); }
-function overlays2d(t) { const x = OV; x.clearRect(0, 0, W, H); x.textAlign = 'left'; x.textBaseline = 'alphabetic';
+function overlays2d(t) { const x = OV; x.clearRect(0, 0, W, H); x.fillStyle = 'rgba(0,0,0,0.004)'; x.fillRect(0, 0, 2, 2); x.textAlign = 'left'; x.textBaseline = 'alphabetic';
   // beat 3: the 70% pie
   if (inB(t, 3) && t > WT(3, 'seventy') - 0.2) { const s = pop(t, WT(3, 'seventy') - 0.2), k = sstep(WT(3, 'seventy') - 0.2, WT(3, 'trades'), t); card2d(x, 540, 700, 620, 620, 0.03, s, (c, cw, ch) => { paper(c, cw, ch);
     c.fillStyle = '#c9ccd6'; c.beginPath(); c.arc(0, -30, 210, 0, 7); c.fill(); c.fillStyle = '#2f6fe0'; c.beginPath(); c.moveTo(0, -30); c.arc(0, -30, 210, -Math.PI / 2, -Math.PI / 2 + 7 * 0.7 * k * 0.8976); c.closePath(); c.fill(); c.lineWidth = 8; c.strokeStyle = '#0e0b16'; c.beginPath(); c.arc(0, -30, 210, 0, 7); c.stroke();
