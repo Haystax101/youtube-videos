@@ -1,2 +1,2 @@
 episodes/dark/002-mt-gox
-# rerun: reference look (pill characters, smooth shading)
+# rerun 2: release was pruned before download
