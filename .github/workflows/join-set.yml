@@ -89,6 +89,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           node pipeline/render_set.cjs "$EP" --join-only && test -f "$EP/silent.mp4"
+          python3 tools/check_frames.py "$EP/silent.mp4" || echo "::warning::dark patches found"
           bash "$EP/audio.sh" "$EP"
           ffmpeg -y -loglevel error -i "$EP/silent.mp4" -i "$EP/audio.norm.wav" -c:v copy -c:a aac -b:a 192k -shortest "$EP/video.mp4"
           TAG="render-$(basename "$EP")-$RUN-j"

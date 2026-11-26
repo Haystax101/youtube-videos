@@ -140,6 +140,8 @@ jobs:
           du -sh assets || true
       - name: Join video
         run: node pipeline/render_set.cjs "$EP" --join-only && test -f "$EP/silent.mp4"
+      - name: Check for black patches (see log; deliver only if clean)
+        run: python3 tools/check_frames.py "$EP/silent.mp4" || echo "::warning::dark patches found, see list above"
       - name: Audio
         run: bash "$EP/audio.sh" "$EP"
       - name: Mux

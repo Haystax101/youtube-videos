@@ -137,6 +137,8 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
 
 ## Pre-delivery checklist (every note george has given)
 
+- [ ] `python3 tools/check_frames.py video.mp4` reports no dark patches. It catches the camera inside grass or trunks and one-frame black glitch rectangles; george spotted one at 13 s. Re-render flagged seconds with `--redo`.
+
 - [ ] The rewind appears once, after the hook, and nowhere else.
 - [ ] The ending is a payoff and a CTA, with no carried-over "you survived".
 - [ ] The narration is clearly on top. No sound effect is louder than the voice.
