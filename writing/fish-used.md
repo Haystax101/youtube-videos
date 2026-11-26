@@ -6,3 +6,4 @@ repeats. One row per lead, used or rejected.
 | Date | Fish ep | Lead (our words) | Our episode | Used / rejected (why) |
 |---|---|---|---|---|
 | 2026-11-25 | #421 | 1939 surgeon ate no vitamin C for 6 months | prototypes/fish-vitamin-c (trial) | used |
+| 2026-11-26 | #589 | Lost people walk in circles without the sun (Souman et al. 2009) | prototypes/walk-circles (opening test) | used |
