@@ -1,2 +1,2 @@
 prototypes/walk-circles
-# George voice-1 and voice-2 clones
+# George, voice-1, voice-2 clones (fix transcription)

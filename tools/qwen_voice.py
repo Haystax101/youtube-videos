@@ -46,7 +46,8 @@ if wanted in CL:  # cloned narrator: Base model + a voice-clone prompt from the 
     ref = os.path.join(os.path.dirname(__file__), '..', c['ref']); text = c.get('text')
     if not text:
         from faster_whisper import WhisperModel
-        segs, _ = WhisperModel('small.en', device='cpu', compute_type='int8').transcribe(ref)
+        import librosa; a16, _ = librosa.load(ref, sr=16000, mono=True)  # numpy input avoids faster-whisper's PyAV decoder
+        segs, _ = WhisperModel('small.en', device='cpu', compute_type='int8').transcribe(a16)
         text = ' '.join(x.text.strip() for x in segs); print('reference transcript:', text, flush=True)
     base = Qwen3TTSModel.from_pretrained('Qwen/Qwen3-TTS-12Hz-1.7B-Base', device_map='cpu', dtype=torch.float32)
     CLONES[wanted] = (base, base.create_voice_clone_prompt(ref_audio=ref, ref_text=text))

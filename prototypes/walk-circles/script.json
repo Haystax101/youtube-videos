@@ -143,6 +143,7 @@
  },
  "qwen_speakers": {
   "narrator": [
+   "George",
    "George1",
    "George2"
   ],
