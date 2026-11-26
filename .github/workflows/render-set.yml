@@ -92,7 +92,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: chunks-${{ matrix.part }}
-          path: ${{ needs.plan.outputs.ep }}/chunks/c*.mp4
+          path: |
+            ${{ needs.plan.outputs.ep }}/chunks/c*.mp4
+            ${{ needs.plan.outputs.ep }}/chunks/c*.guard.json
           retention-days: 3
 
   join:
@@ -140,19 +142,25 @@ jobs:
           du -sh assets || true
       - name: Join video
         run: node pipeline/render_set.cjs "$EP" --join-only && test -f "$EP/silent.mp4"
-      - name: Check for black patches (see log; deliver only if clean)
-        run: python3 tools/check_frames.py "$EP/silent.mp4" || echo "::warning::dark patches found, see list above"
       - name: Audio
         run: bash "$EP/audio.sh" "$EP"
       - name: Mux
         run: ffmpeg -y -loglevel error -i "$EP/silent.mp4" -i "$EP/audio.norm.wav" -c:v copy -c:a aac -b:a 192k -shortest "$EP/video.mp4"
+      # Quality gate (tools/qa.py): patches one-frame black tiles (video.fixed.mp4 replaces video.mp4) and
+      # publishes qa.json + contact.jpg with the video. A FAIL is a warning here; the session reads qa.json.
+      - name: Quality gate
+        run: |
+          python3 tools/qa.py "$EP" --fix || echo "::warning::QA found problems, see qa.json in the release"
+          if [ -f "$EP/video.fixed.mp4" ]; then mv "$EP/video.fixed.mp4" "$EP/video.mp4"; fi
+          cp "$EP/qa/qa.json" "$EP/qa/contact.jpg" "$EP/" 2>/dev/null || true
       # Claude sessions can't reach the artifact storage host, so publish to a pre-release.
       - name: Publish to release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           NAME="$(basename "$EP")"; TAG="render-$NAME-${{ github.run_id }}"
-          gh release create "$TAG" "$EP/video.mp4" --prerelease \
+          EXTRA=""; for f in qa.json contact.jpg frame_guard.json; do [ -f "$EP/$f" ] && EXTRA="$EXTRA $EP/$f"; done
+          gh release create "$TAG" "$EP/video.mp4" $EXTRA --prerelease \
             --title "Render: $NAME" --notes "Rendered by run ${{ github.run_id }} on $PARTS machines" --target "${{ github.event.repository.default_branch }}"
           gh release list --limit 100 --json tagName,isPrerelease,createdAt \
             --jq '[.[] | select(.isPrerelease and (.tagName|startswith("render-")))] | sort_by(.createdAt) | reverse | .[12:][] | select(now - (.createdAt | fromdateiso8601) > 86400) | .tagName' |

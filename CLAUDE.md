@@ -144,9 +144,11 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    placeholder boxes, mismatched photoreal pieces, broken proportions). If anything fails,
    improve it or drop the Short. Then the
    full render: `NODE_PATH=$(npm root -g) node pipeline/render.mjs EP` (~8 min).
+   Then the **quality gate** (`qa-video` skill): `python3 tools/qa.py EP --fix` must have no FAIL, and
+   you review its contact sheet (`EP/qa/contact.jpg`) against this bar before delivery.
 7. Append a row to `episodes/LOG.md`, commit the script and any code changes to `main`
    (never commit .mp4/.wav), push.
-8. Deliver: copy the video to `/mnt/project-files/gary-tries-it/NNN-slug.mp4` and post it
+8. Deliver (only after the quality gate passed): copy the video to `/mnt/project-files/gary-tries-it/NNN-slug.mp4` and post it
    to george with a suggested YouTube title, description and 3-5 hashtags (and the
    YouTube link plus publish time if it was uploaded). The description ends with the credit
    line "Fact rabbit-hole inspired by No Such Thing As A Fish (episode #N). Sources: ..." with
@@ -192,6 +194,6 @@ Length is flexible, roughly 6-12 minutes; stop when the idea runs out, don't pad
    Measured speed on Actions: about 16 s of render per second of 1080p video.
    (`gh workflow run` and GraphQL are not available from Claude sessions.)
    If Actions fails, render locally with `--workers 4` instead.
-5. Log a row in `episodes/long/LOG.md`, deliver to `/mnt/project-files/gary-tries-it/long/`
+5. Run the quality gate (`qa-video` skill) on the downloaded video. Log a row in `episodes/long/LOG.md`, deliver to `/mnt/project-files/gary-tries-it/long/`
    and post to george with title, description (with chapter timestamps from
    `timeline.json` card beats) and tags; upload if enabled.
