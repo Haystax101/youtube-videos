@@ -8,7 +8,7 @@
   "ranger": "af_heart",
   "iguana": "bm_george"
  },
- "speed": 1.3,
+ "speed": 1.25,
  "tail": 0.7,
  "beats": [
   {
@@ -134,7 +134,7 @@
    "ending": "survives",
    "premise": "absurd_event",
    "ending_cta": "comment_next",
-   "narrator": "qwen:Ryan",
+   "narrator": "kokoro:am_michael (characters qwen)",
    "source": "fish#313"
   },
   "facts": [

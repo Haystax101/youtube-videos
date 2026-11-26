@@ -1,2 +1,2 @@
 prototypes/manchineel
-# retry 1 (screenshot timeout)
+# retry 2 (Kokoro narrator + Qwen characters)

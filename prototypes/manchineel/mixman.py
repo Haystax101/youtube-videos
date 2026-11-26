@@ -1,5 +1,5 @@
-"""Voice + music + sound design for the manchineel Short (levels from the make-set-video skill: music 0.36 ducked
-55% under the voice, SFX x0.18 through a 0.15*tanh limit, ambiences quieter). Uses real CC0 recordings from
+"""Voice + music + sound design for the manchineel Short (music 0.36 ducked 55% under the voice;
+SFX peaks capped at 0.28 and ambience at 0.12 by a tanh limit, so the voice sits ~15 dB above everything). Uses real CC0 recordings from
 assets/sfx/<folder>/ (release sfx-v1, see sfx-keywords.txt) when present, synthesised stand-ins otherwise.
 All times are VIDEO seconds: the voice is split at the hook and resumes after the 0.8 s rewind.
 Usage: python3 mixman.py EP_DIR -> EP_DIR/audio.mix.wav"""
@@ -121,6 +121,10 @@ m[int(HOOK_END * SR): int((HOOK_END + RW) * SR)] = rev * np.linspace(1, 0.3, len
 tape = one('tape', lambda: np.sin(2 * np.pi * np.cumsum(np.linspace(2200, 300, int(RW * SR))) / SR) * 0.5, maxlen=RW); place(fx, tape, HOOK_END, 0.5)
 mute = np.ones(N); a, b = int(HOOK_END * SR), int((HOOK_END + RW) * SR); amb[a:b] *= 0.15
 venv = lp(np.abs(v), 2400); duck = 1 - 0.55 * np.clip(venv / (venv.max() * 0.25), 0, 1)
-mix = v + m * 0.36 * duck + 0.15 * np.tanh(fx[:N] * 0.18 / 0.15) + 0.15 * np.tanh(amb[:N] * 0.12 / 0.15)
+mix = v + m * 0.36 * duck + 0.28 * np.tanh(fx[:N] * 0.3 / 0.28) + 0.12 * np.tanh(amb[:N] * 0.2 / 0.12)
+db = lambda x: round(20 * np.log10(np.sqrt(np.mean(x ** 2)) + 1e-9), 1); act = lp(np.abs(v), 4800) > 0.02
+stems = {'voice': v, 'music': m * 0.36 * duck, 'sfx': 0.28 * np.tanh(fx[:N] * 0.3 / 0.28), 'ambience': 0.12 * np.tanh(amb[:N] * 0.2 / 0.12)}
+print('levels while speaking (dB):', {k: db(x[act]) for k, x in stems.items()}, '| in gaps:', {k: db(x[~act]) for k, x in stems.items() if k != 'voice'})
+print('loudest sfx peak vs voice peak:', round(float(np.abs(stems['sfx']).max() / np.abs(v).max()), 2))
 mix /= np.abs(mix).max() * 1.05; sf.write(f'{EP}/audio.mix.wav', mix.astype(np.float32), SR)
 print('audio', round(N / SR, 2), 's; real sfx folders:', sorted(os.listdir(SFX)) if os.path.isdir(SFX) else 'none (stand-ins)')

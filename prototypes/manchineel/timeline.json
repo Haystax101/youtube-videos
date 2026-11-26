@@ -1,1205 +1,1193 @@
 {
- "duration": 63.653,
+ "duration": 64.755,
  "sr": 24000,
- "engine": "qwen3-tts",
- "voice": "ryan",
- "cast": {
-  "narrator": "ryan",
-  "you": "aiden",
-  "ranger": "serena",
-  "iguana": "uncle_fu"
- },
+ "engine": "kokoro:am_michael+qwen3-tts",
  "beats": [
   {
    "i": 0,
-   "start": 0.125,
-   "end": 3.508,
+   "start": 0.15,
+   "end": 4.077,
    "deathAt": null,
    "words": [
     {
      "w": "This",
-     "s": 0.125,
-     "e": 0.312,
+     "s": 0.15,
+     "e": 0.373,
      "speaker": "narrator"
     },
     {
      "w": "is",
-     "s": 0.312,
-     "e": 0.486,
+     "s": 0.373,
+     "e": 0.581,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 0.486,
-     "e": 0.667,
+     "s": 0.581,
+     "e": 0.796,
      "speaker": "narrator"
     },
     {
      "w": "most",
-     "s": 0.667,
-     "e": 0.853,
+     "s": 0.796,
+     "e": 1.019,
      "speaker": "narrator"
     },
     {
      "w": "dangerous",
-     "s": 0.853,
-     "e": 1.394,
+     "s": 1.019,
+     "e": 1.665,
      "speaker": "narrator"
     },
     {
      "w": "tree",
-     "s": 1.394,
-     "e": 1.581,
+     "s": 1.665,
+     "e": 1.888,
      "speaker": "narrator"
     },
     {
      "w": "on",
-     "s": 1.581,
-     "e": 1.755,
+     "s": 1.888,
+     "e": 2.096,
      "speaker": "narrator"
     },
     {
      "w": "Earth.",
-     "s": 1.755,
-     "e": 1.948,
+     "s": 2.096,
+     "e": 2.326,
      "speaker": "narrator"
     },
     {
      "w": "And",
-     "s": 2.015,
-     "e": 2.208,
+     "s": 2.426,
+     "e": 2.634,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 2.208,
-     "e": 2.4,
+     "s": 2.634,
+     "e": 2.842,
      "speaker": "narrator"
     },
     {
      "w": "just",
-     "s": 2.4,
-     "e": 2.6,
+     "s": 2.842,
+     "e": 3.058,
      "speaker": "narrator"
     },
     {
      "w": "hid",
-     "s": 2.6,
-     "e": 2.792,
+     "s": 3.058,
+     "e": 3.266,
      "speaker": "narrator"
     },
     {
      "w": "under",
-     "s": 2.792,
-     "e": 3.172,
+     "s": 3.266,
+     "e": 3.675,
      "speaker": "narrator"
     },
     {
      "w": "it.",
-     "s": 3.172,
-     "e": 3.358,
+     "s": 3.675,
+     "e": 3.877,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 1,
-   "start": 3.508,
-   "end": 9.924,
+   "start": 4.077,
+   "end": 11.685,
    "deathAt": null,
    "words": [
     {
      "w": "You're",
-     "s": 3.508,
-     "e": 3.688,
+     "s": 4.077,
+     "e": 4.258,
      "speaker": "narrator"
     },
     {
      "w": "on",
-     "s": 3.688,
-     "e": 3.852,
+     "s": 4.258,
+     "e": 4.422,
      "speaker": "narrator"
     },
     {
      "w": "holiday",
-     "s": 3.852,
-     "e": 4.347,
+     "s": 4.422,
+     "e": 4.919,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 4.347,
-     "e": 4.51,
+     "s": 4.919,
+     "e": 5.083,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 4.51,
-     "e": 4.679,
+     "s": 5.083,
+     "e": 5.253,
      "speaker": "narrator"
     },
     {
      "w": "Caribbean.",
-     "s": 4.679,
-     "e": 5.186,
+     "s": 5.253,
+     "e": 5.762,
      "speaker": "narrator"
     },
     {
      "w": "Perfect",
-     "s": 5.253,
-     "e": 5.743,
+     "s": 5.862,
+     "e": 6.506,
      "speaker": "narrator"
     },
     {
      "w": "beach.",
-     "s": 5.743,
-     "e": 6.002,
+     "s": 6.506,
+     "e": 6.843,
      "speaker": "narrator"
     },
     {
      "w": "And",
-     "s": 6.068,
-     "e": 6.282,
+     "s": 6.943,
+     "e": 7.175,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 6.282,
-     "e": 6.481,
+     "s": 7.175,
+     "e": 7.39,
      "speaker": "narrator"
     },
     {
      "w": "tree",
-     "s": 6.481,
-     "e": 6.702,
+     "s": 7.39,
+     "e": 7.629,
      "speaker": "narrator"
     },
     {
      "w": "full",
-     "s": 6.702,
-     "e": 6.923,
+     "s": 7.629,
+     "e": 7.868,
      "speaker": "narrator"
     },
     {
      "w": "of",
-     "s": 6.923,
-     "e": 7.129,
+     "s": 7.868,
+     "e": 8.092,
      "speaker": "narrator"
     },
     {
      "w": "little",
-     "s": 7.129,
-     "e": 7.364,
+     "s": 8.092,
+     "e": 8.346,
      "speaker": "narrator"
     },
     {
      "w": "green",
-     "s": 7.364,
-     "e": 7.593,
+     "s": 8.346,
+     "e": 8.593,
      "speaker": "narrator"
     },
     {
      "w": "apples.",
-     "s": 7.593,
-     "e": 8.02,
+     "s": 8.593,
+     "e": 9.055,
      "speaker": "narrator"
     },
     {
      "w": "Ooh!",
-     "s": 8.087,
-     "e": 8.772,
+     "s": 9.155,
+     "e": 9.898,
      "speaker": "you"
     },
     {
      "w": "Free",
-     "s": 8.838,
-     "e": 9.3,
+     "s": 9.898,
+     "e": 10.667,
      "speaker": "you"
     },
     {
      "w": "snacks!",
-     "s": 9.3,
-     "e": 9.791,
+     "s": 10.667,
+     "e": 11.485,
      "speaker": "you"
     }
    ]
   },
   {
    "i": 2,
-   "start": 9.924,
-   "end": 14.705,
+   "start": 11.685,
+   "end": 15.457,
    "deathAt": null,
    "words": [
     {
      "w": "You",
-     "s": 9.924,
-     "e": 10.164,
+     "s": 11.685,
+     "e": 11.957,
      "speaker": "narrator"
     },
     {
      "w": "take",
-     "s": 10.164,
-     "e": 10.412,
+     "s": 11.957,
+     "e": 12.238,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 10.412,
-     "e": 10.635,
+     "s": 12.238,
+     "e": 12.492,
      "speaker": "narrator"
     },
     {
      "w": "bite.",
-     "s": 10.635,
-     "e": 10.883,
+     "s": 12.492,
+     "e": 12.773,
      "speaker": "narrator"
     },
     {
      "w": "It's",
-     "s": 10.949,
-     "e": 12.54,
+     "s": 12.873,
+     "e": 13.306,
      "speaker": "narrator"
     },
     {
      "w": "sweet...",
-     "s": 12.54,
-     "e": 13.363,
+     "s": 13.306,
+     "e": 13.769,
      "speaker": "narrator"
     },
     {
      "w": "for",
-     "s": 13.43,
-     "e": 13.621,
+     "s": 13.869,
+     "e": 14.103,
      "speaker": "narrator"
     },
     {
      "w": "about",
-     "s": 13.621,
-     "e": 13.995,
+     "s": 14.103,
+     "e": 14.565,
      "speaker": "narrator"
     },
     {
      "w": "ten",
-     "s": 13.995,
-     "e": 14.185,
+     "s": 14.565,
+     "e": 14.8,
      "speaker": "narrator"
     },
     {
      "w": "seconds.",
-     "s": 14.185,
-     "e": 14.571,
+     "s": 14.8,
+     "e": 15.277,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 3,
-   "start": 14.705,
-   "end": 22.059,
+   "start": 15.457,
+   "end": 20.337,
    "deathAt": null,
    "words": [
     {
      "w": "Then",
-     "s": 14.705,
-     "e": 15.566,
+     "s": 15.457,
+     "e": 15.725,
      "speaker": "narrator"
     },
     {
      "w": "it's",
-     "s": 15.566,
-     "e": 16.397,
+     "s": 15.725,
+     "e": 15.984,
      "speaker": "narrator"
     },
     {
      "w": "pepper.",
-     "s": 16.397,
-     "e": 18.062,
+     "s": 15.984,
+     "e": 16.502,
      "speaker": "narrator"
     },
     {
      "w": "Then",
-     "s": 18.129,
-     "e": 18.451,
+     "s": 16.602,
+     "e": 16.954,
      "speaker": "narrator"
     },
     {
      "w": "it's",
-     "s": 18.451,
-     "e": 18.763,
+     "s": 16.954,
+     "e": 17.295,
      "speaker": "narrator"
     },
     {
      "w": "fire.",
-     "s": 18.763,
-     "e": 19.086,
+     "s": 17.295,
+     "e": 17.647,
      "speaker": "narrator"
     },
     {
      "w": "Your",
-     "s": 19.152,
-     "e": 19.386,
+     "s": 17.747,
+     "e": 17.95,
      "speaker": "narrator"
     },
     {
      "w": "throat",
-     "s": 19.386,
-     "e": 19.635,
+     "s": 17.95,
+     "e": 18.165,
      "speaker": "narrator"
     },
     {
      "w": "swells",
-     "s": 19.635,
-     "e": 19.883,
+     "s": 18.165,
+     "e": 18.381,
      "speaker": "narrator"
     },
     {
      "w": "so",
-     "s": 19.883,
-     "e": 20.101,
+     "s": 18.381,
+     "e": 18.57,
      "speaker": "narrator"
     },
     {
      "w": "tight",
-     "s": 20.101,
-     "e": 20.343,
+     "s": 18.57,
+     "e": 18.779,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 20.343,
-     "e": 20.569,
+     "s": 18.779,
+     "e": 18.975,
      "speaker": "narrator"
     },
     {
      "w": "can",
-     "s": 20.569,
-     "e": 20.795,
+     "s": 18.975,
+     "e": 19.171,
      "speaker": "narrator"
     },
     {
      "w": "barely",
-     "s": 20.795,
-     "e": 21.45,
+     "s": 19.171,
+     "e": 19.739,
      "speaker": "narrator"
     },
     {
      "w": "swallow.",
-     "s": 21.45,
-     "e": 21.909,
+     "s": 19.739,
+     "e": 20.137,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 4,
-   "start": 22.059,
-   "end": 26.772,
+   "start": 20.337,
+   "end": 25.175,
    "deathAt": null,
    "words": [
     {
      "w": "Then",
-     "s": 22.059,
-     "e": 22.387,
+     "s": 20.337,
+     "e": 20.624,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 22.387,
-     "e": 22.683,
+     "s": 20.624,
+     "e": 20.883,
      "speaker": "narrator"
     },
     {
      "w": "storm",
-     "s": 22.683,
-     "e": 23.021,
+     "s": 20.883,
+     "e": 21.18,
      "speaker": "narrator"
     },
     {
      "w": "rolls",
-     "s": 23.021,
-     "e": 23.36,
+     "s": 21.18,
+     "e": 21.476,
      "speaker": "narrator"
     },
     {
      "w": "in.",
-     "s": 23.36,
-     "e": 23.666,
+     "s": 21.476,
+     "e": 21.745,
      "speaker": "narrator"
     },
     {
      "w": "And",
-     "s": 23.732,
-     "e": 23.941,
+     "s": 21.845,
+     "e": 22.044,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 23.941,
-     "e": 24.151,
+     "s": 22.044,
+     "e": 22.243,
      "speaker": "narrator"
     },
     {
      "w": "only",
-     "s": 24.151,
-     "e": 24.555,
+     "s": 22.243,
+     "e": 22.628,
      "speaker": "narrator"
     },
     {
      "w": "shelter",
-     "s": 24.555,
-     "e": 24.98,
+     "s": 22.628,
+     "e": 23.033,
      "speaker": "narrator"
     },
     {
      "w": "on",
-     "s": 24.98,
-     "e": 25.181,
+     "s": 23.033,
+     "e": 23.225,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 25.181,
-     "e": 25.391,
+     "s": 23.225,
+     "e": 23.424,
      "speaker": "narrator"
     },
     {
      "w": "beach",
-     "s": 25.391,
-     "e": 25.613,
+     "s": 23.424,
+     "e": 23.636,
      "speaker": "narrator"
     },
     {
      "w": "is...",
-     "s": 25.613,
-     "e": 25.816,
+     "s": 23.636,
+     "e": 23.829,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 25.882,
-     "e": 26.129,
+     "s": 23.929,
+     "e": 24.277,
      "speaker": "narrator"
     },
     {
      "w": "same",
-     "s": 26.129,
-     "e": 26.384,
+     "s": 24.277,
+     "e": 24.636,
      "speaker": "narrator"
     },
     {
      "w": "tree.",
-     "s": 26.384,
-     "e": 26.639,
+     "s": 24.636,
+     "e": 24.995,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 5,
-   "start": 26.772,
-   "end": 32.808,
+   "start": 25.175,
+   "end": 30.981,
    "deathAt": null,
    "words": [
     {
      "w": "Every",
-     "s": 26.772,
-     "e": 27.235,
+     "s": 25.175,
+     "e": 25.748,
      "speaker": "narrator"
     },
     {
      "w": "raindrop",
-     "s": 27.235,
-     "e": 27.569,
+     "s": 25.748,
+     "e": 26.161,
      "speaker": "narrator"
     },
     {
      "w": "washes",
-     "s": 27.569,
-     "e": 27.891,
+     "s": 26.161,
+     "e": 26.561,
      "speaker": "narrator"
     },
     {
      "w": "milky",
-     "s": 27.891,
-     "e": 28.209,
+     "s": 26.561,
+     "e": 26.953,
      "speaker": "narrator"
     },
     {
      "w": "sap",
-     "s": 28.209,
-     "e": 28.371,
+     "s": 26.953,
+     "e": 27.153,
      "speaker": "narrator"
     },
     {
      "w": "off",
-     "s": 28.371,
-     "e": 28.532,
+     "s": 27.153,
+     "e": 27.353,
      "speaker": "narrator"
     },
     {
      "w": "its",
-     "s": 28.532,
-     "e": 28.694,
+     "s": 27.353,
+     "e": 27.553,
      "speaker": "narrator"
     },
     {
      "w": "leaves",
-     "s": 28.694,
-     "e": 29.016,
+     "s": 27.553,
+     "e": 27.952,
      "speaker": "narrator"
     },
     {
      "w": "and",
-     "s": 29.016,
-     "e": 29.178,
+     "s": 27.952,
+     "e": 28.152,
      "speaker": "narrator"
     },
     {
      "w": "onto",
-     "s": 29.178,
-     "e": 29.49,
+     "s": 28.152,
+     "e": 28.538,
      "speaker": "narrator"
     },
     {
      "w": "you.",
-     "s": 29.49,
-     "e": 29.651,
+     "s": 28.538,
+     "e": 28.738,
      "speaker": "narrator"
     },
     {
      "w": "Wherever",
-     "s": 29.718,
-     "e": 30.625,
+     "s": 28.838,
+     "e": 29.44,
      "speaker": "narrator"
     },
     {
      "w": "it",
-     "s": 30.625,
-     "e": 30.92,
+     "s": 29.44,
+     "e": 29.636,
      "speaker": "narrator"
     },
     {
      "w": "lands,",
-     "s": 30.92,
-     "e": 31.411,
+     "s": 29.636,
+     "e": 29.962,
      "speaker": "narrator"
     },
     {
      "w": "your",
-     "s": 31.411,
-     "e": 31.727,
+     "s": 29.962,
+     "e": 30.172,
      "speaker": "narrator"
     },
     {
      "w": "skin",
-     "s": 31.727,
-     "e": 32.043,
+     "s": 30.172,
+     "e": 30.381,
      "speaker": "narrator"
     },
     {
      "w": "blisters.",
-     "s": 32.043,
-     "e": 32.675,
+     "s": 30.381,
+     "e": 30.801,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 6,
-   "start": 32.808,
-   "end": 36.017,
+   "start": 30.981,
+   "end": 35.032,
    "deathAt": null,
    "words": [
     {
      "w": "Hey!",
-     "s": 32.808,
-     "e": 33.231,
+     "s": 30.981,
+     "e": 31.36,
      "speaker": "ranger"
     },
     {
      "w": "Not",
-     "s": 33.298,
-     "e": 33.645,
+     "s": 31.36,
+     "e": 31.738,
      "speaker": "ranger"
     },
     {
      "w": "that",
-     "s": 33.645,
-     "e": 34.003,
+     "s": 31.738,
+     "e": 32.13,
      "speaker": "ranger"
     },
     {
      "w": "tree!",
-     "s": 34.003,
-     "e": 34.361,
+     "s": 32.13,
+     "e": 32.521,
      "speaker": "ranger"
     },
     {
      "w": "Didn't",
-     "s": 34.427,
-     "e": 34.682,
+     "s": 32.521,
+     "e": 32.925,
      "speaker": "ranger"
     },
     {
      "w": "you",
-     "s": 34.682,
-     "e": 34.921,
+     "s": 32.925,
+     "e": 33.304,
      "speaker": "ranger"
     },
     {
      "w": "see",
-     "s": 34.921,
-     "e": 35.16,
+     "s": 33.304,
+     "e": 33.683,
      "speaker": "ranger"
     },
     {
      "w": "the",
-     "s": 35.16,
-     "e": 35.398,
+     "s": 33.683,
+     "e": 34.062,
      "speaker": "ranger"
     },
     {
      "w": "red",
-     "s": 35.398,
-     "e": 35.637,
+     "s": 34.062,
+     "e": 34.44,
      "speaker": "ranger"
     },
     {
      "w": "band?",
-     "s": 35.637,
-     "e": 35.884,
+     "s": 34.44,
+     "e": 34.832,
      "speaker": "ranger"
     }
    ]
   },
   {
    "i": 7,
-   "start": 36.017,
-   "end": 39.807,
+   "start": 35.032,
+   "end": 39.001,
    "deathAt": null,
    "words": [
     {
      "w": "Locals",
-     "s": 36.017,
-     "e": 36.553,
+     "s": 35.032,
+     "e": 35.548,
      "speaker": "narrator"
     },
     {
      "w": "paint",
-     "s": 36.553,
-     "e": 36.84,
+     "s": 35.548,
+     "e": 35.823,
      "speaker": "narrator"
     },
     {
      "w": "red",
-     "s": 36.84,
-     "e": 37.108,
+     "s": 35.823,
+     "e": 36.081,
      "speaker": "narrator"
     },
     {
      "w": "bands",
-     "s": 37.108,
-     "e": 37.395,
+     "s": 36.081,
+     "e": 36.356,
      "speaker": "narrator"
     },
     {
      "w": "on",
-     "s": 37.395,
-     "e": 37.654,
+     "s": 36.356,
+     "e": 36.606,
      "speaker": "narrator"
     },
     {
      "w": "these",
-     "s": 37.654,
-     "e": 37.94,
+     "s": 36.606,
+     "e": 36.881,
      "speaker": "narrator"
     },
     {
      "w": "trunks.",
-     "s": 37.94,
-     "e": 38.236,
+     "s": 36.881,
+     "e": 37.165,
      "speaker": "narrator"
     },
     {
      "w": "Even",
-     "s": 38.302,
-     "e": 38.673,
+     "s": 37.265,
+     "e": 37.685,
      "speaker": "narrator"
     },
     {
      "w": "its",
-     "s": 38.673,
-     "e": 38.865,
+     "s": 37.685,
+     "e": 37.902,
      "speaker": "narrator"
     },
     {
      "w": "smoke",
-     "s": 38.865,
-     "e": 39.069,
+     "s": 37.902,
+     "e": 38.134,
      "speaker": "narrator"
     },
     {
      "w": "can",
-     "s": 39.069,
-     "e": 39.261,
+     "s": 38.134,
+     "e": 38.352,
      "speaker": "narrator"
     },
     {
      "w": "blind",
-     "s": 39.261,
-     "e": 39.466,
+     "s": 38.352,
+     "e": 38.584,
      "speaker": "narrator"
     },
     {
      "w": "you.",
-     "s": 39.466,
-     "e": 39.657,
+     "s": 38.584,
+     "e": 38.801,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 8,
-   "start": 39.807,
-   "end": 45.671,
+   "start": 39.001,
+   "end": 45.701,
    "deathAt": null,
    "words": [
     {
      "w": "Spanish",
-     "s": 39.807,
-     "e": 40.166,
+     "s": 39.001,
+     "e": 39.427,
      "speaker": "narrator"
     },
     {
      "w": "sailors",
-     "s": 40.166,
-     "e": 40.525,
+     "s": 39.427,
+     "e": 39.852,
      "speaker": "narrator"
     },
     {
      "w": "called",
-     "s": 40.525,
-     "e": 40.877,
+     "s": 39.852,
+     "e": 40.271,
      "speaker": "narrator"
     },
     {
      "w": "it",
-     "s": 40.877,
-     "e": 41.047,
+     "s": 40.271,
+     "e": 40.473,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 41.047,
-     "e": 41.224,
+     "s": 40.473,
+     "e": 40.682,
      "speaker": "narrator"
     },
     {
      "w": "little",
-     "s": 41.224,
-     "e": 41.418,
+     "s": 40.682,
+     "e": 40.912,
      "speaker": "narrator"
     },
     {
      "w": "apple",
-     "s": 41.418,
-     "e": 41.606,
+     "s": 40.912,
+     "e": 41.136,
      "speaker": "narrator"
     },
     {
      "w": "of",
-     "s": 41.606,
-     "e": 41.776,
+     "s": 41.136,
+     "e": 41.338,
      "speaker": "narrator"
     },
     {
      "w": "death.",
-     "s": 41.776,
-     "e": 41.965,
+     "s": 41.338,
+     "e": 41.561,
      "speaker": "narrator"
     },
     {
      "w": "Legend",
-     "s": 42.031,
-     "e": 42.381,
+     "s": 41.661,
+     "e": 42.046,
      "speaker": "narrator"
     },
     {
      "w": "says",
-     "s": 42.381,
-     "e": 42.561,
+     "s": 42.046,
+     "e": 42.245,
      "speaker": "narrator"
     },
     {
      "w": "an",
-     "s": 42.561,
-     "e": 42.731,
+     "s": 42.245,
+     "e": 42.43,
      "speaker": "narrator"
     },
     {
      "w": "arrow",
-     "s": 42.731,
-     "e": 43.074,
+     "s": 42.43,
+     "e": 42.809,
      "speaker": "narrator"
     },
     {
      "w": "dipped",
-     "s": 43.074,
-     "e": 43.424,
+     "s": 42.809,
+     "e": 43.193,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 43.424,
-     "e": 43.593,
+     "s": 43.193,
+     "e": 43.379,
      "speaker": "narrator"
     },
     {
      "w": "its",
-     "s": 43.593,
-     "e": 43.767,
+     "s": 43.379,
+     "e": 43.571,
      "speaker": "narrator"
     },
     {
      "w": "sap",
-     "s": 43.767,
-     "e": 43.942,
+     "s": 43.571,
+     "e": 43.764,
      "speaker": "narrator"
     },
     {
      "w": "killed",
-     "s": 43.942,
-     "e": 44.292,
+     "s": 43.764,
+     "e": 44.148,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 44.292,
-     "e": 44.467,
+     "s": 44.148,
+     "e": 44.341,
      "speaker": "narrator"
     },
     {
      "w": "explorer",
-     "s": 44.467,
-     "e": 44.986,
+     "s": 44.341,
+     "e": 44.911,
      "speaker": "narrator"
     },
     {
      "w": "Ponce",
-     "s": 44.986,
-     "e": 45.172,
+     "s": 44.911,
+     "e": 45.116,
      "speaker": "narrator"
     },
     {
      "w": "de",
-     "s": 45.172,
-     "e": 45.341,
+     "s": 45.116,
+     "e": 45.302,
      "speaker": "narrator"
     },
     {
      "w": "Leon.",
-     "s": 45.341,
-     "e": 45.521,
+     "s": 45.302,
+     "e": 45.501,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 9,
-   "start": 45.671,
-   "end": 55.823,
+   "start": 45.701,
+   "end": 55.954,
    "deathAt": null,
    "words": [
     {
      "w": "And",
-     "s": 45.671,
-     "e": 45.929,
+     "s": 45.701,
+     "e": 45.898,
      "speaker": "narrator"
     },
     {
      "w": "yet",
-     "s": 45.929,
-     "e": 46.186,
+     "s": 45.898,
+     "e": 46.094,
      "speaker": "narrator"
     },
     {
      "w": "one",
-     "s": 46.186,
-     "e": 46.442,
+     "s": 46.094,
+     "e": 46.291,
      "speaker": "narrator"
     },
     {
      "w": "animal",
-     "s": 46.442,
-     "e": 47.187,
+     "s": 46.291,
+     "e": 46.86,
      "speaker": "narrator"
     },
     {
      "w": "eats",
-     "s": 47.187,
-     "e": 47.453,
+     "s": 46.86,
+     "e": 47.063,
      "speaker": "narrator"
     },
     {
      "w": "them",
-     "s": 47.453,
-     "e": 47.719,
+     "s": 47.063,
+     "e": 47.266,
      "speaker": "narrator"
     },
     {
      "w": "like",
-     "s": 47.719,
-     "e": 47.984,
+     "s": 47.266,
+     "e": 47.469,
      "speaker": "narrator"
     },
     {
      "w": "candy.",
-     "s": 47.984,
-     "e": 48.49,
+     "s": 47.469,
+     "e": 47.856,
      "speaker": "narrator"
     },
     {
      "w": "Mmm.",
-     "s": 48.556,
-     "e": 49.578,
+     "s": 47.956,
+     "e": 49.341,
      "speaker": "iguana"
     },
     {
      "w": "Crunchy.",
-     "s": 49.644,
-     "e": 52.065,
+     "s": 49.341,
+     "e": 52.157,
      "speaker": "iguana"
     },
     {
      "w": "The",
-     "s": 52.132,
-     "e": 52.342,
+     "s": 52.277,
+     "e": 52.483,
      "speaker": "narrator"
     },
     {
      "w": "black",
-     "s": 52.342,
-     "e": 52.565,
+     "s": 52.483,
+     "e": 52.703,
      "speaker": "narrator"
     },
     {
      "w": "spiny-tailed",
-     "s": 52.565,
-     "e": 53.399,
+     "s": 52.703,
+     "e": 53.521,
      "speaker": "narrator"
     },
     {
      "w": "iguana",
-     "s": 53.399,
-     "e": 54.007,
+     "s": 53.521,
+     "e": 54.118,
      "speaker": "narrator"
     },
     {
      "w": "even",
-     "s": 54.007,
-     "e": 54.413,
+     "s": 54.118,
+     "e": 54.517,
      "speaker": "narrator"
     },
     {
      "w": "lives",
-     "s": 54.413,
-     "e": 54.826,
+     "s": 54.517,
+     "e": 54.922,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 54.826,
-     "e": 55.029,
+     "s": 54.922,
+     "e": 55.122,
      "speaker": "narrator"
     },
     {
      "w": "its",
-     "s": 55.029,
-     "e": 55.239,
+     "s": 55.122,
+     "e": 55.328,
      "speaker": "narrator"
     },
     {
      "w": "branches.",
-     "s": 55.239,
-     "e": 55.673,
+     "s": 55.328,
+     "e": 55.754,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 10,
-   "start": 55.823,
-   "end": 63.036,
+   "start": 55.954,
+   "end": 64.055,
    "deathAt": null,
    "words": [
     {
      "w": "That",
-     "s": 55.823,
-     "e": 55.99,
+     "s": 55.954,
+     "e": 56.138,
      "speaker": "narrator"
     },
     {
      "w": "bite",
-     "s": 55.99,
-     "e": 56.158,
+     "s": 56.138,
+     "e": 56.322,
      "speaker": "narrator"
     },
     {
      "w": "really",
-     "s": 56.158,
-     "e": 56.484,
+     "s": 56.322,
+     "e": 56.678,
      "speaker": "narrator"
     },
     {
      "w": "happened,",
-     "s": 56.484,
-     "e": 57.054,
+     "s": 56.678,
+     "e": 57.303,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 57.054,
-     "e": 57.21,
+     "s": 57.303,
+     "e": 57.475,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 57.21,
-     "e": 57.362,
+     "s": 57.475,
+     "e": 57.641,
      "speaker": "narrator"
     },
     {
      "w": "British",
-     "s": 57.362,
-     "e": 57.693,
+     "s": 57.641,
+     "e": 58.003,
      "speaker": "narrator"
     },
     {
      "w": "doctor",
-     "s": 57.693,
-     "e": 58.018,
+     "s": 58.003,
+     "e": 58.359,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 58.018,
-     "e": 58.174,
+     "s": 58.359,
+     "e": 58.531,
      "speaker": "narrator"
     },
     {
      "w": "Tobago.",
-     "s": 58.174,
-     "e": 58.645,
+     "s": 58.531,
+     "e": 59.047,
      "speaker": "narrator"
     },
     {
      "w": "She",
-     "s": 58.712,
-     "e": 58.876,
+     "s": 59.147,
+     "e": 59.321,
      "speaker": "narrator"
     },
     {
      "w": "survived,",
-     "s": 58.876,
-     "e": 59.449,
+     "s": 59.321,
+     "e": 59.931,
      "speaker": "narrator"
     },
     {
      "w": "and",
-     "s": 59.449,
-     "e": 59.614,
+     "s": 59.931,
+     "e": 60.105,
      "speaker": "narrator"
     },
     {
      "w": "warned",
-     "s": 59.614,
-     "e": 59.941,
+     "s": 60.105,
+     "e": 60.453,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 59.941,
-     "e": 60.104,
+     "s": 60.453,
+     "e": 60.626,
      "speaker": "narrator"
     },
     {
      "w": "world",
-     "s": 60.104,
-     "e": 60.279,
+     "s": 60.626,
+     "e": 60.812,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 60.279,
-     "e": 60.437,
+     "s": 60.812,
+     "e": 60.98,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 60.437,
-     "e": 60.59,
+     "s": 60.98,
+     "e": 61.142,
      "speaker": "narrator"
     },
     {
      "w": "medical",
-     "s": 60.59,
-     "e": 61.07,
+     "s": 61.142,
+     "e": 61.652,
      "speaker": "narrator"
     },
     {
      "w": "journal.",
-     "s": 61.07,
-     "e": 61.403,
+     "s": 61.652,
+     "e": 62.006,
      "speaker": "narrator"
     },
     {
      "w": "Comment",
-     "s": 61.469,
-     "e": 61.824,
+     "s": 62.106,
+     "e": 62.543,
      "speaker": "narrator"
     },
     {
      "w": "what",
-     "s": 61.824,
-     "e": 62.004,
+     "s": 62.543,
+     "e": 62.766,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 62.004,
-     "e": 62.178,
+     "s": 62.766,
+     "e": 62.981,
      "speaker": "narrator"
     },
     {
      "w": "want",
-     "s": 62.178,
-     "e": 62.358,
+     "s": 62.981,
+     "e": 63.203,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 62.358,
-     "e": 62.526,
+     "s": 63.203,
+     "e": 63.411,
      "speaker": "narrator"
     },
     {
      "w": "know",
-     "s": 62.526,
-     "e": 62.706,
+     "s": 63.411,
+     "e": 63.633,
      "speaker": "narrator"
     },
     {
      "w": "next.",
-     "s": 62.706,
-     "e": 62.886,
+     "s": 63.633,
+     "e": 63.855,
      "speaker": "narrator"
     }
    ]
   }
- ],
- "retimed": {
-  "tempo": 1.2,
-  "maxgap": 0.42,
-  "cuts": 2
- }
+ ]
 }
