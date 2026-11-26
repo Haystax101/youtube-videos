@@ -68,8 +68,12 @@ rebuild it; george would rather post fewer videos than weaker ones.
 
 - **Length is whatever fits.** Archimedes is 1:17 and george was happy with that. Don't pad, and
   don't cut a real arc to hit 30 s.
+- **Hook strength (george, 26 Nov):** our facts are the edge, and the visuals and hook must be
+  strong enough to carry them. Use a bold claim to "you" that states the surprising fact or stakes,
+  not a soft question; Darwin's "Did Darwin invent the office chair?" was too weak. See the rules
+  in the `write-short-script` skill, under "Hook strength".
 - **Cold open:**
-  - Show the most extreme moment while the hook question is asked.
+  - Show the most striking moment while the hook claim is spoken.
   - Then play exactly **one** rewind: a `◀◀ REWIND` overlay, a scanline effect and the camera flying back along its path for 1 s.
   - george loved it. It must never appear again later.
     - Pauses in the voice are **not** rewinds. v2 showed the overlay in the story pauses and it read as "going back in time" when time was going forward.

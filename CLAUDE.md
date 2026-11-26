@@ -69,6 +69,10 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
    - Beat 1 is a hook beat (`"hook": true`): a clickbait question to the VIEWER in the first
      2 seconds, e.g. "If you wore a face mask every single day, how long would it take for
      you to die?" On-screen label like `HOW LONG UNTIL YOU *DIE?*` (`*word*` turns red).
+     **Hooks must carry the content (george, 2026-11-26 20:20):** our facts are the edge, so the
+     hook is a bold claim or challenge to "you" over the most striking image, never a soft yes/no
+     question about a fact ("Did Darwin invent the office chair?" was too weak). Follow the rules
+     under "Hook strength" in the `write-short-script` skill.
    - Narrate in second person ("you") throughout. Gary is the on-screen avatar of "you".
      **Exception (george, 2026-11-25): Shorts don't have to be the Gary/"you" format.** When a
      fact isn't about something "you" do (an animal, a place, a historical event, an object),
