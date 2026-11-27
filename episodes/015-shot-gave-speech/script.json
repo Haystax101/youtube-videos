@@ -4,7 +4,7 @@
  "look": "smol",
  "noGary": true,
  "voices": {
-  "narrator": "af_nicole"
+  "narrator": "am_michael"
  },
  "speed": 1.28,
  "tail": 0.8,
@@ -99,8 +99,8 @@
   "vars": {
    "music": "suspense",
    "ending_cta": "comment_next",
-   "narrator": "af_nicole",
-   "voices.narrator": "af_nicole",
+   "narrator": "am_michael",
+   "voices.narrator": "am_michael",
    "speed": 1.28,
    "hook_form": "statement",
    "format": "no_gary",
@@ -151,6 +151,6 @@
     ]
    }
   ],
-  "notes": "Speech length varies by source (50-90 min), so the script says 'almost an hour'. No gunshot recording in the CC0 library: the shot is a recorded impact plus a metal ring under the score hit."
+  "notes": "Speech length varies by source (50-90 min), so the script says 'almost an hour'. No gunshot recording in the CC0 library: the shot is a recorded impact plus a metal ring under the score hit. george (27 Nov): af_nicole sounded like whispering, so re-voiced with am_michael before posting; the narrator arm for this video is am_michael."
  }
 }

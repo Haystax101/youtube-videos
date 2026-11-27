@@ -266,8 +266,8 @@ const BED_TOP = 0.56, BED_SIT = 0.52, LIGHTBOX = new THREE.Group();
 }
 
 // ---------- characters ----------
-const TR = makeBighead(THREE, { cloth: '#33406a', lapels: '#263256', collar: '#ffffff', tie: '#c8202e', sleeve: '#33406a', trousers: '#2a3048', glasses: true, tache: true, tacheC: '#6a4630', brows: 'thick', browC: '#6a4630', hair: '#8a6240', skin: '#f6e6d4', limb: '#f2dcc8' });
-const TRH = makeBighead(THREE, { cloth: '#f4f0e6', stripes: '#bcd4f0', collar: '#ffffff', sleeve: '#f4f0e6', trousers: '#dfe8f4', glasses: true, tache: true, tacheC: '#6a4630', brows: 'thick', browC: '#6a4630', hair: '#8a6240', skin: '#f6e6d4', limb: '#f2dcc8' });
+const TR = makeBighead(THREE, { cloth: '#33406a', lapels: '#263256', collar: '#ffffff', tie: '#c8202e', sleeve: '#33406a', trousers: '#2a3048', glasses: true, tache: true, tacheC: '#6a4630', brows: 'thick', browC: '#6a4630', hair: '#8a6240' });
+const TRH = makeBighead(THREE, { cloth: '#f4f0e6', stripes: '#bcd4f0', collar: '#ffffff', sleeve: '#f4f0e6', trousers: '#dfe8f4', glasses: true, tache: true, tacheC: '#6a4630', brows: 'thick', browC: '#6a4630', hair: '#8a6240' });
 const GUN = makeBighead(THREE, { cloth: '#7a5a3a', lapels: '#5a4028', collar: '#e8e0d0', sleeve: '#7a5a3a', trousers: '#4a3a2a', hat: 'bowler', hatC: '#2a2420', stubble: true, brows: 'thick' });
 const DOC = makeBighead(THREE, { cloth: '#5e6a78', lapels: '#4a5462', collar: '#ffffff', tie: '#2a4a8a', sleeve: '#5e6a78', trousers: '#3a404a', hat: 'top', hatC: '#22222a', glasses: true, hair: '#b8b4ae', tache: true, tacheC: '#9a948e' });
 const DR = makeBighead(THREE, { cloth: '#f6f8fa', collar: '#cfe0f2', buttons: '#9aa8b8', sleeve: '#f6f8fa', trousers: '#4a5060', hair: '#5a4030', glasses: true, brows: 'thin' });
@@ -454,7 +454,11 @@ window.renderFrame = (t) => {
   if (s.whip && u < WD) { whip = 1 - u / WD; wdir = -s.dir; }
   if (whip > 0) cam.rotateY(wdir * whip * whip * 0.45);
   L.whip(wdir * whip * whip * 0.05, 0);
-  L.dof(c.p.distanceTo(c.l), (c.dof || 0) * 0.55);
+  // focus spans every face in frame (george: faces must never be blurred); only the set behind/in front softens
+  cam.updateMatrixWorld(); let fd = cam.position.distanceTo(c.l), zone = 0.6; { const fwd = cam.getWorldDirection(V(0, 0, 0)), hp = V(0, 0, 0); let lo = 1e9, hi = -1;
+    CAST.forEach(ch => { if (!ch.root.visible) return; ch.head.getWorldPosition(hp); const d = hp.clone().sub(cam.position), z = d.dot(fwd); if (z < 0.2) return; const off = d.clone().addScaledVector(fwd, -z).length() / z; if (off < 0.75) { lo = Math.min(lo, z); hi = Math.max(hi, z); } });
+    if (hi > 0) { fd = (lo + hi) / 2; zone = (hi - lo) / 2 + 0.6; } }
+  L.dof(fd, (c.dof || 0) * 0.4, zone);
   CAST.forEach(ch => { if (ch.root.visible) ch.look(cam, 0.9); });
   // shadow focus
   const half = s.env === 'street' || s.env === 'hall' ? 13 : 8; const sc = key.shadow.camera; if (sc.right !== half) { sc.left = sc.bottom = -half; sc.right = sc.top = half; sc.updateProjectionMatrix(); }

@@ -28,20 +28,23 @@ export function makeLook(THREE, { canvas, W, H, scene, cam, addons, exposure = 1
   const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType }));
   composer.addPass(new RenderPass(scene, cam));
   const dofPass = new ShaderPass({
-    uniforms: { tDiffuse: { value: null }, tDepth: { value: depthRT.texture }, focus: { value: 3 }, amount: { value: 0 }, res: { value: new THREE.Vector2(W, H) } },
+    uniforms: { tDiffuse: { value: null }, tDepth: { value: depthRT.texture }, focus: { value: 3 }, zone: { value: 0.6 }, amount: { value: 0 }, res: { value: new THREE.Vector2(W, H) } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position,1.0); }',
-    fragmentShader: `uniform sampler2D tDiffuse, tDepth; uniform float focus, amount; uniform vec2 res; varying vec2 vUv;
-      float coc(float d){ return clamp(abs(d - focus) / max(d, 0.05) * 1.6, 0.0, 1.0); }
+    fragmentShader: `uniform sampler2D tDiffuse, tDepth; uniform float focus, zone, amount; uniform vec2 res; varying vec2 vUv;
+      float coc(float d){ return clamp(max(abs(d - focus) - zone, 0.0) / max(d, 0.05) * 1.6, 0.0, 1.0); }   // a sharp zone (default 0.6 m) round the focus: whole faces stay crisp
       void main(){
         vec4 base = texture2D(tDiffuse, vUv); if (amount < 0.001) { gl_FragColor = base; return; }
-        float dc = texture2D(tDepth, vUv).r; float c0 = coc(dc); float maxR = amount * 26.0;
+        float dc = texture2D(tDepth, vUv).r; float c0 = coc(dc); if (c0 < 0.02) { gl_FragColor = base; return; }   // in-focus pixels stay exactly sharp
+        float maxR = amount * 26.0;
         vec3 acc = base.rgb; float wsum = 1.0;
         for (int i = 1; i < 40; i++) { float fi = float(i); float r = sqrt(fi / 40.0) * maxR; float a = fi * 2.39996;
           vec2 off = vec2(cos(a), sin(a)) * r / res; float ds = texture2D(tDepth, vUv + off).r; float cs = coc(ds);
-          // a sample counts if it is blurry enough to reach us; nearer sharp things don't bleed onto blurred background
-          float reach = cs * maxR; float w = smoothstep(r - 2.0, r, max(reach, c0 * maxR * step(ds, dc + 0.5)));
+          // farther samples never spread over a nearer sharper pixel (no background smear across faces), and our own
+          // blur only gathers from samples at our depth or behind (sharp foreground doesn't halo onto background)
+          float reach = (ds > dc + 0.3 ? min(cs, c0) : cs) * maxR; float w = smoothstep(r - 2.0, r, max(reach, c0 * maxR * step(dc - 0.5, ds)));
           acc += texture2D(tDiffuse, vUv + off).rgb * w; wsum += w; }
         gl_FragColor = vec4(acc / wsum, base.a); }` });
+  dofPass.uniforms.tDepth.value = depthRT.texture;   // ShaderPass clones its uniforms, which unhooks the render target's texture: re-link it
   composer.addPass(dofPass);
   const bloomPass = new UnrealBloomPass(new THREE.Vector2(W / 2, H / 2), bloom, 0.5, 0.88); composer.addPass(bloomPass);
   const grade = new ShaderPass({ uniforms: { tDiffuse: { value: null }, sat: { value: sat }, warm: { value: warm }, blur: { value: new THREE.Vector2() } },
@@ -56,8 +59,8 @@ export function makeLook(THREE, { canvas, W, H, scene, cam, addons, exposure = 1
   composer.addPass(grade);
   const hidden = [];
   return {
-    renderer, composer, grade, bloomPass, dofPass,
-    dof(focus, amount) { dofPass.uniforms.focus.value = focus; dofPass.uniforms.amount.value = amount; },
+    renderer, composer, grade, bloomPass, dofPass, depthRT,
+    dof(focus, amount, zone = 0.6) { dofPass.uniforms.focus.value = focus; dofPass.uniforms.amount.value = amount; dofPass.uniforms.zone.value = zone; },
     whip(dx, dy) { grade.uniforms.blur.value.set(dx, dy); },
     render() {
       if (dofPass.uniforms.amount.value > 0.001) {
