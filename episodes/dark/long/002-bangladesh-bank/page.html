@@ -3,8 +3,9 @@
 </head><body><div id="stage"><canvas id="cv"></canvas></div>
 <script type="module">
 import { W, H, INK, YEL, RED, drawChar, camera, caption, dateTag, nameCard, clamp, lerp, ease, easeOut, easeInOut, hash, textOutlined, rr, fillStroke } from '/prototypes/casefile2d/engine.js';
-import { corkboard, mapInsert, glowSpot } from '/prototypes/casefile2d/sets.js';
-import { FLOOR, newspaper, statBars } from '/prototypes/casefile2d/sets2.js';
+import { corkboard, mapInsert, glowSpot, documentInsert } from '/prototypes/casefile2d/sets.js';
+import { FLOOR, newspaper, statBars, room, windowFrame, plant, courtroom, subscribeSet } from '/prototypes/casefile2d/sets2.js';
+import { emailWindow, networkSpread, branchFront, jeepney, licences, tanker, cityClocks, casino, moneyFlow, wantedPoster, ransomWard, checklist, deskPhone, bug } from '/prototypes/casefile2d/sets4.js';
 import { bankTower, officeFloor, printer, swiftSlips, fedBuilding, hackerDen, iconsCrossed, moneyCounter, bubble, calendarCard, rickshaw } from '/prototypes/casefile2d/sets3.js';
 window.QA2D = true;
 
@@ -14,6 +15,17 @@ const CLERK2 = { name: 'Clerk2', hair: 'long', hairColor: '#1a1414', outfit: 'te
 const STAFF = (i) => ({ name: 'Staff' + i, hair: ['short', 'side', 'long', 'buzz', 'short'][i % 5], hairColor: '#1e1816', outfit: ['shirt', 'suit', 'tee', 'shirt', 'suit'][i % 5], color: ['#d9e2ea', '#3a4150', '#b8584a', '#e7dcc4', '#2f3a4a'][i % 5], legs: ['#2f3440', '#2a2b33', '#3a2f45', '#4a4238', '#24262d'][i % 5], tie: i % 5 === 1 ? '#7a2b2b' : undefined, id: 110 + i });
 const walkTo = (L, t0, d, x0, x1) => { const w = clamp((L - t0) / d); return { x: lerp(x0, x1, ease(w)), walk: w > 0 && w < 1 ? w * d * 2.2 : 0, face: x1 > x0 ? 1 : -1, moving: w > 0 && w < 1 }; };
 const shake = (t, t0, amp = 14, d = 0.5) => { const k = (t - t0) / d; if (k < 0 || k > 1) return [0, 0]; const a = amp * (1 - k); return [Math.sin(t * 38) * a, Math.cos(t * 31) * a]; };
+const FED1 = { name: 'Fed1', hair: 'short', hairColor: '#5a3a22', outfit: 'suit', color: '#2f3a4a', legs: '#24262d', tie: '#7a2b2b', id: 120 };
+const FED2 = { name: 'Fed2', hair: 'long', hairColor: '#c9a24a', outfit: 'shirt', color: '#d9e2ea', legs: '#2f3440', glasses: true, id: 121 };
+const RASEL = { name: 'Rasel', hair: 'side', hairColor: '#1e1816', outfit: 'suit', color: '#3a4150', tie: '#2b4f8a', legs: '#2a2b33', id: 130 };
+const DEGUITO = { name: 'Deguito', hair: 'long', hairColor: '#2a1c16', outfit: 'suit', color: '#6b2f3a', legs: '#2a2b33', id: 131 };
+const PARK = { name: 'Park', hair: 'buzz', hairColor: '#141414', outfit: 'shirt', color: '#3b4a63', legs: '#2a2b33', glasses: true, id: 132 };
+const KIM = { name: 'Kim', hair: 'short', hairColor: '#2a2a2a', outfit: 'suit', color: '#1f1f24', tie: '#c7342a', legs: '#1f1f24', id: 133 };
+const classroom = (ctx, t, L) => room(ctx, t, { wall: '#d6cfb8', wall2: '#8a7a5a', floor: '#5d4330', wainscot: 640, items: c => {
+  rr(c, 560, 140, 800, 380, 8); fillStroke(c, '#5a4030', INK, 5); rr(c, 580, 160, 760, 340, 4); fillStroke(c, '#2f4a3a', INK, 3);
+  c.save(); c.fillStyle = 'rgba(240,240,230,.9)'; c.font = '64px "Caveat"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('HACKING 101', 960, 240);
+  c.font = '44px "Caveat"'; const ln = ['1. get inside', '2. stay quiet', '3. take the money']; ln.forEach((s, i) => { const n = Math.floor(clamp((L - 0.4 - i * 0.6) / 0.5) * s.length); c.fillText(s.slice(0, n), 960, 320 + i * 56); }); c.restore();
+  } });
 const DHAKA = [90.41, 23.81], NYC = [-74.0, 40.71], MANILA = [120.98, 14.6], COLOMBO = [79.86, 6.93];
 const BANKS = [[-0.12, 51.5], [139.7, 35.7], [8.68, 50.11], [103.8, 1.35], [55.3, 25.2], [-46.6, -23.5], [151.2, -33.9], [2.35, 48.85], [114.2, 22.3], [-79.4, 43.7]];
 
@@ -113,8 +125,278 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
       strings: [[0, 1, 0.6], [0, 2, 0.8], [0, 3, 1.0], [0, 4, 1.2]] }); },
     (ctx, t, k, L) => { caption(ctx, 'WHY DID IT FAIL?', W / 2, 1000, t - B(6, 'fail') + 0.1, 2.5, { size: 76 }); }, 0.04);
 
-  // (rest of the video follows; the opening test ends here)
-  add(B(7, 0), 'end of opening test', (ctx, t, k, L) => { calendarCard(ctx, t, L, 'JANUARY', '2015'); }, null, 0.04);
+  // ================= PART 1: HOW THEY GOT IN (after the opening a new setup every 4-6 s) =================
+  const face = (who) => (c, tt) => drawChar(c, { ...who, x: 0, y: 0, headOnly: true, qaSkip: true }, tt);
+  const hl = (L, at) => clamp((L - at) / 0.4);
+  // beat 7: January 2015, a polite email
+  add(B(7, 0) - 0.05, 'jan 2015', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.1 }, k); calendarCard(ctx, t, L, 'JANUARY', '2015', { sub: 'ONE YEAR EARLIER' }); }, null, 0.04);
+  add(B(7, 'few') - 0.1, 'emails arrive', (ctx, t, k, L) => { camera(ctx, { x: 900, y: 560, z: 1.1 }, { x: 960, y: 560, z: 1.18 }, k);
+    officeFloor(ctx, t, { desks: [420, 760, 1100], printerX: 1500 });
+    [[420, CLERK2], [760, STAFF(3)], [1100, CLERK]].forEach(([x, c], i) => { drawChar(ctx, { ...c, x: x + 60, y: FLOOR, face: -1, mood: L > 1.2 + i * 0.4 ? 'smug' : 'neutral' }, t); bubble(ctx, x + 40, 330, 'NEW EMAIL', L - 0.4 - i * 0.4, { size: 34 }); }); },
+    (ctx, t, k, L) => { caption(ctx, 'A POLITE EMAIL', W / 2, 140, L - 0.2, 2.0); }, 0.05);
+  add(B(7, 'rasel') - 0.1, 'rasel', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.25 }, { x: 960, y: 520, z: 1.4 }, k);
+    room(ctx, t, { wall: '#cfdbe0', wall2: '#8fa6b0', floor: '#4a4f5a', wainscot: 600, items: c => { windowFrame(c, 1250, 180, 360, 300, t); plant(c, 520, FLOOR, 1.1); } });
+    const w = L > 0.6 ? Math.sin((L - 0.6) * 8) * 0.5 : 0; drawChar(ctx, { ...RASEL, x: 960, y: FLOOR, face: 0, mood: 'smug', arms: [0.2, 2.4 + w] }, t); },
+    (ctx, t, k, L) => { nameCard(ctx, 'RASEL AHLAM', 'WOULD LOVE A JOB AT THE BANK', L - 0.3); }, 0.05);
+  add(B(7, 'his') - 0.1, 'cv email', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 900, y: 600, z: 1.12 }, k); emailWindow(ctx, t, L); }, null, 0.05);
+  // beat 8: there was no Rasel; someone clicked
+  add(B(8, 0) - 0.05, 'no rasel', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.4 }, { x: 960, y: 520, z: 1.5 }, k);
+    room(ctx, t, { wall: '#cfdbe0', wall2: '#8fa6b0', floor: '#4a4f5a', wainscot: 600, items: c => { windowFrame(c, 1250, 180, 360, 300, t); plant(c, 520, FLOOR, 1.1); } });
+    ctx.save(); ctx.globalAlpha = 1 - clamp((L - 0.5) / 1.2); drawChar(ctx, { ...RASEL, x: 960, y: FLOOR, face: 0, mood: 'smug', qaSkip: true }, t); ctx.restore(); },
+    (ctx, t, k, L) => { caption(ctx, 'HE DID NOT EXIST', W / 2, 140, L - 0.6, 2.0, { fill: RED }); }, 0.06);
+  add(B(8, 'but') - 0.1, 'click', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 760, y: 700, z: 1.35 }, k); emailWindow(ctx, t, L, { click: B(8, 'clicked') - B(8, 'but') + 0.1 }); },
+    (ctx, t, k, L) => { caption(ctx, 'HIDDEN SOFTWARE', W / 2, 1000, t - B(8, 'hidden'), 2.4, { fill: RED, size: 64 }); }, 0.05);
+  // beat 9: Lazarus, North Korea, Sony
+  add(B(9, 0) - 0.05, 'lazarus', (ctx, t, k, L) => { const [sx, sy] = shake(t, B(9, 'lazarus'), 10, 0.4); camera(ctx, { x: 960 + sx, y: 560 + sy, z: 1.3 }, { x: 960 + sx, y: 520 + sy, z: 1.15 }, k); hackerDen(ctx, t); glowSpot(ctx, 960, 400, 700, 'rgba(255,40,30,.12)'); },
+    (ctx, t, k, L) => { caption(ctx, 'LAZARUS', W / 2, 160, t - B(9, 'lazarus'), 3.0, { fill: RED, size: 110 }); }, 0.1);
+  add(B(9, 'years') - 0.1, 'north korea', (ctx, t, k, L) => { const z = easeInOut(clamp(L / 2.2)); mapInsert(ctx, t, { view: { lon: lerp(100, 127, z), lat: lerp(30, 39.5, z), span: lerp(120, 28, z) }, local: L, dimAll: true, highlight: { 'North Korea': '#b8584a' }, pins: [{ at: [125.75, 39.02], label: 'NORTH KOREA', t0: 1.0 }] }); },
+    (ctx, t, k, L) => { dateTag(ctx, 'THE FBI, LATER', L - 0.2); }, 0.04);
+  add(B(9, 'same') - 0.1, 'sony', (ctx, t, k, L) => { newspaper(ctx, t, { local: L, paper: 'THE DAILY RECORD', date: 'DECEMBER 2014', headline: 'SONY PICTURES\nHACKED' }); }, null, 0.04);
+  // beat 10: fun fact: cut off, sanctions, trained hackers
+  add(B(10, 0) - 0.05, 'cut off', (ctx, t, k, L) => { mapInsert(ctx, t, { view: { lon: lerp(122, 127, k), lat: 38, span: lerp(70, 50, k) }, local: L, dimAll: true, highlight: { 'North Korea': '#b8584a' } });
+    ctx.strokeStyle = RED; ctx.lineWidth = 10; ctx.setLineDash([26, 18]); ctx.lineDashOffset = -t * 30; ctx.beginPath(); ctx.arc(W / 2 + 90, H / 2 - 20, 180 + Math.sin(t * 3) * 6, 0, 7); ctx.stroke(); ctx.setLineDash([]); },
+    (ctx, t, k, L) => { caption(ctx, 'FUN FACT', W / 2, 140, L - 0.1, 1.5, { size: 84 }); caption(ctx, 'ONE OF THE MOST CUT OFF\nCOUNTRIES ON EARTH', W / 2, 960, t - B(10, 'most'), 2.6, { size: 56 }); }, 0.04);
+  add(B(10, 'sanctions') - 0.1, 'sanctions doc', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 520, z: 1.08 }, k);
+    documentInsert(ctx, t, { local: L, header: 'International sanctions  ·  North Korea', source: 'UN Security Council resolutions', lines: [
+      { text: 'Banned: most exports', at: 0.2 }, { text: 'Banned: most foreign banking', at: 0.8 }, { text: 'Result: very hard to earn money abroad', at: 1.5, hl: [8, 38, 2.4] }] }); }, null, 0.05);
+  add(B(10, 'so') - 0.1, 'classroom', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.05 }, { x: 960, y: 560, z: 1.15 }, k); classroom(ctx, t, L);
+    [0, 1, 2].forEach(i => drawChar(ctx, { ...STAFF(i + 2), x: 520 + i * 300, y: FLOOR + 10, face: 1, s: 0.9, mood: 'neutral' }, t));
+    drawChar(ctx, { ...PARK, x: 1500, y: FLOOR, face: -1, talk: true, arms: [0.3, 1.6 + Math.sin(t * 3) * 0.3] }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'TRAINED HACKERS', W / 2, 140, t - B(10, 'trained'), 2.4); }, 0.05);
+  // beat 11: they waited a year, moving computer to computer
+  add(B(11, 0) - 0.05, 'they waited', (ctx, t, k, L) => { camera(ctx, { x: 1000, y: 560, z: 1.1 }, { x: 1000, y: 560, z: 1.2 }, k);
+    officeFloor(ctx, t, { desks: [420, 760, 1100], printerX: 1500, dark: 0.4, night: true }); [420, 760, 1100].forEach(x => glowSpot(ctx, x, 690, 120, 'rgba(255,40,30,' + (0.15 + 0.1 * Math.sin(t * 2 + x)) + ')')); },
+    (ctx, t, k, L) => { caption(ctx, 'THEY DID NOT GRAB ANYTHING', W / 2, 140, L - 0.3, 2.0, { size: 60 }); caption(ctx, 'THEY WAITED', W / 2, 140, t - B(11, 'waited'), 1.6, { fill: RED }); }, 0.08);
+  add(B(11, 'for') - 0.1, 'a whole year', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.08 }, k); calendarCard(ctx, t, L, 'JAN 2015 → JAN 2016', 'A YEAR', { sub: 'INSIDE THE BANK', cross: 10 }); }, null, 0.04);
+  add(B(11, 'moved') - 0.2, 'network spread', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 1150, y: 520, z: 1.12 }, k); networkSpread(ctx, t, L, { dur: B(11, 'swift') - B(11, 'moved') }); },
+    (ctx, t, k, L) => { caption(ctx, 'COMPUTER TO COMPUTER', W / 2, 1000, L - 0.3, 2.2, { size: 60 }); }, 0.05);
+  // beat 12: remember Swift: trusted like a signed letter
+  add(B(12, 0) - 0.05, 'swift message', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 900, y: 460, z: 1.15 }, k);
+    documentInsert(ctx, t, { local: L, header: 'SWIFT message  ·  payment order', source: 'treated almost like a signed letter', lines: [
+      { text: 'FROM:  BANGLADESH BANK', hl: [7, 22, B(12, 'if') - B(12, 0)] }, { text: 'TO:    FEDERAL RESERVE BANK OF NEW YORK' }, { text: 'PAY:   $ 20,000,000' }, { text: 'AUTHENTICATED  ✔', color: '#2f7a4a', at: B(12, 'signed') - B(12, 0) - 0.2 }] }); }, null, 0.05);
+  add(B(12, 'the') - 0.1, 'fed trusts', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 500, z: 1.0 }, { x: 960, y: 540, z: 1.1 }, k); fedBuilding(ctx, t); },
+    (ctx, t, k, L) => { bubble(ctx, 1240, 420, 'MUST BE REAL', t - B(12, 'assumes'), { size: 44 }); dateTag(ctx, 'NEW YORK', L - 0.1); }, 0.08);
+
+  // ================= PART 2: THE PREPARATION =================
+  add(B(13, 0) - 0.05, 'the plan', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    checklist(ctx, t, L, { title: 'THE PLAN', items: [{ text: 'GET INSIDE', at: 0.5 }, { text: 'SEND THE MONEY', at: B(13, 'easy') - B(13, 0) }, { text: 'GET IT OUT FAST', at: 99 }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'THE HARD PART', W / 2, 1010, t - B(13, 'send'), 2.4, { fill: RED, size: 60 }); }, 0.04);
+  // beat 14: Manila accounts
+  add(B(14, 0) - 0.05, 'manila map', (ctx, t, k, L) => { const z = easeInOut(clamp(L / 2.4)); mapInsert(ctx, t, { view: { lon: lerp(105, MANILA[0], z), lat: lerp(20, MANILA[1], z), span: lerp(110, 22, z) }, local: L, highlight: { Philippines: '#c9a24a' }, pins: [{ at: MANILA, label: 'MANILA', t0: 1.4 }] }); },
+    (ctx, t, k, L) => { dateTag(ctx, 'MAY 2015 · MANILA', L - 0.2); }, 0.04);
+  add(B(14, 'four') - 0.1, 'four open accounts', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 580, z: 1.1 }, k); branchFront(ctx, t, { name: 'BIG BANK · BRANCH' });
+    [0, 1, 2, 3].forEach(i => { const w = walkTo(L, i * 0.45, 2.2, -150, 1150 - i * 175); drawChar(ctx, { ...STAFF(i + 5), x: w.x, y: FLOOR + 30, walk: w.walk, face: 1, s: 0.85 }, t); }); },
+    (ctx, t, k, L) => { caption(ctx, '4 NEW ACCOUNTS', W / 2, 140, L - 0.4, 2.2); }, 0.04);
+  add(B(14, 'five') - 0.1, 'licences 500', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); licences(ctx, t, L, { faces: [0, 1, 2, 3].map(i => face(STAFF(i + 5))), cash: 0.3 }); }, null, 0.04);
+  add(B(14, 'then') - 0.1, 'nine months', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.08 }, k); calendarCard(ctx, t, L, 'MAY → FEBRUARY', '9 MONTHS', { sub: 'UNTOUCHED', cross: 9 }); }, null, 0.04);
+  // beat 15: fake licences, Jupiter Street
+  add(B(15, 0) - 0.05, 'fake licences', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.08 }, { x: 960, y: 520, z: 1.16 }, k); licences(ctx, t, L + 2, { faces: [0, 1, 2, 3].map(i => face(STAFF(i + 5))), stamp: B(15, 'fake') - B(15, 0) + 2 }); }, null, 0.04);
+  add(B(15, 'and') - 0.1, 'jupiter street', (ctx, t, k, L) => { camera(ctx, { x: 1100, y: 560, z: 1.0 }, { x: 1360, y: 430, z: 1.7 }, k); branchFront(ctx, t, { name: 'BIG BANK · BRANCH', signGlow: L > B(15, 'jupiter') - B(15, 'and') }); },
+    (ctx, t, k, L) => { caption(ctx, 'JUPITER STREET', W / 2, 140, t - B(15, 'jupiter'), 3.0, { size: 84 }); }, 0.04);
+  add(B(15, 'that') - 0.1, 'remember jupiter', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.08 }, k);
+    corkboard(ctx, t, { local: L, title: 'Remember this', cards: [{ x: 960, y: 520, w: 340, h: 320, kind: 'note', title: 'Jupiter Street', sub: 'Manila', at: 0.05, rot: -0.03, icon: (c, x, y) => { rr(c, x - 100, y - 40, 200, 56, 6); fillStroke(c, '#2f7a4a', INK, 3); c.font = '30px "Lilita One"'; c.fillStyle = '#fff'; c.textAlign = 'center'; c.fillText('JUPITER ST', x, y - 10); } }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'IT COMES BACK', W / 2, 1000, t - B(15, 'comes'), 2.4, { fill: RED, size: 64 }); }, 0.04);
+  // beat 16: the timing
+  add(B(16, 0) - 0.05, 'money in new york', (ctx, t, k, L) => { mapInsert(ctx, t, { view: { lon: lerp(10, 0, k), lat: 32, span: 300 }, local: L, highlight: { Bangladesh: '#d98b4a', 'United States of America': '#7fa3a6' },
+    routes: [{ from: DHAKA, to: NYC, at: B(16, 'federal') - B(16, 0), dur: 1.0 }], pins: [{ at: DHAKA, label: 'DHAKA', t0: 0.2 }, { at: NYC, label: "BANGLADESH'S MONEY", t0: B(16, 'federal') - B(16, 0) + 0.8 }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'NEXT: THE TIMING', W / 2, 140, L - 0.1, 1.8); }, 0.04);
+  add(B(16, 'so') - 0.1, 'when', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.1 }, k); calendarCard(ctx, t, L, 'WHEN?', '?', { sub: 'TO EMPTY IT' }); }, null, 0.04);
+  // beat 17: three weekends
+  add(B(17, 0) - 0.05, 'three weekends', (ctx, t, k, L) => { const o = B(17, 0) - 0.05; camera(ctx, { x: 900, y: 540, z: 1.0 }, { x: 1020, y: 540, z: 1.04 }, k);
+    cityClocks(ctx, t, L, { cities: [{ name: 'DHAKA', day: 'FRI + SAT', sub: 'WEEKEND', hour: 9, at: B(17, 'bangladesh') - o, color: '#2f7a4a' },
+      { name: 'NEW YORK', day: 'SAT + SUN', sub: 'WEEKEND', hour: 11, at: B(17, 'new') - o, color: '#2c3e6b' },
+      { name: 'MANILA', day: 'MON 8 FEB', sub: 'CHINESE NEW YEAR', hour: 10, at: B(17, 'philippines') - o, color: '#b8584a' }] }); }, null, 0.04);
+  // beat 18: Thursday night: four days
+  add(B(18, 0) - 0.05, 'thursday', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.08 }, k); calendarCard(ctx, t, L, 'FEBRUARY 2016', 'THU 4', { sub: 'NIGHT' }); }, null, 0.04);
+  add(B(18, 'bangladesh') - 0.1, 'everyone closing', (ctx, t, k, L) => { const o = B(18, 'bangladesh') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k);
+    cityClocks(ctx, t, L, { cities: [{ name: 'DHAKA', day: 'THU NIGHT', hour: 22, at: 0, night: true, color: '#2f7a4a', closed: B(18, 'going') - o, closedText: 'HOME' },
+      { name: 'NEW YORK', day: 'THU', hour: 16.5, at: 0.15, color: '#2c3e6b', closed: B(18, 'close') - o, closedText: 'CLOSING' },
+      { name: 'MANILA', day: 'FRI', hour: 11, at: 0.3, color: '#b8584a', closed: B(18, 'shut') - o, closedText: 'LONG WEEKEND' }] }); }, null, 0.04);
+  add(B(18, 'four') - 0.1, 'four days', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.1 }, k); calendarCard(ctx, t, L, 'THU → MON', '4 DAYS', { sub: 'NOBODY CAN REACH ANYBODY', cross: 4 }); }, null, 0.04);
+  // beat 19: rule one
+  add(B(19, 0) - 0.05, 'rule one', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    checklist(ctx, t, L, { title: 'ROBBING A BANK ON 3 CONTINENTS', items: [{ text: "CHECK EVERYONE'S HOLIDAYS", at: B(19, 'lazarus') - B(19, 0) + 0.3 }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'RULE ONE', W / 2, 1000, L - 0.1, 2.0, { size: 72 }); }, 0.04);
+
+  // ================= PART 3: THE NIGHT =================
+  add(B(20, 0) - 0.05, 'bank night', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 480, z: 1.12 }, k); bankTower(ctx, t, { night: true, clock: 22.3 + L * 0.02 }); },
+    (ctx, t, k, L) => { dateTag(ctx, '4 FEBRUARY 2016 · DHAKA', L - 0.2); }, 0.06);
+  add(B(20, 'using') - 0.1, 'hackers send', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.25 }, { x: 960, y: 560, z: 1.1 }, k); hackerDen(ctx, t); },
+    (ctx, t, k, L) => { caption(ctx, "THE BANK'S OWN SWIFT COMPUTERS", W / 2, 140, L - 0.3, 2.4, { size: 56 }); }, 0.1);
+  add(B(20, 'start') - 0.1, 'orders out', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.08 }, k); swiftSlips(ctx, t, L, { every: 0.3, red: true }); },
+    (ctx, t, k, L) => { caption(ctx, 'PAYMENT ORDERS', W / 2, 1000, L - 0.2, 2.2, { size: 64 }); }, 0.04);
+  add(B(21, 0) - 0.05, '35 orders', (ctx, t, k, L) => { const [sx, sy] = shake(t, B(21, 'dollars'), 8, 0.4); camera(ctx, { x: 960 + sx, y: 540 + sy, z: 1.0 }, { x: 960 + sx, y: 540 + sy, z: 1.06 }, k);
+    moneyCounter(ctx, t, L, { to: 951000000, at: B(21, 'together') - B(21, 0), dur: B(21, 'dollars') - B(21, 'together'), label: '35 ORDERS' }); }, null, 0.04);
+  add(B(21, 'each') - 0.1, 'routes out', (ctx, t, k, L) => { mapInsert(ctx, t, { view: { lon: lerp(-20, 25, k), lat: 25, span: 320 }, local: L, highlight: { 'United States of America': '#7fa3a6', Philippines: '#c9a24a', 'Sri Lanka': '#c9a24a' },
+    routes: [{ from: NYC, to: MANILA, at: B(21, 'philippines') - B(21, 'each') - 0.6, dur: 1.0 }, { from: NYC, to: COLOMBO, at: B(21, 'sri') - B(21, 'each') - 0.4, dur: 1.0 }],
+    pins: [{ at: NYC, label: 'NEW YORK FED', t0: 0.1 }, { at: MANILA, label: 'PHILIPPINES', t0: B(21, 'philippines') - B(21, 'each') + 0.3 }, { at: COLOMBO, label: 'SRI LANKA', t0: B(21, 'sri') - B(21, 'each') + 0.5, dy: 50 }] }); }, null, 0.04);
+  // beat 22: covering tracks
+  add(B(22, 0) - 0.05, 'records wiped', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 500, z: 1.1 }, k);
+    documentInsert(ctx, t, { local: L, header: "Bank's own records  ·  4 February 2016", lines: [
+      { text: 'Payment orders sent tonight:', at: 0.3 }, { text: L > B(22, 'do') - B(22, 0) ? '  0' : '  35', color: L > B(22, 'do') - B(22, 0) ? '#2b2622' : RED, size: 64, at: 0.9 }, { text: 'Nothing unusual.', at: B(22, 'show') - B(22, 0) }] });
+    if (L > B(22, 'changes') - B(22, 0)) bug(ctx, 1300 + Math.sin(t * 2) * 40, 520 + Math.cos(t * 2.4) * 30, 1.6, t); }, null, 0.05);
+  add(B(22, 'and') - 0.1, 'printer stopped', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 560, z: 1.6 }, { x: 1400, y: 480, z: 2.6 }, k);
+    officeFloor(ctx, t, { desks: [420], printerX: 1380, printer: { error: true, paper: 0.6, jam: true }, dark: 0.45, night: true }); glowSpot(ctx, 1493, 460, 260, 'rgba(255,40,30,.25)'); },
+    (ctx, t, k, L) => { caption(ctx, 'THE PRINTER ON THE 10TH FLOOR', W / 2, 140, t - B(22, 'printer'), 2.6, { size: 60 }); }, 0.12);
+  // beat 23: New York pays
+  add(B(23, 0) - 0.05, 'ny receives', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 500, z: 1.15 }, { x: 960, y: 520, z: 1.0 }, k); fedBuilding(ctx, t); },
+    (ctx, t, k, L) => { caption(ctx, 'PERFECT FORMAT', W / 2, 160, t - B(23, 'perfect'), 2.0); caption(ctx, 'ALL THE RIGHT CODES', W / 2, 160, t - B(23, 'right') + 0.2, 1.8, { size: 60 }); }, 0.08);
+  add(B(23, 'and') - 0.1, 'computers pay', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); swiftSlips(ctx, t, L, { every: 0.35 }); },
+    (ctx, t, k, L) => { caption(ctx, 'PAID', W / 2, 1000, t - B(23, 'pay'), 2.0, { fill: '#9fd37f', size: 84 }); }, 0.04);
+
+  // ================= PART 4: WHAT WENT WRONG =================
+  add(B(24, 0) - 0.05, 'falls apart', (ctx, t, k, L) => { const [sx, sy] = shake(t, B(24, 'apart'), 12, 0.5); camera(ctx, { x: 960 + sx, y: 540 + sy, z: 1.0 }, { x: 960 + sx, y: 560 + sy, z: 1.08 }, k);
+    corkboard(ctx, t, { local: L, title: 'The billion dollar heist', cards: [{ x: 960, y: 520, w: 300, h: 320, kind: 'note', title: 'The plan', sub: 'February 2016', at: 0.05, rot: -0.03, icon: (c, x, y) => { c.font = '92px "Lilita One"'; c.fillStyle = '#3e6b4a'; c.textAlign = 'center'; c.fillText('$1B', x, y); }, stamp: { text: 'FALLING APART', at: B(24, 'apart') - B(24, 0) } }] }); }, null, 0.04);
+  add(B(24, 'one') - 0.1, 'typo', (ctx, t, k, L) => { const o = B(24, 'one') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 880, y: 600, z: 1.22 }, k);
+    documentInsert(ctx, t, { local: L, header: 'SWIFT payment order', lines: [{ text: 'AMOUNT:  $ 20,000,000', at: 0.2 }, { text: 'TO:      SRI LANKA', at: B(24, 'sri') - o - 0.3 },
+      { text: 'FOR:     SHALIKA FANDATION', at: B(24, 'shalika') - o - 0.3, circle: [17, 26, B(24, 'fandation', 0) - o] }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'FANDATION?', W / 2, 1000, t - B(24, 'fandation'), 2.4, { fill: RED, size: 72 }); }, 0.05);
+  add(B(25, 0) - 0.05, 'deutsche', (ctx, t, k, L) => { const FR = [8.68, 50.11]; mapInsert(ctx, t, { view: { lon: lerp(10, 30, k), lat: 35, span: 300 }, local: L, highlight: { Germany: '#c9a24a', 'Sri Lanka': '#c9a24a' },
+    routes: [{ from: NYC, to: FR, at: 0.2, dur: 0.8 }, { from: FR, to: COLOMBO, at: 1.0, dur: 0.9 }], pins: [{ at: FR, label: 'DEUTSCHE BANK', t0: B(25, 'deutsche') - B(25, 0) }, { at: COLOMBO, label: 'SRI LANKA', t0: 0.1, dy: 50 }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'A BANK IN THE MIDDLE', W / 2, 140, L - 0.2, 2.2); }, 0.04);
+  add(B(25, 'noticed') - 0.1, 'stopped', (ctx, t, k, L) => { const o = B(25, 'noticed') - 0.1; camera(ctx, { x: 1100, y: 600, z: 1.3 }, { x: 1100, y: 600, z: 1.4 }, k);
+    documentInsert(ctx, t, { local: L + 3, header: 'SWIFT payment order', lines: [{ text: 'AMOUNT:  $ 20,000,000' }, { text: 'TO:      SRI LANKA' }, { text: 'FOR:     SHALIKA FANDATION', circle: [17, 26, 0] }, { text: 'PLEASE CHECK THIS ORDER', color: '#2c3e6b', at: B(25, 'asked') - o + 3 }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'STOPPED', W / 2, 160, t - B(25, 'stopped'), 2.0, { fill: RED, size: 96 }); }, 0.05);
+  add(B(25, "here's") - 0.1, 'spell checker', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    checklist(ctx, t, L, { title: 'BILLION DOLLAR ROBBERY: PRO TIPS', items: [{ text: 'USE A SPELL CHECKER', at: B(25, 'spell') - B(25, "here's") + 0.4 }] }); }, null, 0.04);
+  // beat 26: Jupiter
+  add(B(26, 0) - 0.05, 'bigger problem ny', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 560, z: 1.12 }, k); fedBuilding(ctx, t); },
+    (ctx, t, k, L) => { caption(ctx, 'THE BIGGER PROBLEM', W / 2, 160, L - 0.2, 2.0); }, 0.08);
+  add(B(26, 'remember') - 0.1, 'jupiter callback', (ctx, t, k, L) => { camera(ctx, { x: 1360, y: 430, z: 1.5 }, { x: 1380, y: 420, z: 1.8 }, k); branchFront(ctx, t, { name: 'BIG BANK · BRANCH', signGlow: true }); },
+    (ctx, t, k, L) => { caption(ctx, 'REMEMBER?', W / 2, 140, L - 0.2, 1.6, { fill: RED }); }, 0.04);
+  add(B(26, 'checks') - 0.3, 'sanctions list', (ctx, t, k, L) => { const o = B(26, 'checks') - 0.3; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 620, z: 1.15 }, k);
+    documentInsert(ctx, t, { local: L, header: 'US sanctions list  ·  Iran', source: 'US Treasury', lines: [{ text: '...', at: 0.1 }, { text: 'ANOTHER COMPANY LTD', at: 0.4 }, { text: 'A SHIPPING FIRM', at: 0.7 },
+      { text: 'JUPITER  (oil tanker)', at: B(26, 'jupiter') - o - 0.3, circle: [0, 7, B(26, 'jupiter') - o + 0.3] }, { text: 'JUPITER  (shipping company)', at: B(26, 'shipping') - o - 0.3 }] }); }, null, 0.05);
+  add(nth(26, 'sanctions', 2) - 0.2, 'tanker', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 540, z: 1.1 }, k); tanker(ctx, t, L, { stamp: B(26, 'iran') - nth(26, 'sanctions', 2) + 0.2, stampText: 'UNDER SANCTIONS' }); }, null, 0.04);
+  // beat 27: red flag
+  add(B(27, 0) - 0.05, 'red flag', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); swiftSlips(ctx, t, L, { every: 0.5, red: true, to: 'JUPITER STREET, MANILA' }); },
+    (ctx, t, k, L) => { caption(ctx, 'RED FLAG', W / 2, 1000, t - B(27, 'flag') + 0.2, 2.2, { fill: RED, size: 84 }); }, 0.04);
+  add(B(27, 'staff') - 0.1, 'fed staff look', (ctx, t, k, L) => { camera(ctx, { x: 900, y: 560, z: 1.15 }, { x: 960, y: 540, z: 1.28 }, k);
+    officeFloor(ctx, t, { desks: [700, 1100], printerX: 1600, hour: 16 }); drawChar(ctx, { ...FED1, x: 820, y: FLOOR, face: -1, mood: 'worried', lookY: 4 }, t); drawChar(ctx, { ...FED2, x: 1220, y: FLOOR, face: -1, mood: 'worried', talk: L > 1.5 }, t); },
+    (ctx, t, k, L) => { bubble(ctx, 900, 330, 'JUPITER?', L - 0.4, { think: true }); bubble(ctx, 1300, 330, 'ASK DHAKA', t - B(27, 'send'), { size: 36 }); }, 0.05);
+  // beat 28: what got through
+  add(B(28, 0) - 0.05, '101 gone', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    moneyCounter(ctx, t, L, { to: 101000000, at: 0.3, dur: Math.max(1.2, B(28, 'one') - B(28, 0)), label: '5 PAYMENTS WENT THROUGH', color: '#ff7a5a' }); }, null, 0.04);
+  add(B(28, 'the') - 0.1, 'sri lanka back', (ctx, t, k, L) => { mapInsert(ctx, t, { view: { lon: 82, lat: 16, span: lerp(70, 60, k) }, local: L, highlight: { 'Sri Lanka': '#c9a24a', Bangladesh: '#d98b4a' },
+    routes: [{ from: COLOMBO, to: DHAKA, at: 0.5, dur: 1.2, color: '#2f7a4a' }], pins: [{ at: COLOMBO, label: '$20M', t0: 0.1, dy: 50 }, { at: DHAKA, label: 'BACK HOME', t0: 1.6 }] }); }, null, 0.04);
+  add(B(28, 'but') - 0.1, '850 held', (ctx, t, k, L) => { const o = B(28, 'but') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    statBars(ctx, t, { local: L, max: 850, title: 'THE OTHER 30 ORDERS', bars: [
+      { label: 'SENT', value: 101, at: 0.1, color: RED, show: p => '$' + Math.round(101 * p) + 'M' },
+      { label: 'HELD', value: 850, at: B(28, 'held') - o - 0.8, color: '#5f8a4e', show: p => '$' + Math.round(850 * p) + 'M' }] }); }, null, 0.04);
+  // beat 29: Friday, nobody there, the broken printer
+  add(B(29, 0) - 0.05, 'questions to dhaka', (ctx, t, k, L) => { mapInsert(ctx, t, { view: { lon: lerp(0, 20, k), lat: 32, span: 300 }, local: L, highlight: { Bangladesh: '#d98b4a', 'United States of America': '#7fa3a6' },
+    routes: [{ from: NYC, to: DHAKA, at: 0.3, dur: 1.2 }], pins: [{ at: NYC, label: 'NEW YORK', t0: 0 }, { at: DHAKA, label: '???', t0: 1.4 }] }); }, null, 0.04);
+  add(B(29, 'but') - 0.1, 'empty friday', (ctx, t, k, L) => { camera(ctx, { x: 900, y: 560, z: 1.05 }, { x: 1000, y: 560, z: 1.15 }, k);
+    officeFloor(ctx, t, { desks: [420, 760, 1100], printerX: 1500, printer: { error: true, paper: 0.6, jam: true }, dark: 0.15 }); deskPhone(ctx, 760, FLOOR - 134, t, { ring: true }); },
+    (ctx, t, k, L) => { caption(ctx, 'FRIDAY', W / 2, 140, L - 0.1, 1.6); caption(ctx, 'NEARLY EMPTY', W / 2, 140, t - B(29, 'nearly'), 1.8); }, 0.05);
+  add(B(29, 'and') - 0.1, 'that printer', (ctx, t, k, L) => { camera(ctx, { x: 1500, y: 520, z: 2.2 }, { x: 1500, y: 480, z: 2.8 }, k); officeFloor(ctx, t, { desks: [420, 760, 1100], printerX: 1500, printer: { error: true, paper: 0.6, jam: true } }); },
+    (ctx, t, k, L) => { caption(ctx, 'STILL BROKEN', W / 2, 140, t - B(29, 'stopped'), 2.0, { fill: RED }); }, 0.06);
+  // ================= PART 5: THE DISCOVERY =================
+  add(B(30, 0) - 0.05, 'saturday', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.08 }, k); calendarCard(ctx, t, L, 'FEBRUARY 2016', 'SAT 6'); }, null, 0.04);
+  add(B(30, 'staff') - 0.1, 'printer fixed', (ctx, t, k, L) => { camera(ctx, { x: 1260, y: 560, z: 1.5 }, { x: 1300, y: 540, z: 1.62 }, k); const go = L > 1.0;
+    officeFloor(ctx, t, { desks: [420], printerX: 1380, printer: { error: !go, paper: go ? clamp((L - 1.0) / 1.2) : 0.6, jam: !go } }); drawChar(ctx, { ...CLERK, x: 1150, y: FLOOR, face: 1, mood: go ? 'smug' : 'neutral', arms: [0.3, L < 1 ? 1.8 : 0.4] }, t); },
+    (ctx, t, k, L) => { bubble(ctx, 1000, 330, 'FINALLY!', L - 1.1, { dur: 1.6 }); }, 0.05);
+  add(B(30, 'out') - 0.1, 'messages out', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.08 }, k); swiftSlips(ctx, t, L, { every: 0.4, amounts: ['QUERY FROM NEW YORK', 'PLEASE CONFIRM', 'QUERY FROM NEW YORK', 'URGENT: PLEASE CONFIRM'] }); }, null, 0.04);
+  add(B(30, 'about') - 0.1, 'clerk shock', (ctx, t, k, L) => { camera(ctx, { x: 1180, y: 640, z: 1.7 }, { x: 1180, y: 620, z: 1.9 }, k);
+    officeFloor(ctx, t, { desks: [420], printerX: 1380, printer: { paper: 1 } }); drawChar(ctx, { ...CLERK, x: 1150, y: FLOOR, face: 1, mood: 'shock', arms: [1.6, 1.6], hold: (c) => { rr(c, -30, -40, 60, 80, 3); fillStroke(c, '#fbf7ec', INK, 2.5); } }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'WE NEVER SENT THESE', W / 2, 1000, L - 0.3, 2.2, { fill: RED, size: 64 }); }, 0.05);
+  // beat 31: nobody answers
+  add(B(31, 0) - 0.05, 'calling ny', (ctx, t, k, L) => { camera(ctx, { x: 900, y: 560, z: 1.3 }, { x: 900, y: 540, z: 1.4 }, k);
+    officeFloor(ctx, t, { desks: [760], printerX: 1500 }); deskPhone(ctx, 760, FLOOR - 134, t, { ring: false }); drawChar(ctx, { ...CLERK2, x: 900, y: FLOOR, face: -1, mood: 'worried', arms: [0.3, 2.6], hold: (c) => { rr(c, -12, -60, 24, 70, 8); fillStroke(c, '#3a3f46', INK, 3); } }, t); },
+    (ctx, t, k, L) => { bubble(ctx, 1040, 330, 'HELLO? NEW YORK?', L - 0.3, { size: 36 }); }, 0.05);
+  add(B(31, 'it') - 0.1, 'ny weekend', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 500, z: 1.0 }, { x: 960, y: 560, z: 1.12 }, k); fedBuilding(ctx, t); deskPhone(ctx, 960, 980, t, { ring: true, color: '#7a2b2b' }); },
+    (ctx, t, k, L) => { caption(ctx, 'WEEKEND', W / 2, 160, L - 0.2, 1.8, { fill: RED }); }, 0.08);
+  add(nth(31, 'they', 2) - 0.1, 'no answer', (ctx, t, k, L) => { const o = nth(31, 'they', 2) - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    checklist(ctx, t, L, { title: 'TRYING TO REACH NEW YORK', items: [{ text: 'PHONE', at: 0.3, no: true }, { text: 'EMAILS', at: B(31, 'emails') - o, no: true }, { text: 'FAXES', at: B(31, 'faxes') - o, no: true }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'NO ANSWER', W / 2, 1010, t - B(31, 'no'), 1.8, { fill: RED, size: 64 }); }, 0.04);
+  add(B(31, 'when') - 0.1, 'monday stop', (ctx, t, k, L) => { const o = B(31, 'when') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    cityClocks(ctx, t, L, { cities: [{ name: 'NEW YORK', day: 'MONDAY', sub: 'STOP EVERYTHING', hour: 9, at: 0, color: '#2c3e6b' }, { name: 'MANILA', day: 'MONDAY', sub: 'CHINESE NEW YEAR', hour: 22, night: true, at: B(31, 'manila') - o, color: '#b8584a', closed: B(31, 'closed') - o }] }); }, null, 0.04);
+  // beat 32: Tuesday: gone
+  add(B(32, 0) - 0.05, 'tuesday branch', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.0 }, { x: 960, y: 600, z: 1.12 }, k); branchFront(ctx, t, { name: 'BIG BANK · BRANCH' }); },
+    (ctx, t, k, L) => { dateTag(ctx, 'TUESDAY 9 FEBRUARY · MANILA', L - 0.2); }, 0.04);
+  add(B(32, 'the') - 0.1, '81 pulled', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    moneyCounter(ctx, t, L, { to: 81000000, at: 0.2, dur: 1.6, label: 'ALREADY PULLED OUT', color: '#ff7a5a' }); }, null, 0.04);
+  // beat 33: subscribe
+  add(B(33, 0) - 0.05, 'subscribe', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.0 }, { x: 1000, y: 560, z: 1.08 }, k);
+    const press = clamp((t - B(33, 'subscribe')) / 0.3) * (1 - clamp((t - B(33, 'subscribe') - 0.5) / 0.3)); subscribeSet(ctx, t, { press, thumb: clamp((t - B(33, 'like')) / 0.5) });
+    printer(ctx, 560, FLOOR, t, { error: true, jam: true, paper: 0.6, shake: t > B(33, 'unlike') ? 0.5 : 0 }); },
+    (ctx, t, k, L) => { caption(ctx, 'IT ACTUALLY WORKS', W / 2, 140, t - B(33, 'actually'), 2.0); }, 0.05);
+
+  // ================= PART 6: FOLLOW THE MONEY =================
+  add(B(34, 0) - 0.05, 'follow money', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.08 }, k);
+    corkboard(ctx, t, { local: L, title: 'Follow the money', cards: [{ x: 960, y: 520, w: 300, h: 300, kind: 'note', title: 'Jupiter Street', sub: 'withdrawn', at: 0.05, rot: -0.03, icon: (c, x, y) => { c.font = '86px "Lilita One"'; c.fillStyle = '#b8584a'; c.textAlign = 'center'; c.fillText('$81M', x, y); } },
+      { x: 1440, y: 480, w: 210, h: 230, kind: 'q', at: 0.6, rot: -0.04 }], strings: [[0, 1, 0.9]] }); }, null, 0.04);
+  add(B(34, 'first') - 0.1, 'pesos', (ctx, t, k, L) => { const o = B(34, 'first') - 0.1; camera(ctx, { x: 760, y: 540, z: 1.1 }, { x: 1000, y: 540, z: 1.1 }, k);
+    moneyFlow(ctx, t, L, { at: [0.2, B(34, 'pesos') - o - 0.4, B(34, 'casinos') - o - 0.2, 99] }); }, null, 0.04);
+  add(B(34, 'into') - 0.1, 'casino', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 580, z: 1.12 }, k); casino(ctx, t); }, (ctx, t, k, L) => { caption(ctx, 'CASINOS', W / 2, 140, L - 0.1, 1.8, { size: 90 }); }, 0.05);
+  add(B(35, 0) - 0.05, 'casino chips', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 900, z: 1.7 }, { x: 1100, y: 880, z: 1.9 }, k); casino(ctx, t, { chips: 6 + Math.floor(L * 2) }); }, null, 0.06);
+  add(B(35, 'big') - 0.1, 'trail cold', (ctx, t, k, L) => { const o = B(35, 'big') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    moneyFlow(ctx, t, L, { steps: [['$', 'MONEY IN', '#7fa36a'], ['◉', 'CHIPS OUT', '#c7342a'], ['$', 'CASH AGAIN', '#7fa36a'], ['?', 'TRAIL GOES COLD', '#5a5048']], at: [0.1, B(35, 'chips') - o - 0.3, B(35, 'follows') - o, B(35, 'cold') - o - 0.3] }); }, null, 0.04);
+  add(B(35, 'and') - 0.1, 'law', (ctx, t, k, L) => { const o = B(35, 'and') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 900, y: 600, z: 1.15 }, k);
+    documentInsert(ctx, t, { local: L, header: 'Philippines  ·  Anti-Money Laundering Act, 2016', lines: [{ text: 'Covered: banks', at: 0.3 }, { text: 'Covered: money transfer firms', at: 0.8 }, { text: 'Casinos:  NOT COVERED', at: B(35, 'not') - o - 0.3, color: RED, circle: [10, 21, B(35, 'covered') - o] }] }); }, null, 0.05);
+  // beat 36: Kim Wong returns some
+  add(B(36, 0) - 0.05, 'kim wong', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.3 }, { x: 980, y: 520, z: 1.45 }, k); casino(ctx, t, { table: false }); drawChar(ctx, { ...KIM, x: 960, y: FLOOR, face: 0, mood: 'smug' }, t); },
+    (ctx, t, k, L) => { nameCard(ctx, 'KIM WONG', 'CASINO BUSINESSMAN', L - 0.4); }, 0.06);
+  add(B(36, 'handed') - 0.1, '15 back', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); moneyCounter(ctx, t, L, { to: 15000000, at: 0.1, dur: 1.2, label: 'HANDED BACK', color: '#9fd37f' }); }, null, 0.04);
+  add(B(36, 'most') - 0.1, 'never found', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.08 }, k);
+    corkboard(ctx, t, { local: L, title: 'The rest of the money', cards: [[480, 470], [960, 430], [1440, 470], [700, 820], [1220, 820]].map(([x, y], i) => ({ x, y, w: 200, h: 220, kind: 'q', at: 0.1 + i * 0.15, rot: (hash(i) - 0.5) * 0.1 })) }); },
+    (ctx, t, k, L) => { caption(ctx, 'NEVER FOUND', W / 2, 1000, t - B(36, 'never'), 2.0, { fill: RED, size: 76 }); }, 0.04);
+  // beat 37: Deguito, the governor
+  add(B(37, 0) - 0.05, 'deguito', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 580, z: 1.1 }, { x: 900, y: 560, z: 1.25 }, k); branchFront(ctx, t, { name: 'BIG BANK · BRANCH' }); drawChar(ctx, { ...DEGUITO, x: 760, y: FLOOR + 20, face: 1, mood: 'neutral' }, t); },
+    (ctx, t, k, L) => { nameCard(ctx, 'MAIA DEGUITO', 'BRANCH MANAGER · JUPITER STREET', t - B(37, 'maia')); }, 0.04);
+  add(B(37, 'was') - 0.1, 'convicted', (ctx, t, k, L) => { camera(ctx, { x: 1000, y: 640, z: 1.5 }, { x: 1040, y: 620, z: 1.65 }, k); courtroom(ctx, t); drawChar(ctx, { ...DEGUITO, x: 1060, y: FLOOR, face: -1, mood: 'sad' }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'CONVICTED · 2019', W / 2, 1000, t - B(37, 'convicted'), 2.4, { fill: RED }); }, 0.05);
+  add(B(37, 'she') - 0.1, 'scapegoat', (ctx, t, k, L) => { camera(ctx, { x: 1060, y: 520, z: 1.9 }, { x: 1060, y: 500, z: 2.1 }, k); courtroom(ctx, t); drawChar(ctx, { ...DEGUITO, x: 1060, y: FLOOR, face: 0, mood: 'angry', talk: true }, t); },
+    (ctx, t, k, L) => { bubble(ctx, 1260, 360, "I'M A SCAPEGOAT!", L - 0.3, { size: 42 }); }, 0.05);
+  add(B(37, 'in') - 0.1, 'governor', (ctx, t, k, L) => { newspaper(ctx, t, { local: L, paper: 'THE DAILY RECORD', date: 'MARCH 2016', headline: 'CENTRAL BANK\nGOVERNOR RESIGNS' }); }, null, 0.04);
+  // beat 38: Park Jin Hyok
+  add(B(38, 0) - 0.05, 'charged', (ctx, t, k, L) => { const o = B(38, 0) - 0.05; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 900, y: 580, z: 1.12 }, k);
+    documentInsert(ctx, t, { local: L, header: 'United States District Court  ·  2018', source: 'Criminal complaint', lines: [{ text: 'UNITED STATES', at: 0.2 }, { text: 'v.', at: 0.5 }, { text: 'PARK JIN HYOK', at: B(38, 'park') - o - 0.4, size: 56, hl: [0, 13, B(38, 'park') - o] }, { text: 'North Korean programmer', at: B(38, 'korean') - o }] }); }, null, 0.05);
+  add(B(38, 'he') - 0.1, 'wanted', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 500, z: 1.12 }, k); wantedPoster(ctx, t, L, { name: 'PARK JIN HYOK', sub: 'BANK HEIST · 2016', face: face(PARK), stamp: B(38, 'never') - B(38, 'he') + 0.2 }); }, null, 0.05);
+  // beat 39: Sony, WannaCry
+  add(B(39, 0) - 0.05, 'sony again', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.1 }, { x: 960, y: 540, z: 1.2 }, k); newspaper(ctx, t, { local: L + 1, paper: 'THE DAILY RECORD', date: 'DECEMBER 2014', headline: 'SONY PICTURES\nHACKED' }); },
+    (ctx, t, k, L) => { caption(ctx, 'REMEMBER?', W / 2, 1010, L - 0.1, 1.6, { fill: RED }); }, 0.04);
+  add(B(39, 'and') - 0.1, 'wannacry', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.0 }, { x: 960, y: 600, z: 1.12 }, k); ransomWard(ctx, t, L, { at: B(39, 'wannacry') - B(39, 'and') }); },
+    (ctx, t, k, L) => { caption(ctx, 'WANNA CRY · 2017', W / 2, 1000, t - B(39, 'wannacry'), 3.0, { fill: RED, size: 72 }); }, 0.05);
+
+  // ================= PART 7: THE ANSWER =================
+  add(B(40, 0) - 0.05, 'why fail again', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.07 }, k);
+    corkboard(ctx, t, { local: L + 2, title: 'The billion dollar heist', cards: [
+      { x: 960, y: 520, w: 280, h: 300, kind: 'note', title: 'Bangladesh Bank', sub: 'February 2016', at: 0.05, rot: -0.03, icon: (c, x, y) => { c.font = '92px "Lilita One"'; c.fillStyle = '#3e6b4a'; c.textAlign = 'center'; c.fillText('$1B', x, y); }, stamp: { text: 'FAILED?', at: 1.6 } },
+      { x: 480, y: 480, w: 210, h: 230, kind: 'q', at: 0.4, rot: 0.04 }, { x: 1440, y: 470, w: 210, h: 230, kind: 'q', at: 0.6, rot: -0.04 }], strings: [[0, 1, 0.6], [0, 2, 0.8]] }); },
+    (ctx, t, k, L) => { caption(ctx, 'SO WHY DID IT FAIL?', W / 2, 1000, L - 0.2, 2.4, { size: 72 }); }, 0.04);
+  add(B(40, 'not') - 0.1, 'not caught', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 520, z: 1.3 }, k); hackerDen(ctx, t); },
+    (ctx, t, k, L) => { caption(ctx, 'NOBODY CAUGHT THEM IN TIME', W / 2, 140, L - 0.3, 2.4, { size: 60 }); }, 0.1);
+  add(B(40, 'their') - 0.1, 'it worked', (ctx, t, k, L) => { const o = B(40, 'their') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    checklist(ctx, t, L, { title: 'WHAT WORKED', items: [{ text: 'THE BREAK IN', at: B(40, 'worked') - o }, { text: 'THE FAKE ORDERS', at: nth(40, 'worked', 2) - o }, { text: 'THE PRINTER TRICK', at: nth(40, 'worked', 3) - o }] }); }, null, 0.04);
+  // beat 41: the three small things
+  add(B(41, 0) - 0.05, 'small things', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k);
+    checklist(ctx, t, L, { title: "WHAT THEY DIDN'T CONTROL", items: [{ text: 'A TYPO', at: 99 }, { text: 'A STREET NAME', at: 99 }, { text: 'THE WEEKEND', at: 99 }] }); }, null, 0.04);
+  add(B(41, 'spelling') - 0.3, 'typo again', (ctx, t, k, L) => { camera(ctx, { x: 1100, y: 600, z: 1.3 }, { x: 1150, y: 620, z: 1.45 }, k);
+    documentInsert(ctx, t, { local: L + 3, header: 'SWIFT payment order', lines: [{ text: 'AMOUNT:  $ 20,000,000' }, { text: 'TO:      SRI LANKA' }, { text: 'FOR:     SHALIKA FANDATION', circle: [17, 26, 0] }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'A SPELLING MISTAKE', W / 2, 160, L - 0.1, 2.4); }, 0.05);
+  add(B(41, 'street') - 0.3, 'tanker again', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.1 }, { x: 960, y: 540, z: 1.2 }, k); tanker(ctx, t, L + 4, { stamp: 0, stampText: 'UNDER SANCTIONS' }); },
+    (ctx, t, k, L) => { caption(ctx, 'A STREET NAME THAT MATCHED A SHIP', W / 2, 1000, L - 0.1, 3.0, { size: 56 }); }, 0.04);
+  add(B(41, 'weekend') - 0.3, 'weekend again', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    cityClocks(ctx, t, L, { cities: [{ name: 'DHAKA', day: 'FRI + SAT', at: 0, color: '#2f7a4a', closed: 0.3, closedText: 'WEEKEND' }, { name: 'NEW YORK', day: 'FRIDAY', at: 0.1, color: '#2c3e6b', closed: B(41, 'time') - B(41, 'weekend') + 0.3, closedText: 'JUST IN TIME' }, { name: 'MANILA', day: 'MON 8 FEB', at: 0.2, color: '#b8584a', closed: 0.6, closedText: 'HOLIDAY' }] }); }, null, 0.04);
+  // beat 42: the darker part
+  add(B(42, 0) - 0.05, 'darker', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.35 }, { x: 960, y: 560, z: 1.15 }, k); hackerDen(ctx, t); glowSpot(ctx, 960, 420, 800, 'rgba(255,30,20,.16)'); },
+    (ctx, t, k, L) => { caption(ctx, 'IT DID NOT FULLY FAIL', W / 2, 140, t - B(42, 'did'), 2.4, { fill: RED, size: 72 }); }, 0.14);
+  add(B(42, 'eighty') - 0.1, 'still gone', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); moneyCounter(ctx, t, L, { to: 81000000, at: 0.1, dur: 1.4, label: 'STILL GONE', color: '#ff7a5a', bg: '#1f1a18' }); }, null, 0.06);
+  add(B(42, 'and') - 0.1, 'kept going', (ctx, t, k, L) => { const NK = [125.75, 39.02]; mapInsert(ctx, t, { view: { lon: lerp(60, 90, k), lat: 30, span: 320 }, local: L, dimAll: true, highlight: { 'North Korea': '#b8584a' },
+    routes: BANKS.map((a, i) => ({ from: a, to: NK, at: 0.4 + i * 0.25, dur: 0.9, color: '#c7342a' })), pins: [{ at: NK, label: 'NORTH KOREA', t0: 0.1 }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'BANKS AND CRYPTO COMPANIES', W / 2, 140, t - B(42, 'banks'), 2.6, { size: 60 }); }, 0.06);
+  // beat 43: almost perfect
+  add(B(43, 0) - 0.05, 'almost perfect', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 480, z: 1.12 }, k); bankTower(ctx, t, { clock: 9.1 }); },
+    (ctx, t, k, L) => { caption(ctx, 'ALMOST PERFECT', W / 2, 160, t - B(43, 'almost'), 2.2); }, 0.04);
+  add(B(43, 'it') - 0.1, '850 saved', (ctx, t, k, L) => { const o = B(43, 'it') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    moneyCounter(ctx, t, L, { to: 850000000, at: 0.3, dur: B(43, 'save') - o, label: 'A TYPO + A STREET CALLED JUPITER', color: '#9fd37f' }); }, null, 0.04);
+  // beat 44: the comment question
+  add(B(44, 0) - 0.05, 'which luckier', (ctx, t, k, L) => { const o = B(44, 0) - 0.05; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.07 }, k);
+    corkboard(ctx, t, { local: L, title: 'Which was luckier?', cards: [
+      { x: 620, y: 560, w: 340, h: 340, kind: 'note', title: 'The typo', sub: 'Shalika Fandation', at: 0.2, rot: -0.04, icon: (c, x, y) => { c.font = '60px "Lilita One"'; c.fillStyle = RED; c.textAlign = 'center'; c.fillText('FANDATION', x, y); } },
+      { x: 1300, y: 560, w: 340, h: 340, kind: 'note', title: 'Jupiter Street', sub: 'Manila', at: 0.5, rot: 0.04, icon: (c, x, y) => { rr(c, x - 110, y - 40, 220, 60, 6); fillStroke(c, '#2f7a4a', INK, 3); c.font = '34px "Lilita One"'; c.fillStyle = '#fff'; c.textAlign = 'center'; c.fillText('JUPITER ST', x, y - 8); } }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'OR', W / 2, 560, t - B(44, 'or'), 9, { size: 110 }); caption(ctx, 'TELL ME IN THE COMMENTS', W / 2, 1000, t - B(44, 'comments') + 0.3, 9, { size: 64 }); }, 0.04);
   return S;
 }, { duration: window.TEST_DURATION });
 </script></body></html>
