@@ -191,6 +191,9 @@ Key words in `timeline.json` give the exact seconds to hit, such as the grab or 
 - **Character voices.** Let characters say a line or two in their own voice: Qwen3-TTS via
   `tools/qwen_voice.py` (`"qwen_speakers"` in script.json, GitHub job voice.yml), then
   `tools/retime_voice.py` to bring Qwen's slow read up to pace.
+  george (27 Nov): whenever a character speaks a line, use their own Qwen voice (never the narrator), and
+  move their mouth while it plays: smol-look `guy.face(expr, t, talk)` with talk 0..1 from the clip's
+  loudness envelope (or `talkFlap(t)` from bighead.js). A quote read by the narrator with a still face looks wrong.
 - **The rewind** gets a reversed, pitched slice of the music plus a tape squeal, and nothing else.
 
 ## Workflow

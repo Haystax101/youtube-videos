@@ -61,7 +61,8 @@ const FACE = {
 // eyes with an ink rim and dark pupils, heavy lids for smug/focus, thick curved brows, a small hook nose, open
 // outlined mouths. Drawn in the style of prototypes/walk-circles/people2d.js. No blush, no crown crease.
 const LID = { dot: 0.12, half: 0.5, wide: 0, squeeze: 1, closed: 1 };
-function drawFace(x, S, spec, expr, t) {
+export function talkFlap(t) { return Math.max(0, Math.sin(t * 21) * 0.6 + Math.sin(t * 13.3) * 0.4); }
+function drawFace(x, S, spec, expr, t, talk = 0) {
   const F = FACE[expr] || FACE.neutral; x.clearRect(0, 0, S, S);
   const cx = S / 2, ey = S * 0.55 - (F.lift || 0) * 0.3, k = S / 512; x.lineCap = 'round'; x.lineJoin = 'round';
   const P = (path, fill, lw) => { x.beginPath(); path(); if (fill) { x.fillStyle = fill; x.fill(); } if (lw) { x.lineWidth = lw * k; x.strokeStyle = INK; x.stroke(); } };
@@ -91,7 +92,9 @@ function drawFace(x, S, spec, expr, t) {
   P(() => { x.moveTo(cx - 2 * k, ey + 30 * k); x.quadraticCurveTo(cx + 12 * k, ey + 42 * k, cx - 2 * k, ey + 50 * k); }, null, 4.5);
   const my = ey + 78 * k;
   if (spec.stubble) { x.fillStyle = 'rgba(60,40,40,.10)'; x.beginPath(); x.ellipse(cx, my + 10 * k, 120 * k, 70 * k, 0, 0, 7); x.fill(); }
-  const m = F.mouth;
+  const m = talk > 0.05 ? 'talk' : F.mouth;
+  if (m === 'talk') { const hh = (6 + 30 * talk) * k, mp = () => x.ellipse(cx, my + 4 * k + hh / 2, (20 + 8 * talk) * k, hh / 2 + 3 * k, 0, 0, 7);
+    P(mp, '#5e1822', 0); x.save(); x.beginPath(); mp(); x.clip(); x.fillStyle = '#e0607a'; x.beginPath(); x.ellipse(cx, my + 8 * k + hh, 16 * k, 9 * k, 0, 0, 7); x.fill(); x.restore(); P(mp, null, 5); }
   if (m === 'small') P(() => { x.moveTo(cx - 16 * k, my); x.quadraticCurveTo(cx, my + 9 * k, cx + 16 * k, my); }, null, 6);
   if (m === 'smile') P(() => { x.moveTo(cx - 28 * k, my - 4 * k); x.quadraticCurveTo(cx, my + 20 * k, cx + 28 * k, my - 4 * k); }, null, 6.5);
   if (m === 'smirk') P(() => { x.moveTo(cx - 24 * k, my + 2 * k); x.quadraticCurveTo(cx + 8 * k, my + 14 * k, cx + 32 * k, my - 8 * k); }, null, 6.5);
@@ -177,7 +180,9 @@ export function makeBighead(THREE, spec = {}) {
   const api = {
     root, head, hips, decal, arms, legs, spec,
     hand: (s) => arms[s].grip,
-    face(expr, t = 0) { const key = expr + '|' + Math.floor(t * 15); if (key === lastExpr) return; lastExpr = key; drawFace(fx, FS, spec, expr, t); ftex.needsUpdate = true; },
+    // talk: 0..1 mouth opening while the character speaks (george, 27 Nov: mouths move when people talk). Drive it from
+    // the line's loudness envelope, or use talkFlap(t) for a simple syllable rhythm.
+    face(expr, t = 0, talk = 0) { const tq = Math.round(talk * 6); const key = expr + '|' + Math.floor(t * 15) + '|' + tq; if (key === lastExpr) return; lastExpr = key; drawFace(fx, FS, spec, expr, t, tq / 6); ftex.needsUpdate = true; },
     look(cam, max = 0.8) { root.updateMatrixWorld(true); const p = new THREE.Vector3(); head.getWorldPosition(p); const local = root.worldToLocal(cam.position.clone()); const ang = Math.atan2(local.x, local.z);
       head.rotation.y = THREE.MathUtils.clamp(ang, -max, max) * 0.9; head.rotation.x = THREE.MathUtils.clamp(-Math.atan2(local.y - head.position.y, Math.hypot(local.x, local.z)) * 0.35, -0.25, 0.25); },
     // poses: t is seconds; each sets arms, legs and a body bob. Positions are in the root's local space (+z = facing).
