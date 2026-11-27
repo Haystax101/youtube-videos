@@ -15,10 +15,10 @@
   {
    "id": "hook",
    "hook": true,
-   "label": "20 KM/H. *INTO SPACE.*",
+   "label": "A BIKE. *INTO SPACE?*",
    "lines": [
     {
-     "text": "Twenty kilometres an hour. Ride a bike that fast on Mars's smallest moon, and you fly into space."
+     "text": "What if you rode a bike into space?"
     }
    ],
    "hold": 0.1
@@ -28,7 +28,7 @@
    "label": "SECOND 1",
    "lines": [
     {
-     "text": "On Deimos, gravity is so weak, your whole body weighs about as much as a slice of bread."
+     "text": "Try it on Deimos, Mars's tiniest moon. Gravity is so weak, your whole body weighs about as much as a slice of bread."
     }
    ],
    "hold": 0.1
@@ -68,7 +68,7 @@
    "label": "LIFTOFF",
    "lines": [
     {
-     "text": "Six more, and you leave Deimos forever, as a tiny new moon of Mars, on a bicycle."
+     "text": "Six more, twenty kilometres an hour, and you leave Deimos forever, as a tiny new moon of Mars, on a bicycle."
     }
    ],
    "hold": 0.2
@@ -93,7 +93,7 @@
    "narrator": "bm_george",
    "voices.narrator": "bm_george",
    "speed": 1.12,
-   "hook_form": "number_first",
+   "hook_form": "question",
    "format": "gary_you",
    "premise": "absurd_event",
    "ending": "better",
@@ -104,7 +104,7 @@
   },
   "hypothesis": "An absurd single-event 'you' premise (006 bee stings, the best retainer, was one) told in the smol look with a number-first hook ('Twenty kilometres an hour...') over the most striking image, you on a bike flying off a tiny moon. Tests the hype score, a British male narrator (bm_george) at 1.12 and the follow CTA. Ends with you better off: a new moon of Mars.",
   "fish": "#264 (you could cycle off Deimos into space)",
-  "notes": "Every number is computed from Deimos's measured mass and size (GM about 98,500 cubic metres per second squared, mean radius about 6.2 km): escape speed 5.6 m/s (20 km/h), circular orbit about 4 m/s (14 km/h), an 80 kg person weighs about 21 g (a slice of bread), a 3 m/s jump rises about 2.4 km and takes about an hour to come down, and with wheel grip of about 0.8 times your tiny weight it takes roughly 45 minutes of gentle pedalling to reach orbital speed. Physics is idealised (smooth path, no space suit drag, ignores Deimos's irregular shape).",
+  "notes": "Every number is computed from Deimos's measured mass and size (GM about 98,500 cubic metres per second squared, mean radius about 6.2 km): escape speed 5.6 m/s (20 km/h), circular orbit about 4 m/s (14 km/h), an 80 kg person weighs about 21 g (a slice of bread), a 3 m/s jump rises about 2.4 km and takes about an hour to come down, and with wheel grip of about 0.8 times your tiny weight it takes roughly 45 minutes of gentle pedalling to reach orbital speed. Physics is idealised (smooth path, no space suit drag, ignores Deimos's irregular shape). v3 (george, 27 Nov 14:02): hook was too dense ('Twenty kilometres an hour. Ride a bike that fast on Mars's smallest moon...'); now the short question 'What if you rode a bike into space?', with Deimos introduced in beat 2 and 20 km/h revealed at the payoff.",
   "facts": [
    {
     "claim": "Deimos, the smaller of Mars's two moons, is about 12 km across with surface gravity around 0.003 m/s squared and an escape velocity of about 5.6 m/s (20 km/h).",

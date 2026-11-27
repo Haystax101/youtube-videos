@@ -1,706 +1,700 @@
 {
- "duration": 39.803,
+ "duration": 39.035,
  "beats": [
   {
    "i": 0,
    "start": 0.15,
-   "end": 6.994,
+   "end": 2.417,
    "deathAt": null,
    "words": [
     {
-     "w": "Twenty",
+     "w": "What",
      "s": 0.15,
-     "e": 0.65,
+     "e": 0.383,
      "speaker": "narrator"
     },
     {
-     "w": "kilometres",
-     "s": 0.65,
-     "e": 1.634,
-     "speaker": "narrator"
-    },
-    {
-     "w": "an",
-     "s": 1.634,
-     "e": 1.875,
-     "speaker": "narrator"
-    },
-    {
-     "w": "hour.",
-     "s": 1.875,
-     "e": 2.134,
-     "speaker": "narrator"
-    },
-    {
-     "w": "Ride",
-     "s": 2.274,
-     "e": 2.551,
-     "speaker": "narrator"
-    },
-    {
-     "w": "a",
-     "s": 2.551,
-     "e": 2.8,
-     "speaker": "narrator"
-    },
-    {
-     "w": "bike",
-     "s": 2.8,
-     "e": 3.077,
-     "speaker": "narrator"
-    },
-    {
-     "w": "that",
-     "s": 3.077,
-     "e": 3.353,
-     "speaker": "narrator"
-    },
-    {
-     "w": "fast",
-     "s": 3.353,
-     "e": 3.63,
-     "speaker": "narrator"
-    },
-    {
-     "w": "on",
-     "s": 3.63,
-     "e": 3.889,
-     "speaker": "narrator"
-    },
-    {
-     "w": "Mars's",
-     "s": 3.889,
-     "e": 4.174,
-     "speaker": "narrator"
-    },
-    {
-     "w": "smallest",
-     "s": 4.174,
-     "e": 4.727,
-     "speaker": "narrator"
-    },
-    {
-     "w": "moon,",
-     "s": 4.727,
-     "e": 5.148,
-     "speaker": "narrator"
-    },
-    {
-     "w": "and",
-     "s": 5.148,
-     "e": 5.416,
+     "w": "if",
+     "s": 0.383,
+     "e": 0.6,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 5.416,
-     "e": 5.684,
+     "s": 0.6,
+     "e": 0.826,
      "speaker": "narrator"
     },
     {
-     "w": "fly",
-     "s": 5.684,
-     "e": 5.951,
+     "w": "rode",
+     "s": 0.826,
+     "e": 1.058,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 1.058,
+     "e": 1.268,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bike",
+     "s": 1.268,
+     "e": 1.501,
      "speaker": "narrator"
     },
     {
      "w": "into",
-     "s": 5.951,
-     "e": 6.468,
+     "s": 1.501,
+     "e": 1.936,
      "speaker": "narrator"
     },
     {
-     "w": "space.",
-     "s": 6.468,
-     "e": 6.754,
+     "w": "space?",
+     "s": 1.936,
+     "e": 2.177,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 1,
-   "start": 6.994,
-   "end": 12.759,
+   "start": 2.417,
+   "end": 10.413,
    "deathAt": null,
    "words": [
     {
-     "w": "On",
-     "s": 6.994,
-     "e": 7.216,
+     "w": "Try",
+     "s": 2.417,
+     "e": 2.728,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 2.728,
+     "e": 3.028,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 3.028,
+     "e": 3.328,
      "speaker": "narrator"
     },
     {
      "w": "Deimos,",
-     "s": 7.216,
-     "e": 7.8,
+     "s": 3.328,
+     "e": 4.118,
      "speaker": "narrator"
     },
     {
-     "w": "gravity",
-     "s": 7.8,
-     "e": 8.473,
+     "w": "Mars's",
+     "s": 4.118,
+     "e": 4.45,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tiniest",
+     "s": 4.45,
+     "e": 5.082,
+     "speaker": "narrator"
+    },
+    {
+     "w": "moon.",
+     "s": 5.082,
+     "e": 5.403,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Gravity",
+     "s": 5.543,
+     "e": 6.204,
      "speaker": "narrator"
     },
     {
      "w": "is",
-     "s": 8.473,
-     "e": 8.695,
+     "s": 6.204,
+     "e": 6.422,
      "speaker": "narrator"
     },
     {
      "w": "so",
-     "s": 8.695,
-     "e": 8.918,
+     "s": 6.422,
+     "e": 6.64,
      "speaker": "narrator"
     },
     {
      "w": "weak,",
-     "s": 8.918,
-     "e": 9.279,
+     "s": 6.64,
+     "e": 6.994,
      "speaker": "narrator"
     },
     {
      "w": "your",
-     "s": 9.279,
-     "e": 9.517,
+     "s": 6.994,
+     "e": 7.227,
      "speaker": "narrator"
     },
     {
      "w": "whole",
-     "s": 9.517,
-     "e": 9.762,
+     "s": 7.227,
+     "e": 7.468,
      "speaker": "narrator"
     },
     {
      "w": "body",
-     "s": 9.762,
-     "e": 10.206,
+     "s": 7.468,
+     "e": 7.904,
      "speaker": "narrator"
     },
     {
      "w": "weighs",
-     "s": 10.206,
-     "e": 10.459,
+     "s": 7.904,
+     "e": 8.152,
      "speaker": "narrator"
     },
     {
      "w": "about",
-     "s": 10.459,
-     "e": 10.911,
+     "s": 8.152,
+     "e": 8.595,
      "speaker": "narrator"
     },
     {
      "w": "as",
-     "s": 10.911,
-     "e": 11.133,
+     "s": 8.595,
+     "e": 8.813,
      "speaker": "narrator"
     },
     {
      "w": "much",
-     "s": 11.133,
-     "e": 11.37,
+     "s": 8.813,
+     "e": 9.046,
      "speaker": "narrator"
     },
     {
      "w": "as",
-     "s": 11.37,
-     "e": 11.592,
+     "s": 9.046,
+     "e": 9.264,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 11.592,
-     "e": 11.807,
+     "s": 9.264,
+     "e": 9.474,
      "speaker": "narrator"
     },
     {
      "w": "slice",
-     "s": 11.807,
-     "e": 12.052,
+     "s": 9.474,
+     "e": 9.714,
      "speaker": "narrator"
     },
     {
      "w": "of",
-     "s": 12.052,
-     "e": 12.274,
+     "s": 9.714,
+     "e": 9.932,
      "speaker": "narrator"
     },
     {
      "w": "bread.",
-     "s": 12.274,
-     "e": 12.519,
+     "s": 9.932,
+     "e": 10.173,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 2,
-   "start": 12.759,
-   "end": 17.193,
+   "start": 10.413,
+   "end": 14.846,
    "deathAt": null,
    "words": [
     {
      "w": "Jump,",
-     "s": 12.759,
-     "e": 13.11,
+     "s": 10.413,
+     "e": 10.763,
      "speaker": "narrator"
     },
     {
      "w": "and",
-     "s": 13.11,
-     "e": 13.332,
+     "s": 10.763,
+     "e": 10.986,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 13.332,
-     "e": 13.555,
+     "s": 10.986,
+     "e": 11.208,
      "speaker": "narrator"
     },
     {
      "w": "float",
-     "s": 13.555,
-     "e": 13.793,
+     "s": 11.208,
+     "e": 11.446,
      "speaker": "narrator"
     },
     {
      "w": "two",
-     "s": 13.793,
-     "e": 14.015,
+     "s": 11.446,
+     "e": 11.669,
      "speaker": "narrator"
     },
     {
      "w": "kilometres",
-     "s": 14.015,
-     "e": 14.891,
+     "s": 11.669,
+     "e": 12.544,
      "speaker": "narrator"
     },
     {
      "w": "up.",
-     "s": 14.891,
-     "e": 15.106,
+     "s": 12.544,
+     "e": 12.759,
      "speaker": "narrator"
     },
     {
      "w": "You",
-     "s": 15.246,
-     "e": 15.527,
+     "s": 12.899,
+     "e": 13.181,
      "speaker": "narrator"
     },
     {
      "w": "won't",
-     "s": 15.527,
-     "e": 15.818,
+     "s": 13.181,
+     "e": 13.471,
      "speaker": "narrator"
     },
     {
      "w": "land",
-     "s": 15.818,
-     "e": 16.109,
+     "s": 13.471,
+     "e": 13.762,
      "speaker": "narrator"
     },
     {
      "w": "for",
-     "s": 16.109,
-     "e": 16.39,
+     "s": 13.762,
+     "e": 14.043,
      "speaker": "narrator"
     },
     {
      "w": "an",
-     "s": 16.39,
-     "e": 16.662,
+     "s": 14.043,
+     "e": 14.315,
      "speaker": "narrator"
     },
     {
      "w": "hour.",
-     "s": 16.662,
-     "e": 16.953,
+     "s": 14.315,
+     "e": 14.606,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 3,
-   "start": 17.193,
-   "end": 21.839,
+   "start": 14.846,
+   "end": 19.493,
    "deathAt": null,
    "words": [
     {
      "w": "Try",
-     "s": 17.193,
-     "e": 17.48,
+     "s": 14.846,
+     "e": 15.134,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 17.48,
-     "e": 17.758,
+     "s": 15.134,
+     "e": 15.412,
      "speaker": "narrator"
     },
     {
      "w": "cycle,",
-     "s": 17.758,
-     "e": 18.221,
+     "s": 15.412,
+     "e": 15.874,
      "speaker": "narrator"
     },
     {
      "w": "and",
-     "s": 18.221,
-     "e": 18.508,
+     "s": 15.874,
+     "e": 16.162,
      "speaker": "narrator"
     },
     {
      "w": "your",
-     "s": 18.508,
-     "e": 18.806,
+     "s": 16.162,
+     "e": 16.459,
      "speaker": "narrator"
     },
     {
      "w": "tyres",
-     "s": 18.806,
-     "e": 19.371,
+     "s": 16.459,
+     "e": 17.025,
      "speaker": "narrator"
     },
     {
      "w": "just",
-     "s": 19.371,
-     "e": 19.669,
+     "s": 17.025,
+     "e": 17.322,
      "speaker": "narrator"
     },
     {
      "w": "spin.",
-     "s": 19.669,
-     "e": 19.966,
+     "s": 17.322,
+     "e": 17.619,
      "speaker": "narrator"
     },
     {
      "w": "You're",
-     "s": 20.106,
-     "e": 20.416,
+     "s": 17.759,
+     "e": 18.07,
      "speaker": "narrator"
     },
     {
      "w": "too",
-     "s": 20.416,
-     "e": 20.707,
+     "s": 18.07,
+     "e": 18.361,
      "speaker": "narrator"
     },
     {
      "w": "light",
-     "s": 20.707,
-     "e": 21.018,
+     "s": 18.361,
+     "e": 18.671,
      "speaker": "narrator"
     },
     {
      "w": "to",
-     "s": 21.018,
-     "e": 21.299,
+     "s": 18.671,
+     "e": 18.952,
      "speaker": "narrator"
     },
     {
      "w": "grip.",
-     "s": 21.299,
-     "e": 21.599,
+     "s": 18.952,
+     "e": 19.253,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 4,
-   "start": 21.839,
-   "end": 30.85,
+   "start": 19.493,
+   "end": 28.503,
    "deathAt": null,
    "words": [
     {
      "w": "So",
-     "s": 21.839,
-     "e": 22.048,
+     "s": 19.493,
+     "e": 19.701,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 22.048,
-     "e": 22.263,
+     "s": 19.701,
+     "e": 19.917,
      "speaker": "narrator"
     },
     {
      "w": "pedal",
-     "s": 22.263,
-     "e": 22.687,
+     "s": 19.917,
+     "e": 20.34,
      "speaker": "narrator"
     },
     {
      "w": "gently",
-     "s": 22.687,
-     "e": 23.118,
+     "s": 20.34,
+     "e": 20.772,
      "speaker": "narrator"
     },
     {
      "w": "for",
-     "s": 23.118,
-     "e": 23.334,
+     "s": 20.772,
+     "e": 20.987,
      "speaker": "narrator"
     },
     {
      "w": "forty",
-     "s": 23.334,
-     "e": 23.758,
+     "s": 20.987,
+     "e": 21.411,
      "speaker": "narrator"
     },
     {
      "w": "five",
-     "s": 23.758,
-     "e": 23.98,
+     "s": 21.411,
+     "e": 21.634,
      "speaker": "narrator"
     },
     {
      "w": "minutes.",
-     "s": 23.98,
-     "e": 24.613,
+     "s": 21.634,
+     "e": 22.266,
      "speaker": "narrator"
     },
     {
      "w": "At",
-     "s": 24.753,
-     "e": 24.966,
+     "s": 22.406,
+     "e": 22.619,
      "speaker": "narrator"
     },
     {
      "w": "fourteen",
-     "s": 24.966,
-     "e": 25.422,
+     "s": 22.619,
+     "e": 23.075,
      "speaker": "narrator"
     },
     {
      "w": "kilometres",
-     "s": 25.422,
-     "e": 26.289,
+     "s": 23.075,
+     "e": 23.942,
      "speaker": "narrator"
     },
     {
      "w": "an",
-     "s": 26.289,
-     "e": 26.502,
+     "s": 23.942,
+     "e": 24.155,
      "speaker": "narrator"
     },
     {
      "w": "hour,",
-     "s": 26.502,
-     "e": 26.849,
+     "s": 24.155,
+     "e": 24.502,
      "speaker": "narrator"
     },
     {
      "w": "the",
-     "s": 26.849,
-     "e": 27.069,
+     "s": 24.502,
+     "e": 24.723,
      "speaker": "narrator"
     },
     {
      "w": "ground",
-     "s": 27.069,
-     "e": 27.312,
+     "s": 24.723,
+     "e": 24.965,
      "speaker": "narrator"
     },
     {
      "w": "curves",
-     "s": 27.312,
-     "e": 27.753,
+     "s": 24.965,
+     "e": 25.406,
      "speaker": "narrator"
     },
     {
      "w": "away",
-     "s": 27.753,
-     "e": 28.179,
+     "s": 25.406,
+     "e": 25.833,
      "speaker": "narrator"
     },
     {
      "w": "faster",
-     "s": 28.179,
-     "e": 28.62,
+     "s": 25.833,
+     "e": 26.274,
      "speaker": "narrator"
     },
     {
      "w": "than",
-     "s": 28.62,
-     "e": 28.848,
+     "s": 26.274,
+     "e": 26.502,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 28.848,
-     "e": 29.069,
+     "s": 26.502,
+     "e": 26.722,
      "speaker": "narrator"
     },
     {
      "w": "fall.",
-     "s": 29.069,
-     "e": 29.297,
+     "s": 26.722,
+     "e": 26.95,
      "speaker": "narrator"
     },
     {
      "w": "You're",
-     "s": 29.437,
-     "e": 29.75,
+     "s": 27.09,
+     "e": 27.403,
      "speaker": "narrator"
     },
     {
      "w": "in",
-     "s": 29.75,
-     "e": 30.033,
+     "s": 27.403,
+     "e": 27.687,
      "speaker": "narrator"
     },
     {
      "w": "orbit.",
-     "s": 30.033,
-     "e": 30.61,
+     "s": 27.687,
+     "e": 28.263,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 5,
-   "start": 30.85,
-   "end": 36.31,
+   "start": 28.503,
+   "end": 35.542,
    "deathAt": null,
    "words": [
     {
      "w": "Six",
-     "s": 30.85,
-     "e": 31.068,
+     "s": 28.503,
+     "e": 28.713,
      "speaker": "narrator"
     },
     {
      "w": "more,",
-     "s": 31.068,
-     "e": 31.412,
+     "s": 28.713,
+     "e": 29.043,
+     "speaker": "narrator"
+    },
+    {
+     "w": "twenty",
+     "s": 29.043,
+     "e": 29.463,
+     "speaker": "narrator"
+    },
+    {
+     "w": "kilometres",
+     "s": 29.463,
+     "e": 30.288,
+     "speaker": "narrator"
+    },
+    {
+     "w": "an",
+     "s": 30.288,
+     "e": 30.491,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hour,",
+     "s": 30.491,
+     "e": 30.821,
      "speaker": "narrator"
     },
     {
      "w": "and",
-     "s": 31.412,
-     "e": 31.63,
+     "s": 30.821,
+     "e": 31.031,
      "speaker": "narrator"
     },
     {
      "w": "you",
-     "s": 31.63,
-     "e": 31.848,
+     "s": 31.031,
+     "e": 31.241,
      "speaker": "narrator"
     },
     {
      "w": "leave",
-     "s": 31.848,
-     "e": 32.082,
+     "s": 31.241,
+     "e": 31.465,
      "speaker": "narrator"
     },
     {
      "w": "Deimos",
-     "s": 32.082,
-     "e": 32.518,
+     "s": 31.465,
+     "e": 31.884,
      "speaker": "narrator"
     },
     {
      "w": "forever,",
-     "s": 32.518,
-     "e": 33.276,
+     "s": 31.884,
+     "e": 32.613,
      "speaker": "narrator"
     },
     {
      "w": "as",
-     "s": 33.276,
-     "e": 33.487,
+     "s": 32.613,
+     "e": 32.816,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 33.487,
-     "e": 33.691,
+     "s": 32.816,
+     "e": 33.012,
      "speaker": "narrator"
     },
     {
      "w": "tiny",
-     "s": 33.691,
-     "e": 34.113,
+     "s": 33.012,
+     "e": 33.417,
      "speaker": "narrator"
     },
     {
      "w": "new",
-     "s": 34.113,
-     "e": 34.331,
+     "s": 33.417,
+     "e": 33.627,
      "speaker": "narrator"
     },
     {
      "w": "moon",
-     "s": 34.331,
-     "e": 34.557,
+     "s": 33.627,
+     "e": 33.844,
      "speaker": "narrator"
     },
     {
      "w": "of",
-     "s": 34.557,
-     "e": 34.768,
+     "s": 33.844,
+     "e": 34.047,
      "speaker": "narrator"
     },
     {
      "w": "Mars,",
-     "s": 34.768,
-     "e": 35.111,
+     "s": 34.047,
+     "e": 34.377,
      "speaker": "narrator"
     },
     {
      "w": "on",
-     "s": 35.111,
-     "e": 35.322,
+     "s": 34.377,
+     "e": 34.58,
      "speaker": "narrator"
     },
     {
      "w": "a",
-     "s": 35.322,
-     "e": 35.526,
+     "s": 34.58,
+     "e": 34.775,
      "speaker": "narrator"
     },
     {
      "w": "bicycle.",
-     "s": 35.526,
-     "e": 35.97,
+     "s": 34.775,
+     "e": 35.202,
      "speaker": "narrator"
     }
    ]
   },
   {
    "i": 6,
-   "start": 36.31,
-   "end": 39.003,
+   "start": 35.542,
+   "end": 38.235,
    "deathAt": null,
    "words": [
     {
      "w": "Follow",
-     "s": 36.31,
-     "e": 36.797,
+     "s": 35.542,
+     "e": 36.029,
      "speaker": "narrator"
     },
     {
      "w": "for",
-     "s": 36.797,
-     "e": 37.041,
+     "s": 36.029,
+     "e": 36.273,
      "speaker": "narrator"
     },
     {
      "w": "more",
-     "s": 37.041,
-     "e": 37.293,
+     "s": 36.273,
+     "e": 36.525,
      "speaker": "narrator"
     },
     {
      "w": "interesting",
-     "s": 37.293,
-     "e": 38.26,
+     "s": 36.525,
+     "e": 37.492,
      "speaker": "narrator"
     },
     {
      "w": "cartoons.",
-     "s": 38.26,
-     "e": 38.763,
+     "s": 37.492,
+     "e": 37.995,
      "speaker": "narrator"
     }
    ]

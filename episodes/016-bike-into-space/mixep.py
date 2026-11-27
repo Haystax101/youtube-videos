@@ -56,10 +56,10 @@ def seg(folder, a, b, g):
 html = open(os.path.join(here, [f for f in os.listdir(here) if f.endswith('.html')][0])).read()   # the folder's only page
 cuts = [WT(int(b), w, int(k or 1)) for b, w, k in re.findall(r"^shot\(WT\((\d), '(\w+)'(?:, (\d))?\)", html, re.M)]
 # ---- hook: tyres on the grit as you ride, a big whoosh as you leave the ground, a hit on "space"
-seg('tyre', WT(0, 'Ride') - 0.3, WT(0, 'fly'), 0.45)
-place(first('whoosh', maxlen=1.2), WT(0, 'fly') - 0.2, 0.9); place(first('impact', maxlen=0.6), WT(0, 'space'), 0.5)
+seg('tyre', WT(0, 'bike') - 0.3, WT(0, 'into'), 0.45)
+place(first('whoosh', maxlen=1.2), WT(0, 'into') - 0.2, 0.9); place(first('impact', maxlen=0.6), WT(0, 'space'), 0.5)
 # ---- beat 1: a soft landing bump, the balance pan clinks, a cartoon boing on the bread
-place(first('impact', maxlen=0.4), WT(1, 'On') + 0.1, 0.35); place(first('metal', maxlen=0.5), WT(1, 'weighs'), 0.4)
+place(first('impact', maxlen=0.4), WT(1, 'tiniest') + 0.1, 0.35); place(first('metal', maxlen=0.5), WT(1, 'weighs'), 0.4)
 place(first('cartoon', maxlen=0.6), WT(1, 'bread'), 0.45)
 # ---- beat 2: the jump (whoosh + boing), a slow drift, a soft landing pop on "land"
 place(first('whoosh', maxlen=1.2), WT(2, 'Jump') - 0.1, 0.8); place(first('cartoon', maxlen=0.5), WT(2, 'Jump'), 0.4)

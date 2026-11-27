@@ -39,11 +39,11 @@ def ostinato(a, b, bpm, prog, g0=0.5, g1=1.0, drums=True, brass=True):
         t += beat; i += 1
 
 # ---- hook: brass hit on "Twenty", driving ostinato, a rising run into "fly", a huge hit on "space"
-th = WT(0, 'Twenty')
+th = WT(0, 'What')
 for k in D + [62]: n(th, BRASS, k, 118, 0.8, 0.55)
 n(th, TIMP, 38, 125, 1.0, 0.9); n(th, HIT, 50, 110, 0.7, 0.6)
-ostinato(th + 0.4, WT(0, 'fly'), 128, [D, D, G, A], 0.6, 1.0)
-tf = WT(0, 'fly')
+ostinato(th + 0.4, WT(0, 'into'), 128, [D, D, G, A], 0.6, 1.0)
+tf = WT(0, 'into')
 for k, key in enumerate([62, 66, 69, 74, 78]): n(tf - 0.5 + k * 0.1, TPT, key, 105, 0.4, 0.35)
 ts = WT(0, 'space')
 for k in [50, 57, 62, 66, 69, 74]: n(ts, BRASS, k, 122, 1.4, 0.55)
