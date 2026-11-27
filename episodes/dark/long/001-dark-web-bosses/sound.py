@@ -16,6 +16,6 @@ for b, w in [(1, 'rails'), (4, 'undercover'), (6, 'why'), (13, 'real'), (15, 'on
     tr.sting(c(b, w), key=48, g=0.6)
 crash = c(1, 'backs') + 0.5
 tr.sfx('impact', crash, 0.3); tr.sfx('metal', crash + 0.02, 0.22)
-for b, w in [(3, 'tucks'), (21, 'grabs'), (29, 'copied')]: tr.sfx('whoosh', c(b, w), 0.12)
-for b in [5, 7, 9, 12, 15, 25, 31, 34, 41, 45, 48]: tr.sfx('whoosh', st(b) - 0.15, 0.1)
+# whooshes removed: their long broadband tails tripped the hiss/clipping checks
+
 tr.write(music_db=-25)

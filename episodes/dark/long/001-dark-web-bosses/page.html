@@ -231,8 +231,8 @@ await boot(new URL('./', location.href).href, ({ cue, end }) => {
     (ctx, t, k, L) => { caption(ctx, 'COPIED', W / 2, 150, t - B(29, 'copied'), 1.6); }, 0.06);
   add(B(29, 'in'), 'benthall arrest', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 590, z: 1.15 }, { x: 980, y: 600, z: 1.22 }, k); cityStreet(ctx, t, { sky0: '#7fa0b8', sky1: '#e3d3b4' });
     drawChar(ctx, { ...BENT, x: 860, y: FLOOR, face: 1, mood: 'shock', arms: [2.6, 2.6] }, t);
-    const a = walkTo(L, 0, 1.0, 1300, 1050); drawChar(ctx, { ...AGENT(a.x, 85), face: -1, walk: a.walk, mood: 'angry', arms: [0, 1.4] }, t);
-    drawChar(ctx, { ...AGENT(1260, 86, { glasses: true }), face: -1, mood: 'neutral' }, t); },
+    const a = walkTo(L, 0, 1.2, 1900, 1050); drawChar(ctx, { ...AGENT(a.x, 85), face: -1, walk: a.walk, mood: 'angry', arms: a.moving ? undefined : [0, 1.4] }, t);
+    const b = walkTo(L, 0.3, 1.2, 2150, 1290); drawChar(ctx, { ...AGENT(b.x, 86, { glasses: true }), face: -1, walk: b.walk, mood: 'neutral' }, t); },
     (ctx, t, k, L) => { dateTag(ctx, 'NOVEMBER 2014 · SAN FRANCISCO', L - 0.2); caption(ctx, 'ONE YEAR LATER', W / 2, 160, t - B(29, 'one', 2), 1.8); }, 0.04);
   add(B(30, 0), 'two lessons', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k);
     statBars(ctx, t, { local: 99, max: 1, bars: [] }); textOutlined(ctx, 'LESSONS SO FAR', W / 2, 170, { size: 74, fill: YEL, lw: 10 });

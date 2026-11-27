@@ -216,7 +216,7 @@ export function statBars(ctx, t, o = {}) {
   ctx.fillStyle = 'rgba(0,0,0,.05)'; for (let y = 0; y < H; y += 54) ctx.fillRect(0, y, W, 2);
   if (o.title) textOutlined(ctx, o.title, W / 2, 140, { size: 74, fill: o.titleColor || RED, lw: 10 });
   const n = o.bars.length, bw = 240, gap = 160, x0 = W / 2 - (n * bw + (n - 1) * gap) / 2, base = 880;
-  ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x0 - 60, base); ctx.lineTo(x0 + n * bw + (n - 1) * gap + 60, base); ctx.stroke();
+  if (n) { ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.beginPath(); ctx.moveTo(x0 - 60, base); ctx.lineTo(x0 + n * bw + (n - 1) * gap + 60, base); ctx.stroke(); }
   o.bars.forEach((b, i) => { const p = easeOut(clamp((k - (b.at || 0)) / 1.0)), hgt = (b.value / o.max) * 560 * p, x = x0 + i * (bw + gap);
     rr(ctx, x, base - hgt, bw, hgt, 6); fillStroke(ctx, b.color || YEL, INK, 4);
     if (p > 0.05) textOutlined(ctx, b.show ? b.show(p) : String(Math.round(b.value * p)), x + bw / 2, base - hgt - 50, { size: 60, fill: '#f6efdd', lw: 10 });
