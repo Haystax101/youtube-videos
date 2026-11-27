@@ -1,0 +1,65 @@
+{
+ "video": "episodes/016-bike-into-space/final.mp4",
+ "duration": 40.3,
+ "result": "PASS",
+ "checks": [
+  {
+   "check": "dark",
+   "status": "WARN",
+   "detail": "dark stretch at 0.00-2.27s (88% dark), 4.20-5.67s (93% dark), 6.60-6.97s (64% dark), 13.80-15.80s (87% dark), 27.10-30.03s (93% dark), 30.77-31.83s (84% dark), 32.60-37.67s (86% dark): fine if the shot is meant to be dark, a bug if the camera is inside a wall or prop"
+  },
+  {
+   "check": "freeze",
+   "status": "PASS",
+   "detail": "picture keeps moving"
+  },
+  {
+   "check": "loudness",
+   "status": "PASS",
+   "detail": "-14.2 LUFS, true peak -4.4 dBTP (want -14 +/- 1.5, <= -1)"
+  },
+  {
+   "check": "clipping",
+   "status": "PASS",
+   "detail": "AUDIO OK"
+  },
+  {
+   "check": "hiss",
+   "status": "PASS",
+   "detail": "no broadband static"
+  },
+  {
+   "check": "silence",
+   "status": "PASS",
+   "detail": "no dead air"
+  },
+  {
+   "check": "balance",
+   "status": "PASS",
+   "detail": "narration -17.3 LUFS, music+SFX -31.9 LUFS: voice 14.6 LU on top (want >= 8)"
+  },
+  {
+   "check": "flicker",
+   "status": "WARN",
+   "detail": "7 one-frame pop(s), worst at 6.93s, 30.17s, 20.93s, 5.80s, 30.73s, 30.23s, 30.33s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
+  },
+  {
+   "check": "vanish",
+   "status": "PASS",
+   "detail": "nothing blinks out for a frame"
+  },
+  {
+   "check": "length",
+   "status": "PASS",
+   "detail": "40.3 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
+  },
+  {
+   "check": "overlap",
+   "status": "PASS",
+   "detail": "0 on-screen overlap(s)"
+  }
+ ],
+ "contact_sheet": "episodes/016-bike-into-space/qa/contact.jpg",
+ "review": null,
+ "review_mtime": 1795776221.458197
+}
