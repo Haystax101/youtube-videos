@@ -1,0 +1,8821 @@
+{
+ "duration": 556.35,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.0,
+   "end": 11.84,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Friday,",
+     "s": 0.0,
+     "e": 0.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "February",
+     "s": 0.8,
+     "e": 1.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 1.6,
+     "e": 1.65,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fifth,",
+     "s": 1.6,
+     "e": 2.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "twenty",
+     "s": 2.04,
+     "e": 2.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sixteen.",
+     "s": 2.8,
+     "e": 3.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Dhaka,",
+     "s": 3.76,
+     "e": 4.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh.",
+     "s": 4.52,
+     "e": 5.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 5.56,
+     "e": 5.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 5.8,
+     "e": 5.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 5.92,
+     "e": 6.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "quarter",
+     "s": 6.08,
+     "e": 6.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 6.44,
+     "e": 6.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "nine",
+     "s": 6.68,
+     "e": 7.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 7.0,
+     "e": 7.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 7.12,
+     "e": 7.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "morning,",
+     "s": 7.28,
+     "e": 7.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 7.68,
+     "e": 7.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 7.92,
+     "e": 8.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 8.08,
+     "e": 8.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tenth",
+     "s": 8.24,
+     "e": 8.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "floor",
+     "s": 8.64,
+     "e": 9.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 9.0,
+     "e": 9.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 9.12,
+     "e": 9.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "central",
+     "s": 9.28,
+     "e": 9.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank,",
+     "s": 9.72,
+     "e": 10.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 10.16,
+     "e": 10.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "printer",
+     "s": 10.32,
+     "e": 10.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "has",
+     "s": 10.8,
+     "e": 11.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stopped",
+     "s": 11.0,
+     "e": 11.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "working.",
+     "s": 11.36,
+     "e": 11.92,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 11.84,
+   "end": 22.34,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "It",
+     "s": 11.92,
+     "e": 12.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 12.2,
+     "e": 12.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "not",
+     "s": 12.4,
+     "e": 12.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "just",
+     "s": 12.68,
+     "e": 12.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "any",
+     "s": 12.96,
+     "e": 13.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "printer.",
+     "s": 13.28,
+     "e": 13.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 13.94,
+     "e": 14.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "prints",
+     "s": 14.26,
+     "e": 14.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 14.74,
+     "e": 14.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "paper",
+     "s": 14.94,
+     "e": 15.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "copy",
+     "s": 15.38,
+     "e": 15.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 15.9,
+     "e": 16.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "every",
+     "s": 16.1,
+     "e": 16.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "big",
+     "s": 16.38,
+     "e": 16.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "transfer",
+     "s": 16.7,
+     "e": 17.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 17.22,
+     "e": 17.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 17.42,
+     "e": 17.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sends",
+     "s": 17.78,
+     "e": 18.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "through",
+     "s": 18.18,
+     "e": 18.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Swift,",
+     "s": 18.46,
+     "e": 19.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 19.06,
+     "e": 19.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "network",
+     "s": 19.3,
+     "e": 19.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "banks",
+     "s": 19.78,
+     "e": 20.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "use",
+     "s": 20.22,
+     "e": 20.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 20.5,
+     "e": 20.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "move",
+     "s": 20.66,
+     "e": 20.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money",
+     "s": 20.9,
+     "e": 21.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "around",
+     "s": 21.22,
+     "e": 21.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 21.66,
+     "e": 21.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "world.",
+     "s": 21.78,
+     "e": 22.42,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 22.34,
+   "end": 35.22,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "The",
+     "s": 22.42,
+     "e": 22.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "staff",
+     "s": 22.74,
+     "e": 23.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "try",
+     "s": 23.3,
+     "e": 23.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 23.66,
+     "e": 23.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "restart",
+     "s": 23.86,
+     "e": 24.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it.",
+     "s": 24.46,
+     "e": 25.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Nothing.",
+     "s": 25.02,
+     "e": 25.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Nobody",
+     "s": 25.78,
+     "e": 26.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 26.82,
+     "e": 27.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "too",
+     "s": 27.06,
+     "e": 27.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "worried.",
+     "s": 27.54,
+     "e": 28.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 28.34,
+     "e": 28.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "has",
+     "s": 28.58,
+     "e": 28.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "broken",
+     "s": 28.9,
+     "e": 29.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "before,",
+     "s": 29.5,
+     "e": 30.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 30.02,
+     "e": 30.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 30.38,
+     "e": 30.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 30.62,
+     "e": 30.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 30.82,
+     "e": 31.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "start",
+     "s": 31.06,
+     "e": 31.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 31.62,
+     "e": 31.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 31.78,
+     "e": 31.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "weekend.",
+     "s": 31.94,
+     "e": 32.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "They",
+     "s": 32.86,
+     "e": 33.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "decide",
+     "s": 33.22,
+     "e": 33.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 33.78,
+     "e": 33.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "deal",
+     "s": 33.94,
+     "e": 34.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "with",
+     "s": 34.26,
+     "e": 34.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 34.5,
+     "e": 34.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "later.",
+     "s": 34.7,
+     "e": 35.3,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 35.22,
+   "end": 50.58,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "What",
+     "s": 35.3,
+     "e": 35.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 35.78,
+     "e": 36.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "do",
+     "s": 36.06,
+     "e": 36.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "not",
+     "s": 36.34,
+     "e": 36.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "know",
+     "s": 36.58,
+     "e": 36.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 36.98,
+     "e": 37.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 37.26,
+     "e": 37.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "overnight,",
+     "s": 37.58,
+     "e": 38.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "someone",
+     "s": 38.42,
+     "e": 39.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "using",
+     "s": 39.14,
+     "e": 39.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 39.46,
+     "e": 39.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank's",
+     "s": 39.62,
+     "e": 40.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "own",
+     "s": 40.14,
+     "e": 40.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "computers",
+     "s": 40.38,
+     "e": 41.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "has",
+     "s": 41.14,
+     "e": 41.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "asked",
+     "s": 41.46,
+     "e": 41.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 41.78,
+     "e": 41.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Federal",
+     "s": 41.94,
+     "e": 42.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Reserve",
+     "s": 42.5,
+     "e": 42.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bank",
+     "s": 42.98,
+     "e": 43.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 43.26,
+     "e": 43.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 43.38,
+     "e": 43.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York",
+     "s": 43.62,
+     "e": 44.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 44.14,
+     "e": 44.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "send",
+     "s": 44.38,
+     "e": 44.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "almost",
+     "s": 44.82,
+     "e": 45.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 45.22,
+     "e": 45.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "billion",
+     "s": 45.38,
+     "e": 45.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars",
+     "s": 45.9,
+     "e": 46.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 46.5,
+     "e": 46.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh's",
+     "s": 46.7,
+     "e": 47.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money",
+     "s": 47.62,
+     "e": 48.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 48.02,
+     "e": 48.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "strangers",
+     "s": 48.22,
+     "e": 48.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 48.86,
+     "e": 49.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 49.02,
+     "e": 49.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "other",
+     "s": 49.18,
+     "e": 49.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "side",
+     "s": 49.5,
+     "e": 49.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 49.86,
+     "e": 50.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 50.02,
+     "e": 50.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "world.",
+     "s": 50.18,
+     "e": 50.66,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 50.58,
+   "end": 53.7,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "And",
+     "s": 50.66,
+     "e": 51.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 51.02,
+     "e": 51.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "printer",
+     "s": 51.3,
+     "e": 51.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "did",
+     "s": 51.94,
+     "e": 52.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "not",
+     "s": 52.14,
+     "e": 52.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "break",
+     "s": 52.38,
+     "e": 52.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "by",
+     "s": 52.82,
+     "e": 53.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "accident.",
+     "s": 53.02,
+     "e": 53.78,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 53.7,
+   "end": 69.88,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "It",
+     "s": 53.78,
+     "e": 54.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 54.02,
+     "e": 54.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 54.3,
+     "e": 54.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 54.62,
+     "e": 54.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 54.82,
+     "e": 54.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "most",
+     "s": 54.94,
+     "e": 55.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ambitious",
+     "s": 55.22,
+     "e": 56.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 56.02,
+     "e": 56.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "robberies",
+     "s": 56.38,
+     "e": 57.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ever",
+     "s": 57.06,
+     "e": 57.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "attempted.",
+     "s": 57.46,
+     "e": 58.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "The",
+     "s": 58.18,
+     "e": 58.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thieves",
+     "s": 58.42,
+     "e": 58.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "never",
+     "s": 58.98,
+     "e": 59.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "touched",
+     "s": 59.18,
+     "e": 59.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 59.62,
+     "e": 59.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "door,",
+     "s": 59.78,
+     "e": 60.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 60.18,
+     "e": 60.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "vault",
+     "s": 60.34,
+     "e": 60.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "or",
+     "s": 60.82,
+     "e": 60.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 60.98,
+     "e": 61.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gun.",
+     "s": 61.18,
+     "e": 61.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "They",
+     "s": 61.72,
+     "e": 62.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "had",
+     "s": 62.16,
+     "e": 62.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "planned",
+     "s": 62.44,
+     "e": 62.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 62.92,
+     "e": 63.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 63.12,
+     "e": 63.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "more",
+     "s": 63.36,
+     "e": 63.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "than",
+     "s": 63.6,
+     "e": 63.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 63.84,
+     "e": 64.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "year.",
+     "s": 64.04,
+     "e": 64.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 64.52,
+     "e": 64.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "yet,",
+     "s": 64.8,
+     "e": 65.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out",
+     "s": 65.32,
+     "e": 65.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 65.52,
+     "e": 65.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "nearly",
+     "s": 65.72,
+     "e": 66.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 66.08,
+     "e": 66.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "billion",
+     "s": 66.24,
+     "e": 66.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars,",
+     "s": 66.68,
+     "e": 67.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 67.4,
+     "e": 67.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "got",
+     "s": 67.64,
+     "e": 67.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "away",
+     "s": 67.96,
+     "e": 68.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "with",
+     "s": 68.28,
+     "e": 68.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "less",
+     "s": 68.52,
+     "e": 68.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "than",
+     "s": 68.84,
+     "e": 69.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 69.04,
+     "e": 69.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tenth.",
+     "s": 69.24,
+     "e": 69.96,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 69.88,
+   "end": 74.12,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 69.96,
+     "e": 70.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "why",
+     "s": 70.52,
+     "e": 71.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "did",
+     "s": 71.0,
+     "e": 71.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "North",
+     "s": 71.24,
+     "e": 71.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Korea's",
+     "s": 71.64,
+     "e": 72.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "billion",
+     "s": 72.12,
+     "e": 72.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollar",
+     "s": 72.48,
+     "e": 72.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 72.84,
+     "e": 73.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "robbery",
+     "s": 73.12,
+     "e": 73.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fail?",
+     "s": 73.64,
+     "e": 74.2,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 7,
+   "start": 74.12,
+   "end": 90.84,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "To",
+     "s": 74.2,
+     "e": 74.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "answer",
+     "s": 74.52,
+     "e": 74.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that,",
+     "s": 74.88,
+     "e": 75.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "we",
+     "s": 75.28,
+     "e": 75.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "have",
+     "s": 75.56,
+     "e": 75.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 75.72,
+     "e": 75.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "go",
+     "s": 75.88,
+     "e": 76.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "back",
+     "s": 76.04,
+     "e": 76.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 76.28,
+     "e": 76.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "January",
+     "s": 76.44,
+     "e": 77.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "twenty",
+     "s": 77.04,
+     "e": 77.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fifteen.",
+     "s": 77.64,
+     "e": 78.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "A",
+     "s": 78.44,
+     "e": 78.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "few",
+     "s": 78.76,
+     "e": 79.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "people",
+     "s": 79.12,
+     "e": 79.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "at",
+     "s": 79.48,
+     "e": 79.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh",
+     "s": 79.68,
+     "e": 80.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bank",
+     "s": 80.36,
+     "e": 80.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "get",
+     "s": 80.84,
+     "e": 81.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 81.0,
+     "e": 81.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "polite",
+     "s": 81.16,
+     "e": 81.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "email",
+     "s": 81.56,
+     "e": 82.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 82.04,
+     "e": 82.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 82.24,
+     "e": 82.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "young",
+     "s": 82.4,
+     "e": 82.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "man",
+     "s": 82.68,
+     "e": 83.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "called",
+     "s": 83.0,
+     "e": 83.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Rasel",
+     "s": 83.44,
+     "e": 84.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Ahlam.",
+     "s": 84.1,
+     "e": 84.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "He",
+     "s": 84.76,
+     "e": 85.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "would",
+     "s": 85.08,
+     "e": 85.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "love",
+     "s": 85.4,
+     "e": 85.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 85.72,
+     "e": 85.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "work",
+     "s": 85.96,
+     "e": 86.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "at",
+     "s": 86.28,
+     "e": 86.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 86.44,
+     "e": 86.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank.",
+     "s": 86.6,
+     "e": 87.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "His",
+     "s": 87.32,
+     "e": 87.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "C",
+     "s": 87.92,
+     "e": 88.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "V",
+     "s": 88.12,
+     "e": 88.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 88.44,
+     "e": 88.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cover",
+     "s": 88.68,
+     "e": 89.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "letter",
+     "s": 89.08,
+     "e": 89.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "are",
+     "s": 89.48,
+     "e": 89.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ready",
+     "s": 89.64,
+     "e": 90.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 90.0,
+     "e": 90.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "download.",
+     "s": 90.16,
+     "e": 90.92,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 8,
+   "start": 90.84,
+   "end": 101.94,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "There",
+     "s": 90.92,
+     "e": 91.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 91.16,
+     "e": 91.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "no",
+     "s": 91.4,
+     "e": 91.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Rasel",
+     "s": 91.76,
+     "e": 92.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Ahlam.",
+     "s": 92.36,
+     "e": 93.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "But",
+     "s": 93.04,
+     "e": 93.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "someone",
+     "s": 93.4,
+     "e": 93.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "at",
+     "s": 93.96,
+     "e": 94.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 94.12,
+     "e": 94.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 94.28,
+     "e": 94.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "clicked.",
+     "s": 94.68,
+     "e": 95.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 95.3,
+     "e": 95.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 95.74,
+     "e": 95.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "files",
+     "s": 95.98,
+     "e": 96.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "carried",
+     "s": 96.74,
+     "e": 97.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hidden",
+     "s": 97.22,
+     "e": 97.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "software",
+     "s": 97.66,
+     "e": 98.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 98.46,
+     "e": 98.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "let",
+     "s": 98.7,
+     "e": 98.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 98.94,
+     "e": 99.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "senders",
+     "s": 99.14,
+     "e": 99.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "quietly",
+     "s": 99.78,
+     "e": 100.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "into",
+     "s": 100.42,
+     "e": 100.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 100.66,
+     "e": 100.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank's",
+     "s": 100.82,
+     "e": 101.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "network.",
+     "s": 101.22,
+     "e": 102.02,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 9,
+   "start": 101.94,
+   "end": 115.94,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "The",
+     "s": 102.02,
+     "e": 102.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "senders",
+     "s": 102.3,
+     "e": 102.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "were",
+     "s": 102.9,
+     "e": 103.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 103.1,
+     "e": 103.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "group",
+     "s": 103.26,
+     "e": 103.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 103.66,
+     "e": 103.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "security",
+     "s": 103.86,
+     "e": 104.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "researchers",
+     "s": 104.42,
+     "e": 105.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "call",
+     "s": 105.14,
+     "e": 105.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Lazarus.",
+     "s": 105.58,
+     "e": 106.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Years",
+     "s": 106.7,
+     "e": 107.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "later,",
+     "s": 107.14,
+     "e": 107.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 107.66,
+     "e": 107.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "F",
+     "s": 107.94,
+     "e": 108.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "B",
+     "s": 108.1,
+     "e": 108.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "I",
+     "s": 108.26,
+     "e": 108.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "would",
+     "s": 108.5,
+     "e": 108.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "say",
+     "s": 108.7,
+     "e": 108.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 108.94,
+     "e": 109.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "worked",
+     "s": 109.14,
+     "e": 109.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 109.46,
+     "e": 109.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 109.58,
+     "e": 109.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "government",
+     "s": 109.7,
+     "e": 110.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 110.18,
+     "e": 110.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "North",
+     "s": 110.3,
+     "e": 110.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Korea.",
+     "s": 110.66,
+     "e": 111.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "The",
+     "s": 111.38,
+     "e": 111.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "same",
+     "s": 111.62,
+     "e": 112.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "people",
+     "s": 112.02,
+     "e": 112.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "blamed",
+     "s": 112.46,
+     "e": 112.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 112.9,
+     "e": 113.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hacking",
+     "s": 113.14,
+     "e": 113.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Sony",
+     "s": 113.54,
+     "e": 113.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Pictures",
+     "s": 113.98,
+     "e": 114.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 114.58,
+     "e": 114.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "year",
+     "s": 114.82,
+     "e": 115.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "before.",
+     "s": 115.18,
+     "e": 116.02,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 10,
+   "start": 115.94,
+   "end": 130.32,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Fun",
+     "s": 116.02,
+     "e": 116.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fact.",
+     "s": 116.3,
+     "e": 116.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "North",
+     "s": 116.86,
+     "e": 117.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Korea",
+     "s": 117.5,
+     "e": 118.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 118.02,
+     "e": 118.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 118.22,
+     "e": 118.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 118.42,
+     "e": 118.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 118.54,
+     "e": 118.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "most",
+     "s": 118.66,
+     "e": 118.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cut",
+     "s": 118.94,
+     "e": 119.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "off",
+     "s": 119.22,
+     "e": 119.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "countries",
+     "s": 119.5,
+     "e": 120.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 120.06,
+     "e": 120.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "earth.",
+     "s": 120.3,
+     "e": 121.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Sanctions",
+     "s": 121.1,
+     "e": 121.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "make",
+     "s": 121.86,
+     "e": 122.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 122.06,
+     "e": 122.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "very",
+     "s": 122.26,
+     "e": 122.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hard",
+     "s": 122.54,
+     "e": 122.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 122.86,
+     "e": 123.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 123.02,
+     "e": 123.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 123.18,
+     "e": 123.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "earn",
+     "s": 123.3,
+     "e": 123.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money",
+     "s": 123.58,
+     "e": 123.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "abroad.",
+     "s": 123.94,
+     "e": 124.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "So,",
+     "s": 124.66,
+     "e": 125.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "according",
+     "s": 125.06,
+     "e": 125.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 125.78,
+     "e": 125.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "American",
+     "s": 125.94,
+     "e": 126.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "investigators,",
+     "s": 126.54,
+     "e": 127.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 127.54,
+     "e": 127.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "trained",
+     "s": 127.82,
+     "e": 128.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hackers",
+     "s": 128.22,
+     "e": 128.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 128.74,
+     "e": 128.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "go",
+     "s": 128.94,
+     "e": 129.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out",
+     "s": 129.18,
+     "e": 129.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 129.46,
+     "e": 129.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "take",
+     "s": 129.7,
+     "e": 130.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it.",
+     "s": 130.02,
+     "e": 130.4,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 11,
+   "start": 130.32,
+   "end": 145.24,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Once",
+     "s": 130.4,
+     "e": 131.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "inside,",
+     "s": 131.2,
+     "e": 132.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Lazarus",
+     "s": 132.0,
+     "e": 132.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "did",
+     "s": 132.68,
+     "e": 132.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "not",
+     "s": 132.88,
+     "e": 133.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "grab",
+     "s": 133.12,
+     "e": 133.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "anything.",
+     "s": 133.52,
+     "e": 134.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "They",
+     "s": 134.24,
+     "e": 134.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "waited.",
+     "s": 134.6,
+     "e": 135.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "For",
+     "s": 135.26,
+     "e": 135.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 135.58,
+     "e": 135.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "whole",
+     "s": 135.82,
+     "e": 136.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "year,",
+     "s": 136.22,
+     "e": 136.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 136.78,
+     "e": 137.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "moved",
+     "s": 137.1,
+     "e": 137.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "quietly",
+     "s": 137.62,
+     "e": 138.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 138.14,
+     "e": 138.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "computer",
+     "s": 138.42,
+     "e": 139.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 139.1,
+     "e": 139.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "computer,",
+     "s": 139.34,
+     "e": 140.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "until",
+     "s": 140.22,
+     "e": 140.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 140.7,
+     "e": 140.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "reached",
+     "s": 140.94,
+     "e": 141.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 141.42,
+     "e": 141.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ones",
+     "s": 141.58,
+     "e": 142.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 142.02,
+     "e": 142.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "matter",
+     "s": 142.3,
+     "e": 142.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "most.",
+     "s": 142.74,
+     "e": 143.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "The",
+     "s": 143.26,
+     "e": 143.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ones",
+     "s": 143.54,
+     "e": 143.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "connected",
+     "s": 143.98,
+     "e": 144.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 144.54,
+     "e": 144.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Swift.",
+     "s": 144.74,
+     "e": 145.32,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 12,
+   "start": 145.24,
+   "end": 160.18,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Remember",
+     "s": 145.32,
+     "e": 146.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Swift.",
+     "s": 146.2,
+     "e": 146.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Banks",
+     "s": 146.92,
+     "e": 147.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "trust",
+     "s": 147.44,
+     "e": 147.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 147.84,
+     "e": 148.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Swift",
+     "s": 148.0,
+     "e": 148.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "message",
+     "s": 148.4,
+     "e": 149.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "almost",
+     "s": 149.08,
+     "e": 149.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "like",
+     "s": 149.52,
+     "e": 149.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 149.72,
+     "e": 149.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "signed",
+     "s": 149.88,
+     "e": 150.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "letter.",
+     "s": 150.36,
+     "e": 151.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "If",
+     "s": 151.0,
+     "e": 151.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 151.28,
+     "e": 151.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "comes",
+     "s": 151.56,
+     "e": 152.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 152.0,
+     "e": 152.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh",
+     "s": 152.28,
+     "e": 153.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bank's",
+     "s": 153.04,
+     "e": 153.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Swift",
+     "s": 153.56,
+     "e": 154.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "computers,",
+     "s": 154.04,
+     "e": 154.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 154.84,
+     "e": 155.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 155.16,
+     "e": 155.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 155.64,
+     "e": 155.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 155.8,
+     "e": 155.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "other",
+     "s": 155.96,
+     "e": 156.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "end",
+     "s": 156.28,
+     "e": 156.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "assumes",
+     "s": 156.72,
+     "e": 157.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh",
+     "s": 157.8,
+     "e": 158.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bank",
+     "s": 158.6,
+     "e": 159.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "really",
+     "s": 159.0,
+     "e": 159.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sent",
+     "s": 159.52,
+     "e": 159.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it.",
+     "s": 159.88,
+     "e": 160.26,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 13,
+   "start": 160.18,
+   "end": 168.12,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "But",
+     "s": 160.26,
+     "e": 160.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stealing",
+     "s": 160.66,
+     "e": 161.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money",
+     "s": 161.26,
+     "e": 161.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "electronically",
+     "s": 161.58,
+     "e": 162.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 162.58,
+     "e": 162.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 162.78,
+     "e": 162.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "easy",
+     "s": 162.94,
+     "e": 163.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "part.",
+     "s": 163.34,
+     "e": 163.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "You",
+     "s": 163.7,
+     "e": 163.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "have",
+     "s": 163.94,
+     "e": 164.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 164.14,
+     "e": 164.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "send",
+     "s": 164.3,
+     "e": 164.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 164.58,
+     "e": 164.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "somewhere,",
+     "s": 164.74,
+     "e": 165.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 165.42,
+     "e": 165.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "then",
+     "s": 165.66,
+     "e": 165.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "get",
+     "s": 165.94,
+     "e": 166.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 166.18,
+     "e": 166.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out",
+     "s": 166.34,
+     "e": 166.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "before",
+     "s": 166.54,
+     "e": 166.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "anyone",
+     "s": 166.82,
+     "e": 167.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "notices.",
+     "s": 167.22,
+     "e": 168.12,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 14,
+   "start": 168.12,
+   "end": 181.7,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "In",
+     "s": 168.2,
+     "e": 168.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "May",
+     "s": 168.6,
+     "e": 168.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "twenty",
+     "s": 168.92,
+     "e": 169.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fifteen,",
+     "s": 169.4,
+     "e": 170.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "four",
+     "s": 170.16,
+     "e": 170.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "people",
+     "s": 170.6,
+     "e": 171.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "opened",
+     "s": 171.0,
+     "e": 171.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollar",
+     "s": 171.4,
+     "e": 171.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "accounts",
+     "s": 171.76,
+     "e": 172.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "at",
+     "s": 172.36,
+     "e": 172.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 172.52,
+     "e": 172.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "branch",
+     "s": 172.64,
+     "e": 173.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 173.04,
+     "e": 173.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 173.16,
+     "e": 173.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "big",
+     "s": 173.32,
+     "e": 173.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Philippine",
+     "s": 173.56,
+     "e": 174.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 174.12,
+     "e": 174.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 174.44,
+     "e": 174.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Manila.",
+     "s": 174.6,
+     "e": 175.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Five",
+     "s": 175.24,
+     "e": 175.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hundred",
+     "s": 175.72,
+     "e": 176.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars",
+     "s": 176.12,
+     "e": 176.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "each.",
+     "s": 176.88,
+     "e": 177.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Then",
+     "s": 177.48,
+     "e": 177.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 177.88,
+     "e": 178.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "accounts",
+     "s": 178.12,
+     "e": 178.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sat",
+     "s": 178.68,
+     "e": 179.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "there,",
+     "s": 179.04,
+     "e": 179.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "untouched,",
+     "s": 179.48,
+     "e": 180.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 180.36,
+     "e": 180.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "nine",
+     "s": 180.6,
+     "e": 181.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "months.",
+     "s": 181.04,
+     "e": 181.78,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 15,
+   "start": 181.7,
+   "end": 196.8,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Investigators",
+     "s": 181.78,
+     "e": 182.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "later",
+     "s": 182.98,
+     "e": 183.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "said",
+     "s": 183.46,
+     "e": 183.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 183.82,
+     "e": 184.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "driving",
+     "s": 184.06,
+     "e": 184.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "licences",
+     "s": 184.58,
+     "e": 185.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "used",
+     "s": 185.38,
+     "e": 185.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 185.78,
+     "e": 186.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "open",
+     "s": 186.02,
+     "e": 186.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "them",
+     "s": 186.42,
+     "e": 186.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "were",
+     "s": 186.74,
+     "e": 186.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fake.",
+     "s": 186.98,
+     "e": 187.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 187.54,
+     "e": 187.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "remember",
+     "s": 187.86,
+     "e": 188.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 188.66,
+     "e": 188.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "address",
+     "s": 188.9,
+     "e": 189.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 189.62,
+     "e": 189.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 189.86,
+     "e": 190.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "branch.",
+     "s": 190.14,
+     "e": 190.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 190.9,
+     "e": 191.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 191.3,
+     "e": 191.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 191.54,
+     "e": 191.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Jupiter",
+     "s": 191.78,
+     "e": 192.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Street.",
+     "s": 192.38,
+     "e": 192.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "That",
+     "s": 192.94,
+     "e": 193.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "name",
+     "s": 193.22,
+     "e": 193.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "comes",
+     "s": 193.58,
+     "e": 193.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "back,",
+     "s": 193.98,
+     "e": 194.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 194.38,
+     "e": 194.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 194.58,
+     "e": 194.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "costs",
+     "s": 194.78,
+     "e": 195.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 195.18,
+     "e": 195.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thieves",
+     "s": 195.34,
+     "e": 195.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "almost",
+     "s": 195.86,
+     "e": 196.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "everything.",
+     "s": 196.26,
+     "e": 196.88,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 16,
+   "start": 196.8,
+   "end": 209.22,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Next,",
+     "s": 196.88,
+     "e": 197.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 197.88,
+     "e": 198.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "timing.",
+     "s": 198.2,
+     "e": 199.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh",
+     "s": 199.2,
+     "e": 200.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bank",
+     "s": 200.0,
+     "e": 200.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "keeps",
+     "s": 200.48,
+     "e": 200.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "much",
+     "s": 200.88,
+     "e": 201.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 201.12,
+     "e": 201.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "its",
+     "s": 201.24,
+     "e": 201.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money",
+     "s": 201.52,
+     "e": 201.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 201.88,
+     "e": 202.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "an",
+     "s": 202.04,
+     "e": 202.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "account",
+     "s": 202.2,
+     "e": 202.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "at",
+     "s": 202.64,
+     "e": 202.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 202.8,
+     "e": 202.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Federal",
+     "s": 202.96,
+     "e": 203.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Reserve",
+     "s": 203.44,
+     "e": 204.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bank",
+     "s": 204.0,
+     "e": 204.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 204.36,
+     "e": 204.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 204.48,
+     "e": 204.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York.",
+     "s": 204.76,
+     "e": 205.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "So",
+     "s": 205.3,
+     "e": 205.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "if",
+     "s": 205.94,
+     "e": 206.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 206.18,
+     "e": 206.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "want",
+     "s": 206.42,
+     "e": 206.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 206.66,
+     "e": 206.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "empty",
+     "s": 206.82,
+     "e": 207.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it,",
+     "s": 207.26,
+     "e": 207.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "when",
+     "s": 207.7,
+     "e": 208.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "do",
+     "s": 208.02,
+     "e": 208.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 208.26,
+     "e": 208.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "do",
+     "s": 208.5,
+     "e": 208.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it?",
+     "s": 208.78,
+     "e": 209.3,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 17,
+   "start": 209.22,
+   "end": 221.74,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "In",
+     "s": 209.3,
+     "e": 209.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh,",
+     "s": 209.62,
+     "e": 210.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 210.5,
+     "e": 210.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "weekend",
+     "s": 210.74,
+     "e": 211.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 211.26,
+     "e": 211.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Friday",
+     "s": 211.42,
+     "e": 212.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 212.02,
+     "e": 212.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Saturday.",
+     "s": 212.22,
+     "e": 213.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "In",
+     "s": 213.1,
+     "e": 213.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 213.3,
+     "e": 213.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York,",
+     "s": 213.54,
+     "e": 214.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 214.02,
+     "e": 214.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 214.18,
+     "e": 214.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Saturday",
+     "s": 214.38,
+     "e": 215.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 215.02,
+     "e": 215.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Sunday.",
+     "s": 215.22,
+     "e": 215.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 215.78,
+     "e": 216.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 216.02,
+     "e": 216.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 216.14,
+     "e": 216.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Philippines,",
+     "s": 216.34,
+     "e": 217.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Monday",
+     "s": 217.3,
+     "e": 217.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 217.78,
+     "e": 217.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eighth",
+     "s": 217.94,
+     "e": 218.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 218.26,
+     "e": 218.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "February",
+     "s": 218.38,
+     "e": 219.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 219.02,
+     "e": 219.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Chinese",
+     "s": 219.22,
+     "e": 219.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 219.82,
+     "e": 220.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Year,",
+     "s": 220.06,
+     "e": 220.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 220.42,
+     "e": 220.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "public",
+     "s": 220.58,
+     "e": 221.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "holiday.",
+     "s": 221.06,
+     "e": 221.82,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 18,
+   "start": 221.74,
+   "end": 236.82,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 221.82,
+     "e": 222.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "if",
+     "s": 222.38,
+     "e": 222.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 222.58,
+     "e": 222.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "orders",
+     "s": 222.82,
+     "e": 223.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "go",
+     "s": 223.26,
+     "e": 223.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out",
+     "s": 223.5,
+     "e": 223.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 223.7,
+     "e": 223.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Thursday",
+     "s": 223.9,
+     "e": 224.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "night,",
+     "s": 224.54,
+     "e": 225.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh",
+     "s": 225.02,
+     "e": 225.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 225.82,
+     "e": 225.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "going",
+     "s": 225.98,
+     "e": 226.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "home",
+     "s": 226.3,
+     "e": 226.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 226.54,
+     "e": 226.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 226.66,
+     "e": 226.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "weekend,",
+     "s": 226.82,
+     "e": 227.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 227.54,
+     "e": 227.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York",
+     "s": 227.74,
+     "e": 228.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 228.14,
+     "e": 228.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "about",
+     "s": 228.38,
+     "e": 228.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 228.62,
+     "e": 228.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "close,",
+     "s": 228.82,
+     "e": 229.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 229.34,
+     "e": 229.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Manila",
+     "s": 229.66,
+     "e": 230.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 230.22,
+     "e": 230.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "about",
+     "s": 230.46,
+     "e": 230.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 230.74,
+     "e": 230.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "shut",
+     "s": 230.94,
+     "e": 231.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 231.3,
+     "e": 231.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 231.46,
+     "e": 231.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "long",
+     "s": 231.62,
+     "e": 231.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "weekend.",
+     "s": 231.9,
+     "e": 232.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Four",
+     "s": 232.58,
+     "e": 233.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "days",
+     "s": 233.22,
+     "e": 233.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "where",
+     "s": 233.94,
+     "e": 234.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "nobody",
+     "s": 234.18,
+     "e": 234.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "can",
+     "s": 234.78,
+     "e": 235.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "easily",
+     "s": 235.02,
+     "e": 235.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "reach",
+     "s": 235.54,
+     "e": 235.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "anybody.",
+     "s": 235.94,
+     "e": 236.84,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 19,
+   "start": 236.82,
+   "end": 243.74,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Rule",
+     "s": 236.9,
+     "e": 237.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 237.26,
+     "e": 237.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 237.54,
+     "e": 237.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "robbing",
+     "s": 237.74,
+     "e": 238.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 238.18,
+     "e": 238.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 238.3,
+     "e": 238.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 238.66,
+     "e": 238.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "three",
+     "s": 238.9,
+     "e": 239.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "continents:",
+     "s": 239.18,
+     "e": 240.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "check",
+     "s": 240.14,
+     "e": 240.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "everybody's",
+     "s": 240.54,
+     "e": 241.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "holiday",
+     "s": 241.22,
+     "e": 241.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "calendar.",
+     "s": 241.74,
+     "e": 242.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Lazarus",
+     "s": 242.58,
+     "e": 243.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "did.",
+     "s": 243.38,
+     "e": 243.82,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 20,
+   "start": 243.74,
+   "end": 254.74,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Thursday,",
+     "s": 243.82,
+     "e": 244.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "February",
+     "s": 244.82,
+     "e": 245.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 245.58,
+     "e": 245.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fourth.",
+     "s": 245.7,
+     "e": 246.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Late",
+     "s": 246.3,
+     "e": 246.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 246.7,
+     "e": 246.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 246.9,
+     "e": 247.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "evening",
+     "s": 247.14,
+     "e": 247.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 247.66,
+     "e": 247.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Dhaka.",
+     "s": 247.9,
+     "e": 248.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Using",
+     "s": 248.66,
+     "e": 249.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 249.46,
+     "e": 249.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank's",
+     "s": 249.7,
+     "e": 250.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "own",
+     "s": 250.18,
+     "e": 250.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Swift",
+     "s": 250.42,
+     "e": 250.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "computers,",
+     "s": 250.9,
+     "e": 251.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 251.7,
+     "e": 251.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hackers",
+     "s": 251.9,
+     "e": 252.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "start",
+     "s": 252.38,
+     "e": 252.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sending",
+     "s": 252.74,
+     "e": 253.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "payment",
+     "s": 253.1,
+     "e": 253.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "orders",
+     "s": 253.5,
+     "e": 253.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 253.86,
+     "e": 254.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 254.02,
+     "e": 254.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York.",
+     "s": 254.26,
+     "e": 254.82,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 21,
+   "start": 254.74,
+   "end": 267.94,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Thirty",
+     "s": 254.82,
+     "e": 255.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "five",
+     "s": 255.38,
+     "e": 255.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 255.7,
+     "e": 255.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "them.",
+     "s": 255.86,
+     "e": 256.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Together,",
+     "s": 256.22,
+     "e": 257.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "about",
+     "s": 257.02,
+     "e": 257.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "nine",
+     "s": 257.38,
+     "e": 257.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hundred",
+     "s": 257.74,
+     "e": 258.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 258.06,
+     "e": 258.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fifty",
+     "s": 258.18,
+     "e": 258.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 258.58,
+     "e": 258.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 258.82,
+     "e": 259.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars.",
+     "s": 259.26,
+     "e": 260.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Each",
+     "s": 260.14,
+     "e": 260.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 260.54,
+     "e": 260.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tells",
+     "s": 260.86,
+     "e": 261.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 261.26,
+     "e": 261.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 261.46,
+     "e": 261.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York",
+     "s": 261.62,
+     "e": 261.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Fed",
+     "s": 261.94,
+     "e": 262.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 262.26,
+     "e": 262.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "move",
+     "s": 262.42,
+     "e": 262.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money",
+     "s": 262.7,
+     "e": 263.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out",
+     "s": 263.06,
+     "e": 263.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 263.22,
+     "e": 263.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh's",
+     "s": 263.38,
+     "e": 264.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "account",
+     "s": 264.18,
+     "e": 264.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 264.7,
+     "e": 264.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "into",
+     "s": 264.94,
+     "e": 265.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "accounts",
+     "s": 265.26,
+     "e": 265.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 265.78,
+     "e": 265.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 265.9,
+     "e": 266.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Philippines",
+     "s": 266.02,
+     "e": 266.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 266.78,
+     "e": 266.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Sri",
+     "s": 266.98,
+     "e": 267.327,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Lanka.",
+     "s": 267.327,
+     "e": 268.02,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 22,
+   "start": 267.94,
+   "end": 280.54,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Then",
+     "s": 268.02,
+     "e": 268.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 268.54,
+     "e": 268.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cover",
+     "s": 268.9,
+     "e": 269.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "their",
+     "s": 269.26,
+     "e": 269.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tracks.",
+     "s": 269.54,
+     "e": 270.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Their",
+     "s": 270.3,
+     "e": 270.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "software",
+     "s": 270.7,
+     "e": 271.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "changes",
+     "s": 271.5,
+     "e": 271.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 271.9,
+     "e": 272.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank's",
+     "s": 272.06,
+     "e": 272.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "records,",
+     "s": 272.46,
+     "e": 273.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "so",
+     "s": 273.06,
+     "e": 273.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 273.26,
+     "e": 273.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "orders",
+     "s": 273.5,
+     "e": 273.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "do",
+     "s": 273.94,
+     "e": 274.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "not",
+     "s": 274.14,
+     "e": 274.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "show",
+     "s": 274.38,
+     "e": 274.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "up.",
+     "s": 274.7,
+     "e": 275.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 275.02,
+     "e": 275.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 275.22,
+     "e": 275.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stops",
+     "s": 275.42,
+     "e": 275.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 275.9,
+     "e": 276.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "printer",
+     "s": 276.06,
+     "e": 276.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 276.5,
+     "e": 276.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 276.62,
+     "e": 276.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tenth",
+     "s": 276.78,
+     "e": 277.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "floor,",
+     "s": 277.14,
+     "e": 277.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 277.66,
+     "e": 277.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 277.9,
+     "e": 278.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 278.18,
+     "e": 278.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "would",
+     "s": 278.38,
+     "e": 278.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "have",
+     "s": 278.54,
+     "e": 278.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "put",
+     "s": 278.7,
+     "e": 278.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "every",
+     "s": 278.98,
+     "e": 279.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "message",
+     "s": 279.26,
+     "e": 279.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 279.78,
+     "e": 279.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "paper.",
+     "s": 279.98,
+     "e": 280.62,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 23,
+   "start": 280.54,
+   "end": 288.2,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "In",
+     "s": 280.62,
+     "e": 280.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 280.86,
+     "e": 281.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York,",
+     "s": 281.06,
+     "e": 281.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 281.54,
+     "e": 281.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "orders",
+     "s": 281.78,
+     "e": 282.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "arrive",
+     "s": 282.26,
+     "e": 282.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 282.7,
+     "e": 282.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "perfect",
+     "s": 282.94,
+     "e": 283.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "format,",
+     "s": 283.42,
+     "e": 284.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "with",
+     "s": 284.1,
+     "e": 284.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "all",
+     "s": 284.38,
+     "e": 284.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 284.66,
+     "e": 284.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "right",
+     "s": 284.86,
+     "e": 285.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "codes.",
+     "s": 285.18,
+     "e": 285.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 285.82,
+     "e": 286.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 286.02,
+     "e": 286.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "computers",
+     "s": 286.22,
+     "e": 287.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "start",
+     "s": 287.02,
+     "e": 287.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 287.42,
+     "e": 287.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pay",
+     "s": 287.58,
+     "e": 287.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "them.",
+     "s": 287.9,
+     "e": 288.28,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 24,
+   "start": 288.2,
+   "end": 303.1,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "And",
+     "s": 288.28,
+     "e": 288.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "this",
+     "s": 288.68,
+     "e": 289.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 289.08,
+     "e": 289.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "where",
+     "s": 289.4,
+     "e": 289.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 289.64,
+     "e": 289.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "plan",
+     "s": 289.84,
+     "e": 290.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "starts",
+     "s": 290.28,
+     "e": 290.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 290.8,
+     "e": 291.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fall",
+     "s": 291.0,
+     "e": 291.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "apart.",
+     "s": 291.28,
+     "e": 291.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "One",
+     "s": 291.84,
+     "e": 292.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "payment",
+     "s": 292.12,
+     "e": 292.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 292.76,
+     "e": 293.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "twenty",
+     "s": 293.0,
+     "e": 293.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 293.44,
+     "e": 293.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars",
+     "s": 293.88,
+     "e": 294.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 294.36,
+     "e": 294.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 294.56,
+     "e": 294.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "charity",
+     "s": 294.68,
+     "e": 295.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 295.16,
+     "e": 295.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Sri",
+     "s": 295.32,
+     "e": 295.613,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Lanka",
+     "s": 295.613,
+     "e": 296.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "called",
+     "s": 296.2,
+     "e": 296.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 296.64,
+     "e": 296.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Shalika",
+     "s": 296.8,
+     "e": 297.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Foundation.",
+     "s": 297.72,
+     "e": 298.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Except",
+     "s": 298.52,
+     "e": 298.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 298.96,
+     "e": 299.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "order",
+     "s": 299.16,
+     "e": 299.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "spells",
+     "s": 299.56,
+     "e": 300.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 300.08,
+     "e": 300.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Shalika",
+     "s": 300.52,
+     "e": 301.85,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Fandation.",
+     "s": 301.85,
+     "e": 303.18,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 25,
+   "start": 303.1,
+   "end": 317.38,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "A",
+     "s": 303.18,
+     "e": 303.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 303.42,
+     "e": 303.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 303.86,
+     "e": 303.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 303.98,
+     "e": 304.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "middle",
+     "s": 304.1,
+     "e": 304.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 304.38,
+     "e": 304.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 304.5,
+     "e": 304.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "chain,",
+     "s": 304.62,
+     "e": 305.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Deutsche",
+     "s": 305.1,
+     "e": 305.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bank,",
+     "s": 305.62,
+     "e": 306.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "noticed",
+     "s": 306.06,
+     "e": 306.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 306.54,
+     "e": 306.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "odd",
+     "s": 306.7,
+     "e": 307.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "spelling",
+     "s": 307.02,
+     "e": 307.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 307.54,
+     "e": 307.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "asked",
+     "s": 307.74,
+     "e": 308.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh",
+     "s": 308.1,
+     "e": 308.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 308.78,
+     "e": 308.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "check.",
+     "s": 308.98,
+     "e": 309.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "The",
+     "s": 309.46,
+     "e": 309.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money",
+     "s": 309.74,
+     "e": 310.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 310.3,
+     "e": 310.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stopped.",
+     "s": 310.58,
+     "e": 311.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Here's",
+     "s": 311.34,
+     "e": 312.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 312.02,
+     "e": 312.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pro",
+     "s": 312.22,
+     "e": 312.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tip",
+     "s": 312.46,
+     "e": 312.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 312.86,
+     "e": 313.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "anyone",
+     "s": 313.06,
+     "e": 313.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "planning",
+     "s": 313.58,
+     "e": 314.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 314.02,
+     "e": 314.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "billion",
+     "s": 314.22,
+     "e": 314.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollar",
+     "s": 314.66,
+     "e": 315.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "robbery:",
+     "s": 315.06,
+     "e": 315.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "use",
+     "s": 315.82,
+     "e": 316.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 316.26,
+     "e": 316.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "spell",
+     "s": 316.42,
+     "e": 316.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "checker.",
+     "s": 316.78,
+     "e": 317.46,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 26,
+   "start": 317.38,
+   "end": 333.58,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "But",
+     "s": 317.46,
+     "e": 317.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 317.78,
+     "e": 318.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bigger",
+     "s": 318.1,
+     "e": 318.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "problem",
+     "s": 318.54,
+     "e": 319.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 319.1,
+     "e": 319.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 319.3,
+     "e": 319.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 319.5,
+     "e": 319.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York.",
+     "s": 319.7,
+     "e": 320.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Remember",
+     "s": 320.18,
+     "e": 320.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Jupiter",
+     "s": 320.74,
+     "e": 321.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Street?",
+     "s": 321.3,
+     "e": 321.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "The",
+     "s": 321.86,
+     "e": 322.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 322.1,
+     "e": 322.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York",
+     "s": 322.34,
+     "e": 322.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Fed",
+     "s": 322.7,
+     "e": 323.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "checks",
+     "s": 323.18,
+     "e": 323.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "payments",
+     "s": 323.66,
+     "e": 324.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "against",
+     "s": 324.26,
+     "e": 324.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "America's",
+     "s": 324.66,
+     "e": 325.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sanctions",
+     "s": 325.34,
+     "e": 325.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lists.",
+     "s": 325.94,
+     "e": 326.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 326.58,
+     "e": 326.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Jupiter",
+     "s": 326.94,
+     "e": 327.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 327.58,
+     "e": 327.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "also",
+     "s": 327.86,
+     "e": 328.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 328.18,
+     "e": 328.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "name",
+     "s": 328.5,
+     "e": 328.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 328.74,
+     "e": 328.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "an",
+     "s": 328.9,
+     "e": 329.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "oil",
+     "s": 329.06,
+     "e": 329.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tanker",
+     "s": 329.46,
+     "e": 329.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 329.98,
+     "e": 330.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 330.18,
+     "e": 330.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "shipping",
+     "s": 330.34,
+     "e": 330.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "company",
+     "s": 330.78,
+     "e": 331.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "under",
+     "s": 331.18,
+     "e": 331.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "American",
+     "s": 331.42,
+     "e": 331.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sanctions",
+     "s": 331.98,
+     "e": 332.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "against",
+     "s": 332.62,
+     "e": 333.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Iran.",
+     "s": 333.02,
+     "e": 333.66,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 27,
+   "start": 333.58,
+   "end": 345.34,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 333.66,
+     "e": 333.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 333.98,
+     "e": 334.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "payments",
+     "s": 334.22,
+     "e": 334.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "heading",
+     "s": 334.82,
+     "e": 335.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 335.18,
+     "e": 335.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Jupiter",
+     "s": 335.38,
+     "e": 335.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Street",
+     "s": 335.9,
+     "e": 336.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "raised",
+     "s": 336.38,
+     "e": 336.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 336.82,
+     "e": 336.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "flag.",
+     "s": 336.94,
+     "e": 337.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Staff",
+     "s": 337.82,
+     "e": 338.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "at",
+     "s": 338.38,
+     "e": 338.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 338.5,
+     "e": 338.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 338.66,
+     "e": 338.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York",
+     "s": 338.86,
+     "e": 339.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Fed",
+     "s": 339.22,
+     "e": 339.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "began",
+     "s": 339.78,
+     "e": 340.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 340.18,
+     "e": 340.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "look",
+     "s": 340.42,
+     "e": 340.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "at",
+     "s": 340.7,
+     "e": 340.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 340.86,
+     "e": 341.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "orders",
+     "s": 341.02,
+     "e": 341.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "much",
+     "s": 341.54,
+     "e": 341.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "more",
+     "s": 341.82,
+     "e": 342.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "closely,",
+     "s": 342.06,
+     "e": 342.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 342.78,
+     "e": 343.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 343.02,
+     "e": 343.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "send",
+     "s": 343.18,
+     "e": 343.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "questions",
+     "s": 343.5,
+     "e": 344.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "back",
+     "s": 344.1,
+     "e": 344.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 344.26,
+     "e": 344.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh.",
+     "s": 344.42,
+     "e": 345.32,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 28,
+   "start": 345.34,
+   "end": 360.48,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "By",
+     "s": 345.42,
+     "e": 345.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "then,",
+     "s": 345.74,
+     "e": 346.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "five",
+     "s": 346.26,
+     "e": 346.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "payments",
+     "s": 346.78,
+     "e": 347.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "had",
+     "s": 347.26,
+     "e": 347.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "already",
+     "s": 347.42,
+     "e": 347.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gone",
+     "s": 347.82,
+     "e": 348.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "through.",
+     "s": 348.22,
+     "e": 348.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "One",
+     "s": 348.7,
+     "e": 349.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hundred",
+     "s": 349.02,
+     "e": 349.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 349.5,
+     "e": 349.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 349.78,
+     "e": 350.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 350.14,
+     "e": 350.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars.",
+     "s": 350.62,
+     "e": 351.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "The",
+     "s": 351.46,
+     "e": 351.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "twenty",
+     "s": 351.74,
+     "e": 352.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 352.22,
+     "e": 352.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 352.7,
+     "e": 352.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Sri",
+     "s": 352.86,
+     "e": 353.153,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Lanka",
+     "s": 353.153,
+     "e": 353.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "would",
+     "s": 353.74,
+     "e": 353.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "come",
+     "s": 353.98,
+     "e": 354.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "back.",
+     "s": 354.3,
+     "e": 354.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "But",
+     "s": 354.68,
+     "e": 355.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 355.04,
+     "e": 355.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "other",
+     "s": 355.4,
+     "e": 355.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thirty",
+     "s": 355.72,
+     "e": 356.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "orders,",
+     "s": 356.24,
+     "e": 356.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "worth",
+     "s": 356.88,
+     "e": 357.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "around",
+     "s": 357.24,
+     "e": 357.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eight",
+     "s": 357.64,
+     "e": 357.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hundred",
+     "s": 357.96,
+     "e": 358.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 358.24,
+     "e": 358.29,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fifty",
+     "s": 358.24,
+     "e": 358.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 358.6,
+     "e": 358.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars,",
+     "s": 358.96,
+     "e": 359.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "were",
+     "s": 359.68,
+     "e": 359.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "held.",
+     "s": 359.96,
+     "e": 360.56,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 29,
+   "start": 360.48,
+   "end": 373.6,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "The",
+     "s": 360.56,
+     "e": 360.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "questions",
+     "s": 360.88,
+     "e": 361.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 361.56,
+     "e": 361.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 361.76,
+     "e": 361.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York",
+     "s": 361.96,
+     "e": 362.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "went",
+     "s": 362.4,
+     "e": 362.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 362.64,
+     "e": 362.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Dhaka.",
+     "s": 362.84,
+     "e": 363.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "But",
+     "s": 363.6,
+     "e": 364.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 364.16,
+     "e": 364.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 364.44,
+     "e": 364.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Friday.",
+     "s": 364.76,
+     "e": 365.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "The",
+     "s": 365.6,
+     "e": 365.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "office",
+     "s": 365.88,
+     "e": 366.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 366.52,
+     "e": 366.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "nearly",
+     "s": 366.76,
+     "e": 367.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "empty.",
+     "s": 367.24,
+     "e": 367.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 367.88,
+     "e": 368.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 368.32,
+     "e": 368.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "machine",
+     "s": 368.68,
+     "e": 369.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 369.32,
+     "e": 369.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "would",
+     "s": 369.48,
+     "e": 369.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "have",
+     "s": 369.6,
+     "e": 369.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "printed",
+     "s": 369.76,
+     "e": 370.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "those",
+     "s": 370.2,
+     "e": 370.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "messages",
+     "s": 370.4,
+     "e": 371.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 371.16,
+     "e": 371.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 371.36,
+     "e": 371.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "printer",
+     "s": 371.56,
+     "e": 372.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 372.2,
+     "e": 372.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "had",
+     "s": 372.4,
+     "e": 372.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stopped",
+     "s": 372.6,
+     "e": 373.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "working.",
+     "s": 373.04,
+     "e": 373.68,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 30,
+   "start": 373.6,
+   "end": 383.64,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "On",
+     "s": 373.68,
+     "e": 373.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Saturday,",
+     "s": 373.96,
+     "e": 374.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "staff",
+     "s": 374.84,
+     "e": 375.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "finally",
+     "s": 375.24,
+     "e": 375.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "got",
+     "s": 375.68,
+     "e": 375.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 375.92,
+     "e": 376.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "printer",
+     "s": 376.04,
+     "e": 376.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "going",
+     "s": 376.52,
+     "e": 376.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "again.",
+     "s": 376.88,
+     "e": 377.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Out",
+     "s": 377.32,
+     "e": 377.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "came",
+     "s": 377.64,
+     "e": 377.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 377.96,
+     "e": 378.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "messages.",
+     "s": 378.24,
+     "e": 379.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Questions",
+     "s": 379.16,
+     "e": 379.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 379.84,
+     "e": 380.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 380.04,
+     "e": 380.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York,",
+     "s": 380.24,
+     "e": 380.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "about",
+     "s": 380.76,
+     "e": 381.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "payments",
+     "s": 381.08,
+     "e": 381.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 381.64,
+     "e": 381.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 381.88,
+     "e": 382.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "had",
+     "s": 382.24,
+     "e": 382.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "never",
+     "s": 382.44,
+     "e": 382.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "meant",
+     "s": 382.72,
+     "e": 383.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 383.04,
+     "e": 383.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "make.",
+     "s": 383.28,
+     "e": 383.72,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 31,
+   "start": 383.64,
+   "end": 402.36,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "They",
+     "s": 383.72,
+     "e": 384.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tried",
+     "s": 384.16,
+     "e": 384.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 384.6,
+     "e": 384.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "call",
+     "s": 384.76,
+     "e": 385.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 385.08,
+     "e": 385.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 385.28,
+     "e": 385.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York",
+     "s": 385.48,
+     "e": 385.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Fed.",
+     "s": 385.84,
+     "e": 386.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 386.4,
+     "e": 386.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 386.72,
+     "e": 387.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 387.04,
+     "e": 387.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "weekend.",
+     "s": 387.28,
+     "e": 388.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "They",
+     "s": 388.04,
+     "e": 388.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sent",
+     "s": 388.36,
+     "e": 388.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "emails",
+     "s": 388.68,
+     "e": 389.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 389.48,
+     "e": 389.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "faxes.",
+     "s": 389.76,
+     "e": 390.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "No",
+     "s": 390.84,
+     "e": 391.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "answer.",
+     "s": 391.28,
+     "e": 391.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "When",
+     "s": 391.88,
+     "e": 392.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 392.2,
+     "e": 392.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York",
+     "s": 392.44,
+     "e": 392.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "opened",
+     "s": 392.8,
+     "e": 393.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 393.16,
+     "e": 393.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Monday,",
+     "s": 393.36,
+     "e": 393.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 393.92,
+     "e": 394.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "asked",
+     "s": 394.2,
+     "e": 394.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 394.48,
+     "e": 394.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 394.68,
+     "e": 394.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stop",
+     "s": 394.88,
+     "e": 395.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "everything.",
+     "s": 395.28,
+     "e": 395.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "But",
+     "s": 395.98,
+     "e": 396.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 396.5,
+     "e": 396.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Manila,",
+     "s": 396.86,
+     "e": 397.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Monday",
+     "s": 397.58,
+     "e": 398.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 398.34,
+     "e": 398.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Chinese",
+     "s": 398.62,
+     "e": 399.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 399.26,
+     "e": 399.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Year.",
+     "s": 399.5,
+     "e": 400.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "The",
+     "s": 400.06,
+     "e": 400.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 400.46,
+     "e": 400.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "there",
+     "s": 400.9,
+     "e": 401.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 401.26,
+     "e": 401.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "closed.",
+     "s": 401.58,
+     "e": 402.44,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 32,
+   "start": 402.36,
+   "end": 411.34,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "By",
+     "s": 402.44,
+     "e": 402.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 402.84,
+     "e": 403.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "time",
+     "s": 403.04,
+     "e": 403.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Manila",
+     "s": 403.4,
+     "e": 403.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "opened",
+     "s": 403.92,
+     "e": 404.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 404.24,
+     "e": 404.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Tuesday,",
+     "s": 404.44,
+     "e": 405.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 405.16,
+     "e": 405.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eighty",
+     "s": 405.44,
+     "e": 405.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 405.84,
+     "e": 406.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 406.04,
+     "e": 406.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars",
+     "s": 406.52,
+     "e": 407.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 407.04,
+     "e": 407.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "those",
+     "s": 407.2,
+     "e": 407.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "four",
+     "s": 407.48,
+     "e": 407.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sleepy",
+     "s": 407.76,
+     "e": 408.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "accounts",
+     "s": 408.24,
+     "e": 408.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "on",
+     "s": 408.68,
+     "e": 408.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Jupiter",
+     "s": 408.84,
+     "e": 409.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Street",
+     "s": 409.32,
+     "e": 409.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "had",
+     "s": 409.72,
+     "e": 409.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "already",
+     "s": 409.92,
+     "e": 410.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "been",
+     "s": 410.48,
+     "e": 410.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pulled",
+     "s": 410.68,
+     "e": 411.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out.",
+     "s": 411.08,
+     "e": 411.42,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 33,
+   "start": 411.34,
+   "end": 421.94,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Quick",
+     "s": 411.42,
+     "e": 411.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "thing,",
+     "s": 411.98,
+     "e": 412.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "before",
+     "s": 412.38,
+     "e": 412.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "we",
+     "s": 412.78,
+     "e": 413.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "follow",
+     "s": 413.02,
+     "e": 413.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 413.34,
+     "e": 413.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money.",
+     "s": 413.5,
+     "e": 413.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "If",
+     "s": 413.98,
+     "e": 414.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you're",
+     "s": 414.22,
+     "e": 414.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "enjoying",
+     "s": 414.5,
+     "e": 415.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "this,",
+     "s": 415.06,
+     "e": 415.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hit",
+     "s": 415.5,
+     "e": 415.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "like",
+     "s": 415.82,
+     "e": 416.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 416.22,
+     "e": 416.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "subscribe.",
+     "s": 416.46,
+     "e": 417.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It's",
+     "s": 417.3,
+     "e": 417.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "free,",
+     "s": 417.66,
+     "e": 418.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 418.06,
+     "e": 418.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "unlike",
+     "s": 418.3,
+     "e": 418.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh",
+     "s": 418.74,
+     "e": 419.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bank's",
+     "s": 419.34,
+     "e": 419.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "printer,",
+     "s": 419.74,
+     "e": 420.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 420.22,
+     "e": 420.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "actually",
+     "s": 420.5,
+     "e": 421.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "works.",
+     "s": 421.26,
+     "e": 422.02,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 34,
+   "start": 421.94,
+   "end": 435.1,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 422.02,
+     "e": 422.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "where",
+     "s": 422.54,
+     "e": 422.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "did",
+     "s": 422.94,
+     "e": 423.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eighty",
+     "s": 423.34,
+     "e": 423.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 423.74,
+     "e": 423.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 423.94,
+     "e": 424.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars",
+     "s": 424.38,
+     "e": 424.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "go?",
+     "s": 424.98,
+     "e": 425.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "First,",
+     "s": 425.38,
+     "e": 426.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "through",
+     "s": 426.34,
+     "e": 426.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 426.66,
+     "e": 426.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money",
+     "s": 426.9,
+     "e": 427.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "transfer",
+     "s": 427.3,
+     "e": 427.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "company",
+     "s": 427.86,
+     "e": 428.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 428.26,
+     "e": 428.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Manila,",
+     "s": 428.42,
+     "e": 429.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "where",
+     "s": 429.06,
+     "e": 429.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "much",
+     "s": 429.3,
+     "e": 429.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 429.58,
+     "e": 429.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 429.7,
+     "e": 429.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 429.9,
+     "e": 430.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "changed",
+     "s": 430.1,
+     "e": 430.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "into",
+     "s": 430.62,
+     "e": 430.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Philippine",
+     "s": 430.82,
+     "e": 431.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pesos.",
+     "s": 431.46,
+     "e": 432.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Then,",
+     "s": 432.34,
+     "e": 432.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "into",
+     "s": 432.9,
+     "e": 433.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 433.34,
+     "e": 433.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "city's",
+     "s": 433.58,
+     "e": 434.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "casinos.",
+     "s": 434.06,
+     "e": 434.96,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 35,
+   "start": 435.1,
+   "end": 451.48,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Casinos",
+     "s": 435.18,
+     "e": 436.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "are",
+     "s": 436.18,
+     "e": 436.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "very",
+     "s": 436.38,
+     "e": 436.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "useful",
+     "s": 436.78,
+     "e": 437.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 437.3,
+     "e": 437.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "this.",
+     "s": 437.5,
+     "e": 437.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Big",
+     "s": 437.98,
+     "e": 438.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "piles",
+     "s": 438.3,
+     "e": 438.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 438.7,
+     "e": 438.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money",
+     "s": 438.86,
+     "e": 439.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "go",
+     "s": 439.18,
+     "e": 439.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in,",
+     "s": 439.38,
+     "e": 439.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "chips",
+     "s": 439.74,
+     "e": 440.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "come",
+     "s": 440.22,
+     "e": 440.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out,",
+     "s": 440.46,
+     "e": 440.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 440.74,
+     "e": 440.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "by",
+     "s": 440.94,
+     "e": 441.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 441.18,
+     "e": 441.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "time",
+     "s": 441.34,
+     "e": 441.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "anyone",
+     "s": 441.62,
+     "e": 442.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "follows",
+     "s": 442.1,
+     "e": 442.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 442.46,
+     "e": 442.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "trail,",
+     "s": 442.7,
+     "e": 443.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 443.22,
+     "e": 443.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "has",
+     "s": 443.46,
+     "e": 443.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gone",
+     "s": 443.74,
+     "e": 444.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cold.",
+     "s": 444.1,
+     "e": 444.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 444.7,
+     "e": 445.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 445.02,
+     "e": 445.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "twenty",
+     "s": 445.3,
+     "e": 445.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sixteen,",
+     "s": 445.82,
+     "e": 446.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Philippine",
+     "s": 446.66,
+     "e": 447.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "casinos",
+     "s": 447.3,
+     "e": 448.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "were",
+     "s": 448.06,
+     "e": 448.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "not",
+     "s": 448.22,
+     "e": 448.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "even",
+     "s": 448.46,
+     "e": 448.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "covered",
+     "s": 448.78,
+     "e": 449.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "by",
+     "s": 449.26,
+     "e": 449.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 449.38,
+     "e": 449.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "country's",
+     "s": 449.58,
+     "e": 450.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money",
+     "s": 450.1,
+     "e": 450.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "laundering",
+     "s": 450.42,
+     "e": 450.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "law.",
+     "s": 450.98,
+     "e": 451.56,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 36,
+   "start": 451.48,
+   "end": 459.98,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "A",
+     "s": 451.56,
+     "e": 451.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "casino",
+     "s": 451.96,
+     "e": 452.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "businessman",
+     "s": 452.52,
+     "e": 453.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "named",
+     "s": 453.32,
+     "e": 453.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Kim",
+     "s": 453.68,
+     "e": 454.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Wong",
+     "s": 454.52,
+     "e": 454.57,
+     "speaker": "narrator"
+    },
+    {
+     "w": "later",
+     "s": 454.52,
+     "e": 455.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "handed",
+     "s": 455.0,
+     "e": 455.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "back",
+     "s": 455.4,
+     "e": 455.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "around",
+     "s": 455.64,
+     "e": 456.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fifteen",
+     "s": 456.12,
+     "e": 456.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 456.72,
+     "e": 457.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars.",
+     "s": 457.16,
+     "e": 457.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Most",
+     "s": 457.84,
+     "e": 458.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 458.16,
+     "e": 458.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 458.32,
+     "e": 458.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "rest",
+     "s": 458.48,
+     "e": 458.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "has",
+     "s": 458.88,
+     "e": 459.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "never",
+     "s": 459.08,
+     "e": 459.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "been",
+     "s": 459.4,
+     "e": 459.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "found.",
+     "s": 459.68,
+     "e": 460.06,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 37,
+   "start": 459.98,
+   "end": 474.06,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "The",
+     "s": 460.06,
+     "e": 460.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "manager",
+     "s": 460.42,
+     "e": 460.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 460.98,
+     "e": 461.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 461.1,
+     "e": 461.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Jupiter",
+     "s": 461.22,
+     "e": 461.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Street",
+     "s": 461.7,
+     "e": 462.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "branch,",
+     "s": 462.1,
+     "e": 462.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Maia",
+     "s": 462.7,
+     "e": 463.05,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Deguito,",
+     "s": 463.05,
+     "e": 464.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 464.1,
+     "e": 464.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "convicted",
+     "s": 464.34,
+     "e": 464.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 464.98,
+     "e": 465.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "money",
+     "s": 465.18,
+     "e": 465.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "laundering",
+     "s": 465.58,
+     "e": 466.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 466.1,
+     "e": 466.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "twenty",
+     "s": 466.3,
+     "e": 466.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "nineteen.",
+     "s": 466.7,
+     "e": 467.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "She",
+     "s": 467.42,
+     "e": 467.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "said",
+     "s": 467.7,
+     "e": 467.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "she",
+     "s": 467.98,
+     "e": 468.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 468.18,
+     "e": 468.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "being",
+     "s": 468.38,
+     "e": 468.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "made",
+     "s": 468.7,
+     "e": 468.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 468.98,
+     "e": 469.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "scapegoat.",
+     "s": 469.1,
+     "e": 470.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "In",
+     "s": 470.02,
+     "e": 470.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh,",
+     "s": 470.34,
+     "e": 471.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 471.34,
+     "e": 471.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "governor",
+     "s": 471.58,
+     "e": 472.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 472.14,
+     "e": 472.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 472.26,
+     "e": 472.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "central",
+     "s": 472.42,
+     "e": 472.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 472.94,
+     "e": 473.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "resigned.",
+     "s": 473.42,
+     "e": 474.14,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 38,
+   "start": 474.06,
+   "end": 483.62,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "And",
+     "s": 474.14,
+     "e": 474.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 474.46,
+     "e": 474.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "twenty",
+     "s": 474.7,
+     "e": 475.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eighteen,",
+     "s": 475.1,
+     "e": 475.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 475.78,
+     "e": 476.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "F",
+     "s": 476.06,
+     "e": 476.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "B",
+     "s": 476.18,
+     "e": 476.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "I",
+     "s": 476.42,
+     "e": 476.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "charged",
+     "s": 476.7,
+     "e": 477.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 477.18,
+     "e": 477.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "North",
+     "s": 477.34,
+     "e": 477.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Korean",
+     "s": 477.62,
+     "e": 478.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "programmer,",
+     "s": 478.14,
+     "e": 478.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Park",
+     "s": 478.82,
+     "e": 479.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Jin",
+     "s": 479.46,
+     "e": 479.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Hyok,",
+     "s": 479.9,
+     "e": 480.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "over",
+     "s": 480.58,
+     "e": 480.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 480.9,
+     "e": 481.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "heist.",
+     "s": 481.14,
+     "e": 481.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "He",
+     "s": 481.7,
+     "e": 481.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "has",
+     "s": 481.98,
+     "e": 482.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "never",
+     "s": 482.22,
+     "e": 482.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "been",
+     "s": 482.54,
+     "e": 482.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "arrested.",
+     "s": 482.86,
+     "e": 483.7,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 39,
+   "start": 483.62,
+   "end": 495.74,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Remember",
+     "s": 483.7,
+     "e": 484.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Sony",
+     "s": 484.42,
+     "e": 484.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Pictures?",
+     "s": 484.86,
+     "e": 485.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "The",
+     "s": 485.7,
+     "e": 485.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "same",
+     "s": 485.94,
+     "e": 486.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "charges",
+     "s": 486.26,
+     "e": 486.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "blamed",
+     "s": 486.86,
+     "e": 487.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 487.3,
+     "e": 487.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "group",
+     "s": 487.54,
+     "e": 487.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 487.82,
+     "e": 487.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 487.94,
+     "e": 488.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hack",
+     "s": 488.18,
+     "e": 488.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "too,",
+     "s": 488.5,
+     "e": 489.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 489.14,
+     "e": 489.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 489.46,
+     "e": 489.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "WannaCry,",
+     "s": 489.78,
+     "e": 490.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 490.74,
+     "e": 490.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "attack",
+     "s": 490.98,
+     "e": 491.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 491.46,
+     "e": 491.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "froze",
+     "s": 491.66,
+     "e": 492.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "computers",
+     "s": 492.02,
+     "e": 492.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 492.54,
+     "e": 492.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hospitals",
+     "s": 492.7,
+     "e": 493.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "across",
+     "s": 493.3,
+     "e": 493.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Britain",
+     "s": 493.74,
+     "e": 494.22,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 494.22,
+     "e": 494.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "year",
+     "s": 494.42,
+     "e": 494.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "after",
+     "s": 494.7,
+     "e": 495.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 495.02,
+     "e": 495.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "heist.",
+     "s": 495.18,
+     "e": 495.82,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 40,
+   "start": 495.74,
+   "end": 508.06,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 495.82,
+     "e": 496.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "why",
+     "s": 496.26,
+     "e": 496.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "did",
+     "s": 496.66,
+     "e": 496.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "North",
+     "s": 496.9,
+     "e": 497.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Korea's",
+     "s": 497.26,
+     "e": 497.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "billion",
+     "s": 497.74,
+     "e": 498.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollar",
+     "s": 498.1,
+     "e": 498.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 498.46,
+     "e": 498.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "robbery",
+     "s": 498.74,
+     "e": 499.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fail?",
+     "s": 499.3,
+     "e": 499.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Not",
+     "s": 499.76,
+     "e": 500.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "because",
+     "s": 500.24,
+     "e": 500.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "anyone",
+     "s": 500.68,
+     "e": 501.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "caught",
+     "s": 501.2,
+     "e": 501.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 501.48,
+     "e": 501.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hackers",
+     "s": 501.64,
+     "e": 502.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 502.16,
+     "e": 502.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "time.",
+     "s": 502.4,
+     "e": 503.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Their",
+     "s": 503.04,
+     "e": 503.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "break",
+     "s": 503.36,
+     "e": 503.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 503.76,
+     "e": 504.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "worked.",
+     "s": 504.2,
+     "e": 504.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Their",
+     "s": 504.8,
+     "e": 505.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fake",
+     "s": 505.16,
+     "e": 505.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "orders",
+     "s": 505.56,
+     "e": 506.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "worked.",
+     "s": 506.04,
+     "e": 506.48,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Their",
+     "s": 506.48,
+     "e": 506.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "printer",
+     "s": 506.72,
+     "e": 507.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "trick",
+     "s": 507.2,
+     "e": 507.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "worked.",
+     "s": 507.6,
+     "e": 508.14,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 41,
+   "start": 508.06,
+   "end": 524.48,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "It",
+     "s": 508.14,
+     "e": 508.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "failed",
+     "s": 508.62,
+     "e": 509.1,
+     "speaker": "narrator"
+    },
+    {
+     "w": "because",
+     "s": 509.1,
+     "e": 509.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 509.42,
+     "e": 509.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "small",
+     "s": 509.62,
+     "e": 509.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "things",
+     "s": 509.9,
+     "e": 510.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "they",
+     "s": 510.3,
+     "e": 510.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "did",
+     "s": 510.46,
+     "e": 510.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "not",
+     "s": 510.66,
+     "e": 510.82,
+     "speaker": "narrator"
+    },
+    {
+     "w": "control.",
+     "s": 510.82,
+     "e": 511.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "A",
+     "s": 511.42,
+     "e": 511.58,
+     "speaker": "narrator"
+    },
+    {
+     "w": "spelling",
+     "s": 511.58,
+     "e": 512.14,
+     "speaker": "narrator"
+    },
+    {
+     "w": "mistake",
+     "s": 512.14,
+     "e": 512.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 512.74,
+     "e": 512.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 512.9,
+     "e": 513.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bank",
+     "s": 513.06,
+     "e": 513.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 513.42,
+     "e": 513.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 513.54,
+     "e": 513.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "middle",
+     "s": 513.66,
+     "e": 514.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "noticed.",
+     "s": 514.02,
+     "e": 514.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "A",
+     "s": 514.7,
+     "e": 514.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "street",
+     "s": 514.94,
+     "e": 515.42,
+     "speaker": "narrator"
+    },
+    {
+     "w": "name",
+     "s": 515.42,
+     "e": 515.66,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 515.66,
+     "e": 515.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Manila",
+     "s": 515.86,
+     "e": 516.5,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 516.5,
+     "e": 516.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "happened",
+     "s": 516.74,
+     "e": 517.18,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 517.18,
+     "e": 517.38,
+     "speaker": "narrator"
+    },
+    {
+     "w": "match",
+     "s": 517.38,
+     "e": 517.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 517.74,
+     "e": 517.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "sanctioned",
+     "s": 517.98,
+     "e": 518.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "ship.",
+     "s": 518.74,
+     "e": 519.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 519.26,
+     "e": 519.54,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 519.54,
+     "e": 519.7,
+     "speaker": "narrator"
+    },
+    {
+     "w": "weekend",
+     "s": 519.7,
+     "e": 520.3,
+     "speaker": "narrator"
+    },
+    {
+     "w": "plan",
+     "s": 520.3,
+     "e": 520.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 520.74,
+     "e": 520.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gave",
+     "s": 520.98,
+     "e": 521.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "New",
+     "s": 521.26,
+     "e": 521.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "York",
+     "s": 521.46,
+     "e": 521.98,
+     "speaker": "narrator"
+    },
+    {
+     "w": "just",
+     "s": 521.98,
+     "e": 522.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "enough",
+     "s": 522.26,
+     "e": 522.62,
+     "speaker": "narrator"
+    },
+    {
+     "w": "time",
+     "s": 522.62,
+     "e": 523.06,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 523.06,
+     "e": 523.34,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stop",
+     "s": 523.34,
+     "e": 523.74,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 523.74,
+     "e": 523.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "rest.",
+     "s": 523.94,
+     "e": 524.56,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 42,
+   "start": 524.48,
+   "end": 540.12,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "And",
+     "s": 524.56,
+     "e": 524.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "here",
+     "s": 524.88,
+     "e": 525.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 525.36,
+     "e": 525.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 525.56,
+     "e": 525.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "darker",
+     "s": 525.76,
+     "e": 526.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "part.",
+     "s": 526.2,
+     "e": 526.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 526.64,
+     "e": 527.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "did",
+     "s": 527.12,
+     "e": 527.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "not",
+     "s": 527.4,
+     "e": 527.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fully",
+     "s": 527.72,
+     "e": 528.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fail.",
+     "s": 528.24,
+     "e": 528.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Eighty",
+     "s": 528.72,
+     "e": 529.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 529.32,
+     "e": 529.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 529.56,
+     "e": 530.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars",
+     "s": 530.0,
+     "e": 530.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "is",
+     "s": 530.72,
+     "e": 530.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "still",
+     "s": 530.96,
+     "e": 531.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gone.",
+     "s": 531.36,
+     "e": 532.04,
+     "speaker": "narrator"
+    },
+    {
+     "w": "And",
+     "s": 532.04,
+     "e": 532.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "investigators",
+     "s": 532.56,
+     "e": 533.46,
+     "speaker": "narrator"
+    },
+    {
+     "w": "say",
+     "s": 533.64,
+     "e": 533.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "North",
+     "s": 533.92,
+     "e": 534.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Korea",
+     "s": 534.28,
+     "e": 534.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "kept",
+     "s": 534.76,
+     "e": 535.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "going,",
+     "s": 535.12,
+     "e": 535.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "stealing",
+     "s": 535.56,
+     "e": 536.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "far",
+     "s": 536.16,
+     "e": 536.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "more",
+     "s": 536.52,
+     "e": 536.8,
+     "speaker": "narrator"
+    },
+    {
+     "w": "from",
+     "s": 536.8,
+     "e": 537.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "banks",
+     "s": 537.08,
+     "e": 537.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 537.56,
+     "e": 537.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "crypto",
+     "s": 537.72,
+     "e": 538.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "companies",
+     "s": 538.2,
+     "e": 538.72,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 538.72,
+     "e": 538.84,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 538.84,
+     "e": 539.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "years",
+     "s": 539.0,
+     "e": 539.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 539.32,
+     "e": 539.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "followed.",
+     "s": 539.6,
+     "e": 540.2,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 43,
+   "start": 540.12,
+   "end": 548.8,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "The",
+     "s": 540.2,
+     "e": 540.52,
+     "speaker": "narrator"
+    },
+    {
+     "w": "plan",
+     "s": 540.52,
+     "e": 541.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 541.0,
+     "e": 541.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "almost",
+     "s": 541.32,
+     "e": 542.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "perfect.",
+     "s": 542.12,
+     "e": 542.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 542.92,
+     "e": 543.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "took",
+     "s": 543.16,
+     "e": 543.4,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 543.4,
+     "e": 543.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "typo,",
+     "s": 543.56,
+     "e": 544.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 544.12,
+     "e": 544.32,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 544.32,
+     "e": 544.44,
+     "speaker": "narrator"
+    },
+    {
+     "w": "street",
+     "s": 544.44,
+     "e": 544.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "called",
+     "s": 544.76,
+     "e": 545.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Jupiter,",
+     "s": 545.08,
+     "e": 545.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 545.68,
+     "e": 545.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "save",
+     "s": 545.92,
+     "e": 546.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eight",
+     "s": 546.28,
+     "e": 546.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hundred",
+     "s": 546.6,
+     "e": 546.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 546.96,
+     "e": 547.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fifty",
+     "s": 547.12,
+     "e": 547.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "million",
+     "s": 547.6,
+     "e": 548.08,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dollars.",
+     "s": 548.08,
+     "e": 548.88,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 44,
+   "start": 548.8,
+   "end": 556.35,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 548.88,
+     "e": 549.68,
+     "speaker": "narrator"
+    },
+    {
+     "w": "which",
+     "s": 549.68,
+     "e": 550.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "was",
+     "s": 550.0,
+     "e": 550.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "luckier",
+     "s": 550.24,
+     "e": 550.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 550.76,
+     "e": 550.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bangladesh:",
+     "s": 550.96,
+     "e": 551.76,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 551.76,
+     "e": 552.0,
+     "speaker": "narrator"
+    },
+    {
+     "w": "typo,",
+     "s": 552.0,
+     "e": 552.64,
+     "speaker": "narrator"
+    },
+    {
+     "w": "or",
+     "s": 552.64,
+     "e": 552.96,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Jupiter",
+     "s": 552.96,
+     "e": 553.56,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Street?",
+     "s": 553.56,
+     "e": 554.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Let",
+     "s": 554.12,
+     "e": 554.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "me",
+     "s": 554.36,
+     "e": 554.6,
+     "speaker": "narrator"
+    },
+    {
+     "w": "know",
+     "s": 554.6,
+     "e": 554.92,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 554.92,
+     "e": 555.12,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 555.12,
+     "e": 555.28,
+     "speaker": "narrator"
+    },
+    {
+     "w": "comments.",
+     "s": 555.28,
+     "e": 555.78,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ],
+ "source": "align_voice",
+ "matched": 0.976
+}
