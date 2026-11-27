@@ -11,3 +11,4 @@ repeats. One row per lead, used or rejected.
 | 2026-11-26 | #574 | Swallowed eels escape out through a predator's gills | 013-eel-escapes-fish | used (Hasegawa et al., Current Biology 2024) |
 | 2026-11-26 | #443 | Man stayed in bed for 30 years (John Tallis) | 014-never-get-out-of-bed | lead only: Tallis story is poorly sourced (one blog), so the script uses the 1966 Dallas bed-rest study instead |
 | 2026-11-26 | #600 | Farmers fill tractor tyres with beet juice | prototypes/beet-tyres (vivid look test) | used (Rim Guard, Yanmar, Monarch, Kubota manual) |
+| 2026-11-26 | #608 | Yoshie Shiratori escaped four Japanese prisons (miso soup rusted the bolts) and gave up after a kind cop offered a cigarette | prototypes/shiratori (smol reference style) | used (Wikipedia, All That's Interesting, Grunge, Tokyo Weekender, Amusing Planet; miso detail is popular retelling, noted in script) |

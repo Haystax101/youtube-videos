@@ -1,0 +1,65 @@
+{
+ "video": "prototypes/shiratori/video.fixed.mp4",
+ "duration": 48.5,
+ "result": "FAIL",
+ "checks": [
+  {
+   "check": "black",
+   "status": "FAIL",
+   "detail": "patched -> video.fixed.mp4 (deliver that file). one-frame black glitch at 1.53-1.53s (29% dark), 14.57-14.57s (46% dark), 16.10-16.10s (38% dark), 34.63-34.63s (47% dark), 40.97-40.97s (37% dark) -> rerun with --fix, or re-render those chunks"
+  },
+  {
+   "check": "freeze",
+   "status": "PASS",
+   "detail": "picture keeps moving"
+  },
+  {
+   "check": "loudness",
+   "status": "PASS",
+   "detail": "-15.4 LUFS, true peak -4.4 dBTP (want -14 +/- 1.5, <= -1)"
+  },
+  {
+   "check": "clipping",
+   "status": "PASS",
+   "detail": "music.wav: 0 noisy window(s) | audio.sfx.wav: 0 noisy window(s) | AUDIO OK"
+  },
+  {
+   "check": "hiss",
+   "status": "PASS",
+   "detail": "no broadband static"
+  },
+  {
+   "check": "silence",
+   "status": "PASS",
+   "detail": "no dead air"
+  },
+  {
+   "check": "balance",
+   "status": "WARN",
+   "detail": "narration -18.9 LUFS, music+SFX -26.8 LUFS: voice 7.9 LU on top (want >= 8)"
+  },
+  {
+   "check": "flicker",
+   "status": "WARN",
+   "detail": "5 one-frame pop(s), worst at 40.83s, 14.43s, 43.50s, 36.70s, 30.47s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
+  },
+  {
+   "check": "vanish",
+   "status": "PASS",
+   "detail": "nothing blinks out for a frame"
+  },
+  {
+   "check": "length",
+   "status": "PASS",
+   "detail": "48.5 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
+  },
+  {
+   "check": "overlap",
+   "status": "PASS",
+   "detail": "0 on-screen overlap(s)"
+  }
+ ],
+ "contact_sheet": "prototypes/shiratori/qa/contact.jpg",
+ "review": null,
+ "review_mtime": 1795738124.1046696
+}

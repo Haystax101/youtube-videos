@@ -15,6 +15,7 @@
 | 012 | 2026-11-26 | Sheltering under a manchineel tree in the rain (Fish #313) | - | new beach set + manchineel tree, rain fx, apple; dare hook, chiptune, bf_emma, speed 1.28, chunky Gary | | survives / comment_next |
 | 013 | 2026-11-26 | A fish swallows an eel and it escapes through the gills (Fish #574) | - | FIRST no-Gary Short: underwater set, predator fish with X-ray, segmented eel; question hook, hype, af_bella, speed 1.12 | | survives / follow |
 | 014 | 2026-11-26 | Never getting out of bed (Dallas bed-rest study; Fish #443 lead) | - | new bedroom set, lie + jog poses; number-first hook, epic, am_fenrir, speed 1.2, low poly | | better / shenanigans |
+| shiratori | 2026-11-27 | Yoshie Shiratori, the man no prison could hold (Fish #608) | - | FIRST smol-look Short (george's reference style): 3D big-head characters with ink outlines, bright 3D sets, 31 quick cuts with whip pans and DOF, koto/taiko score; bold claim hook, am_michael 1.2, 48 s (prototypes/shiratori) | | better / follow |
 
 ## Style locked to low-poly (george, 2026-11-25)
 

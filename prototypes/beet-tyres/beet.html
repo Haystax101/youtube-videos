@@ -48,14 +48,15 @@ const voiceT = t => t < HOOK_END ? t : (t < HOOK_END + RW ? null : t - RW);
 function worldT(t) { if (t < HOOK_END) return HOOK_W0 + t; if (t < HOOK_END + RW) return lerp(HOOK_W0 + HOOK_END, HOOK_END, ease(HOOK_END, HOOK_END + RW, t)); return t - RW; }
 
 // ---------- renderer + vivid grade ----------
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true, logarithmicDepthBuffer: true }); // log depth: no z-fighting between layered ground planes far away
 renderer.setSize(W, H, false); renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = 1.05;
 renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 const scene = new THREE.Scene();
 const FOG_SUM = new THREE.Color('#b9d8f0'), FOG_WIN = new THREE.Color('#d6e6f4');
 scene.fog = new THREE.Fog(FOG_SUM.clone(), 60, 700);
-const cam = new THREE.PerspectiveCamera(55, W / H, 0.03, 3000);
-const composer = new EffectComposer(renderer);
+const cam = new THREE.PerspectiveCamera(55, W / H, 0.05, 2600);
+// the composer's own targets have no MSAA, so edges crawl as the camera moves: give it a 4x multisampled target
+const composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(W, H, { samples: 4, type: THREE.HalfFloatType }));
 composer.addPass(new RenderPass(scene, cam));
 composer.addPass(new UnrealBloomPass(new THREE.Vector2(W / 2, H / 2), 0.16, 0.4, 0.93));
 const grade = new ShaderPass({ uniforms: { tDiffuse: { value: null }, sat: { value: 1.18 }, blur: { value: 0 } },
@@ -84,6 +85,10 @@ const sun = new THREE.DirectionalLight('#fff4dc', 3.0); sun.castShadow = true; s
 { const sc = sun.shadow.camera; sc.left = sc.bottom = -16; sc.right = sc.top = 16; sc.near = 1; sc.far = 140; }
 scene.add(sun, sun.target);
 const SUN_DIR = V(-22, 40, 30).normalize().multiplyScalar(60);
+// a shadow camera that slides with the action makes every shadow edge shimmer; move it in whole shadow-map texels only
+const LZ = SUN_DIR.clone().normalize(), LX = new THREE.Vector3(0, 1, 0).cross(LZ).normalize(), LY = LZ.clone().cross(LX);
+function snapToTexel(f, half) { const tx = 2 * half / 4096, a = Math.round(f.dot(LX) / tx) * tx, b = Math.round(f.dot(LY) / tx) * tx, c = f.dot(LZ);
+  f.copy(LX).multiplyScalar(a).addScaledVector(LY, b).addScaledVector(LZ, c); }
 const cloudTex = canvasTex(256, 128, (x, w, h) => { const r = rng(6); for (let i = 0; i < 30; i++) { const cx = 40 + r() * 176, cy = 56 + r() * 34 - Math.abs(cx - 128) * 0.12, rad = 16 + r() * 30; const g = x.createRadialGradient(cx, cy - rad * 0.3, 2, cx, cy, rad); g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(0.8, 'rgba(246,250,255,1)'); g.addColorStop(0.93, 'rgba(232,240,252,.9)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, w, h); } }, 1);
 { const r = rng(15); for (let i = 0; i < 44; i++) { const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: cloudTex, transparent: true, fog: false, depthWrite: false })); const a = r() * 6.283, d = 1100 + r() * 600;
   s.position.set(Math.cos(a) * d, 160 + r() * 260, Math.sin(a) * d); s.scale.set(220 + r() * 180, 100 + r() * 60, 1); scene.add(s); } }
@@ -117,7 +122,7 @@ const plantTex = canvasTex(256, 256, (x, w, h) => { const leaves = [[-1.1, 0.95]
     x.strokeStyle = 'rgba(220,255,190,.55)'; x.lineWidth = 3; x.beginPath(); x.moveTo(0, -6); x.quadraticCurveTo(3, -L * 0.5, 0, -L * 0.92); x.stroke(); x.restore(); }); }, 1);
 const crops = [];
 { const r = rng(55), pts = []; for (let x = -19.5; x <= 19.5; x += 0.9) { if (Math.abs(x) < 1.9) continue; for (let z = 18; z > -158; z -= 0.55 + r() * 0.2) { if (x > -6 && x < 0 && z > -44 && z < -28) continue; pts.push([x + (r() - 0.5) * 0.1, z, 0.5 + r() * 0.35, r() * 6]); } }
-  const cropMat = new THREE.MeshStandardMaterial({ map: plantTex, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.75 });
+  const cropMat = new THREE.MeshStandardMaterial({ map: plantTex, alphaTest: 0.45, alphaToCoverage: true, side: THREE.DoubleSide, roughness: 0.75 });
   for (const rot of [0, 1.047, 2.094]) crops.push(inst(new THREE.PlaneGeometry(0.62, 0.62).translate(0, 0.3, 0), cropMat, pts, (d, [x, z, s, a]) => { d.position.set(x, 0, z); d.scale.setScalar(s * 1.2); d.rotation.y = a + rot; }, false)); }
 const greenMats = [];
 const hedgeMat = std('#ffffff', { map: leafTex('#3f8a2e', '#2f6d22', '#5aa83c', 31), roughness: 0.9 }); greenMats.push(hedgeMat);
@@ -153,7 +158,7 @@ const hayEnd = std('#e8c35a', { map: canvasTex(128, 128, (x, w, h) => { x.fillSt
   inst(new THREE.BoxGeometry(0.16, 1.3, 0.16), post, pts, (d, [x, z]) => { d.position.set(x, 0.65, z); });
   inst(new THREE.BoxGeometry(0.06, 0.1, 3), std('#a87650'), pts.flatMap(p => [[...p, 0.5], [...p, 1.0]]), (d, [x, z, y]) => { d.position.set(x, y, z - 1.5); }); }
 const grassTex = canvasTex(256, 256, (x, w, h) => { const r = rng(12); for (let i = 0; i < 46; i++) { const bx = 20 + r() * 216, lean = (r() - 0.5) * 70, top = 30 + r() * 120; x.strokeStyle = ['#5aa83a', '#79c24c', '#4a9a32', '#93d65a'][i % 4]; x.lineWidth = 2 + r() * 2.5; x.lineCap = 'round'; x.beginPath(); x.moveTo(bx, h); x.quadraticCurveTo(bx + lean * 0.3, (h + top) / 2, bx + lean, top); x.stroke(); } }, 1);
-const grassMat = new THREE.MeshStandardMaterial({ map: grassTex, alphaTest: 0.4, side: THREE.DoubleSide, roughness: 0.9 }); greenMats.push(grassMat);
+const grassMat = new THREE.MeshStandardMaterial({ map: grassTex, alphaTest: 0.4, alphaToCoverage: true, side: THREE.DoubleSide, roughness: 0.9 }); greenMats.push(grassMat);
 { const r = rng(19), pts = []; for (let i = 0; i < 400; i++) { const x = (r() < 0.5 ? -1 : 1) * (20.5 + r() * 1.5), z = 10 - r() * 160; pts.push([x, z, r() * 3, 0.8 + r() * 0.7]); }
   for (let i = 0; i < 160; i++) { const x = -10.5 + (r() - 0.5) * 1.2, z = -2 - r() * 140; pts.push([x, z, r() * 3, 0.7 + r() * 0.5]); }
   for (const rot of [0, Math.PI / 2]) inst(new THREE.PlaneGeometry(1.6, 1.6).translate(0, 0.8, 0), grassMat, pts, (d, [x, z, a, s]) => { d.position.set(x, 0, z); d.rotation.set(0, a + rot, 0); d.scale.setScalar(s); }, false); }
@@ -416,7 +421,7 @@ const SHOTS = [
   [T_COLD, (w, u) => ({ p: V(-6.3 + u * 0.15, 1.45, -35.3 - u * 0.15), l: V(-2.9, 1.05, -37.0), fov: 50 })],
   [T_GENTLE, (w, u) => ({ p: V(-4.9 + u * 0.3, 1.05, -37.0), l: V(-1.36, 0.95, -37.0), fov: 56 })],
   [T_PAY - 0.05, (w, u) => { const a = 0.75 - u * 0.2; return { p: V(Math.cos(a) * 12.5, 3.0, tp().z + 2 + Math.sin(a) * 12.5), l: V(0, 1.6, tp().z + 2.2), fov: 52 }; }],
-  [WT(7, 'technically') - 0.3, (w, u) => ({ p: V(0.55, 2.88, tp().z + 1.0 - u * 0.05), l: V(-0.05, 2.58, tp().z - 0.45), fov: 62 })],
+  [WT(7, 'technically') - 0.3, (w, u) => ({ p: V(0.55, 2.88 + tp().y, tp().z + 1.0 - u * 0.05), l: V(-0.05, 2.58 + tp().y, tp().z - 0.45), fov: 62 })],
 ];
 function shotAt(w) { let i = 0; for (let k = 1; k < SHOTS.length; k++) if (w >= SHOTS[k][0]) i = k; if (w >= HOOK_W0 - 1 && w < HOOK_W0 + HOOK_END + 0.01 && hookMode) i = 0; return i; }
 let hookMode = false;
@@ -451,9 +456,9 @@ window.renderFrame = (t) => {
   flakes.material.opacity = s.snow > 0.3 ? 0.95 : 0;
   // tractor
   T.position.set(0, 0, s.tz); TILT.rotation.x = s.tip * 0.2;
-  const dist = s.tz - (-48), spinA = 14 * clamp(w - T_SPIN, 0, T_TIP - 0.1 - T_SPIN);
-  wheels.forEach((wh) => { wh.spin.rotation.x = dist / wh.r + (wh.rear ? spinA : 0) + 0.6; });
-  T.position.y = s.drive ? Math.abs(Math.sin(w * 7)) * 0.015 : 0;
+  const DPARK = PARK.z + 0.35 + 48, dist = s.tz - (-48), spinA = 6.5 * clamp(w - T_SPIN, 0, T_TIP - 0.1 - T_SPIN);
+  wheels.forEach((wh) => { wh.spin.rotation.x = (DPARK + (dist - DPARK) * 0.3) / wh.r + (wh.rear ? spinA : 0) + 0.6; });
+  T.position.y = s.drive ? (1 - Math.cos(w * 14)) * 0.0075 : 0;   // smooth bob: abs(sin) had a kink that jolted the cab camera
   LOADER.visible = s.loader; ARMS.rotation.x = 0.3 - 0.48 * s.loaderUp; SPEAR.rotation.x = -ARMS.rotation.x;
   mud.visible = w > BS(1) && w < T_FILL; mudBits.visible = s.spin;
   if (s.spin) { mudSeeds.forEach(([a, b, c, d], i) => { const u = ((w - T_SPIN) * 2.2 + a) % 1, side = i % 2 ? 1 : -1; const vx = (b - 0.5) * 1.5, vz = -3.5 - c * 3, vy = 3 + d * 3;
@@ -464,7 +469,7 @@ window.renderFrame = (t) => {
   drawRust(s.rust);
   brine.visible = s.brine > 0.02; brine.scale.setScalar(0.2 + s.brine * 0.9);
   IBC.visible = s.ibc; SACK.visible = s.sack; THERMO.visible = s.thermo > 0;
-  if (s.ibc) { IBC.updateMatrixWorld(true); RL.updateMatrixWorld(true); hose(RL.userData.valve.getWorldPosition(new THREE.Vector3()).add(V(-0.06, 0, 0))); HOSE.visible = true; IBC.userData.pump.position.y = 0.15 + (s.pumping ? Math.sin(w * 40) * 0.008 : 0); IBC.userData.juice.scale.y = s.pumping ? lerp(1, 0.55, ease(T_BEET, T_PAY, w)) : 1; IBC.userData.juice.position.y = 0.18 + 0.4 * IBC.userData.juice.scale.y; }
+  if (s.ibc) { IBC.updateMatrixWorld(true); RL.updateMatrixWorld(true); hose(RL.userData.valve.getWorldPosition(new THREE.Vector3()).add(V(-0.06, 0, 0))); HOSE.visible = true; IBC.userData.pump.position.y = 0.15 + (s.pumping ? Math.sin(w * 9) * 0.008 : 0); IBC.userData.juice.scale.y = s.pumping ? lerp(1, 0.55, ease(T_BEET, T_PAY, w)) : 1; IBC.userData.juice.position.y = 0.18 + 0.4 * IBC.userData.juice.scale.y; }
   else if (HOSE) HOSE.visible = false;
   // steam
   puffs.forEach((p, i) => { const src = steam[i % steam.length], u = ((w * 0.25 + i * 0.137) % 1); p.position.set(src.x + u * 8, src.y + 1 + u * 14, src.z + u * 3); p.scale.setScalar(3 + u * 9); p.material.opacity = 0.9 * (1 - u); });
@@ -472,8 +477,8 @@ window.renderFrame = (t) => {
   const si = shotAt(w), [a0, f] = SHOTS[si]; const local = hookMode ? t : (w - a0);
   const c = f(w, Math.max(0, local)); cam.position.copy(c.p); cam.fov = c.fov; cam.updateProjectionMatrix(); cam.lookAt(c.l);
   const sh = (a, amp) => { const u = w - a; return u > 0 && u < 0.6 ? amp * Math.exp(-u * 7) : 0; };
-  const shake = sh(T_TIP + 0.5, 0.06) + sh(T_FREEZE + 0.3, 0.03) + (s.spin ? 0.012 : 0);
-  cam.position.add(V(Math.sin(w * 63) * shake, Math.sin(w * 51) * shake, 0));
+  const shake = sh(T_TIP + 0.5, 0.06) + sh(T_FREEZE + 0.3, 0.03);   // slow enough to read as a jolt at 30 fps, not per-frame jitter
+  cam.position.add(V(Math.sin(w * 19) * shake, Math.sin(w * 15) * shake, 0));
   grade.uniforms.blur.value = (t >= HOOK_END && t < HOOK_END + RW) ? 0.012 : 0;
   // farmers
   const inCab = s.inCab && !hookMode;
@@ -487,7 +492,7 @@ window.renderFrame = (t) => {
       flakePos[i * 3] = cp.x - 15 + ((bx + Math.sin(w + i) * 0.3 - cp.x) % 30 + 30) % 30; flakePos[i * 3 + 1] = ((by - w * 1.2) % 16 + 16) % 16; flakePos[i * 3 + 2] = cp.z - 15 + ((bz - cp.z) % 30 + 30) % 30; }
     flakeGeo.attributes.position.needsUpdate = true; }
   // sun shadow follows the action
-  const focus = (si === 11) ? V(FAC.x - 8, 0, FAC.z + 4) : V(0, 0, s.tz); sun.target.position.copy(focus); sun.position.copy(focus).add(SUN_DIR);
+  const focus = (si === 11) ? V(FAC.x - 8, 0, FAC.z + 4) : V(0, 0, s.tz); snapToTexel(focus, sun.shadow.camera.right); sun.target.position.copy(focus); sun.position.copy(focus).add(SUN_DIR);
   { const sc = sun.shadow.camera; const big = si === 11 ? 60 : 16; if (sc.right !== big) { sc.left = sc.bottom = -big; sc.right = sc.top = big; sc.updateProjectionMatrix(); } }
   composer.render(); };
 await document.fonts.ready;
