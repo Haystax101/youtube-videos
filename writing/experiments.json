@@ -64,11 +64,12 @@
         "question",
         "statement",
         "number_first",
-        "dare"
+        "dare",
+        "he_statement"
       ],
       "set_by": "beat 1 wording",
       "since": "2026-11-25",
-      "why": "question 'What happens if you...?' / statement 'You just got struck by lightning.' / number first '1,000 bees. 30 seconds.' / dare 'Would you...?'",
+      "why": "question 'What happens if you...?' / statement 'You just got struck by lightning.' / number first '1,000 bees. 30 seconds.' / dare 'Would you...?' / he_statement (george 27 Nov, RicksClips style, for told-straight stories) 'He got shot in the chest, then did a speech straight after.'",
       "metric": "retention_3s"
     }
   },
