@@ -1,0 +1,400 @@
+{
+ "title": "Why Did North Korea's Billion Dollar Bank Robbery Fail?",
+ "channel": "dark-stories",
+ "format": "landscape",
+ "look": "casefile2d",
+ "voices": {
+  "narrator": "chatterbox_michael"
+ },
+ "speed": 1.0,
+ "tail": 1.0,
+ "pronounce": {
+  "Dhaka": "Dahka",
+  "Ahlam": "Ah-lahm",
+  "Rasel": "Rahsel",
+  "Deguito": "Deh-ghee-toe",
+  "Hyok": "Hyuk",
+  "Jin": "Jin",
+  "Shalika": "Shah-lika",
+  "Fandation": "Fan-day-shun",
+  "Lazarus": "Lazarus",
+  "WannaCry": "Wanna Cry",
+  "Swift": "Swift"
+ },
+ "experiment": {
+  "facts": [
+   "Printer that logs SWIFT transfers found not working about 8:45 am Friday 5 February 2016, assumed a routine fault, fixed Saturday; the messages from the NY Fed then printed: BBC, 'The Lazarus heist' (2021), reported by The Financial Express and Business Insider Bangladesh",
+   "35 fraudulent SWIFT instructions, about 951 million dollars; 5 paid, 101 million; 20 million to Sri Lanka 'Shalika Fandation' stopped after Deutsche Bank queried the misspelling; 81 million to four RCBC Jupiter Street accounts in Manila: Reuters, March 2016; Fortune / NBC / Irish Times, 10-11 March 2016",
+   "Remaining payments flagged because 'Jupiter' matched an oil tanker and shipping company under US sanctions against Iran: Reuters special report 'How the New York Fed fumbled over the Bangladesh Bank heist', July 2016",
+   "Accounts opened at RCBC Jupiter Street, May 2015 and left dormant: PCIJ, 'What went before the Bangladesh Bank heist' (2020); Dhaka Tribune",
+   "Weekend timing: Bangladesh Friday-Saturday weekend, NY weekend, Philippines holiday Monday 8 February (Lunar New Year): BBC 2021",
+   "January 2015 job-application email from 'Rasel Ahlam' with CV download link; Lazarus inside for about a year: US v. Park Jin Hyok criminal complaint (C.D. Cal., unsealed 6 Sept 2018), BBC 2021",
+   "Park Jin Hyok charged September 2018 for Bangladesh Bank, Sony Pictures (2014) and WannaCry (2017): US Department of Justice press release, 6 Sept 2018",
+   "Casinos not covered by Philippine anti-money-laundering law in 2016; Kim Wong returned about 15 million dollars: Reuters, Philippine Senate hearings 2016",
+   "RCBC branch manager Maia Deguito convicted on 8 counts of money laundering, 10 January 2019, upheld on appeal 2023: Inquirer, ABS-CBN",
+   "Governor Atiur Rahman resigned March 2016: Inquirer / AFP, 15 March 2016"
+  ]
+ },
+ "beats": [
+  {
+   "id": "open1",
+   "lines": [
+    {
+     "text": "Friday, February the fifth, twenty sixteen. Dhaka, Bangladesh. It is a quarter to nine in the morning, and on the tenth floor of the central bank, a printer has stopped working."
+    }
+   ]
+  },
+  {
+   "id": "open2",
+   "lines": [
+    {
+     "text": "It is not just any printer. It prints a paper copy of every big transfer the bank sends through Swift, the network banks use to move money around the world."
+    }
+   ]
+  },
+  {
+   "id": "open3",
+   "lines": [
+    {
+     "text": "The staff try to restart it. Nothing. Nobody is too worried. It has broken before, and it is the start of the weekend. They decide to deal with it later."
+    }
+   ]
+  },
+  {
+   "id": "open4",
+   "lines": [
+    {
+     "text": "What they do not know is that overnight, someone using the bank's own computers has asked the Federal Reserve Bank of New York to send almost a billion dollars of Bangladesh's money to strangers on the other side of the world."
+    }
+   ]
+  },
+  {
+   "id": "open5",
+   "lines": [
+    {
+     "text": "And the printer did not break by accident."
+    }
+   ]
+  },
+  {
+   "id": "open6",
+   "lines": [
+    {
+     "text": "It was one of the most ambitious bank robberies ever attempted. The thieves never touched a door, a vault or a gun. They had planned it for more than a year. And yet, out of nearly a billion dollars, they got away with less than a tenth."
+    }
+   ]
+  },
+  {
+   "id": "open7",
+   "lines": [
+    {
+     "text": "So why did North Korea's billion dollar bank robbery fail?"
+    }
+   ]
+  },
+  {
+   "id": "in1",
+   "lines": [
+    {
+     "text": "To answer that, we have to go back to January twenty fifteen. A few people at Bangladesh Bank get a polite email from a young man called Rasel Ahlam. He would love to work at the bank. His C V and cover letter are ready to download."
+    }
+   ]
+  },
+  {
+   "id": "in2",
+   "lines": [
+    {
+     "text": "There was no Rasel Ahlam. But someone at the bank clicked. And the files carried hidden software that let the senders quietly into the bank's network."
+    }
+   ]
+  },
+  {
+   "id": "in3",
+   "lines": [
+    {
+     "text": "The senders were a group that security researchers call Lazarus. Years later, the F B I would say they worked for the government of North Korea. The same people blamed for hacking Sony Pictures the year before."
+    }
+   ]
+  },
+  {
+   "id": "in4",
+   "lines": [
+    {
+     "text": "Fun fact. North Korea is one of the most cut off countries on earth. Sanctions make it very hard for it to earn money abroad. So, according to American investigators, it trained hackers to go out and take it."
+    }
+   ]
+  },
+  {
+   "id": "in5",
+   "lines": [
+    {
+     "text": "Once inside, Lazarus did not grab anything. They waited. For a whole year, they moved quietly from computer to computer, until they reached the ones that matter most. The ones connected to Swift."
+    }
+   ]
+  },
+  {
+   "id": "in6",
+   "lines": [
+    {
+     "text": "Remember Swift. Banks trust a Swift message almost like a signed letter. If it comes from Bangladesh Bank's Swift computers, the bank on the other end assumes Bangladesh Bank really sent it."
+    }
+   ]
+  },
+  {
+   "id": "prep1",
+   "lines": [
+    {
+     "text": "But stealing money electronically is the easy part. You have to send it somewhere, and then get it out before anyone notices."
+    }
+   ]
+  },
+  {
+   "id": "prep2",
+   "lines": [
+    {
+     "text": "In May twenty fifteen, four people opened dollar accounts at a branch of a big Philippine bank in Manila. Five hundred dollars each. Then the accounts sat there, untouched, for nine months."
+    }
+   ]
+  },
+  {
+   "id": "prep3",
+   "lines": [
+    {
+     "text": "Investigators later said the driving licences used to open them were fake. And remember the address of that branch. It was on Jupiter Street. That name comes back, and it costs the thieves almost everything."
+    }
+   ]
+  },
+  {
+   "id": "prep4",
+   "lines": [
+    {
+     "text": "Next, the timing. Bangladesh Bank keeps much of its money in an account at the Federal Reserve Bank of New York. So if you want to empty it, when do you do it?"
+    }
+   ]
+  },
+  {
+   "id": "prep5",
+   "lines": [
+    {
+     "text": "In Bangladesh, the weekend is Friday and Saturday. In New York, it is Saturday and Sunday. And in the Philippines, Monday the eighth of February was Chinese New Year, a public holiday."
+    }
+   ]
+  },
+  {
+   "id": "prep6",
+   "lines": [
+    {
+     "text": "So if the orders go out on Thursday night, Bangladesh is going home for the weekend, New York is about to close, and Manila is about to shut for a long weekend. Four days where nobody can easily reach anybody."
+    }
+   ]
+  },
+  {
+   "id": "prep7",
+   "lines": [
+    {
+     "text": "Rule one for robbing a bank on three continents: check everybody's holiday calendar. Lazarus did."
+    }
+   ]
+  },
+  {
+   "id": "night1",
+   "lines": [
+    {
+     "text": "Thursday, February the fourth. Late in the evening in Dhaka. Using the bank's own Swift computers, the hackers start sending payment orders to New York."
+    }
+   ]
+  },
+  {
+   "id": "night2",
+   "lines": [
+    {
+     "text": "Thirty five of them. Together, about nine hundred and fifty one million dollars. Each one tells the New York Fed to move money out of Bangladesh's account and into accounts in the Philippines and Sri Lanka."
+    }
+   ]
+  },
+  {
+   "id": "night3",
+   "lines": [
+    {
+     "text": "Then they cover their tracks. Their software changes the bank's records, so the orders do not show up. And it stops the printer on the tenth floor, the one that would have put every message on paper."
+    }
+   ]
+  },
+  {
+   "id": "night4",
+   "lines": [
+    {
+     "text": "In New York, the orders arrive in perfect format, with all the right codes. And the computers start to pay them."
+    }
+   ]
+  },
+  {
+   "id": "wrong1",
+   "lines": [
+    {
+     "text": "And this is where the plan starts to fall apart. One payment is twenty million dollars for a charity in Sri Lanka called the Shalika Foundation. Except the order spells it Shalika Fandation."
+    }
+   ]
+  },
+  {
+   "id": "wrong2",
+   "lines": [
+    {
+     "text": "A bank in the middle of the chain, Deutsche Bank, noticed the odd spelling and asked Bangladesh to check. The money was stopped. Here's a pro tip for anyone planning a billion dollar robbery: use a spell checker."
+    }
+   ]
+  },
+  {
+   "id": "wrong3",
+   "lines": [
+    {
+     "text": "But the bigger problem was in New York. Remember Jupiter Street? The New York Fed checks payments against America's sanctions lists. And Jupiter was also the name of an oil tanker and a shipping company under American sanctions against Iran."
+    }
+   ]
+  },
+  {
+   "id": "wrong4",
+   "lines": [
+    {
+     "text": "So the payments heading for Jupiter Street raised a flag. Staff at the New York Fed began to look at the orders much more closely, and to send questions back to Bangladesh."
+    }
+   ]
+  },
+  {
+   "id": "wrong5",
+   "lines": [
+    {
+     "text": "By then, five payments had already gone through. One hundred and one million dollars. The twenty million to Sri Lanka would come back. But the other thirty orders, worth around eight hundred and fifty million dollars, were held."
+    }
+   ]
+  },
+  {
+   "id": "wrong6",
+   "lines": [
+    {
+     "text": "The questions from New York went to Dhaka. But it was Friday. The office was nearly empty. And the machine that would have printed those messages was the printer that had stopped working."
+    }
+   ]
+  },
+  {
+   "id": "find1",
+   "lines": [
+    {
+     "text": "On Saturday, staff finally got the printer going again. Out came the messages. Questions from New York, about payments the bank had never meant to make."
+    }
+   ]
+  },
+  {
+   "id": "find2",
+   "lines": [
+    {
+     "text": "They tried to call the New York Fed. It was the weekend. They sent emails and faxes. No answer. When New York opened on Monday, they asked it to stop everything. But in Manila, Monday was Chinese New Year. The bank there was closed."
+    }
+   ]
+  },
+  {
+   "id": "find3",
+   "lines": [
+    {
+     "text": "By the time Manila opened on Tuesday, the eighty one million dollars in those four sleepy accounts on Jupiter Street had already been pulled out."
+    }
+   ]
+  },
+  {
+   "id": "sub",
+   "lines": [
+    {
+     "text": "Quick thing, before we follow the money. If you're enjoying this, hit like and subscribe. It's free, and unlike Bangladesh Bank's printer, it actually works."
+    }
+   ]
+  },
+  {
+   "id": "money1",
+   "lines": [
+    {
+     "text": "So where did eighty one million dollars go? First, through a money transfer company in Manila, where much of it was changed into Philippine pesos. Then, into the city's casinos."
+    }
+   ]
+  },
+  {
+   "id": "money2",
+   "lines": [
+    {
+     "text": "Casinos are very useful for this. Big piles of money go in, chips come out, and by the time anyone follows the trail, it has gone cold. And in twenty sixteen, Philippine casinos were not even covered by the country's money laundering law."
+    }
+   ]
+  },
+  {
+   "id": "money3",
+   "lines": [
+    {
+     "text": "A casino businessman named Kim Wong later handed back around fifteen million dollars. Most of the rest has never been found."
+    }
+   ]
+  },
+  {
+   "id": "money4",
+   "lines": [
+    {
+     "text": "The manager of the Jupiter Street branch, Maia Deguito, was convicted of money laundering in twenty nineteen. She said she was being made a scapegoat. In Bangladesh, the governor of the central bank resigned."
+    }
+   ]
+  },
+  {
+   "id": "money5",
+   "lines": [
+    {
+     "text": "And in twenty eighteen, the F B I charged a North Korean programmer, Park Jin Hyok, over the heist. He has never been arrested."
+    }
+   ]
+  },
+  {
+   "id": "money6",
+   "lines": [
+    {
+     "text": "Remember Sony Pictures? The same charges blamed his group for that hack too, and for WannaCry, the attack that froze computers in hospitals across Britain the year after the heist."
+    }
+   ]
+  },
+  {
+   "id": "an1",
+   "lines": [
+    {
+     "text": "So why did North Korea's billion dollar bank robbery fail? Not because anyone caught the hackers in time. Their break in worked. Their fake orders worked. Their printer trick worked."
+    }
+   ]
+  },
+  {
+   "id": "an2",
+   "lines": [
+    {
+     "text": "It failed because of small things they did not control. A spelling mistake that a bank in the middle noticed. A street name in Manila that happened to match a sanctioned ship. And a weekend plan that gave New York just enough time to stop the rest."
+    }
+   ]
+  },
+  {
+   "id": "an3",
+   "lines": [
+    {
+     "text": "And here is the darker part. It did not fully fail. Eighty one million dollars is still gone. And investigators say North Korea kept going, stealing far more from banks and crypto companies in the years that followed."
+    }
+   ]
+  },
+  {
+   "id": "an4",
+   "lines": [
+    {
+     "text": "The plan was almost perfect. It took a typo, and a street called Jupiter, to save eight hundred and fifty million dollars."
+    }
+   ]
+  },
+  {
+   "id": "an5",
+   "lines": [
+    {
+     "text": "So which was luckier for Bangladesh: the typo, or Jupiter Street? Let me know in the comments."
+    }
+   ]
+  }
+ ]
+}
