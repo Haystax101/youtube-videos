@@ -23,7 +23,10 @@ while True:
     darks.append((f[m] < LUMA).mean()); blacks.append((f[m] < 4).mean()); i += 1
 blacks = np.array(blacks)
 for k in range(i):
-    nb = np.median(np.r_[blacks[max(0, k - 6):k], blacks[k + 1:k + 7]]) if i > 1 else 0
+    # compare with each side separately: a hard cut from a bright set to a dark one changes the black level
+    # for good (not a glitch); a dropped tile is darker than the frames on both sides
+    bef, aft = blacks[max(0, k - 6):k], blacks[k + 1:k + 7]
+    nb = max(np.median(bef) if len(bef) else 0, np.median(aft) if len(aft) else 0) if i > 1 else 0
     if darks[k] > AREA or blacks[k] - nb > JUMP: bad.append((k / FPS, max(darks[k], blacks[k])))
 ranges = []
 for t, d in bad:

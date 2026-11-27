@@ -1,0 +1,65 @@
+{
+ "video": "episodes/015-shot-gave-speech/final.mp4",
+ "duration": 39.23,
+ "result": "PASS",
+ "checks": [
+  {
+   "check": "dark",
+   "status": "WARN",
+   "detail": "dark stretch at 11.60-11.80s (96% dark): fine if the shot is meant to be dark, a bug if the camera is inside a wall or prop"
+  },
+  {
+   "check": "freeze",
+   "status": "PASS",
+   "detail": "picture keeps moving"
+  },
+  {
+   "check": "loudness",
+   "status": "PASS",
+   "detail": "-14.2 LUFS, true peak -2.8 dBTP (want -14 +/- 1.5, <= -1)"
+  },
+  {
+   "check": "clipping",
+   "status": "PASS",
+   "detail": "AUDIO OK"
+  },
+  {
+   "check": "hiss",
+   "status": "PASS",
+   "detail": "no broadband static"
+  },
+  {
+   "check": "silence",
+   "status": "PASS",
+   "detail": "no dead air"
+  },
+  {
+   "check": "balance",
+   "status": "PASS",
+   "detail": "narration -17.7 LUFS, music+SFX -25.8 LUFS: voice 8.1 LU on top (want >= 8)"
+  },
+  {
+   "check": "flicker",
+   "status": "PASS",
+   "detail": "no isolated one-frame pops (12 frames with sustained motion like particles)"
+  },
+  {
+   "check": "vanish",
+   "status": "PASS",
+   "detail": "nothing blinks out for a frame"
+  },
+  {
+   "check": "length",
+   "status": "PASS",
+   "detail": "39.2 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
+  },
+  {
+   "check": "overlap",
+   "status": "PASS",
+   "detail": "0 on-screen overlap(s)"
+  }
+ ],
+ "contact_sheet": "episodes/015-shot-gave-speech/qa/contact.jpg",
+ "review": null,
+ "review_mtime": 1795761103.2941084
+}

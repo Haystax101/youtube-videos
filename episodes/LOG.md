@@ -15,6 +15,7 @@
 | 012 | 2026-11-26 | Sheltering under a manchineel tree in the rain (Fish #313) | - | new beach set + manchineel tree, rain fx, apple; dare hook, chiptune, bf_emma, speed 1.28, chunky Gary | | survives / comment_next |
 | 013 | 2026-11-26 | A fish swallows an eel and it escapes through the gills (Fish #574) | - | FIRST no-Gary Short: underwater set, predator fish with X-ray, segmented eel; question hook, hype, af_bella, speed 1.12 | | survives / follow |
 | 014 | 2026-11-26 | Never getting out of bed (Dallas bed-rest study; Fish #443 lead) | - | new bedroom set, lie + jog poses; number-first hook, epic, am_fenrir, speed 1.2, low poly | | better / shenanigans |
+| 015 | 2026-11-27 | Roosevelt shot in the chest, then gave his speech anyway (Fish #342) | - | Smol look daily (World of How style): street + 1912 car, rally hall with 40-seat audience, pocket close-up (bullet through 50 pages + steel case), hospital x-ray; statement hook, suspense score, af_nicole, speed 1.28, 39 s | | survives / comment_next |
 | shiratori | 2026-11-27 | Yoshie Shiratori, the man no prison could hold (Fish #608) | - | FIRST smol-look Short (george's reference style): 3D big-head characters with ink outlines, bright 3D sets, 31 quick cuts with whip pans and DOF, koto/taiko score; bold claim hook, am_michael 1.2, 48 s (prototypes/shiratori) | | better / follow |
 
 ## Style locked to low-poly (george, 2026-11-25)
@@ -55,3 +56,6 @@ premise as the base; storybook gets a second test (010) at the 25-30 s length be
 Retention/avg % viewed still null from the Analytics API, so no test can be judged yet. Public views: 006 bees 1,208, 004
 sitting 1,120, 001 face mask 1,106, 009 energy drinks 784 (in ~1 day), 005 sun 627, 002 noir 503. Every lowpoly
 Short is in the top four; 009 is the fastest riser. Today: first no-Gary Short (013), first female narrators on lowpoly.
+
+
+27 Nov: analytics so far: 006 bee stings holds 69% avg viewed on 1,195 views, the best by far (short, absurd single event); 001 55.9%, 002 52.6%, 004 47.4%, 005 46.6%. Shorter, single-event Shorts keep people watching longest, so 015 is cut to 39 s (Shiratori was 48 s). Today's only Short is the Roosevelt one: quality first, one finished through the gate.

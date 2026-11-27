@@ -78,8 +78,8 @@ for i, at in enumerate(cuts):
 # ---- level and mix
 def lp(x, k): return np.convolve(x, np.ones(k) / k, 'same')
 venv = lp(np.abs(pad(voice)), 2400); duck = 1 - 0.55 * np.clip(venv / (venv.max() * 0.25), 0, 1)
-sfx = 0.15 * np.tanh(fx[:N] * 0.18 / 0.15)
-mix = pad(voice) + pad(m) * 0.10 * duck + sfx
+sfx = 0.15 * np.tanh(fx[:N] * 0.14 / 0.15)
+mix = pad(voice) + pad(m) * 0.075 * duck + sfx
 g = 1 / (np.abs(mix).max() * 1.05); mix *= g
 sf.write(f'{here}/audio.sfx.wav', (sfx * g).astype(np.float32), SR); sf.write(f'{here}/audio.voice.wav', (pad(voice) * g).astype(np.float32), SR)
 sf.write(f'{here}/audio.mix.wav', mix.astype(np.float32), SR); print('audio', round(N / SR, 2), 's', len(cuts) + 1, 'shots')
