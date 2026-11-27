@@ -1,12 +1,12 @@
 {
  "video": "episodes/015-shot-gave-speech/final.mp4",
- "duration": 32.9,
+ "duration": 31.87,
  "result": "PASS",
  "checks": [
   {
    "check": "dark",
    "status": "WARN",
-   "detail": "dark stretch at 9.53-9.67s (96% dark), 12.20-12.43s (60% dark): fine if the shot is meant to be dark, a bug if the camera is inside a wall or prop"
+   "detail": "dark stretch at 3.30-3.30s (39% dark), 7.00-7.03s (70% dark), 8.47-8.60s (97% dark), 8.67-8.67s (60% dark), 11.13-11.40s (61% dark): fine if the shot is meant to be dark, a bug if the camera is inside a wall or prop"
   },
   {
    "check": "freeze",
@@ -16,7 +16,7 @@
   {
    "check": "loudness",
    "status": "PASS",
-   "detail": "-14.2 LUFS, true peak -3.0 dBTP (want -14 +/- 1.5, <= -1)"
+   "detail": "-14.2 LUFS, true peak -2.8 dBTP (want -14 +/- 1.5, <= -1)"
   },
   {
    "check": "clipping",
@@ -36,12 +36,12 @@
   {
    "check": "balance",
    "status": "WARN",
-   "detail": "narration -17.8 LUFS, music+SFX -25.1 LUFS: voice 7.3 LU on top (want >= 8)"
+   "detail": "narration -18.0 LUFS, music+SFX -24.9 LUFS: voice 6.9 LU on top (want >= 8)"
   },
   {
    "check": "flicker",
    "status": "WARN",
-   "detail": "1 one-frame pop(s), worst at 27.67s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
+   "detail": "5 one-frame pop(s), worst at 9.77s, 26.80s, 22.53s, 8.50s, 13.97s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
   },
   {
    "check": "vanish",
@@ -51,7 +51,7 @@
   {
    "check": "length",
    "status": "PASS",
-   "detail": "32.9 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
+   "detail": "31.9 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
   },
   {
    "check": "overlap",
@@ -61,5 +61,5 @@
  ],
  "contact_sheet": "episodes/015-shot-gave-speech/qa/contact.jpg",
  "review": null,
- "review_mtime": 1795774864.8301163
+ "review_mtime": 1795778035.1186185
 }
