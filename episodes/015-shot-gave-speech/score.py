@@ -31,8 +31,8 @@ Cm = [48, 51, 55]; Ab = [44, 48, 51]; G = [43, 47, 50]; Fm = [41, 44, 48]; C = [
 n(0.05, TIMP, 36, 120, 1.0); n(0.05, HIT, 48, 110, 0.8, 0.7)
 for k in Cm: n(WT(0, 'shot'), BRASS, k, 112, 0.5, 0.6)
 n(WT(0, 'shot'), TIMP, 36, 125, 0.7)
-for k in [36, 43, 48]: n(0.3, TREM, k, 85, WT(0, 'This') - 0.3, 0.45)
-n(WT(0, 'hospital'), CELESTA, 79, 85, 0.6, 0.4)
+for k in [36, 43, 48]: n(0.3, TREM, k, 85, WT(0, 'then') - 0.3, 0.45)
+n(WT(0, 'chest'), CELESTA, 79, 85, 0.6, 0.4)
 for k in [48, 52, 55, 60]: n(WT(0, 'speech'), BRASS, k, 115, 1.0, 0.6)
 n(WT(0, 'speech'), TIMP, 36, 120, 0.8); n(WT(0, 'speech'), HIT, 60, 100, 0.6, 0.5)
 

@@ -337,10 +337,10 @@ function platform(t) { place(PLAT[0], at(H0, -3.4, STAGE_Y + SIT_Y, -4.4), 0.25,
 function trPodium(pose, expr, t, o) { place(TR, PODT, PODF, pose, expr, t, o); }
 
 // ---- HOOK (cold open): the bloodied speech held up in the hall, the bullet hole, the grin, the roaring crowd
-shot(WT(0, 'Get'), 'hall', move(frame(at(PODT, 0, 1.0, 0), 2.7, 8, -5, 46), frame(at(PODT, 0, 1.05, 0), 2.0, 2, -7, 46), 0.25),
+shot(WT(0, 'He'), 'hall', move(frame(at(PODT, 0, 1.0, 0), 2.7, 8, -5, 46), frame(at(PODT, 0, 1.05, 0), 2.0, 2, -7, 46), 0.25),
   (u, t) => { trPodium('hold_up', 'angry', t); TR.hand('r').add(PAGES); PAGES.position.set(0, 0.05, 0.03); PAGES.scale.setScalar(1.7); PAGES.rotation.set(0, 0, 0); hallAudience(t, 'none', 'shock'); platform(t); });
-shot(WT(0, 'hospital'), 'macro', move(frame(at(M0, 0.25, 2.25, 0.3), 2.6, -24, 6, 36), frame(at(M0, 0.25, 2.2, 0.3), 2.0, -14, 4, 36), 0.5), (u, t) => { }, { holeState: 1 });
-shot(WT(0, 'This'), 'hall', move(frame(at(PODT, 0, 0.98, 0), 1.35, 18, 2, 34), frame(at(PODT, 0, 0.98, 0), 1.1, 10, 2, 34), 0.8),
+shot(WT(0, 'chest'), 'macro', move(frame(at(M0, 0.25, 2.25, 0.3), 2.6, -24, 6, 36), frame(at(M0, 0.25, 2.2, 0.3), 2.0, -14, 4, 36), 0.5), (u, t) => { }, { holeState: 1 });
+shot(WT(0, 'then'), 'hall', move(frame(at(PODT, 0, 0.98, 0), 1.35, 18, 2, 34), frame(at(PODT, 0, 0.98, 0), 1.1, 10, 2, 34), 0.8),
   (u, t) => { trPodium('orate', 'grin', t); });
 shot(WT(0, 'speech'), 'hall', move(frame(at(H0, 0, 1.8, -0.5), 9.5, 0, 10, 64), frame(at(H0, 0, 1.8, -0.8), 8.5, 4, 8, 64), 0.15),
   (u, t) => { trPodium('orate', 'grin', t); hallAudience(t, 'cheer', 'grin'); platform(t); }, { cheer: 1 });
