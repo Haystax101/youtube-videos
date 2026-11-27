@@ -1,0 +1,15 @@
+{
+ "title": "Case File style test",
+ "channel": "dark-stories",
+ "voices": {"narrator": "am_fenrir"},
+ "speed": 1.0,
+ "tail": 0.6,
+ "pronounce": {},
+ "beats": [
+  {"lines": [{"text": "July the fifth, twenty seventeen. Bangkok. Just before dawn, a car rolls straight into the gate of a big white villa."}]},
+  {"lines": [{"text": "Upstairs, a twenty five year old Canadian is still awake at his laptop. He runs Alpha Bay, the biggest drug market on the dark web. More than a billion dollars has passed through it, and almost nobody knows his name."}]},
+  {"lines": [{"text": "He hears the crash, and he does exactly what the police were hoping for. He walks outside to look, and he leaves the laptop open."}]},
+  {"lines": [{"text": "He was not the first dark web boss to get caught. He would not be the last. So why does every single one of them end up in handcuffs?"}]},
+  {"lines": [{"text": "For this one, the answer was hiding in a welcome email."}]}
+ ]
+}

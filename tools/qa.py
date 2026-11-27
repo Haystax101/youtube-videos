@@ -194,8 +194,10 @@ if page:
     r = run(['node', os.path.join(ROOT, 'tools', 'set_check.cjs'), os.path.abspath(page), '0.1'], env=nenv)
     if r.returncode != 2: add('continuity', 'PASS' if r.returncode == 0 else 'FAIL', tail(r.stdout, 8))
     o = run(['node', os.path.join(ROOT, 'tools', 'check_overlap.cjs'), os.path.abspath(page), '0.1'], env=nenv)
+    if o.returncode == 2 and r.returncode == 2:   # flat 2D pages (Case File look) use the 2D check
+        o = run(['node', os.path.join(ROOT, 'tools', 'check_overlap2d.cjs'), os.path.abspath(page), '0.1'], env=nenv)
     if o.returncode == 2 and r.returncode == 2:
-        add('overlap', 'FAIL', 'the page has neither window.QA nor window.SETCHECK, so nothing checked that characters and props stay out of each other; add the one-line window.QA hook (tools/check_overlap.cjs header)')
+        add('overlap', 'FAIL', 'the page has neither window.QA, window.QA2D nor window.SETCHECK, so nothing checked that characters and props stay out of each other; add the one-line window.QA hook (tools/check_overlap.cjs header)')
     elif o.returncode != 2:
         if ep: os.makedirs(os.path.join(ep, 'qa'), exist_ok=True); open(os.path.join(ep, 'qa', 'overlap.txt'), 'w').write(o.stdout)
         add('overlap', 'PASS' if o.returncode == 0 else 'FAIL', tail(o.stdout, 10) + (' -> full list in qa/overlap.txt' if o.returncode else ''))

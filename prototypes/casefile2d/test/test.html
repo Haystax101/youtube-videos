@@ -1,0 +1,72 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Case File style test</title>
+<style>html,body{margin:0;background:#000}#stage{position:relative;width:1920px;height:1080px;overflow:hidden}canvas{display:block}</style>
+</head><body><div id="stage"><canvas id="cv"></canvas></div>
+<script type="module">
+import { W, H, drawChar, camera, caption, dateTag, nameCard, clamp, lerp, ease, easeOut, hash, RED, YEL } from '../engine.js';
+import { villaNight, car, hackerRoom, desk, corkboard, documentInsert, mapInsert, glowSpot } from '../sets.js';
+
+const CAZES = { hair: 'short', hairColor: '#2e2420', stubble: true, outfit: 'shirt', color: '#2f3a4a', legs: '#2a2b33', id: 3 };
+const COP = (x, id) => ({ x, y: 840, s: 1, cap: true, capColor: '#3d3a2c', outfit: 'police', color: '#6b5d3f', sleeve: '#6b5d3f', legs: '#3a3528', hair: 'buzz', hairColor: '#1e1a18', id });
+const shake = (t, t0, amp = 14, d = 0.5) => { const k = (t - t0) / d; if (k < 0 || k > 1) return [0, 0]; const a = amp * (1 - k); return [Math.sin(t * 90) * a, Math.cos(t * 77) * a]; };
+
+window.QA2D = true;
+const { boot } = await import('../runtime.js');
+await boot(new URL('./', location.href).href, ({ cue, end }) => {
+  const crashT = cue(0, 'gate') + 0.05;
+  return [
+  { name: 'villa wide', t0: 0, dark: 0.2,
+    draw(ctx, t, k) { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 980, y: 560, z: 1.12 }, k); villaNight(ctx, t, { dawn: 0.12 }); },
+    overlay(ctx, t, k, L) { dateTag(ctx, '5 JULY 2017 · BANGKOK', L - 0.3); caption(ctx, 'JUST BEFORE DAWN', W / 2, 170, t - cue(0, 'just'), 1.6); } },
+  { name: 'car hits gate', t0: cue(0, 'car') - 0.1, dark: 0.2,
+    draw(ctx, t, k, L) { const [sx, sy] = shake(t, crashT); camera(ctx, { x: 900 + sx, y: 640 + sy, z: 1.35 }, { x: 960 + sx, y: 650 + sy, z: 1.45 }, k);
+      villaNight(ctx, t, { dawn: 0.14, crash: clamp((t - crashT) / 0.15) });
+      const drive = easeOut(clamp((t - (crashT - 1.4)) / 1.4)), cx = lerp(-200, 380, drive);
+      car(ctx, cx, 900, t, { color: '#8e9aa3', crumple: clamp((t - crashT) / 0.12) });
+      if (t > crashT) glowSpot(ctx, 800, 760, 200 * clamp(1 - (t - crashT) / 0.6), 'rgba(255,240,200,.8)'); } },
+  { name: 'room', t0: cue(1, 0), dark: 0.15,
+    draw(ctx, t, k) { camera(ctx, { x: 900, y: 600, z: 1.35 }, { x: 880, y: 610, z: 1.45 }, k); hackerRoom(ctx, t);
+      drawChar(ctx, { ...CAZES, x: 760, y: 840, face: 1, arms: [1.25 + Math.sin(t * 14) * 0.06, 1.3 + Math.cos(t * 13) * 0.06], glow: { color: 'rgba(110,220,255,.55)', side: 1 }, lookY: 4 }, t);
+      desk(ctx, 640, t, { laptopX: 280 }); },
+    overlay(ctx, t, k, L) { caption(ctx, '25 YEARS OLD', W / 2, 150, t - cue(1, 'twenty'), 2.2); nameCard(ctx, 'ALEXANDRE CAZES', 'CANADIAN · LIVES IN BANGKOK', L - 1.3); } },
+  { name: 'room close', t0: cue(1, 'he'), dark: 0.2,
+    draw(ctx, t, k) { camera(ctx, { x: 850, y: 600, z: 1.9 }, { x: 860, y: 610, z: 2.05 }, k); hackerRoom(ctx, t);
+      drawChar(ctx, { ...CAZES, x: 760, y: 840, face: 1, mood: 'smug', arms: [1.25 + Math.sin(t * 14) * 0.06, 1.3 + Math.cos(t * 13) * 0.06], glow: { color: 'rgba(110,220,255,.6)', side: 1 }, lookY: 4 }, t);
+      desk(ctx, 640, t, { laptopX: 280 }); },
+    overlay(ctx, t) { caption(ctx, 'ALPHABAY', W / 2, 150, t - cue(1, 'alpha'), 0.95, { size: 80 }); caption(ctx, 'BIGGEST DRUG MARKET\nON THE DARK WEB', W / 2, 170, t - cue(1, 'biggest'), 2.1, { size: 64 }); } },
+  { name: 'map orders', t0: cue(1, 'more'), dark: 0.1,
+    draw(ctx, t, k, L) {
+      const z = ease(k); mapInsert(ctx, t, { view: { lon: lerp(100.5, 40, z), lat: lerp(14, 25, z), span: lerp(60, 230, z) }, local: L, highlight: { Thailand: '#d98b4a' },
+        pins: [{ at: [100.5, 13.75], label: 'BANGKOK', t0: 0 }],
+        routes: [[-74, 40.7], [-0.1, 51.5], [2.35, 48.85], [13.4, 52.5], [151.2, -33.9], [-79.4, 43.7], [37.6, 55.75], [-46.6, -23.5], [4.9, 52.4], [18.1, 59.3]].map((to, i) => ({ from: [100.5, 13.75], to, at: 0.6 + i * 0.22, dur: 1.2 })) }); },
+    overlay(ctx, t) { caption(ctx, '$1,000,000,000+', W / 2, 160, t - cue(1, 'billion'), 2.2, { size: 84 }); caption(ctx, 'IDENTITY: UNKNOWN', W / 2, 160, t - cue(1, 'nobody'), 1.2, { size: 64, fill: '#f4efe2' }); } },
+  { name: 'room crash heard', t0: cue(2, 0), dark: 0.2,
+    draw(ctx, t, k, L) { const [sx, sy] = shake(t, cue(2, 'crash'), 6, 0.4); camera(ctx, { x: 960 + sx, y: 600 + sy, z: 1.4 }, { x: 960 + sx, y: 600 + sy, z: 1.45 }, k); hackerRoom(ctx, t);
+      const hear = t > cue(2, 'crash');
+      drawChar(ctx, { ...CAZES, x: 760, y: 840, face: hear ? -1 : 1, mood: hear ? 'shock' : 'neutral', arms: hear ? [0.3, 0.3] : [1.25, 1.3], glow: { color: 'rgba(110,220,255,.55)', side: 1 } }, t);
+      desk(ctx, 640, t, { laptopX: 280 }); },
+    overlay(ctx, t) { caption(ctx, 'THE POLICE PLAN', W / 2, 160, t - cue(2, 'exactly'), 1.8); } },
+  { name: 'walks out', t0: cue(2, 'walks') - 0.1, dark: 0.15,
+    draw(ctx, t, k, L) { camera(ctx, { x: 980, y: 600, z: 1.15 }, { x: 1020, y: 610, z: 1.25 }, k);
+      villaNight(ctx, t, { dawn: 0.2, crash: 1, gateOpen: ease(clamp(L / 1.0)) * 0.55 });
+      car(ctx, 380, 900, t, { color: '#8e9aa3', crumple: 1 });
+      const w = clamp((L - 0.4) / 1.6); drawChar(ctx, { ...CAZES, x: lerp(980, 1120, ease(w)), y: 840, face: 1, walk: w > 0 && w < 1 ? w * 6 : 0, mood: 'worried' }, t);
+      const c = clamp((L - 1.4) / 1.2); drawChar(ctx, { ...COP(lerp(1700, 1330, ease(c)), 11), face: -1, walk: c > 0 && c < 1 ? c * 5 : 0, mood: 'angry', arms: c >= 1 ? [0, 1.2] : undefined }, t);
+      drawChar(ctx, { ...COP(lerp(1900, 1500, ease(c)), 12), face: -1, walk: c > 0 && c < 1 ? c * 5 : 0, mood: 'neutral' }, t); },
+    overlay(ctx, t) { caption(ctx, 'LAPTOP: STILL OPEN', W / 2, 160, t - cue(2, 'leaves'), 1.6); } },
+  { name: 'corkboard', t0: cue(3, 0), dark: 0.05,
+    draw(ctx, t, k, L) { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.06 }, k);
+      corkboard(ctx, t, { local: L, title: 'Dark web bosses', cards: [
+        { x: 380, y: 560, w: 250, h: 270, kind: 'note', title: 'AlphaBay', sub: 'Bangkok, 2017', at: 0.1, rot: -0.04, icon: (c, x, y) => { c.font = '90px "Lilita One"'; c.fillStyle = '#2b3a55'; c.fillText('α', x, y); }, stamp: { text: 'CAUGHT', at: 1.0 } },
+        { x: 740, y: 520, w: 220, h: 240, kind: 'q', at: 0.8, rot: 0.03 }, { x: 1080, y: 600, w: 220, h: 240, kind: 'q', at: 1.0, rot: -0.02 },
+        { x: 1430, y: 520, w: 220, h: 240, kind: 'q', at: 1.2, rot: 0.04 }, { x: 900, y: 860, w: 200, h: 210, kind: 'q', at: 2.4, rot: -0.05 }, { x: 1300, y: 870, w: 200, h: 210, kind: 'q', at: 2.6, rot: 0.03 }],
+        strings: [[0, 1, 1.6], [1, 2, 1.9], [2, 3, 2.2], [2, 4, 2.8], [3, 5, 3.0]] }); },
+    overlay(ctx, t) { caption(ctx, 'WHY ALWAYS CAUGHT?', W / 2, 990, t - cue(3, 'why'), 3.2, { size: 72 }); } },
+  { name: 'welcome email', t0: cue(4, 0), dark: 0.05,
+    draw(ctx, t, k, L) { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 980, y: 520, z: 1.12 }, k);
+      documentInsert(ctx, t, { local: L, header: 'AlphaBay Market  -  Welcome!', source: 'Court filing, United States v. Cazes', lines: [
+        { text: 'From: Pimp_Alex_91@hotmail.com', at: 0.2, type: 0.6, hl: [6, 30, 1.4], circle: [6, 30, 2.2] },
+        { text: 'Subject: Welcome to AlphaBay', at: 0.6, type: 0.5 },
+        { text: 'Thank you for registering...', at: 1.0, type: 0.6, color: '#6b6258' }] }); } },
+  ];
+});
+</script></body></html>
