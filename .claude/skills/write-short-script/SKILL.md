@@ -42,6 +42,12 @@ the last scene with "You survived. <CTA>" or "You're stronger than ever. <CTA>".
 one CLAUDE.md's ending A/B test assigns to this Short; record it in `experiment.ending_cta`.
 
 **Hook strength (george, 26 Nov 20:20): our facts are the edge, so the hook must be strong enough to carry them.**
+
+**Short and plain (george, 27 Nov):** a scroller must get the hook instantly. One short sentence (about 8 words, under 3 s),
+no numbers, units, place names or jargon: those go in beat 2. Good: "What if you rode a bike into space?", "He got shot
+in the chest, then did a speech straight after." (RicksClips-style "He..." opener for told-straight stories). Rejected:
+"Twenty kilometres an hour. Ride a bike that fast on Mars's smallest moon, and you fly into space." (too much to parse) and
+"Get shot in the chest, and you'd go to hospital. This man gave a speech." (who is "this man"? the contrast doesn't land).
 "Did Darwin invent the office chair?" was too weak. A soft yes/no question about a fact gives the
 viewer nothing at stake. Instead:
 - Open on the most striking image in the video, together with a bold claim aimed at the viewer
@@ -65,7 +71,7 @@ voice a script that fails it. Captions show the same text, so pick wording that 
 
 | Move | Beats | Job |
 |---|---|---|
-| Hook (cold open) | 1 | The most extreme image + a bold claim to "you" (see Hook strength). ≤ 12 words. |
+| Hook (cold open) | 1 | The most extreme image + a short bold claim or question (see Hook strength). About 8 words, no numbers or place names. |
 | Setup | 1 | Why you're doing it / what triggers it. One line. Skip if the hook says it. |
 | Escalation | 2-3 | Each beat is worse (or better) AND teaches the mechanism. A number per beat if possible. |
 | Turn | 1 | The myth-bust, reversal, irony or twist. The moment a viewer says "huh". |
