@@ -104,6 +104,8 @@ function clothTex(THREE, spec) {
   if (spec.buttons) { x.fillStyle = spec.buttons; for (let y = 60; y < 230; y += 50) { x.beginPath(); x.arc(128, y, 9, 0, 7); x.fill(); } }
   if (spec.belt) { x.fillStyle = spec.belt; x.fillRect(0, 196, 256, 22); }
   if (spec.collar) { x.fillStyle = spec.collar; x.beginPath(); x.moveTo(92, 0); x.lineTo(128, 52); x.lineTo(164, 0); x.fill(); }
+  if (spec.lapels) { x.fillStyle = spec.lapels; x.beginPath(); x.moveTo(76, 0); x.lineTo(124, 120); x.lineTo(104, 0); x.fill(); x.beginPath(); x.moveTo(180, 0); x.lineTo(132, 120); x.lineTo(152, 0); x.fill(); }
+  if (spec.tie) { x.fillStyle = spec.tie; x.beginPath(); x.moveTo(121, 30); x.lineTo(135, 30); x.lineTo(140, 120); x.lineTo(128, 138); x.lineTo(116, 120); x.fill(); x.fillRect(120, 22, 16, 12); }
   if (spec.wrap) { x.strokeStyle = spec.wrap; x.lineWidth = 16; x.beginPath(); x.moveTo(90, 0); x.lineTo(150, 190); x.stroke(); } // kimono-style cross-over
   const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
 }
@@ -139,6 +141,18 @@ export function makeBighead(THREE, spec = {}) {
     add(new THREE.Mesh(new THREE.CylinderGeometry(R * 0.88, R * 0.88, 0.05, 32), toon(THREE, spec.bandC || '#1c1c22')), 0, R * 0.68, -0.01, head);
     add(new THREE.Mesh(new THREE.CylinderGeometry(R * 0.55, R * 0.55, 0.02, 24, 1, false, -Math.PI / 2, Math.PI).scale(1, 1, 0.9), toon(THREE, '#18181c')), 0, R * 0.62, 0.12, head).rotation.x = 0.35;
     if (spec.badge) add(new THREE.Mesh(new THREE.CircleGeometry(0.04, 16), toon(THREE, spec.badge, { emissive: spec.badge, emissiveIntensity: 0.2 })), 0, R * 0.8, R * 0.84, head).rotation.x = -0.15; }
+  // period hats (Roosevelt Short, 27 Nov): bowler, straw boater, top hat, flat cap
+  if (spec.hat === 'bowler') { add(new THREE.Mesh(new THREE.SphereGeometry(R * 0.86, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.5), hatM), 0, R * 0.5, -0.01, head);
+    add(new THREE.Mesh(new THREE.CylinderGeometry(R * 1.12, R * 1.12, 0.025, 36), hatM), 0, R * 0.5, -0.01, head);
+    add(new THREE.Mesh(new THREE.CylinderGeometry(R * 0.87, R * 0.87, 0.04, 32), toon(THREE, spec.bandC || '#1a1416')), 0, R * 0.54, -0.01, head); }
+  if (spec.hat === 'boater') { add(new THREE.Mesh(new THREE.CylinderGeometry(R * 0.8, R * 0.82, 0.16, 32), hatM), 0, R * 0.66, -0.01, head);
+    add(new THREE.Mesh(new THREE.CylinderGeometry(R * 1.25, R * 1.25, 0.02, 36), hatM), 0, R * 0.58, -0.01, head);
+    add(new THREE.Mesh(new THREE.CylinderGeometry(R * 0.825, R * 0.825, 0.06, 32), toon(THREE, spec.bandC || '#2a3a7a')), 0, R * 0.62, -0.01, head); }
+  if (spec.hat === 'top') { add(new THREE.Mesh(new THREE.CylinderGeometry(R * 0.72, R * 0.7, 0.42, 32), hatM), 0, R * 0.62 + 0.21, -0.01, head);
+    add(new THREE.Mesh(new THREE.CylinderGeometry(R * 1.1, R * 1.1, 0.025, 36), hatM), 0, R * 0.62, -0.01, head);
+    add(new THREE.Mesh(new THREE.CylinderGeometry(R * 0.715, R * 0.715, 0.07, 32), toon(THREE, spec.bandC || '#3a1a22')), 0, R * 0.62 + 0.05, -0.01, head); }
+  if (spec.hat === 'flatcap') { const c = add(new THREE.Mesh(new THREE.SphereGeometry(R * 1.04, 32, 16, 0, Math.PI * 2, 0, Math.PI * 0.32), hatM), 0, 0.02, -0.02, head); c.scale.set(1, 0.9, 1.08); c.rotation.x = 0.18;
+    add(new THREE.Mesh(new THREE.CylinderGeometry(R * 0.6, R * 0.6, 0.02, 24, 1, false, -Math.PI / 2, Math.PI).scale(1, 1, 0.8), hatM), 0, R * 0.62, 0.14, head).rotation.x = 0.3; }
   // arms: upper + fore capsules re-aimed every frame, round hands with a Group for props
   const arms = {}; for (const s of ['l', 'r']) { const sg = s === 'l' ? -1 : 1, up = add(new THREE.Mesh(new THREE.CylinderGeometry(0.042, 0.04, 1, 10), armM), 0, 0, 0), lo = add(new THREE.Mesh(new THREE.CylinderGeometry(0.038, 0.036, 1, 10), armM), 0, 0, 0);
     const hand = add(new THREE.Mesh(new THREE.SphereGeometry(0.058, 14, 10), skinM), 0, 0, 0), grip = new THREE.Group(); hand.add(grip); const elb = add(new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 8), armM), 0, 0, 0);
@@ -178,6 +192,16 @@ export function makeBighead(THREE, spec = {}) {
       if (name === 'kneel') { hips.position.y = -0.16; legs.forEach((l) => { l.rotation.x = -1.3; }); }
       if (name === 'sit') { hips.position.y = -0.12; legs.forEach((l) => { l.rotation.x = -1.45; }); }
       if (name === 'hands_hips') { arm('l', [-0.3, 0.46, -0.02], [-0.18, 0.34, 0.05]); arm('r', [0.3, 0.46, -0.02], [0.18, 0.34, 0.05]); }
+      // Roosevelt Short (27 Nov): cough into a hand, clutch the chest, hold pages up high, orate, cheer, aim
+      if (name === 'cough') { const j = Math.sin(t * 18) * 0.012; arm('r', [0.2, 0.5, 0.18], [0.04, 0.86 + j, 0.34]); hips.rotation.x = 0.08 + Math.max(0, Math.sin(t * 9)) * 0.05; }
+      if (name === 'palm') arm('r', [0.22, 0.48, 0.18], [0.1, 0.66, 0.36]);
+      if (name === 'clutch') { arm('r', [0.22, 0.44, 0.14], [0.06, 0.5, 0.2]); arm('l', [-0.3, 0.5, 0.06], [-0.4, 0.62, 0.1]); hips.rotation.x = -0.12; }
+      if (name === 'hold_up') { arm('r', [0.28, 0.76, 0.1], [0.3, 1.04, 0.16]); arm('l', [-0.26, 0.5, 0.12], [-0.16, 0.56, 0.26]); }
+      if (name === 'orate') { const a = Math.sin(t * 3.1); arm('r', [0.28, 0.56, 0.14], [0.3 + a * 0.04, 0.7 + Math.max(0, a) * 0.16, 0.3]); arm('l', [-0.24, 0.46, 0.12], [-0.14, 0.4, 0.26]); hips.rotation.x = 0.04 * a; }
+      if (name === 'cheer') { const a = Math.sin(t * 7 + (o.ph || 0)); arm('l', [-0.3, 0.78, 0.04], [-0.34, 1.04 + a * 0.05, 0.1]); arm('r', [0.3, 0.78, 0.04], [0.34, 1.04 - a * 0.05, 0.1]); hips.position.y = Math.max(0, a) * 0.03; }
+      if (name === 'clap') { const a = Math.abs(Math.sin(t * 8 + (o.ph || 0))); arm('l', [-0.2, 0.48, 0.16], [-0.02 - a * 0.07, 0.56, 0.3]); arm('r', [0.2, 0.48, 0.16], [0.02 + a * 0.07, 0.56, 0.3]); }
+      if (name === 'aim') { arm('r', [0.2, 0.6, 0.2], [0.16, 0.64, 0.46]); arm('l', [-0.2, 0.46, 0.14], [-0.12, 0.42, 0.24]); }
+      if (name === 'grab') { arm('l', [-0.2, 0.56, 0.2], [-0.12, 0.62, 0.42]); arm('r', [0.2, 0.56, 0.2], [0.12, 0.6, 0.42]); hips.rotation.x = 0.15; }
       if (name === 'thumb') arm('r', [0.28, 0.5, 0.12], [0.26, 0.64, 0.24]);
     },
   };

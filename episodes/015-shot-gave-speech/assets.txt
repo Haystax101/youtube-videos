@@ -1,0 +1,2 @@
+# shiratori v2: framing, softer textures, audio fixes
+sfx-v1 sfx.tar

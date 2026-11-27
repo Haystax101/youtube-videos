@@ -1,19 +1,17 @@
 {
- "004-sitting-all-day": [
-  {
-   "text": "Yooooo",
-   "likes": 1
-  }
- ],
- "005-sun-goes-out": [],
- "006-bee-stings": [],
+ "004-sitting-all-day": {
+  "error": 403
+ },
+ "005-sun-goes-out": {
+  "error": 403
+ },
+ "006-bee-stings": {
+  "error": 403
+ },
  "007-groom-of-the-stool": {
   "error": 404
  },
- "009-only-energy-drinks": [
-  {
-   "text": "Ow really \ud83d\ude02\ud83d\ude02",
-   "likes": 0
-  }
- ]
+ "009-only-energy-drinks": {
+  "error": 403
+ }
 }

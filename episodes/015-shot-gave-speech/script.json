@@ -1,0 +1,156 @@
+{
+ "title": "He got shot in the chest, then gave a speech",
+ "style": "set3d",
+ "look": "smol",
+ "noGary": true,
+ "voices": {
+  "narrator": "af_nicole"
+ },
+ "speed": 1.28,
+ "tail": 0.8,
+ "pronounce": {
+  "Milwaukee": "mill-wawkee",
+  "Roosevelt": "Rose-uh-velt"
+ },
+ "label": "SHOT IN THE CHEST. *THEN A SPEECH.*",
+ "beats": [
+  {
+   "id": "hook",
+   "hook": true,
+   "label": "SHOT IN THE CHEST. *THEN A SPEECH.*",
+   "lines": [
+    {
+     "text": "Get shot in the chest, and you'd go to hospital. This man gave a speech."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "street",
+   "label": "SECOND 1",
+   "lines": [
+    {
+     "text": "Nineteen twelve. Teddy Roosevelt waves to a crowd, and a man shoots him in the chest."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "pocket",
+   "label": "SECOND 2",
+   "lines": [
+    {
+     "text": "The bullet punches through a fifty page speech in his pocket, and a steel glasses case."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "cough",
+   "label": "MINUTE 1",
+   "lines": [
+    {
+     "text": "He coughs into his hand. No blood. It missed his lung."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "hall",
+   "label": "MINUTES LATER",
+   "lines": [
+    {
+     "text": "So he skips the hospital, holds up the bloody pages, and says: it takes more than that to kill a Bull Moose."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "hour",
+   "label": "HOUR 1",
+   "lines": [
+    {
+     "text": "Then he talks for almost an hour."
+    }
+   ],
+   "hold": 0.15
+  },
+  {
+   "id": "payoff",
+   "label": "SIX YEARS LATER",
+   "lines": [
+    {
+     "text": "Doctors left the bullet in. He carried it for the rest of his life."
+    }
+   ],
+   "hold": 0.2
+  },
+  {
+   "id": "cta",
+   "lines": [
+    {
+     "text": "Comment what you want to know next."
+    }
+   ],
+   "hold": 0.1
+  }
+ ],
+ "experiment": {
+  "vars": {
+   "music": "suspense",
+   "ending_cta": "comment_next",
+   "narrator": "af_nicole",
+   "voices.narrator": "af_nicole",
+   "speed": 1.28,
+   "hook_form": "statement",
+   "format": "no_gary",
+   "premise": "true_history",
+   "ending": "survives",
+   "look": "smol",
+   "style": "set3d",
+   "character": "bighead",
+   "length": "mid_39s"
+  },
+  "hypothesis": "Second smol-look Short and the first quality-gated daily run in it. A told-straight history story with a bold statement hook over the most striking image (the bloodied speech held up at the podium). Tests a soft female Kokoro narrator (af_nicole) at fast speed against the suspense score, and a shorter 39 s cut than Shiratori (48 s).",
+  "fish": "#342 (Theodore Roosevelt was shot in the chest but survived thanks to a 50 page speech in his coat pocket, then gave the speech)",
+  "facts": [
+   {
+    "claim": "On 14 October 1912, outside the Gilpatrick Hotel in Milwaukee, John Schrank shot Theodore Roosevelt in the chest as he stood in his car waving to the crowd.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Attempted_assassination_of_Theodore_Roosevelt",
+     "https://www.history.com/this-day-in-history/october-14/theodore-roosevelt-shot-in-milwaukee"
+    ]
+   },
+   {
+    "claim": "The bullet passed through his folded fifty page speech and his steel glasses case in his coat pocket, which slowed it; it lodged in his chest wall.",
+    "sources": [
+     "https://blogs.loc.gov/headlinesandheroes/2019/07/the-pocket-items-that-saved-the-life-of-theodore-roosevelt/",
+     "https://www.smithsonianmag.com/history/the-speech-that-saved-teddy-roosevelts-life-83479091/",
+     "https://wpr.org/shot-chest-milwaukee-theodore-roosevelt-kept-talking-1912"
+    ]
+   },
+   {
+    "claim": "He coughed into his hand, saw no blood and concluded the bullet had not reached his lung, refused to go to hospital, and spoke at the Milwaukee Auditorium, holding up the bloodied pages: 'it takes more than that to kill a Bull Moose'.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Attempted_assassination_of_Theodore_Roosevelt",
+     "https://www.history.com/news/shot-in-the-chest-100-years-ago-teddy-roosevelt-kept-on-talking"
+    ]
+   },
+   {
+    "claim": "He spoke for somewhere between about 50 and 90 minutes (sources differ; the script says 'almost an hour').",
+    "sources": [
+     "https://www.pbs.org/wgbh/americanexperience/features/tr-politics",
+     "https://www.mentalfloss.com/history/presidents/time-teddy-roosevelt-got-shot-chest-gave-speech-anyway"
+    ]
+   },
+   {
+    "claim": "Doctors judged it safer to leave the bullet in; it stayed in his chest until his death in January 1919.",
+    "sources": [
+     "https://www.history.com/this-day-in-history/october-14/theodore-roosevelt-shot-in-milwaukee",
+     "https://en.wikipedia.org/wiki/Attempted_assassination_of_Theodore_Roosevelt"
+    ]
+   }
+  ],
+  "notes": "Speech length varies by source (50-90 min), so the script says 'almost an hour'. No gunshot recording in the CC0 library: the shot is a recorded impact plus a metal ring under the score hit."
+ }
+}

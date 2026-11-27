@@ -1,0 +1,717 @@
+{
+ "duration": 38.771,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 4.967,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Get",
+     "s": 0.15,
+     "e": 0.397,
+     "speaker": "narrator"
+    },
+    {
+     "w": "shot",
+     "s": 0.397,
+     "e": 0.652,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 0.652,
+     "e": 0.89,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 0.89,
+     "e": 1.137,
+     "speaker": "narrator"
+    },
+    {
+     "w": "chest,",
+     "s": 1.137,
+     "e": 1.533,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 1.533,
+     "e": 1.78,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you'd",
+     "s": 1.78,
+     "e": 2.035,
+     "speaker": "narrator"
+    },
+    {
+     "w": "go",
+     "s": 2.035,
+     "e": 2.273,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 2.273,
+     "e": 2.512,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hospital.",
+     "s": 2.512,
+     "e": 3.243,
+     "speaker": "narrator"
+    },
+    {
+     "w": "This",
+     "s": 3.383,
+     "e": 3.656,
+     "speaker": "narrator"
+    },
+    {
+     "w": "man",
+     "s": 3.656,
+     "e": 3.919,
+     "speaker": "narrator"
+    },
+    {
+     "w": "gave",
+     "s": 3.919,
+     "e": 4.192,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 4.192,
+     "e": 4.437,
+     "speaker": "narrator"
+    },
+    {
+     "w": "speech.",
+     "s": 4.437,
+     "e": 4.727,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 4.967,
+   "end": 11.577,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Nineteen",
+     "s": 4.967,
+     "e": 5.87,
+     "speaker": "narrator"
+    },
+    {
+     "w": "twelve.",
+     "s": 5.87,
+     "e": 6.205,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Teddy",
+     "s": 6.345,
+     "e": 6.875,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Roosevelt",
+     "s": 6.875,
+     "e": 7.684,
+     "speaker": "narrator"
+    },
+    {
+     "w": "waves",
+     "s": 7.684,
+     "e": 8.215,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 8.215,
+     "e": 8.475,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 8.475,
+     "e": 8.727,
+     "speaker": "narrator"
+    },
+    {
+     "w": "crowd,",
+     "s": 8.727,
+     "e": 9.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 9.16,
+     "e": 9.43,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 9.43,
+     "e": 9.682,
+     "speaker": "narrator"
+    },
+    {
+     "w": "man",
+     "s": 9.682,
+     "e": 9.952,
+     "speaker": "narrator"
+    },
+    {
+     "w": "shoots",
+     "s": 9.952,
+     "e": 10.249,
+     "speaker": "narrator"
+    },
+    {
+     "w": "him",
+     "s": 10.249,
+     "e": 10.518,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 10.518,
+     "e": 10.779,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 10.779,
+     "e": 11.049,
+     "speaker": "narrator"
+    },
+    {
+     "w": "chest.",
+     "s": 11.049,
+     "e": 11.337,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 11.577,
+   "end": 17.385,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "The",
+     "s": 11.577,
+     "e": 11.832,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bullet",
+     "s": 11.832,
+     "e": 12.344,
+     "speaker": "narrator"
+    },
+    {
+     "w": "punches",
+     "s": 12.344,
+     "e": 12.864,
+     "speaker": "narrator"
+    },
+    {
+     "w": "through",
+     "s": 12.864,
+     "e": 13.154,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 13.154,
+     "e": 13.392,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fifty",
+     "s": 13.392,
+     "e": 13.895,
+     "speaker": "narrator"
+    },
+    {
+     "w": "page",
+     "s": 13.895,
+     "e": 14.16,
+     "speaker": "narrator"
+    },
+    {
+     "w": "speech",
+     "s": 14.16,
+     "e": 14.441,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 14.441,
+     "e": 14.688,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 14.688,
+     "e": 14.944,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pocket,",
+     "s": 14.944,
+     "e": 15.593,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 15.593,
+     "e": 15.849,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 15.849,
+     "e": 16.087,
+     "speaker": "narrator"
+    },
+    {
+     "w": "steel",
+     "s": 16.087,
+     "e": 16.36,
+     "speaker": "narrator"
+    },
+    {
+     "w": "glasses",
+     "s": 16.36,
+     "e": 16.88,
+     "speaker": "narrator"
+    },
+    {
+     "w": "case.",
+     "s": 16.88,
+     "e": 17.145,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 17.385,
+   "end": 21.361,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "He",
+     "s": 17.385,
+     "e": 17.607,
+     "speaker": "narrator"
+    },
+    {
+     "w": "coughs",
+     "s": 17.607,
+     "e": 17.86,
+     "speaker": "narrator"
+    },
+    {
+     "w": "into",
+     "s": 17.86,
+     "e": 18.304,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 18.304,
+     "e": 18.534,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hand.",
+     "s": 18.534,
+     "e": 18.771,
+     "speaker": "narrator"
+    },
+    {
+     "w": "No",
+     "s": 18.911,
+     "e": 19.388,
+     "speaker": "narrator"
+    },
+    {
+     "w": "blood.",
+     "s": 19.388,
+     "e": 19.914,
+     "speaker": "narrator"
+    },
+    {
+     "w": "It",
+     "s": 20.054,
+     "e": 20.26,
+     "speaker": "narrator"
+    },
+    {
+     "w": "missed",
+     "s": 20.26,
+     "e": 20.687,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 20.687,
+     "e": 20.9,
+     "speaker": "narrator"
+    },
+    {
+     "w": "lung.",
+     "s": 20.9,
+     "e": 21.121,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 21.361,
+   "end": 29.622,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "So",
+     "s": 21.361,
+     "e": 21.631,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 21.631,
+     "e": 21.901,
+     "speaker": "narrator"
+    },
+    {
+     "w": "skips",
+     "s": 21.901,
+     "e": 22.2,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 22.2,
+     "e": 22.479,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hospital,",
+     "s": 22.479,
+     "e": 23.459,
+     "speaker": "narrator"
+    },
+    {
+     "w": "holds",
+     "s": 23.459,
+     "e": 23.758,
+     "speaker": "narrator"
+    },
+    {
+     "w": "up",
+     "s": 23.758,
+     "e": 24.028,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 24.028,
+     "e": 24.308,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bloody",
+     "s": 24.308,
+     "e": 24.867,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pages,",
+     "s": 24.867,
+     "e": 25.568,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 25.568,
+     "e": 25.847,
+     "speaker": "narrator"
+    },
+    {
+     "w": "says:",
+     "s": 25.847,
+     "e": 26.287,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 26.287,
+     "e": 26.557,
+     "speaker": "narrator"
+    },
+    {
+     "w": "takes",
+     "s": 26.557,
+     "e": 27.107,
+     "speaker": "narrator"
+    },
+    {
+     "w": "more",
+     "s": 27.107,
+     "e": 27.396,
+     "speaker": "narrator"
+    },
+    {
+     "w": "than",
+     "s": 27.396,
+     "e": 27.685,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that",
+     "s": 27.685,
+     "e": 27.974,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 27.974,
+     "e": 28.245,
+     "speaker": "narrator"
+    },
+    {
+     "w": "kill",
+     "s": 28.245,
+     "e": 28.534,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 28.534,
+     "e": 28.794,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Bull",
+     "s": 28.794,
+     "e": 29.084,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Moose.",
+     "s": 29.084,
+     "e": 29.382,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 29.622,
+   "end": 31.64,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Then",
+     "s": 29.622,
+     "e": 29.843,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 29.843,
+     "e": 30.05,
+     "speaker": "narrator"
+    },
+    {
+     "w": "talks",
+     "s": 30.05,
+     "e": 30.279,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 30.279,
+     "e": 30.493,
+     "speaker": "narrator"
+    },
+    {
+     "w": "almost",
+     "s": 30.493,
+     "e": 30.922,
+     "speaker": "narrator"
+    },
+    {
+     "w": "an",
+     "s": 30.922,
+     "e": 31.129,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hour.",
+     "s": 31.129,
+     "e": 31.35,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 31.64,
+   "end": 35.747,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Doctors",
+     "s": 31.64,
+     "e": 32.103,
+     "speaker": "narrator"
+    },
+    {
+     "w": "left",
+     "s": 32.103,
+     "e": 32.338,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 32.338,
+     "e": 32.565,
+     "speaker": "narrator"
+    },
+    {
+     "w": "bullet",
+     "s": 32.565,
+     "e": 33.02,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in.",
+     "s": 33.02,
+     "e": 33.24,
+     "speaker": "narrator"
+    },
+    {
+     "w": "He",
+     "s": 33.38,
+     "e": 33.576,
+     "speaker": "narrator"
+    },
+    {
+     "w": "carried",
+     "s": 33.576,
+     "e": 33.988,
+     "speaker": "narrator"
+    },
+    {
+     "w": "it",
+     "s": 33.988,
+     "e": 34.184,
+     "speaker": "narrator"
+    },
+    {
+     "w": "for",
+     "s": 34.184,
+     "e": 34.387,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 34.387,
+     "e": 34.589,
+     "speaker": "narrator"
+    },
+    {
+     "w": "rest",
+     "s": 34.589,
+     "e": 34.799,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 34.799,
+     "e": 34.995,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 34.995,
+     "e": 35.197,
+     "speaker": "narrator"
+    },
+    {
+     "w": "life.",
+     "s": 35.197,
+     "e": 35.407,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 7,
+   "start": 35.747,
+   "end": 37.971,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Comment",
+     "s": 35.747,
+     "e": 36.243,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 36.243,
+     "e": 36.495,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 36.495,
+     "e": 36.739,
+     "speaker": "narrator"
+    },
+    {
+     "w": "want",
+     "s": 36.739,
+     "e": 36.991,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 36.991,
+     "e": 37.226,
+     "speaker": "narrator"
+    },
+    {
+     "w": "know",
+     "s": 37.226,
+     "e": 37.479,
+     "speaker": "narrator"
+    },
+    {
+     "w": "next.",
+     "s": 37.479,
+     "e": 37.731,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}
