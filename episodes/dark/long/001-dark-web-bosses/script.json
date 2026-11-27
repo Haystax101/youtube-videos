@@ -1,0 +1,474 @@
+{
+ "title": "Why Does Every Dark Web Boss Get Caught?",
+ "channel": "dark-stories",
+ "format": "landscape",
+ "look": "casefile2d",
+ "voices": {
+  "narrator": "am_fenrir"
+ },
+ "speed": 1.0,
+ "tail": 1.0,
+ "pronounce": {
+  "Cazes": "Kahzez",
+  "Ulbricht": "Ulbrikt",
+  "Benthall": "Bent hall",
+  "Hansa": "Hahnsa",
+  "Alford": "Alford",
+  "Nueng": "Noong",
+  "Lamborghini": "Lamborgeeni",
+  "Bitdefender": "Bit defender"
+ },
+ "experiment": {
+  "facts": [
+   "AlphaBay arrest, Bangkok, 5 July 2017; welcome and password-recovery emails carried Pimp_Alex_91@hotmail.com; alpha02 post with his name on commentcamarche.com; over 200,000 users, 40,000 vendors, over 1 billion dollars; Cazes found dead in custody 12 July 2017: US Department of Justice press release 20 July 2017 and civil forfeiture complaint, US v. Cazes (E.D. Cal. 1:17-cv-00967)",
+   "Gate lure with a car in a fake three-point turn, wife then Cazes come out, phone taken, laptop open and logged in: Andy Greenberg, Tracers in the Dark (2022) / WIRED 'The Rise and Fall of AlphaBay'",
+   "Silk Road: altoid posts Jan 2011, rossulbricht@gmail.com in a programming-help post, IRS agent Gary Alford's searches: New York Times (2015) via Business Insider / Vice; nine fake IDs intercepted 10 July 2013, HSI visit 26 July 2013, 'hypothetically' anyone could buy them on Silk Road: criminal complaint, US v. Ulbricht (S.D.N.Y. 2013)",
+   "Glen Park library arrest 1 October 2013, staged argument, laptop grabbed open: trial testimony reported by WIRED / Business Insider; life sentence May 2015; pardon 21 January 2025",
+   "Corrupt agents Carl Force (DEA) and Shaun Bridges (Secret Service) stole bitcoin during the investigation: DOJ press releases 2015",
+   "Silk Road 2.0: undercover HSI agent on the support staff from the start, Benthall arrested November 2014, about 8 million dollars a month in sales: SDNY press release 6 Nov 2014",
+   "Hansa: German admins arrested, Dutch police took control 20 June 2017, ran it about a month, vendors per day up from about 1,000 to 8,000 after AlphaBay closed, about 10,000 buyer addresses collected, revealed 20 July 2017: Europol / Dutch police / DOJ press releases 20 July 2017"
+  ]
+ },
+ "beats": [
+  {
+   "id": "open1",
+   "lines": [
+    {
+     "text": "July the fifth, twenty seventeen. Bangkok. It is early in the morning, and a car is trying to turn around in a quiet street."
+    }
+   ]
+  },
+  {
+   "id": "open2",
+   "lines": [
+    {
+     "text": "It reverses, a little too far, and backs straight into the gate of a big white villa. The gate comes off its rails."
+    }
+   ]
+  },
+  {
+   "id": "open3",
+   "lines": [
+    {
+     "text": "Upstairs, a twenty five year old Canadian is at his laptop. His name is Alexandre Cazes, and he runs Alpha Bay, the biggest drug market on the dark web. Two hundred thousand users. Forty thousand sellers. More than a billion dollars, in under three years."
+    }
+   ]
+  },
+  {
+   "id": "open4",
+   "lines": [
+    {
+     "text": "His wife goes out to look first. Then he comes down himself, to help lift the gate back on. He tucks his phone into his shorts. He leaves the laptop upstairs, open, and logged in."
+    }
+   ]
+  },
+  {
+   "id": "open5",
+   "lines": [
+    {
+     "text": "The woman driving the car is an undercover police officer. A second officer walks up, takes the phone out of his shorts, and the street fills with police."
+    }
+   ]
+  },
+  {
+   "id": "q1",
+   "lines": [
+    {
+     "text": "He was not the first dark web boss to get caught. He was not the last. The man who built the first big market was arrested in a public library. One market was secretly run by the police for a month. Another had a federal agent on the staff from day one."
+    }
+   ]
+  },
+  {
+   "id": "q2",
+   "lines": [
+    {
+     "text": "These people had encryption, fake names, hidden servers, and millions of dollars. And they all ended up in handcuffs. So why does every dark web boss get caught?"
+    }
+   ]
+  },
+  {
+   "id": "sr1",
+   "lines": [
+    {
+     "text": "To answer that, we have to go back to the beginning. February, twenty eleven. A twenty six year old physics graduate from Texas opens a website called Silk Road."
+    }
+   ]
+  },
+  {
+   "id": "sr2",
+   "lines": [
+    {
+     "text": "His name is Ross Ulbricht. The site only works through Tor, a free browser that bounces your connection around the world so nobody can see where it comes from. Payment is in bitcoin, which back then almost nobody had heard of."
+    }
+   ]
+  },
+  {
+   "id": "sr3",
+   "lines": [
+    {
+     "text": "Silk Road looks like a normal online shop. There are product photos, seller ratings and reviews. Except the products are drugs. Over the next two and a half years, it handles more than a billion dollars in sales."
+    }
+   ]
+  },
+  {
+   "id": "sr4",
+   "lines": [
+    {
+     "text": "And it makes Ulbricht a legend. Online, he calls himself the Dread Pirate Roberts, after the masked hero from The Princess Bride. Nobody knows who he is. The newspapers write about him. A United States senator demands that it is shut down."
+    }
+   ]
+  },
+  {
+   "id": "sr5",
+   "lines": [
+    {
+     "text": "But there is a problem with being a legend on the internet. The internet remembers everything you did before you became one."
+    }
+   ]
+  },
+  {
+   "id": "sr6",
+   "lines": [
+    {
+     "text": "In January twenty eleven, before Silk Road was famous, someone called altoid had posted on two forums asking if anyone had seen this new site. A few months later, altoid posted again, looking for a programmer. And at the bottom, he left an email address to contact him."
+    }
+   ]
+  },
+  {
+   "id": "sr7",
+   "lines": [
+    {
+     "text": "It was ross ulbricht at gmail dot com. Pro tip. If you are going to run a secret drug empire, do not sign the job advert with your real name."
+    }
+   ]
+  },
+  {
+   "id": "sr8",
+   "lines": [
+    {
+     "text": "Remember that post. It sat there in plain sight for almost two years. Nobody connected it to the Dread Pirate Roberts, until a tax investigator named Gary Alford started typing old search terms into Google at his desk."
+    }
+   ]
+  },
+  {
+   "id": "sr9",
+   "lines": [
+    {
+     "text": "Meanwhile, the real world was closing in from another direction. In July twenty thirteen, border officers opened a package coming in from Canada. Inside were nine fake I Ds. Nine different names. One face. Ross Ulbricht's."
+    }
+   ]
+  },
+  {
+   "id": "sr10",
+   "lines": [
+    {
+     "text": "Federal agents went to the address in San Francisco. Ulbricht opened the door, refused to answer questions, and then helpfully explained that hypothetically, anyone could buy fake I Ds on a website called Silk Road."
+    }
+   ]
+  },
+  {
+   "id": "sr11",
+   "lines": [
+    {
+     "text": "They did not arrest him that day. They did not have enough yet. But now they had a face, a home address, and a man who could not stop talking about his own website."
+    }
+   ]
+  },
+  {
+   "id": "sr12",
+   "lines": [
+    {
+     "text": "October the first, twenty thirteen. The Glen Park library, San Francisco. Ulbricht sits down at a table with his laptop. He often works from cafes and libraries, on their public wifi."
+    }
+   ]
+  },
+  {
+   "id": "sr13",
+   "lines": [
+    {
+     "text": "The agents know his laptop is protected by encryption. If he closes the lid, it may lock forever. So they need him to be logged in, and they need him to look away."
+    }
+   ]
+  },
+  {
+   "id": "sr14",
+   "lines": [
+    {
+     "text": "An undercover agent, who has taken over the account of one of the site's staff, starts a chat with the Dread Pirate Roberts, so Ulbricht logs into the admin pages. Then, behind him, a man and a woman start a loud argument."
+    }
+   ]
+  },
+  {
+   "id": "sr15",
+   "lines": [
+    {
+     "text": "Ulbricht turns around to look. The woman grabs his laptop and slides it across the table to another agent. It is open, unlocked, and still logged in as the Dread Pirate Roberts."
+    }
+   ]
+  },
+  {
+   "id": "sr16",
+   "lines": [
+    {
+     "text": "On it, they find his diary, his bitcoin, and the records of the whole market. In twenty fifteen, he is sentenced to life in prison with no parole. Remember that sentence. It comes back at the end."
+    }
+   ]
+  },
+  {
+   "id": "sr17",
+   "lines": [
+    {
+     "text": "Fun fact. Two of the federal agents chasing Silk Road were also stealing from it. One from the Drug Enforcement Administration, one from the Secret Service. Both went to prison too. On the dark web, even the police were not always the police."
+    }
+   ]
+  },
+  {
+   "id": "cta",
+   "lines": [
+    {
+     "text": "Quick thing, before the next boss makes the same mistake. If you are enjoying this, hit like and subscribe. Unlike a dark web market, it is free, and nobody will raid your house."
+    }
+   ]
+  },
+  {
+   "id": "s21",
+   "lines": [
+    {
+     "text": "Silk Road was shut down on a Wednesday. Five weeks later, it was back. Same name, same look, new boss. They called it Silk Road two point oh."
+    }
+   ]
+  },
+  {
+   "id": "s22",
+   "lines": [
+    {
+     "text": "Its leader called himself Defcon. In real life he was Blake Benthall, a twenty six year old software engineer in San Francisco. He had watched exactly what happened to Ulbricht, and he thought he could do it better."
+    }
+   ]
+  },
+  {
+   "id": "s23",
+   "lines": [
+    {
+     "text": "But a market needs people to run it. Moderators, support staff, someone to answer angry customers. And one of the first people Benthall's team let onto the staff was an undercover agent from Homeland Security."
+    }
+   ]
+  },
+  {
+   "id": "s24",
+   "lines": [
+    {
+     "text": "For a whole year, the agent did the job well. He chatted with Defcon, earned his trust, and quietly passed everything he learned to investigators. By late twenty fourteen, the market was making about eight million dollars a month."
+    }
+   ]
+  },
+  {
+   "id": "s25",
+   "lines": [
+    {
+     "text": "The F B I found one of its servers abroad, copied it, and followed the trail back to Benthall. In November twenty fourteen, he was arrested in San Francisco, the same city as Ulbricht, one year later."
+    }
+   ]
+  },
+  {
+   "id": "s26",
+   "lines": [
+    {
+     "text": "So now there were two lessons. Your past can catch you. And the person helping you run the place might not be on your side. Which brings us back to the man in Bangkok."
+    }
+   ]
+  },
+  {
+   "id": "ab1",
+   "lines": [
+    {
+     "text": "Alexandre Cazes grew up in Quebec. He was a clever, self taught programmer, and in December twenty fourteen, he opened Alpha Bay. He called himself alpha zero two."
+    }
+   ]
+  },
+  {
+   "id": "ab2",
+   "lines": [
+    {
+     "text": "He was careful in many ways. The servers were hidden. The money was moved through layers of bitcoin wallets. Within two years, Alpha Bay was about ten times bigger than Silk Road had ever been."
+    }
+   ]
+  },
+  {
+   "id": "ab3",
+   "lines": [
+    {
+     "text": "And he lived like it. He moved to Thailand, bought villas and a Lamborghini, and married a Thai woman. Online, under another name, he gave other men advice about money and success."
+    }
+   ]
+  },
+  {
+   "id": "ab4",
+   "lines": [
+    {
+     "text": "But remember the first Silk Road, and the email at the bottom of a forum post. When new users signed up to the Alpha Bay forum in late twenty fourteen, they got a welcome email. Hidden in the header was the address it came from."
+    }
+   ]
+  },
+  {
+   "id": "ab5",
+   "lines": [
+    {
+     "text": "Pimp underscore Alex underscore ninety one, at hotmail dot com."
+    }
+   ]
+  },
+  {
+   "id": "ab6",
+   "lines": [
+    {
+     "text": "Investigators searched for it. They found an old post on a French language tech forum by a user called alpha zero two. At the bottom of the post was that same email address, and a real name. Alexandre Cazes."
+    }
+   ]
+  },
+  {
+   "id": "ab7",
+   "lines": [
+    {
+     "text": "The same mistake as Ulbricht. Not a hacking trick. Not a broken encryption. A few seconds of carelessness, years before anyone was looking."
+    }
+   ]
+  },
+  {
+   "id": "ab8",
+   "lines": [
+    {
+     "text": "The F B I found him in Bangkok and tracked his money and his life for months. They knew where he lived, what he drove, and when he was usually online. What they still needed was the laptop, open, with him logged in."
+    }
+   ]
+  },
+  {
+   "id": "ab9",
+   "lines": [
+    {
+     "text": "Which is why an undercover officer in a car was practising a very bad three point turn outside his gate. When Cazes came down to fix it, his laptop was waiting upstairs, logged in as the admin of Alpha Bay."
+    }
+   ]
+  },
+  {
+   "id": "ab10",
+   "lines": [
+    {
+     "text": "One week later, on July the twelfth, Alexandre Cazes was found dead in his cell in Bangkok. The police said he had taken his own life. He was twenty five."
+    }
+   ]
+  },
+  {
+   "id": "hn1",
+   "lines": [
+    {
+     "text": "But Alpha Bay was only half of the trap. The other half was in the Netherlands."
+    }
+   ]
+  },
+  {
+   "id": "hn2",
+   "lines": [
+    {
+     "text": "There was another big market called Hansa. With a tip from a security company, Dutch police had found its servers, and traced the two men running it to Germany. On June the twentieth, twenty seventeen, German police arrested them."
+    }
+   ]
+  },
+  {
+   "id": "hn3",
+   "lines": [
+    {
+     "text": "And then the Dutch police did something nobody expected. They did not shut Hansa down. They took it over, and kept it running, as if nothing had happened."
+    }
+   ]
+  },
+  {
+   "id": "hn4",
+   "lines": [
+    {
+     "text": "They answered customer messages. They paid the sellers. And they quietly changed the code, so that it saved passwords and home addresses that were supposed to be scrambled."
+    }
+   ]
+  },
+  {
+   "id": "hn5",
+   "lines": [
+    {
+     "text": "Two weeks later, Alpha Bay vanished overnight. Hundreds of thousands of users needed somewhere new to go. Most of them went to Hansa. In a few days, the number of sellers each day jumped from about one thousand to about eight thousand."
+    }
+   ]
+  },
+  {
+   "id": "hn6",
+   "lines": [
+    {
+     "text": "Every one of them was walking straight into a shop run by the police. By the time Hansa was shut down, on July the twentieth, the police had collected around ten thousand buyers' home addresses."
+    }
+   ]
+  },
+  {
+   "id": "hn7",
+   "lines": [
+    {
+     "text": "On the day it closed, the front page of Hansa was replaced with a police notice. The users who had fled Alpha Bay to stay safe had run straight into the net."
+    }
+   ]
+  },
+  {
+   "id": "an1",
+   "lines": [
+    {
+     "text": "So, why does every dark web boss get caught? Not because the police can break Tor. In all of these cases, the hiding technology mostly held."
+    }
+   ]
+  },
+  {
+   "id": "an2",
+   "lines": [
+    {
+     "text": "They were caught by the things around it. An old forum post. An email in a header. A package of fake I Ds. A staff member who was really an agent. A crashed gate, and a laptop left open."
+    }
+   ]
+  },
+  {
+   "id": "an3",
+   "lines": [
+    {
+     "text": "And there is a deeper reason. A dark web boss has to be perfect every single day, for years, while the business grows and the money piles up. The police only have to be lucky once. And they can wait."
+    }
+   ]
+  },
+  {
+   "id": "an4",
+   "lines": [
+    {
+     "text": "Even the money gives them away. You can hide a website. It is much harder to hide a Lamborghini."
+    }
+   ]
+  },
+  {
+   "id": "an5",
+   "lines": [
+    {
+     "text": "Remember Ross Ulbricht's life sentence? In January twenty twenty five, after more than eleven years in prison, he was pardoned by the new American president, and walked free."
+    }
+   ]
+  },
+  {
+   "id": "an6",
+   "lines": [
+    {
+     "text": "The dark web was built to keep people anonymous. The people running it never were. Every one of them was caught by a mistake a careful person could have made on any normal day."
+    }
+   ]
+  },
+  {
+   "id": "an7",
+   "lines": [
+    {
+     "text": "So tell me in the comments. If you had been the investigator, which clue would you have spotted first?"
+    }
+   ]
+  }
+ ]
+}

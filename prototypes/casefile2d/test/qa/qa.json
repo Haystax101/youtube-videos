@@ -1,0 +1,65 @@
+{
+ "video": "prototypes/casefile2d/test/video.mp4",
+ "duration": 38.97,
+ "result": "PASS",
+ "checks": [
+  {
+   "check": "black",
+   "status": "PASS",
+   "detail": "no dark patches or black tiles"
+  },
+  {
+   "check": "guard",
+   "status": "PASS",
+   "detail": "0 glitch frame(s) re-rendered clean"
+  },
+  {
+   "check": "freeze",
+   "status": "PASS",
+   "detail": "picture keeps moving"
+  },
+  {
+   "check": "loudness",
+   "status": "PASS",
+   "detail": "-15.3 LUFS, true peak -4.3 dBTP (want -14 +/- 1.5, <= -1)"
+  },
+  {
+   "check": "clipping",
+   "status": "PASS",
+   "detail": "music.wav: 0 noisy window(s) | sfx.wav: 0 noisy window(s) | AUDIO OK"
+  },
+  {
+   "check": "hiss",
+   "status": "PASS",
+   "detail": "no broadband static"
+  },
+  {
+   "check": "silence",
+   "status": "PASS",
+   "detail": "no dead air"
+  },
+  {
+   "check": "balance",
+   "status": "PASS",
+   "detail": "narration -18.6 LUFS, music+SFX -26.9 LUFS: voice 8.3 LU on top (want >= 8)"
+  },
+  {
+   "check": "flicker",
+   "status": "WARN",
+   "detail": "2 one-frame pop(s), worst at 19.03s, 17.20s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
+  },
+  {
+   "check": "vanish",
+   "status": "WARN",
+   "detail": "3 small blink(s) at 5.8s, 6.1s, 24.8s -> qa/vanish.jpg: an eye blink or a light is fine, a label or prop is not"
+  },
+  {
+   "check": "overlap",
+   "status": "PASS",
+   "detail": "0 overlap(s)"
+  }
+ ],
+ "contact_sheet": "prototypes/casefile2d/test/qa/contact.jpg",
+ "review": null,
+ "review_mtime": 1795790242.1830478
+}

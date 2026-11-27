@@ -156,7 +156,9 @@ export function drawChar(ctx, c, t) {
     const m = ctx.getTransform(), P = (x, y) => [m.a * x + m.c * y + m.e, m.b * x + m.d * y + m.f], z = Math.hypot(m.a, m.b);
     window.__chars.push({ name: c.name || ('char' + (c.id || '')), head: [...P(f * 4, -236), 60 * z], body: [...P(-44, -184), ...P(44, -58)] });
   }
+  if (c.headOnly) { ctx.save(); ctx.translate(0, 236); }
   const ph = (c.walk || 0) * Math.PI, walking = !!c.walk, bob = walking ? Math.abs(Math.sin(ph)) * 6 : Math.sin(t * 1.7 + (c.id || 0)) * 1.2;
+  if (!c.headOnly) {
   // ground shadow
   ctx.fillStyle = 'rgba(0,0,0,0.22)'; ctx.beginPath(); ctx.ellipse(0, 2, 58, 10, 0, 0, 7); ctx.fill();
   // legs
@@ -189,6 +191,7 @@ export function drawChar(ctx, c, t) {
   if (c.glow) { const gx = c.glow.side * 50; const gr = ctx.createRadialGradient(gx, -120, 5, gx, -120, 110); gr.addColorStop(0, c.glow.color); gr.addColorStop(1, 'rgba(0,0,0,0)'); ctx.globalCompositeOperation = 'screen'; ctx.fillStyle = gr; ctx.fillRect(-60, -200, 120, 150); }
   ctx.restore();
   outfit(ctx, c, f);
+  }
   // head
   const hx = f * 4, hy = -236;
   ctx.save(); ctx.translate(hx, hy); if (c.tilt) ctx.rotate(c.tilt);
@@ -200,6 +203,7 @@ export function drawChar(ctx, c, t) {
   face(ctx, c, f, t);
   hair(ctx, c, f);
   ctx.restore();
+  if (c.headOnly) ctx.restore();
   ctx.restore();
 }
 

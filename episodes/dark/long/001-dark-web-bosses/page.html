@@ -1,0 +1,445 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Why Does Every Dark Web Boss Get Caught?</title>
+<style>html,body{margin:0;background:#000}#stage{position:relative;width:1920px;height:1080px;overflow:hidden}canvas{display:block}</style>
+</head><body><div id="stage"><canvas id="cv"></canvas></div>
+<script type="module">
+import { W, H, INK, YEL, RED, drawChar, camera, caption, dateTag, nameCard, clamp, lerp, ease, easeOut, easeInOut, hash, textOutlined, rr, fillStroke } from '/prototypes/casefile2d/engine.js';
+import { villaNight, car, hackerRoom, desk, corkboard, documentInsert, mapInsert, glowSpot } from '/prototypes/casefile2d/sets.js';
+import { room, windowFrame, door, bookshelf, wallClock, frameArt, plant, cabinet, serverRack, tableSide, laptopSide, bars, flag, cityStreet, prisonGate, cell, courtroom, subscribeSet, newspaper, statBars, idParcel, shopCard, seizedNotice, FLOOR } from '/prototypes/casefile2d/sets2.js';
+window.QA2D = true;
+
+// ---------- cast (our own characters) ----------
+const CAZES = { name: 'Cazes', hair: 'short', hairColor: '#2e2420', stubble: true, outfit: 'shirt', color: '#2f3a4a', legs: '#2a2b33', id: 3 };
+const CAZES_SHORTS = { ...CAZES, outfit: 'tee', color: '#e7e1d3', legs: '#5b6b7a' };
+const WIFE = { name: 'Wife', hair: 'long', hairColor: '#1e1816', outfit: 'tee', color: '#b84a5a', legs: '#3a3240', id: 7 };
+const DRIVER = { name: 'Driver', hair: 'long', hairColor: '#3a2a20', outfit: 'shirt', color: '#d9c27a', legs: '#3d4f6e', id: 8 };
+const COP = (x, id, f = -1) => ({ name: 'Cop' + id, x, y: FLOOR, face: f, cap: true, capColor: '#3d3a2c', outfit: 'police', color: '#6b5d3f', sleeve: '#6b5d3f', legs: '#3a3528', hair: 'buzz', hairColor: '#1e1a18', id });
+const ROSS = { name: 'Ross', hair: 'messy', hairColor: '#6b4a2e', outfit: 'tee', color: '#5d6b5a', legs: '#3d4f6e', id: 21 };
+const AGENT = (x, id, o = {}) => ({ name: 'Agent' + id, x, y: FLOOR, outfit: 'agent', color: '#23324a', legs: '#26272c', hair: id % 2 ? 'short' : 'side', hairColor: ['#2e2420', '#5a4030', '#1e1a18'][id % 3], id, ...o });
+const FEMAGENT = (x, id, o = {}) => ({ name: 'FemAgent' + id, x, y: FLOOR, outfit: 'shirt', color: '#7a4a5a', legs: '#26272c', hair: 'long', hairColor: '#8a5a30', id, ...o });
+const ALFORD = { name: 'Alford', hair: 'buzz', hairColor: '#1e1a18', outfit: 'suit', color: '#3a3f4a', tie: '#2b4f8a', glasses: true, legs: '#2a2b33', id: 31 };
+const BENT = { name: 'Benthall', hair: 'side', hairColor: '#c9a85a', outfit: 'tee', color: '#2b2b30', legs: '#3d4f6e', id: 41 };
+const HSI = { name: 'HSI', hair: 'short', hairColor: '#3a2a20', beard: true, outfit: 'hoodie', color: '#4a5a3a', legs: '#2a2b33', id: 42 };
+const DUTCH = (x, id, f = 1) => ({ name: 'Dutch' + id, x, y: FLOOR, face: f, outfit: 'shirt', color: '#2b3d5c', legs: '#1e2430', hair: id % 2 ? 'buzz' : 'short', hairColor: '#4a3a2a', glasses: id % 3 === 0, id });
+const JUDGE = { name: 'Judge', hair: 'bald', hairColor: '#e8e2d6', outfit: 'suit', color: '#1d1d22', shirt: '#efe9dd', tie: '#1d1d22', glasses: true, id: 51 };
+const typing = t => [1.25 + Math.sin(t * 14) * 0.06, 1.3 + Math.cos(t * 13) * 0.06];
+const shake = (t, t0, amp = 14, d = 0.5) => { const k = (t - t0) / d; if (k < 0 || k > 1) return [0, 0]; const a = amp * (1 - k); return [Math.sin(t * 90) * a, Math.cos(t * 77) * a]; };
+const walkTo = (L, t0, d, x0, x1) => { const w = clamp((L - t0) / d); return { x: lerp(x0, x1, ease(w)), walk: w > 0 && w < 1 ? w * d * 2.2 : 0, face: x1 > x0 ? 1 : -1, moving: w > 0 && w < 1 }; };
+const C = (o) => o;   // readability
+const BG = '/prototypes/casefile2d/';
+
+const cork = (L, extra = {}) => ({ local: L, title: 'Dark web bosses', ...extra });
+const CARD = {
+  sr: { x: 400, y: 560, w: 250, h: 270, kind: 'note', title: 'Silk Road', sub: 'San Francisco, 2013', rot: -0.04, icon: (c, x, y) => { c.font = '86px "Lilita One"'; c.fillStyle = '#3e6b4a'; c.textAlign = 'center'; c.fillText('~', x, y); } },
+  s2: { x: 760, y: 520, w: 250, h: 270, kind: 'note', title: 'Silk Road 2.0', sub: 'San Francisco, 2014', rot: 0.03, icon: (c, x, y) => { c.font = '76px "Lilita One"'; c.fillStyle = '#3e6b4a'; c.textAlign = 'center'; c.fillText('2', x, y); } },
+  ab: { x: 1110, y: 590, w: 250, h: 270, kind: 'note', title: 'AlphaBay', sub: 'Bangkok, 2017', rot: -0.02, icon: (c, x, y) => { c.font = '90px "Lilita One"'; c.fillStyle = '#2b3a55'; c.textAlign = 'center'; c.fillText('α', x, y); } },
+  hn: { x: 1470, y: 530, w: 250, h: 270, kind: 'note', title: 'Hansa', sub: 'Netherlands, 2017', rot: 0.04, icon: (c, x, y) => { c.font = '86px "Lilita One"'; c.fillStyle = '#5a3f7a'; c.textAlign = 'center'; c.fillText('H', x, y); } },
+};
+const q = (c) => ({ ...c, kind: 'q', title: '', sub: '', icon: null });
+
+window.__eventsUsed = true;
+const { boot } = await import('/prototypes/casefile2d/runtime.js');
+await boot(new URL('./', location.href).href, ({ cue, end }) => {
+  const B = (b, w = 0) => cue(b, w);   // beat/word start
+  const crashT = B(1, 'backs') + 0.5;
+  const S = [];
+  const add = (t0, name, draw, overlay, dark = 0.1) => S.push({ t0, name, draw, overlay, dark });
+
+  // ======== COLD OPEN: Bangkok, 5 July 2017 ========
+  add(0, 'villa wide street', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 1000, y: 560, z: 1.12 }, k); villaNight(ctx, t, { dawn: 0.35 });
+    const p = clamp((L - 2.2) / 5); car(ctx, lerp(1900, 1250, ease(p)), 960, t, { color: '#8e9aa3', flip: true }); },
+    (ctx, t, k, L) => { dateTag(ctx, '5 JULY 2017 · BANGKOK', L - 0.3); caption(ctx, 'EARLY MORNING', W / 2, 170, t - B(0, 'early'), 1.8); }, 0.15);
+  add(B(1, 0), 'car reverses into gate', (ctx, t, k, L) => { const [sx, sy] = shake(t, crashT); camera(ctx, { x: 980 + sx, y: 640 + sy, z: 1.35 }, { x: 1000 + sx, y: 650 + sy, z: 1.45 }, k);
+    villaNight(ctx, t, { dawn: 0.38, crash: clamp((t - crashT) / 0.15) });
+    const back = easeInOut(clamp((t - (crashT - 2.0)) / 2.0)); car(ctx, lerp(1180, 560, back), 905, t, { color: '#8e9aa3', flip: true, crumple: 0 });
+    if (t > crashT) glowSpot(ctx, 900, 760, 220 * clamp(1 - (t - crashT) / 0.6), 'rgba(255,240,200,.8)'); },
+    (ctx, t) => { caption(ctx, 'OFF ITS RAILS', W / 2, 170, t - B(1, 'rails') + 0.3, 2.0); }, 0.15);
+  add(B(2, 0), 'cazes at laptop', (ctx, t, k) => { camera(ctx, { x: 900, y: 600, z: 1.35 }, { x: 880, y: 610, z: 1.45 }, k); hackerRoom(ctx, t);
+    drawChar(ctx, { ...CAZES, x: 760, y: FLOOR, face: 1, arms: typing(t), glow: { color: 'rgba(110,220,255,.55)', side: 1 }, lookY: 4 }, t); desk(ctx, 640, t, { laptopX: 280 }); },
+    (ctx, t, k, L) => { caption(ctx, '25 YEARS OLD', W / 2, 150, t - B(2, 'twenty'), 2.0); nameCard(ctx, 'ALEXANDRE CAZES', 'CANADIAN · LIVES IN BANGKOK', t - B(2, 'name')); }, 0.15);
+  add(B(2, 'runs') - 0.1, 'cazes close', (ctx, t, k) => { camera(ctx, { x: 850, y: 600, z: 1.9 }, { x: 860, y: 610, z: 2.05 }, k); hackerRoom(ctx, t);
+    drawChar(ctx, { ...CAZES, x: 760, y: FLOOR, face: 1, mood: 'smug', arms: typing(t), glow: { color: 'rgba(110,220,255,.6)', side: 1 }, lookY: 4 }, t); desk(ctx, 640, t, { laptopX: 280 }); },
+    (ctx, t) => { caption(ctx, 'ALPHABAY', W / 2, 150, t - B(2, 'alpha'), 1.0, { size: 84 }); caption(ctx, 'BIGGEST DRUG MARKET\nON THE DARK WEB', W / 2, 170, t - B(2, 'biggest'), 2.0); }, 0.2);
+  add(B(2, 'two') - 0.15, 'alphabay stats', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1 }, { x: 960, y: 540, z: 1.04 }, k);
+    statBars(ctx, t, { local: L, max: 200000, title: 'ALPHABAY, 2017', bars: [
+      { label: 'USERS', value: 200000, at: 0.1, color: '#d98b4a', show: p => Math.round(200 * p) + ',000' },
+      { label: 'SELLERS', value: 40000, at: B(2, 'forty') - B(2, 'two') + 0.1, color: '#7fa3a6', show: p => Math.round(40 * p) + ',000' },
+      { label: 'SALES', value: 200000, at: B(2, 'more') - B(2, 'two') + 0.1, color: YEL, show: p => '$' + (p).toFixed(1) + ' BILLION+' }] }); }, null, 0.05);
+  add(B(3, 0), 'wife goes out', (ctx, t, k, L) => { camera(ctx, { x: 1000, y: 620, z: 1.3 }, { x: 1020, y: 630, z: 1.38 }, k);
+    villaNight(ctx, t, { dawn: 0.45, crash: 1 }); car(ctx, 560, 905, t, { color: '#8e9aa3', flip: true });
+    const w = walkTo(L, 0.2, 2.2, 1000, 1150); drawChar(ctx, { ...WIFE, x: w.x, y: FLOOR, walk: w.walk, face: w.moving ? 1 : -1, mood: 'worried' }, t);
+    const c = walkTo(L, B(3, 'then') - B(3, 0), 2.2, 900, 1000); if (t > B(3, 'then')) drawChar(ctx, { ...CAZES_SHORTS, x: c.x, y: FLOOR, walk: c.walk, face: c.moving ? 1 : -1, mood: 'neutral' }, t);
+    drawChar(ctx, { ...DRIVER, x: 700, y: FLOOR + 40, s: 0.9, face: 1, mood: 'worried', talk: t > B(3, 'his') && t < B(3, 'then') }, t); },
+    (ctx, t) => { caption(ctx, 'PHONE: IN HIS SHORTS', W / 2, 160, t - B(3, 'tucks'), 2.0); }, 0.12);
+  add(B(3, 'leaves') - 0.1, 'laptop alone', (ctx, t, k) => { camera(ctx, { x: 920, y: 640, z: 1.8 }, { x: 930, y: 640, z: 2.0 }, k); hackerRoom(ctx, t); desk(ctx, 640, t, { laptopX: 280 }); },
+    (ctx, t) => { caption(ctx, 'OPEN. LOGGED IN.', W / 2, 170, t - B(3, 'open'), 2.0); }, 0.18);
+  add(B(4, 0), 'phone grab', (ctx, t, k, L) => { camera(ctx, { x: 1060, y: 620, z: 1.45 }, { x: 1080, y: 630, z: 1.55 }, k);
+    villaNight(ctx, t, { dawn: 0.5, crash: 1 }); car(ctx, 560, 905, t, { color: '#8e9aa3', flip: true });
+    const grab = B(4, 'takes'); const lift = Math.sin(t * 5) * 0.1;
+    drawChar(ctx, { ...DRIVER, x: 830, y: FLOOR, face: 1, mood: t > grab ? 'smug' : 'neutral' }, t);
+    drawChar(ctx, { ...CAZES_SHORTS, x: 1060, y: FLOOR, face: -1, mood: t > grab ? 'shock' : 'worried', arms: t > grab ? [0.4, 0.4] : [1.6 + lift, 1.6 - lift] }, t);
+    const a = walkTo(L, B(4, 'second') - B(4, 0), 2.0, 1500, 1200); drawChar(ctx, { ...COP(a.x, 61, -1), cap: false, outfit: 'shirt', color: '#7d8a6a', walk: a.walk, mood: 'neutral', arms: t > grab ? [1.2, 0.1] : undefined }, t);
+    if (t > B(4, 'street')) { [1420, 1560, 1700].forEach((x0, i) => { const w = walkTo(L, B(4, 'street') - B(4, 0) + i * 0.2, 1.4, 1980 + i * 120, x0); drawChar(ctx, { ...COP(w.x, 62 + i), walk: w.walk, mood: 'angry' }, t); }); } },
+    (ctx, t) => { caption(ctx, 'UNDERCOVER POLICE', W / 2, 160, t - B(4, 'undercover'), 2.0, { fill: RED }); }, 0.1);
+
+  // ======== THE QUESTION ========
+  add(B(5, 0), 'corkboard intro', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.06 }, k);
+    const b = t0 => t0 - B(5, 0);
+    corkboard(ctx, t, cork(L, { cards: [{ ...CARD.ab, at: 0.1, stamp: { text: 'CAUGHT', at: 0.6 } }, { ...q(CARD.sr), at: b(B(5, 'man')) }, { ...q(CARD.hn), at: b(B(5, 'one', 2)) }, { ...q(CARD.s2), at: b(B(5, 'another')) }],
+      strings: [[0, 1, b(B(5, 'man')) + 0.4], [1, 3, b(B(5, 'another')) + 0.4], [0, 2, b(B(5, 'one', 2)) + 0.4]] })); },
+    (ctx, t) => { caption(ctx, 'A LIBRARY', W / 2, 960, t - B(5, 'library'), 1.4); caption(ctx, 'RUN BY THE POLICE', W / 2, 960, t - B(5, 'police'), 1.6); caption(ctx, 'AN AGENT ON STAFF', W / 2, 960, t - B(5, 'federal'), 2.0); }, 0.05);
+  add(B(6, 0), 'tools list', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k);
+    statBars(ctx, t, { local: 99, max: 1, title: '', bars: [] });
+    const items = [['ENCRYPTION', 'encryption'], ['FAKE NAMES', 'fake'], ['HIDDEN SERVERS', 'hidden'], ['MILLIONS', 'millions']];
+    textOutlined(ctx, 'WHAT THEY HAD', W / 2, 160, { size: 74, fill: YEL, lw: 10 });
+    items.forEach(([s, w], i) => { const p = clamp((t - B(6, w)) / 0.3); if (p <= 0) return; ctx.save(); ctx.globalAlpha = p; const y = 330 + i * 140;
+      ctx.beginPath(); ctx.arc(640, y, 46, 0, 7); fillStroke(ctx, '#efe6d2', INK, 4); ctx.strokeStyle = '#3e6b4a'; ctx.lineWidth = 9; ctx.lineCap = 'round'; ctx.beginPath(); ctx.moveTo(618, y + 2); ctx.lineTo(634, y + 20); ctx.lineTo(664, y - 18); ctx.stroke();
+      ctx.fillStyle = INK; ctx.font = '900 64px "Nunito"'; ctx.textAlign = 'left'; ctx.fillText(s, 730, y + 4); ctx.restore(); });
+    const st = clamp((t - B(6, 'handcuffs')) / 0.3); if (st > 0) { ctx.save(); ctx.translate(1300, 760); ctx.rotate(-0.15); ctx.scale(1.6 - 0.6 * st, 1.6 - 0.6 * st); ctx.globalAlpha = st; ctx.strokeStyle = RED; ctx.lineWidth = 9; rr(ctx, -230, -70, 460, 140, 10); ctx.stroke(); ctx.fillStyle = RED; ctx.font = '96px "Lilita One"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('CAUGHT', 0, 6); ctx.restore(); } },
+    (ctx, t) => { caption(ctx, 'WHY?', W / 2, 960, t - B(6, 'why'), 3.0, { size: 110 }); }, 0.03);
+
+  // ======== SILK ROAD ========
+  add(B(7, 0), 'calendar 2011', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.08 }, k); calendar(ctx, t, L, 'FEBRUARY', '2011'); }, null, 0.05);
+  add(B(7, 'a', 2) - 0.1, 'ross apartment', (ctx, t, k) => { camera(ctx, { x: 960, y: 600, z: 1.3 }, { x: 940, y: 610, z: 1.38 }, k); rossRoom(ctx, t);
+    drawChar(ctx, { ...ROSS, x: 860, y: FLOOR, face: 1, arms: typing(t), glow: { color: 'rgba(110,220,255,.45)', side: 1 } }, t); desk(ctx, 740, t, { laptopX: 280 }); },
+    (ctx, t, k, L) => { caption(ctx, 'SILK ROAD', W / 2, 150, t - B(7, 'silk'), 2.2, { size: 84 }); nameCard(ctx, 'ROSS ULBRICHT', '26 · PHYSICS GRADUATE FROM TEXAS', t - B(7, 'physics') + 0.5); }, 0.06);
+  add(B(8, 'the', 1) - 0.1, 'tor map', (ctx, t, k, L) => { const z = ease(k); mapInsert(ctx, t, { view: { lon: lerp(-40, -10, z), lat: lerp(35, 32, z), span: lerp(170, 200, z) }, local: L,
+      pins: [{ at: [-122.4, 37.77], label: 'YOU', t0: 0.2 }, { at: [10.4, 51.2], label: '', t0: 1.4, color: '#7a5a9a' }, { at: [151.2, -33.9], label: '', t0: 2.4, color: '#7a5a9a' }, { at: [-46.6, -23.5], label: '', t0: 3.4, color: '#7a5a9a' }, { at: [-0.1, 51.5], label: 'WEBSITE', t0: 4.4, dy: -46 }],
+      routes: [{ from: [-122.4, 37.77], to: [10.4, 51.2], at: 0.4, dur: 1.0, color: '#7a5a9a' }, { from: [10.4, 51.2], to: [151.2, -33.9], at: 1.4, dur: 1.0, color: '#7a5a9a' }, { from: [151.2, -33.9], to: [-46.6, -23.5], at: 2.4, dur: 1.0, color: '#7a5a9a' }, { from: [-46.6, -23.5], to: [-0.1, 51.5], at: 3.4, dur: 1.0, color: '#7a5a9a' }] }); },
+    (ctx, t) => { caption(ctx, 'TOR', W / 2, 150, t - B(8, 'tor'), 2.4, { size: 90 }); }, 0.05);
+  add(B(8, 'payment'), 'bitcoin coin', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.1 }, k); coinInsert(ctx, t, L); },
+    (ctx, t) => { caption(ctx, 'BITCOIN', W / 2, 150, t - B(8, 'bitcoin'), 2.0, { size: 84 }); }, 0.05);
+  add(B(9, 0), 'shop page', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.1 }, k); shopCard(ctx, t, { local: L, title: 'SILK ROAD', barColor: '#3e6b4a', logo: '~' }); },
+    (ctx, t) => { caption(ctx, 'DRUGS', W / 2, 1000, t - B(9, 'drugs'), 1.4, { fill: RED, size: 80 }); caption(ctx, '$1,000,000,000+ IN SALES', W / 2, 1000, t - B(9, 'billion'), 2.4); }, 0.05);
+  add(B(10, 0), 'newspaper', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 520, z: 1.12 }, k);
+    newspaper(ctx, t, { local: L, paper: 'THE MORNING STANDARD', date: 'SUMMER 2013', headline: 'WHO IS THE\nDREAD PIRATE ROBERTS?', photo: (c, x, y) => { c.save(); c.translate(x, y - 10); c.scale(0.9, 0.9); c.fillStyle = '#2b2b30'; c.beginPath(); c.arc(0, -236, 62, 0, 7); c.fill(); c.fillRect(-48, -186, 96, 130); c.fillStyle = '#efe6d2'; c.font = '120px "Lilita One"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('?', 0, -228); c.restore(); } }); },
+    (ctx, t) => { caption(ctx, 'THE DREAD PIRATE ROBERTS', W / 2, 980, t - B(10, 'dread'), 2.4); }, 0.05);
+  add(B(10, 'the', 2) - 0.1, 'senator', (ctx, t, k) => { camera(ctx, { x: 960, y: 590, z: 1.3 }, { x: 960, y: 600, z: 1.36 }, k);
+    room(ctx, t, { wall: '#d9c7a4', wall2: '#6b4a32', floor: '#3e2c22', wainscot: 560, items: c => { flag(c, 560, 300, 'us'); frameArt(c, 1240, 180, 220, 160, 'seal'); } });
+    rr(ctx, 790, 640, 340, 200, 4); fillStroke(ctx, '#6b4a32', INK, 3.5);
+    drawChar(ctx, { name: 'Senator', x: 960, y: FLOOR - 40, face: 0, outfit: 'suit', color: '#2b3344', hair: 'side', hairColor: '#cfc8bb', glasses: true, mood: 'angry', talk: true, arms: [0.2, 1.9 + Math.sin(t * 6) * 0.2] }, t);
+    rr(ctx, 780, 620, 360, 40, 4); fillStroke(ctx, '#5a3d29', INK, 3.5); ctx.beginPath(); ctx.moveTo(960, 620); ctx.lineTo(990, 560); ctx.lineWidth = 5; ctx.strokeStyle = INK; ctx.stroke(); },
+    (ctx, t) => { caption(ctx, '"SHUT IT DOWN"', W / 2, 160, t - B(10, 'demands'), 2.2, { fill: RED }); }, 0.05);
+  add(B(11, 0), 'ross worried', (ctx, t, k) => { camera(ctx, { x: 900, y: 590, z: 1.8 }, { x: 900, y: 600, z: 1.95 }, k); rossRoom(ctx, t, 0.45);
+    drawChar(ctx, { ...ROSS, x: 860, y: FLOOR, face: 1, mood: 'smug', arms: typing(t), glow: { color: 'rgba(110,220,255,.5)', side: 1 } }, t); desk(ctx, 740, t, { laptopX: 280 }); },
+    (ctx, t) => { caption(ctx, 'THE INTERNET REMEMBERS', W / 2, 160, t - B(11, 'remembers'), 2.0); }, 0.15);
+  add(B(12, 0), 'forum post altoid', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 520, z: 1.1 }, k);
+    documentInsert(ctx, t, { local: L, header: 'Forum thread  -  January 2011', source: 'Public forum post (later deleted, quoted in a reply)', lines: [
+      { text: 'altoid:', at: 0.3, type: 0.3, color: '#2b4f8a' }, { text: 'Has anyone seen Silk Road yet?', at: 0.7, type: 1.2, hl: [16, 26, 2.4] }, { text: 'It looks kind of like an', at: 2.0, type: 0.8, color: '#6b6258' }, { text: 'anonymous amazon.com...', at: 2.8, type: 0.8, color: '#6b6258' }] }); },
+    (ctx, t) => { caption(ctx, 'ALTOID', W / 2, 150, t - B(12, 'altoid'), 2.2, { size: 84 }); }, 0.03);
+  add(B(12, 'a', 2) - 0.1, 'forum post email', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 980, y: 560, z: 1.16 }, k);
+    const at0 = B(12, 'and') - B(12, 'a', 2);
+    documentInsert(ctx, t, { local: L, header: 'Forum thread  -  October 2011', source: 'Public forum post', lines: [
+      { text: 'altoid:', at: 0.2, type: 0.3, color: '#2b4f8a' }, { text: 'Looking for an IT pro in', at: 0.5, type: 0.8 }, { text: 'the bitcoin community...', at: 1.3, type: 0.8 }, { text: '', at: 0 },
+      { text: 'contact: rossulbricht@gmail.com', at: at0, type: 1.0, hl: [9, 31, B(13, 0) - B(12, 'a', 2)], circle: [9, 21, B(13, 'pro') - B(12, 'a', 2)] }] }); },
+    (ctx, t) => { caption(ctx, 'HIS REAL NAME', W / 2, 150, t - B(13, 0) - 0.5, 2.0, { fill: RED }); caption(ctx, 'PRO TIP', W / 2, 150, t - B(13, 'pro'), 1.4); }, 0.03);
+  add(B(14, 0), 'post gathers dust', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.04 }, k); calendar(ctx, t, L, 'OCT 2011 → 2013', '', true); },
+    (ctx, t) => { caption(ctx, 'ALMOST TWO YEARS', W / 2, 960, t - B(14, 'almost'), 2.0); }, 0.05);
+  add(B(14, 'until') - 0.1, 'alford desk', (ctx, t, k) => { camera(ctx, { x: 960, y: 600, z: 1.35 }, { x: 980, y: 610, z: 1.45 }, k); office(ctx, t, 'irs');
+    drawChar(ctx, { ...ALFORD, x: 900, y: FLOOR, face: 1, arms: typing(t), mood: 'neutral', glow: { color: 'rgba(170,220,255,.35)', side: 1 } }, t); desk(ctx, 780, t, { laptopX: 280 }); },
+    (ctx, t, k, L) => { nameCard(ctx, 'GARY ALFORD', 'TAX INVESTIGATOR · IRS', t - B(14, 'gary')); caption(ctx, 'GOOGLE', W / 2, 160, t - B(14, 'google'), 1.6); }, 0.04);
+  add(B(15, 0), 'border package', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.08 }, k);
+    idParcel(ctx, t, { local: L - (B(15, 'inside') - B(15, 0)) + 0.4, face: (c, tt) => drawChar(c, { ...ROSS, x: 0, y: 0, headOnly: true, qaSkip: true }, tt) }); },
+    (ctx, t, k, L) => { dateTag(ctx, 'JULY 2013 · US BORDER', L - 0.2); caption(ctx, '9 FAKE IDS', W / 2, 160, t - B(15, 'nine'), 1.6); caption(ctx, 'ONE FACE', W / 2, 160, t - B(15, 'one'), 2.0, { fill: RED }); }, 0.05);
+  add(B(16, 0), 'door visit', (ctx, t, k, L) => { camera(ctx, { x: 980, y: 600, z: 1.3 }, { x: 1000, y: 610, z: 1.4 }, k); hallway(ctx, t);
+    const hypo = t > B(16, 'helpfully');
+    drawChar(ctx, { ...ROSS, x: 760, y: FLOOR, face: 1, mood: hypo ? 'smug' : 'neutral', talk: hypo, arms: hypo ? [0.2, 1.4 + Math.sin(t * 4) * 0.15] : undefined }, t);
+    const a = walkTo(L, 0.2, 1.8, 1500, 1130); drawChar(ctx, { ...AGENT(a.x, 71), face: -1, walk: a.walk, mood: hypo ? 'shock' : 'neutral' }, t);
+    const b = walkTo(L, 0.5, 1.8, 1650, 1290); drawChar(ctx, { ...AGENT(b.x, 72), face: -1, walk: b.walk, mood: 'neutral', glasses: true }, t); },
+    (ctx, t, k, L) => { dateTag(ctx, '26 JULY 2013 · SAN FRANCISCO', L - 0.2); caption(ctx, '"HYPOTHETICALLY..."', W / 2, 170, t - B(16, 'hypothetically'), 3.0); }, 0.05);
+  add(B(17, 0), 'evidence board 1', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.06 }, k);
+    const b = w => B(17, w) - B(17, 0);
+    corkboard(ctx, t, { local: L, title: 'Dread Pirate Roberts', cards: [
+      { x: 520, y: 560, w: 240, h: 260, kind: 'note', title: 'A face', at: b('face'), rot: -0.04, icon: (c, x, y, tt) => { c.save(); c.translate(x, y + 10); c.scale(0.55, 0.55); drawChar(c, { ...ROSS, x: 0, y: 0, headOnly: true, qaSkip: true }, tt); c.restore(); } },
+      { x: 960, y: 540, w: 240, h: 260, kind: 'note', title: 'A home address', at: b('home'), rot: 0.03, icon: (c, x, y) => { c.save(); c.translate(x, y); c.beginPath(); c.moveTo(-50, 10); c.lineTo(0, -40); c.lineTo(50, 10); c.closePath(); fillStroke(c, '#c9765b', INK, 3); rr(c, -38, 10, 76, 50, 2); fillStroke(c, '#e2c27a', INK, 3); c.restore(); } },
+      { x: 1400, y: 570, w: 240, h: 260, kind: 'note', title: 'A big mouth', at: b('talking'), rot: -0.02, icon: (c, x, y) => { c.save(); c.translate(x, y); c.beginPath(); c.ellipse(0, 0, 56, 34, 0, 0, 7); fillStroke(c, '#6b2c2a', INK, 3); c.fillStyle = '#efe6d2'; c.fillRect(-36, -30, 72, 14); c.restore(); } }],
+      strings: [[0, 1, b('home') + 0.4], [1, 2, b('talking') + 0.4]] }); },
+    (ctx, t) => { caption(ctx, 'NOT ENOUGH. YET.', W / 2, 960, t - B(17, 0) - 0.2, 2.6); }, 0.05);
+
+  // the library
+  add(B(18, 0), 'library ext', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 980, y: 560, z: 1.12 }, k); libraryExt(ctx, t); },
+    (ctx, t, k, L) => { dateTag(ctx, '1 OCTOBER 2013 · SAN FRANCISCO', L - 0.2); caption(ctx, 'GLEN PARK LIBRARY', W / 2, 170, t - B(18, 'glen'), 2.2); }, 0.03);
+  add(B(18, 'ulbricht') - 0.1, 'library ross sits', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 610, z: 1.3 }, { x: 940, y: 620, z: 1.38 }, k); library(ctx, t);
+    const w = walkTo(L, 0, 1.6, 600, 900); drawChar(ctx, { ...ROSS, x: w.x, y: FLOOR, walk: w.walk, face: 1, arms: w.moving ? undefined : typing(t) }, t);
+    libTable(ctx, t, 820, 520, true); },
+    (ctx, t) => { caption(ctx, 'PUBLIC WIFI', W / 2, 160, t - B(18, 'public'), 1.8); }, 0.03);
+  add(B(19, 0), 'laptop encryption', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.08 }, k); lockInsert(ctx, t, L, B(19, 'closes') - B(19, 0)); },
+    (ctx, t) => { caption(ctx, 'ENCRYPTED', W / 2, 150, t - B(19, 'encryption'), 1.8, { size: 80 }); caption(ctx, 'LOGGED IN + LOOKING AWAY', W / 2, 960, t - B(19, 'so'), 3.0); }, 0.05);
+  add(B(20, 0), 'chat with staff account', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 610, z: 1.35 }, { x: 980, y: 620, z: 1.42 }, k); library(ctx, t);
+    drawChar(ctx, { ...ROSS, x: 900, y: FLOOR, face: 1, arms: typing(t), mood: 'neutral', glow: { color: 'rgba(110,220,255,.45)', side: 1 } }, t); libTable(ctx, t, 820, 520, true);
+    drawChar(ctx, { ...AGENT(1560, 73, { outfit: 'shirt', color: '#6a7a8a', glasses: true }), face: -1, mood: 'neutral', arms: typing(t) }, t); tableSide(ctx, 1440, 300, 700, '#7a5638'); laptopSide(ctx, 1600, 700, t, { face: 1 }); },
+    (ctx, t) => { caption(ctx, 'UNDERCOVER AGENT', W / 2, 160, t - B(20, 'undercover'), 1.8, { fill: RED }); caption(ctx, 'ADMIN: LOGGED IN', W / 2, 160, t - B(20, 'logs'), 1.6); }, 0.03);
+  add(B(20, 'then'), 'argument', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 610, z: 1.3 }, { x: 960, y: 620, z: 1.4 }, k); library(ctx, t);
+    drawChar(ctx, { ...ROSS, x: 900, y: FLOOR, face: 1, arms: typing(t) }, t); libTable(ctx, t, 820, 520, true);
+    const f = Math.sin(t * 7);
+    drawChar(ctx, { ...AGENT(460, 74, { outfit: 'shirt', color: '#5a6a4a' }), face: 1, mood: 'angry', talk: f > 0, arms: [0.3, 1.5 + f * 0.3] }, t);
+    drawChar(ctx, { ...FEMAGENT(620, 75), face: -1, mood: 'angry', talk: f <= 0, arms: [1.4 - f * 0.3, 0.2] }, t); },
+    (ctx, t) => { caption(ctx, 'A FAKE ARGUMENT', W / 2, 160, t - B(20, 'loud'), 2.0); }, 0.03);
+  add(B(21, 0), 'laptop grab', (ctx, t, k, L) => { camera(ctx, { x: 800, y: 610, z: 1.4 }, { x: 820, y: 620, z: 1.5 }, k); library(ctx, t);
+    const grab = B(21, 'grabs'); const g = clamp((t - grab) / 0.5);
+    drawChar(ctx, { ...ROSS, x: 900, y: FLOOR, face: t > B(21, 0) + 0.2 ? -1 : 1, mood: g > 0.5 ? 'shock' : 'neutral' }, t);
+    const fw = walkTo(L, grab - B(21, 0) - 0.8, 0.8, 620, 760); drawChar(ctx, { ...FEMAGENT(fw.x, 75), face: 1, walk: fw.walk, mood: g > 0 ? 'smug' : 'angry', arms: g > 0 ? [1.5, 1.5] : undefined }, t);
+    drawChar(ctx, { ...AGENT(460, 74, { outfit: 'shirt', color: '#5a6a4a' }), face: 1, mood: 'neutral' }, t);
+    libTable(ctx, t, 820, 520, false); laptopSide(ctx, lerp(950, 1240, ease(clamp((t - grab - 0.3) / 0.6))), 700, t, { face: 1 });
+    const kn = walkTo(L, 1.0, 1.2, 1600, 1360); drawChar(ctx, { ...AGENT(kn.x, 76, { glasses: true }), face: -1, walk: kn.walk, arms: [1.2, 1.2] }, t); },
+    (ctx, t) => { caption(ctx, 'OPEN. UNLOCKED.', W / 2, 160, t - B(21, 'open'), 2.4); }, 0.03);
+  add(B(22, 0), 'laptop contents', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    const b = w => B(22, w) - B(22, 0);
+    corkboard(ctx, t, { local: L, title: 'On the laptop', cards: [
+      { x: 520, y: 560, w: 240, h: 260, kind: 'note', title: 'His diary', at: b('diary'), rot: -0.04, icon: (c, x, y) => { rr(c, x - 40, y - 50, 80, 100, 4); fillStroke(c, '#8c3b2e', INK, 3); } },
+      { x: 960, y: 560, w: 240, h: 260, kind: 'note', title: 'His bitcoin', at: b('bitcoin'), rot: 0.03, icon: (c, x, y) => { c.beginPath(); c.arc(x, y, 50, 0, 7); fillStroke(c, '#e2a23a', INK, 3); c.fillStyle = '#fff3c4'; c.font = '900 60px "Nunito"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('₿', x, y + 2); } },
+      { x: 1400, y: 560, w: 240, h: 260, kind: 'note', title: 'Every sale', at: b('records'), rot: -0.02, icon: (c, x, y) => { rr(c, x - 50, y - 46, 100, 92, 4); fillStroke(c, '#efe6d2', INK, 3); for (let i = 0; i < 5; i++) { c.fillStyle = INK; c.fillRect(x - 38, y - 32 + i * 16, 76, 5); } } }] }); }, null, 0.05);
+  add(B(22, 'in'), 'courtroom', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.2 }, { x: 960, y: 570, z: 1.28 }, k); courtroom(ctx, t);
+    drawChar(ctx, { ...JUDGE, x: 960, y: 600, s: 0.9, face: 0, talk: t < B(22, 'remember') }, t); rr(ctx, 720, 470, 480, 70, 4); fillStroke(ctx, '#5a3d29', INK, 3.5); rr(ctx, 700, 540, 520, 300, 4); fillStroke(ctx, '#6b4a32', INK, 3.5);
+    drawChar(ctx, { ...ROSS, x: 480, y: FLOOR + 60, s: 1.05, face: 1, outfit: 'suit', color: '#3a3f4a', mood: 'sad' }, t); },
+    (ctx, t, k, L) => { dateTag(ctx, 'MAY 2015 · NEW YORK', L - 0.2); caption(ctx, 'LIFE. NO PAROLE.', W / 2, 160, t - B(22, 'life'), 3.0, { fill: RED }); }, 0.05);
+  add(B(23, 0), 'corrupt agents', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 600, z: 1.3 }, { x: 960, y: 610, z: 1.38 }, k); office(ctx, t, 'fed', 0.35);
+    const sneak = Math.sin(t * 3) * 0.1;
+    drawChar(ctx, { ...AGENT(760, 81, { color: '#3a3f4a', outfit: 'suit', tie: '#6b2c2a' }), face: 1, mood: 'smug', lookX: -6, arms: [0.3, 1.1 + sneak], hold: (c) => { c.beginPath(); c.arc(0, 90, 20, 0, 7); fillStroke(c, '#e2a23a', INK, 3); } }, t);
+    drawChar(ctx, { ...AGENT(1160, 82, { color: '#2b3344', outfit: 'suit', tie: '#2b4f8a', hair: 'side' }), face: -1, mood: 'smug', lookX: 6, arms: [1.1 - sneak, 0.3], holdSide: -1, hold: (c) => { c.beginPath(); c.arc(0, 90, 20, 0, 7); fillStroke(c, '#e2a23a', INK, 3); } }, t);
+    if (t > B(23, 'prison')) bars(ctx, 520, 1400, 200, FLOOR, '#3a3f46'); },
+    (ctx, t, k, L) => { caption(ctx, 'FUN FACT', W / 2, 150, t - B(23, 0), 1.4); caption(ctx, 'ALSO STEALING', W / 2, 150, t - B(23, 'stealing'), 2.0, { fill: RED });
+      nameCard(ctx, 'TWO FEDERAL AGENTS', 'DRUG ENFORCEMENT ADMIN. · SECRET SERVICE', t - B(23, 'one')); caption(ctx, 'PRISON TOO', W / 2, 150, t - B(23, 'prison'), 1.8); }, 0.08);
+  add(B(24, 0), 'subscribe', (ctx, t, k, L) => { camera(ctx, { x: 980, y: 600, z: 1.3 }, { x: 990, y: 610, z: 1.36 }, k);
+    const press = t > B(24, 'subscribe') && t < B(24, 'subscribe') + 0.4 ? 1 : 0; subscribeSet(ctx, t, { press, thumb: clamp((t - B(24, 'like')) / 0.5) });
+    drawChar(ctx, { ...ROSS, x: 900, y: FLOOR, face: 1, talk: true, mood: 'smug', arms: press ? [0.2, 1.7] : [0.2, 0.7] }, t); },
+    (ctx, t) => { caption(ctx, 'LIKE + SUBSCRIBE', W / 2, 150, t - B(24, 'hit'), 2.4); caption(ctx, 'FREE. NO RAIDS.', W / 2, 150, t - B(24, 'unlike'), 3.0); }, 0.03);
+
+  // ======== SILK ROAD 2.0 ========
+  add(B(25, 0), 'site seized then back', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    if (t < B(25, 'five')) seizedNotice(ctx, t, { local: L, site: 'SILK ROAD', barColor: '#3e6b4a', logo: '~', sub: 'by federal investigators\n2 October 2013' });
+    else shopCard(ctx, t, { local: t - B(25, 'five'), title: 'SILK ROAD 2.0', barColor: '#3e6b4a', logo: '2' }); },
+    (ctx, t) => { caption(ctx, '5 WEEKS LATER', W / 2, 1000, t - B(25, 'five'), 1.8); caption(ctx, 'SILK ROAD 2.0', W / 2, 1000, t - B(25, 'silk'), 2.0); }, 0.05);
+  add(B(26, 0), 'benthall', (ctx, t, k) => { camera(ctx, { x: 960, y: 600, z: 1.35 }, { x: 950, y: 610, z: 1.42 }, k); benthallFlat(ctx, t);
+    drawChar(ctx, { ...BENT, x: 880, y: FLOOR, face: 1, arms: typing(t), mood: 'smug', glow: { color: 'rgba(110,220,255,.45)', side: 1 } }, t); desk(ctx, 760, t, { laptopX: 280 }); },
+    (ctx, t) => { caption(ctx, '"DEFCON"', W / 2, 150, t - B(26, 'defcon'), 1.8, { size: 84 }); nameCard(ctx, 'BLAKE BENTHALL', '26 · SOFTWARE ENGINEER', t - B(26, 'blake')); caption(ctx, '"I CAN DO IT BETTER"', W / 2, 150, t - B(26, 'better') + 0.6, 2.0); }, 0.06);
+  add(B(27, 0), 'staff lineup', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 600, z: 1.15 }, { x: 960, y: 610, z: 1.22 }, k); room(ctx, t, { wall: '#30404a', wall2: '#24323a', floor: '#2a2523', wainscot: 640, dark: 0.05, items: c => { textOutlined(c, 'STAFF', W / 2, 220, { size: 90, fill: '#cfd8dc', lw: 8, shadow: false }); } });
+    const names = [['MODERATOR', 300], ['SUPPORT', 620], ['SUPPORT', 940], ['ADMIN', 1260], ['MODERATOR', 1580]];
+    names.forEach(([n, x], i) => { const show = clamp((L - i * 0.35) / 0.3); if (show <= 0) return; const spy = i === 2;
+      drawChar(ctx, { name: 'Staff' + i, x, y: FLOOR, face: 0, hair: ['messy', 'short', 'short', 'side', 'beanie'][i], hairColor: ['#3a2a20', '#7a5a3a', '#3a2a20', '#c9a85a', '#1e1a18'][i], outfit: 'hoodie', color: ['#3b4a63', '#6b3a3a', HSI.color, BENT.color, '#4a3a5a'][i], beard: spy, mood: spy && t > B(27, 'undercover') ? 'smug' : 'neutral', id: 90 + i }, t);
+      ctx.fillStyle = '#efe6d2'; rr(ctx, x - 80, FLOOR + 30, 160, 40, 4); fillStroke(ctx, '#efe6d2', INK, 2.5); ctx.fillStyle = INK; ctx.font = '900 22px "Nunito"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(n, x, FLOOR + 51);
+      if (spy && t > B(27, 'undercover')) { const p = clamp((t - B(27, 'undercover')) / 0.3); ctx.strokeStyle = RED; ctx.lineWidth = 7; ctx.beginPath(); ctx.arc(x, FLOOR - 236, 90 * p + 10, 0, 7); ctx.stroke(); } }); },
+    (ctx, t) => { caption(ctx, 'HOMELAND SECURITY', W / 2, 140, t - B(27, 'homeland'), 2.4, { fill: RED }); }, 0.05);
+  add(B(28, 0), 'hsi chats', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 610, z: 1.3 }, { x: 960, y: 620, z: 1.38 }, k); office(ctx, t, 'fed', 0.15);
+    drawChar(ctx, { ...HSI, x: 820, y: FLOOR, face: 1, arms: typing(t), mood: 'smug', glow: { color: 'rgba(110,220,255,.4)', side: 1 } }, t); desk(ctx, 700, t, { laptopX: 280 });
+    if (t > B(28, 'passed')) { const w = walkTo(L, B(28, 'passed') - B(28, 0), 1.6, 1700, 1380); drawChar(ctx, { ...AGENT(w.x, 83), face: -1, walk: w.walk, mood: 'neutral' }, t); } },
+    (ctx, t) => { caption(ctx, 'A WHOLE YEAR', W / 2, 150, t - B(28, 'whole'), 1.6); caption(ctx, '$8 MILLION A MONTH', W / 2, 150, t - B(28, 'eight'), 2.6); }, 0.06);
+  add(B(29, 0), 'server abroad', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 600, z: 1.2 }, { x: 980, y: 610, z: 1.3 }, k);
+    room(ctx, t, { wall: '#2a3238', wall2: '#22292e', floor: '#2f3337', tiles: true, wainscot: 900, dark: 0.1 });
+    [200, 440, 680, 1240, 1480, 1720].forEach((x, i) => serverRack(ctx, x, FLOOR, 200, 560, t, i + 1));
+    const p = clamp((t - B(29, 'copied')) / 0.8); serverRack(ctx, 960, FLOOR, 220, 600, t, 9); if (p > 0) { glowSpot(ctx, 1070, 500, 260, `rgba(120,230,255,${0.5 * p})`); }
+    const w = walkTo(L, 0.4, 1.6, 1900, 1430); drawChar(ctx, { ...AGENT(w.x, 84, { glasses: true }), face: -1, walk: w.walk, arms: w.moving ? undefined : [1.2, 1.2] }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'COPIED', W / 2, 150, t - B(29, 'copied'), 1.6); }, 0.06);
+  add(B(29, 'in'), 'benthall arrest', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 590, z: 1.15 }, { x: 980, y: 600, z: 1.22 }, k); cityStreet(ctx, t, { sky0: '#7fa0b8', sky1: '#e3d3b4' });
+    drawChar(ctx, { ...BENT, x: 860, y: FLOOR, face: 1, mood: 'shock', arms: [2.6, 2.6] }, t);
+    const a = walkTo(L, 0, 1.0, 1300, 1050); drawChar(ctx, { ...AGENT(a.x, 85), face: -1, walk: a.walk, mood: 'angry', arms: [0, 1.4] }, t);
+    drawChar(ctx, { ...AGENT(1260, 86, { glasses: true }), face: -1, mood: 'neutral' }, t); },
+    (ctx, t, k, L) => { dateTag(ctx, 'NOVEMBER 2014 · SAN FRANCISCO', L - 0.2); caption(ctx, 'ONE YEAR LATER', W / 2, 160, t - B(29, 'one', 2), 1.8); }, 0.04);
+  add(B(30, 0), 'two lessons', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k);
+    statBars(ctx, t, { local: 99, max: 1, bars: [] }); textOutlined(ctx, 'LESSONS SO FAR', W / 2, 170, { size: 74, fill: YEL, lw: 10 });
+    [['1', 'YOUR PAST CAN CATCH YOU', 'past'], ['2', 'YOUR STAFF MIGHT BE THE POLICE', 'person']].forEach(([n, s, w], i) => { const p = clamp((t - B(30, w)) / 0.3); if (p <= 0) return; const y = 420 + i * 190; ctx.save(); ctx.globalAlpha = p;
+      ctx.beginPath(); ctx.arc(420, y, 60, 0, 7); fillStroke(ctx, RED, INK, 4); ctx.fillStyle = '#f6efdd'; ctx.font = '74px "Lilita One"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(n, 420, y + 4);
+      ctx.fillStyle = INK; ctx.font = '900 62px "Nunito"'; ctx.textAlign = 'left'; ctx.fillText(s, 520, y + 4); ctx.restore(); }); }, null, 0.03);
+
+  // ======== ALPHABAY ========
+  add(B(31, 0), 'quebec map', (ctx, t, k, L) => { const z = ease(k); mapInsert(ctx, t, { view: { lon: lerp(-72.5, -70, z), lat: lerp(47, 46.5, z), span: lerp(40, 30, z) }, local: L, highlight: { Canada: '#d98b4a' }, pins: [{ at: [-72.55, 46.35], label: 'QUEBEC', t0: 0.3 }] }); },
+    (ctx, t) => { caption(ctx, 'SELF-TAUGHT PROGRAMMER', W / 2, 150, t - B(31, 'self'), 1.8); caption(ctx, '"ALPHA02"', W / 2, 150, t - B(31, 'called'), 2.4, { size: 84 }); }, 0.04);
+  add(B(31, 'and') - 0.1, 'young cazes', (ctx, t, k) => { camera(ctx, { x: 900, y: 600, z: 1.4 }, { x: 900, y: 610, z: 1.5 }, k); rossRoom(ctx, t, 0.25, 'quebec');
+    drawChar(ctx, { ...CAZES, x: 820, y: FLOOR, face: 1, arms: typing(t), mood: 'smug', glow: { color: 'rgba(110,220,255,.45)', side: 1 } }, t); desk(ctx, 700, t, { laptopX: 280 }); },
+    (ctx, t, k, L) => { dateTag(ctx, 'DECEMBER 2014', L - 0.2); }, 0.08);
+  add(B(32, 0), 'money layers', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); walletsInsert(ctx, t, L); },
+    (ctx, t) => { caption(ctx, 'HIDDEN SERVERS', W / 2, 140, t - B(32, 'servers'), 1.6); caption(ctx, 'LAYERS OF WALLETS', W / 2, 140, t - B(32, 'layers'), 2.0); caption(ctx, '10x SILK ROAD', W / 2, 140, t - B(32, 'ten'), 2.4, { fill: RED, size: 84 }); }, 0.04);
+  add(B(33, 0), 'lamborghini', (ctx, t, k, L) => { camera(ctx, { x: 980, y: 590, z: 1.2 }, { x: 1000, y: 600, z: 1.28 }, k); villaDay(ctx, t);
+    car(ctx, 1000, 905, t, { sport: true, color: '#e9b23a' });
+    drawChar(ctx, { ...CAZES, outfit: 'shirt', color: '#efe9dd', legs: '#c9b48c', x: 820, y: FLOOR, face: 1, mood: 'smug' }, t);
+    if (t > B(33, 'married')) drawChar(ctx, { ...WIFE, x: 680, y: FLOOR, face: 1, mood: 'neutral' }, t); },
+    (ctx, t) => { caption(ctx, 'VILLAS', W / 2, 150, t - B(33, 'villas'), 1.2); caption(ctx, 'A LAMBORGHINI', W / 2, 150, t - B(33, 'lamborghini'), 1.8); caption(ctx, 'MONEY ADVICE (UNDER ANOTHER NAME)', W / 2, 150, t - B(33, 'online'), 3.2); }, 0.02);
+  add(B(34, 0), 'remember email', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    const b = w => B(34, w) - B(34, 0);
+    corkboard(ctx, t, { local: L, title: 'Remember?', cards: [{ x: 620, y: 560, w: 300, h: 260, kind: 'note', title: 'rossulbricht@\ngmail.com', at: 0.1, rot: -0.04, icon: (c, x, y) => { c.font = '86px "Lilita One"'; c.fillStyle = '#3e6b4a'; c.textAlign = 'center'; c.fillText('~', x, y); } },
+      { ...q({ x: 1300, y: 560, w: 300, h: 260 }), at: b('when'), rot: 0.03 }], strings: [[0, 1, b('when') + 0.4]] }); },
+    (ctx, t) => { caption(ctx, 'A WELCOME EMAIL', W / 2, 960, t - B(34, 'welcome'), 2.2); }, 0.04);
+  add(B(34, 'hidden') - 0.1, 'email header', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 900, y: 500, z: 1.3 }, k);
+    const a5 = B(35, 0) - B(34, 'hidden') + 0.1;
+    documentInsert(ctx, t, { local: L, header: 'AlphaBay forum  -  Welcome!  (December 2014)', source: 'Court filing, United States v. Cazes', lines: [
+      { text: 'From: Pimp_Alex_91@hotmail.com', at: 0.2, type: 0.6, hl: [6, 30, a5], circle: [6, 30, a5 + 1.6] }, { text: 'Subject: Welcome to AlphaBay', at: 0.6, type: 0.5 }, { text: 'Thank you for registering...', at: 1.0, type: 0.6, color: '#6b6258' }] }); }, null, 0.03);
+  add(B(36, 0), 'french forum', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 980, y: 560, z: 1.12 }, k);
+    const b = w => B(36, w) - B(36, 0);
+    documentInsert(ctx, t, { local: L, header: 'French-language tech forum', source: 'Court filing, United States v. Cazes', lines: [
+      { text: 'alpha02:', at: b('alpha'), type: 0.4, color: '#2b4f8a', circle: [0, 7, b('alpha') + 0.6] }, { text: '[question about a computer problem]', at: b('alpha') + 0.6, type: 0.8, color: '#6b6258' }, { text: '', at: 0 },
+      { text: 'Pimp_Alex_91@hotmail.com', at: b('same'), type: 0.6, hl: [0, 24, b('same') + 0.7] }, { text: 'Alexandre Cazes', at: b('real'), type: 0.6, size: 46, color: RED, hl: [0, 15, b('alexandre')] }] }); },
+    (ctx, t) => { caption(ctx, 'A REAL NAME', W / 2, 150, t - B(36, 'real'), 2.4, { fill: RED }); }, 0.03);
+  add(B(37, 0), 'same mistake board', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    corkboard(ctx, t, { local: L + 9, title: 'Remember?', cards: [{ x: 620, y: 560, w: 300, h: 260, kind: 'note', title: 'rossulbricht@\ngmail.com', at: 0, rot: -0.04, icon: (c, x, y) => { c.font = '86px "Lilita One"'; c.fillStyle = '#3e6b4a'; c.textAlign = 'center'; c.fillText('~', x, y); } },
+      { x: 1300, y: 560, w: 300, h: 260, kind: 'note', title: 'Pimp_Alex_91@\nhotmail.com', at: 0, rot: 0.03, icon: (c, x, y) => { c.font = '90px "Lilita One"'; c.fillStyle = '#2b3a55'; c.textAlign = 'center'; c.fillText('α', x, y); } }], strings: [[0, 1, 0]] }); },
+    (ctx, t) => { caption(ctx, 'SAME MISTAKE', W / 2, 960, t - B(37, 0), 2.0, { fill: RED }); caption(ctx, 'YEARS BEFORE ANYONE LOOKED', W / 2, 960, t - B(37, 'years'), 2.4); }, 0.04);
+  add(B(38, 0), 'fbi bangkok board', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 600, z: 1.25 }, { x: 980, y: 610, z: 1.32 }, k); office(ctx, t, 'fbi', 0.1);
+    drawChar(ctx, { ...AGENT(700, 91), face: 1, mood: 'neutral', arms: [0.2, 2.0 + Math.sin(t * 2) * 0.1], talk: true }, t);
+    drawChar(ctx, { ...AGENT(1240, 92, { glasses: true }), face: -1, mood: 'neutral' }, t); drawChar(ctx, { ...FEMAGENT(1400, 93, { color: '#23324a', outfit: 'agent' }), face: -1, mood: 'neutral' }, t); },
+    (ctx, t) => { caption(ctx, 'WHERE HE LIVED', W / 2, 150, t - B(38, 'where'), 1.2); caption(ctx, 'WHAT HE DROVE', W / 2, 150, t - B(38, 'what'), 1.2); caption(ctx, 'WHEN HE WAS ONLINE', W / 2, 150, t - B(38, 'when'), 1.6); caption(ctx, 'NEED: THE OPEN LAPTOP', W / 2, 150, t - B(38, 'what', 2), 3.0, { fill: RED }); }, 0.05);
+  add(B(39, 0), 'three point turn', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.1 }, { x: 980, y: 600, z: 1.22 }, k);
+    villaNight(ctx, t, { dawn: 0.38, crash: 0 }); const wob = Math.sin(L * 1.3); car(ctx, 900 + wob * 260, 960, t, { color: '#8e9aa3', flip: wob < 0 }); },
+    (ctx, t) => { caption(ctx, 'A VERY BAD 3-POINT TURN', W / 2, 160, t - B(39, 'very'), 2.4); }, 0.12);
+  add(B(39, 'when'), 'laptop waiting', (ctx, t, k) => { camera(ctx, { x: 920, y: 640, z: 1.6 }, { x: 930, y: 640, z: 1.9 }, k); hackerRoom(ctx, t); desk(ctx, 640, t, { laptopX: 280 });
+    if (t > B(39, 'admin') - 1.2) { const w = clamp((t - (B(39, 'admin') - 1.2)) / 1.5); drawChar(ctx, { ...AGENT(lerp(1500, 1150, ease(w)), 94), face: -1, walk: w > 0 && w < 1 ? w * 3 : 0, mood: 'smug' }, t); } },
+    (ctx, t) => { caption(ctx, 'ADMIN: LOGGED IN', W / 2, 160, t - B(39, 'logged'), 2.4); }, 0.18);
+  add(B(40, 0), 'empty cell', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.1 }, { x: 960, y: 560, z: 1.18 }, k); cell(ctx, t); },
+    (ctx, t, k, L) => { dateTag(ctx, '12 JULY 2017 · BANGKOK', L - 0.3); caption(ctx, 'HE WAS 25', W / 2, 960, t - B(40, 'he', 2), 2.4, { fill: '#f4efe2' }); }, 0.25);
+
+  // ======== HANSA ========
+  add(B(41, 0), 'netherlands map', (ctx, t, k, L) => { const z = ease(k); mapInsert(ctx, t, { view: { lon: lerp(30, 6, z), lat: lerp(30, 52, z), span: lerp(120, 22, z) }, local: L, highlight: { Netherlands: '#d98b4a' }, pins: [{ at: [4.9, 52.37], label: 'NETHERLANDS', t0: 2.6 }] }); }, null, 0.04);
+  add(B(42, 0), 'hansa site', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.08 }, k); shopCard(ctx, t, { local: L, title: 'HANSA', barColor: '#5a3f7a', logo: 'H' }); },
+    (ctx, t) => { caption(ctx, 'HANSA', W / 2, 1000, t - B(42, 'hansa'), Math.min(1.8, B(42, 'tip') - B(42, 'hansa') - 0.05), { size: 84 }); caption(ctx, 'A TIP', W / 2, 1000, t - B(42, 'tip'), 1.6); }, 0.04);
+  add(B(42, 'traced') - 0.1, 'germany arrest', (ctx, t, k, L) => { camera(ctx, { x: 980, y: 600, z: 1.3 }, { x: 1000, y: 610, z: 1.38 }, k); hallway(ctx, t, 'de');
+    const p = t > B(42, 'arrested');
+    drawChar(ctx, { name: 'Admin1', x: 640, y: FLOOR, face: 1, hair: 'buzz', hairColor: '#a8865a', outfit: 'hoodie', color: '#3a3a40', mood: p ? 'shock' : 'neutral', arms: p ? [2.6, 2.6] : undefined, id: 101 }, t);
+    drawChar(ctx, { name: 'Admin2', x: 500, y: FLOOR, face: 1, hair: 'messy', hairColor: '#4a3a2a', glasses: true, outfit: 'tee', color: '#6b3a3a', mood: p ? 'shock' : 'neutral', arms: p ? [2.6, 2.6] : undefined, id: 102 }, t);
+    if (t > B(42, 'june') - 0.5) [1150, 1310, 1470].forEach((x0, i) => { const w = walkTo(t - (B(42, 'june') - 0.5), i * 0.15, 1.3, 1800 + i * 100, x0); drawChar(ctx, { name: 'GerCop' + i, x: w.x, y: FLOOR, face: -1, walk: w.walk, cap: true, capColor: '#2a3a2e', outfit: 'police', color: '#4a5a4a', legs: '#2a2b33', hair: 'buzz', hairColor: '#3a2a20', mood: 'angry', id: 110 + i }, t); }); },
+    (ctx, t, k, L) => { dateTag(ctx, '20 JUNE 2017 · GERMANY', t - B(42, 'june') + 0.3); caption(ctx, 'TWO ADMINS', W / 2, 160, t - B(42, 'two'), 1.8); }, 0.06);
+  add(B(43, 0), 'dutch police take over', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 610, z: 1.3 }, { x: 960, y: 620, z: 1.4 }, k); office(ctx, t, 'nl', 0.15);
+    [[700, 1, 121], [1000, 1, 122], [1300, 1, 123]].forEach(([x, f, id], i) => { drawChar(ctx, { ...DUTCH(x, id, f), arms: typing(t + i), mood: t > B(43, 'took') ? 'smug' : 'neutral', glow: { color: 'rgba(110,220,255,.35)', side: 1 } }, t); deskSmall(ctx, x + 40, t); }); },
+    (ctx, t) => { caption(ctx, 'DID NOT SHUT IT DOWN', W / 2, 150, t - B(43, 'not'), 1.8, { fill: RED }); caption(ctx, 'THEY KEPT IT RUNNING', W / 2, 150, t - B(43, 'took'), 2.6); }, 0.06);
+  add(B(44, 0), 'code changes', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    const b = w => B(44, w) - B(44, 0);
+    corkboard(ctx, t, { local: L, title: 'Police-run Hansa', cards: [
+      { x: 520, y: 560, w: 240, h: 260, kind: 'note', title: 'Answered\nmessages', at: b('answered'), rot: -0.04, icon: (c, x, y) => { rr(c, x - 50, y - 36, 100, 70, 6); fillStroke(c, '#efe6d2', INK, 3); c.beginPath(); c.moveTo(x - 50, y - 36); c.lineTo(x, y); c.lineTo(x + 50, y - 36); c.stroke(); } },
+      { x: 960, y: 560, w: 240, h: 260, kind: 'note', title: 'Paid the\nsellers', at: b('paid'), rot: 0.03, icon: (c, x, y) => { c.beginPath(); c.arc(x, y, 46, 0, 7); fillStroke(c, '#e2a23a', INK, 3); c.fillStyle = '#fff3c4'; c.font = '900 56px "Nunito"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('₿', x, y + 2); } },
+      { x: 1400, y: 560, w: 240, h: 260, kind: 'note', title: 'Saved\npasswords', at: b('saved'), rot: -0.02, icon: (c, x, y) => { rr(c, x - 36, y - 10, 72, 56, 6); fillStroke(c, '#c9a65a', INK, 3); c.beginPath(); c.arc(x, y - 10, 26, Math.PI, 0); c.lineWidth = 8; c.strokeStyle = INK; c.stroke(); }, stamp: { text: 'LOGGED', at: b('home') } }] }); }, null, 0.04);
+  add(B(45, 0), 'alphabay gone', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); seizedNotice(ctx, t, { local: L, site: 'ALPHABAY', barColor: '#2b3a55', logo: 'α', head: 'ALPHABAY', head2: 'IS OFFLINE', sub: '5 July 2017' }); },
+    (ctx, t) => { caption(ctx, 'OVERNIGHT', W / 2, 980, t - B(45, 'overnight'), 2.0); }, 0.05);
+  add(B(45, 'most'), 'vendor jump', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.04 }, k);
+    statBars(ctx, t, { local: L, max: 8000, title: 'HANSA SELLERS PER DAY', bars: [{ label: 'BEFORE', value: 1000, at: 0.3, color: '#7fa3a6', show: p => '~' + Math.round(1000 * p).toLocaleString('en') }, { label: 'AFTER', value: 8000, at: B(45, 'eight') - B(45, 'most'), color: RED, show: p => '~' + Math.round(8000 * p).toLocaleString('en') }] }); }, null, 0.03);
+  add(B(46, 0), 'walking into police shop', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 590, z: 1.15 }, { x: 1000, y: 600, z: 1.22 }, k); hansaShop(ctx, t);
+    for (let i = 0; i < 5; i++) { const w = walkTo(L, i * 1.1, 3.4, -200, 960); if (w.x < 900) drawChar(ctx, { name: 'Buyer' + i, x: w.x, y: FLOOR, walk: w.walk, face: 1, hair: ['messy', 'beanie', 'short', 'side', 'buzz'][i], hairColor: ['#3a2a20', '#2a2a2a', '#7a5a3a', '#c9a85a', '#1e1a18'][i], outfit: 'hoodie', color: ['#3b4a63', '#6b3a3a', '#4a5a3a', '#5a4a6a', '#3a3f46'][i], id: 130 + i, qaSkip: true }, t); }
+    drawChar(ctx, { ...DUTCH(1260, 141, -1), mood: 'smug', outfit: 'police', cap: true, capColor: '#1e2a40' }, t); },
+    (ctx, t) => { caption(ctx, '~10,000 HOME ADDRESSES', W / 2, 150, t - B(46, 'ten'), 2.6, { fill: RED }); }, 0.06);
+  add(B(47, 0), 'hansa seized', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.08 }, k); seizedNotice(ctx, t, { local: L, site: 'HANSA', barColor: '#5a3f7a', logo: 'H', sub: 'by the Dutch police\n20 July 2017' }); },
+    (ctx, t) => { caption(ctx, 'STRAIGHT INTO THE NET', W / 2, 980, t - B(47, 'straight'), 2.4); }, 0.05);
+
+  // ======== THE ANSWER ========
+  add(B(48, 0), 'answer board', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.06 }, k);
+    corkboard(ctx, t, { local: L + 9, title: 'Dark web bosses', cards: [{ ...CARD.sr, stamp: { text: 'CAUGHT', at: 0 } }, { ...CARD.s2, stamp: { text: 'CAUGHT', at: 0 } }, { ...CARD.ab, stamp: { text: 'CAUGHT', at: 0 } }, { ...CARD.hn, stamp: { text: 'SEIZED', at: 0 } }], strings: [[0, 1, 0], [1, 2, 0], [2, 3, 0]] }); },
+    (ctx, t) => { caption(ctx, 'NOT BY BREAKING TOR', W / 2, 960, t - B(48, 'not'), 2.4); }, 0.04);
+  add(B(49, 0), 'clue list', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.04 }, k);
+    statBars(ctx, t, { local: 99, max: 1, bars: [] }); textOutlined(ctx, 'WHAT REALLY CAUGHT THEM', W / 2, 140, { size: 70, fill: YEL, lw: 10 });
+    [['AN OLD FORUM POST', 'old'], ['AN EMAIL IN A HEADER', 'email'], ['A PACKAGE OF FAKE IDS', 'package'], ['A STAFF MEMBER WHO WAS AN AGENT', 'staff'], ['A CRASHED GATE', 'crashed'], ['A LAPTOP LEFT OPEN', 'laptop']].forEach(([s, w], i) => {
+      const p = clamp((t - B(49, w)) / 0.3); if (p <= 0) return; const y = 270 + i * 118; ctx.save(); ctx.globalAlpha = p;
+      ctx.beginPath(); ctx.arc(480, y, 40, 0, 7); fillStroke(ctx, RED, INK, 4); ctx.fillStyle = '#f6efdd'; ctx.font = '52px "Lilita One"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(String(i + 1), 480, y + 3);
+      ctx.fillStyle = INK; ctx.font = '900 54px "Nunito"'; ctx.textAlign = 'left'; ctx.fillText(s, 560, y + 4); ctx.restore(); }); }, null, 0.03);
+  add(B(50, 0), 'perfect every day', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); calendarGrid(ctx, t, L, B(50, 'police') - B(50, 0)); },
+    (ctx, t) => { caption(ctx, 'PERFECT EVERY DAY', W / 2, 150, t - B(50, 'perfect'), 2.4); caption(ctx, 'LUCKY ONCE', W / 2, 150, t - B(50, 'lucky'), 2.0, { fill: RED }); caption(ctx, 'AND THEY CAN WAIT', W / 2, 150, t - B(50, 'and', 3), 2.0); }, 0.03);
+  add(B(51, 0), 'lambo again', (ctx, t, k, L) => { camera(ctx, { x: 1060, y: 640, z: 1.45 }, { x: 1080, y: 650, z: 1.6 }, k); villaDay(ctx, t); car(ctx, 900, 905, t, { sport: true, color: '#e9b23a' }); },
+    (ctx, t) => { caption(ctx, 'HARD TO HIDE', W / 2, 160, t - B(51, 'harder'), 2.4); }, 0.02);
+  add(B(52, 0), 'ross freed', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 600, z: 1.15 }, { x: 980, y: 610, z: 1.22 }, k); prisonGate(ctx, t, { open: clamp((t - B(52, 'pardoned')) / 1.5) * 0.9 });
+    const w = walkTo(t - B(52, 'walked') + 1.6, 0, 2.6, 960, 1400); if (t > B(52, 'pardoned') + 0.6) drawChar(ctx, { ...ROSS, hairColor: '#7a5a3e', beard: true, x: w.x, y: FLOOR, walk: w.walk, face: 1, mood: 'smug' }, t); },
+    (ctx, t, k, L) => { dateTag(ctx, 'JANUARY 2025', t - B(52, 'january') + 0.3); caption(ctx, '11 YEARS LATER', W / 2, 160, t - B(52, 'more'), 1.6); caption(ctx, 'PARDONED', W / 2, 160, t - B(52, 'pardoned'), 2.6, { size: 90 }); }, 0.02);
+  add(B(53, 0), 'final board', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 520, z: 1.12 }, k);
+    corkboard(ctx, t, { local: L + 9, title: 'Anonymous?', cards: [{ ...CARD.sr, stamp: { text: 'CAUGHT', at: 0 } }, { ...CARD.s2, stamp: { text: 'CAUGHT', at: 0 } }, { ...CARD.ab, stamp: { text: 'CAUGHT', at: 0 } }, { ...CARD.hn, stamp: { text: 'SEIZED', at: 0 } }], strings: [[0, 1, 0], [1, 2, 0], [2, 3, 0]] }); },
+    (ctx, t) => { caption(ctx, 'THE PEOPLE NEVER WERE', W / 2, 960, t - B(53, 'people'), 3.0, { fill: RED }); }, 0.04);
+  add(B(54, 0), 'comment question', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 610, z: 1.3 }, { x: 960, y: 620, z: 1.35 }, k); office(ctx, t, 'fbi', 0.1);
+    drawChar(ctx, { ...ALFORD, x: 960, y: FLOOR, face: 0, mood: 'smug', arms: [0.2, 1.7] }, t); },
+    (ctx, t) => { caption(ctx, 'WHICH CLUE FIRST?', W / 2, 160, t - B(54, 'which'), 4.0); }, 0.04);
+  return S;
+}, { duration: undefined });
+
+// ---------- local sets ----------
+function calendar(ctx, t, L, month, year, flip) {
+  ctx.fillStyle = '#2f2a26'; ctx.fillRect(-400, -400, W + 800, H + 800);
+  for (let i = 0; i < 60; i++) { ctx.fillStyle = `rgba(255,250,230,${0.05 + hash(i) * 0.1})`; ctx.fillRect(hash(i * 3) * W, hash(i * 7) * H, 2, 2); }
+  const p = easeOut(clamp(L / 0.5)); ctx.save(); ctx.translate(W / 2, H / 2 + (1 - p) * 60); ctx.globalAlpha = p;
+  rr(ctx, -250, -300, 500, 600, 8); fillStroke(ctx, '#efe6d2', INK, 4); rr(ctx, -250, -300, 500, 130, 8); fillStroke(ctx, RED, INK, 4);
+  rr(ctx, -260, -330, 520, 40, 6); fillStroke(ctx, '#5a3f2c', INK, 3); [-120, 120].forEach(x => { rr(ctx, x - 8, -350, 16, 60, 6); fillStroke(ctx, '#b9b2a0', INK, 3); });
+  ctx.fillStyle = '#f6efdd'; ctx.font = (month.length > 10 ? '58px' : '74px') + ' "Lilita One"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(month, 0, -232);
+  if (year) { ctx.fillStyle = INK; ctx.font = '150px "Lilita One"'; ctx.fillText(year, 0, -60); }
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 6; c++) { ctx.fillStyle = '#d6ccb4'; rr(ctx, -210 + c * 72, (year ? 60 : -140) + r * 56, 60, 44, 4); ctx.fill(); }
+  if (flip) { const n = Math.floor(L * 6); for (let i = 0; i < Math.min(n, 24); i++) { const r = Math.floor(i / 6), c = i % 6; ctx.strokeStyle = RED; ctx.lineWidth = 5; const x = -210 + c * 72, y = -140 + r * 56; ctx.beginPath(); ctx.moveTo(x + 8, y + 6); ctx.lineTo(x + 52, y + 38); ctx.moveTo(x + 52, y + 6); ctx.lineTo(x + 8, y + 38); ctx.stroke(); } }
+  ctx.restore();
+}
+function calendarGrid(ctx, t, L, policeAt) {
+  ctx.fillStyle = '#e8dcc0'; ctx.fillRect(-400, -400, W + 800, H + 800);
+  const cols = 20, rows = 8, s = 62, x0 = W / 2 - cols * s / 2, y0 = 300;
+  for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) { const i = r * cols + c, p = clamp(L * 40 - i); const x = x0 + c * s, y = y0 + r * s;
+    rr(ctx, x + 4, y + 4, s - 8, s - 8, 6); fillStroke(ctx, '#f6efdd', 'rgba(0,0,0,.25)', 2);
+    if (p > 0) { ctx.strokeStyle = '#3e6b4a'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(x + 16, y + s / 2); ctx.lineTo(x + 26, y + s - 18); ctx.lineTo(x + s - 14, y + 16); ctx.stroke(); } }
+  if (L > policeAt) { const i = 117, x = x0 + (i % cols) * s, y = y0 + Math.floor(i / cols) * s, p = clamp((L - policeAt) / 0.3);
+    ctx.fillStyle = 'rgba(217,72,59,.85)'; rr(ctx, x + 4, y + 4, s - 8, s - 8, 6); ctx.fill(); ctx.strokeStyle = RED; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(x + s / 2, y + s / 2, 30 + 30 * (1 - p), 0, 7); ctx.stroke(); }
+}
+function coinInsert(ctx, t, L) {
+  ctx.fillStyle = '#2f2a26'; ctx.fillRect(-400, -400, W + 800, H + 800);
+  const p = easeOut(clamp(L / 0.6)), sx = Math.cos(t * 2.2);
+  ctx.save(); ctx.translate(W / 2, H / 2 + 40); ctx.scale(Math.max(0.08, Math.abs(sx)) * p, p);
+  ctx.beginPath(); ctx.arc(0, 0, 230, 0, 7); fillStroke(ctx, '#e2a23a', INK, 6); ctx.beginPath(); ctx.arc(0, 0, 190, 0, 7); fillStroke(ctx, '#f0b84a', INK, 4);
+  if (sx > 0) { ctx.fillStyle = '#fff3c4'; ctx.font = '900 260px "Nunito"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('₿', 0, 10); }
+  ctx.restore(); glowSpot(ctx, W / 2, H / 2, 420, 'rgba(255,200,90,.18)');
+}
+function lockInsert(ctx, t, L, closeAt) {
+  ctx.fillStyle = '#2a2523'; ctx.fillRect(-400, -400, W + 800, H + 800);
+  // a big laptop, front view
+  const lid = clamp((L - closeAt) / 0.5);
+  ctx.save(); ctx.translate(W / 2, 760);
+  rr(ctx, -470, -10, 940, 40, 10); fillStroke(ctx, '#8a9198', INK, 4);
+  const hgt = 560 * (1 - lid * 0.97); rr(ctx, -430, -10 - hgt, 860, hgt, 14); fillStroke(ctx, '#9aa1a8', INK, 4);
+  if (lid < 0.6) { rr(ctx, -400, -10 - hgt + 26, 800, hgt - 56, 6); fillStroke(ctx, '#0e2a33', INK, 3); glowSpot(ctx, 0, -10 - hgt / 2, 420, 'rgba(110,220,255,.25)');
+    ctx.fillStyle = '#7fe3ff'; ctx.font = '900 40px "Nunito"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('LOGGED IN', 0, -10 - hgt / 2 - 60); }
+  ctx.restore();
+  if (lid > 0.3) { const p = clamp((lid - 0.3) / 0.4); ctx.save(); ctx.translate(W / 2, 520); ctx.scale(0.6 + 0.4 * easeOut(p), 0.6 + 0.4 * easeOut(p)); ctx.globalAlpha = p;
+    rr(ctx, -90, -20, 180, 150, 14); fillStroke(ctx, YEL, INK, 6); ctx.beginPath(); ctx.arc(0, -20, 62, Math.PI, 0); ctx.lineWidth = 26; ctx.strokeStyle = INK; ctx.stroke(); ctx.lineWidth = 16; ctx.strokeStyle = '#b9b2a0'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(0, 50, 18, 0, 7); ctx.fillStyle = INK; ctx.fill(); ctx.restore(); }
+}
+function walletsInsert(ctx, t, L) {
+  ctx.fillStyle = '#e8dcc0'; ctx.fillRect(-400, -400, W + 800, H + 800);
+  const cols = [[300, 540]], layers = [[300, [540]], [720, [360, 720]], [1140, [270, 540, 810]], [1560, [360, 720]]];
+  const coin = (x, y, s = 1) => { ctx.beginPath(); ctx.arc(x, y, 50 * s, 0, 7); fillStroke(ctx, '#e2a23a', INK, 4); ctx.fillStyle = '#fff3c4'; ctx.font = `900 ${60 * s}px "Nunito"`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('₿', x, y + 3); };
+  layers.forEach(([x, ys], li) => { const p = clamp(L * 1.4 - li); if (p <= 0) return; ys.forEach(y => { if (li) { const prev = layers[li - 1]; prev[1].forEach(py => { ctx.strokeStyle = 'rgba(60,50,40,.5)'; ctx.lineWidth = 4; ctx.setLineDash([10, 10]); ctx.beginPath(); ctx.moveTo(prev[0] + 60, py); ctx.lineTo(lerp(prev[0] + 60, x - 60, p), lerp(py, y, p)); ctx.stroke(); ctx.setLineDash([]); }); } });
+    ys.forEach(y => { if (p > 0.6) { rr(ctx, x - 80, y - 70, 160, 140, 14); fillStroke(ctx, '#6b4a34', INK, 4); coin(x, y, 0.9); } }); });
+}
+function rossRoom(ctx, t, dark = 0.15, kind = 'sf') {
+  room(ctx, t, { wall: kind === 'sf' ? '#c9b48c' : '#a9b4a0', wall2: kind === 'sf' ? '#8a6e4c' : '#6a7a64', floor: '#5d4330', wainscot: 640, dark,
+    items: c => { windowFrame(c, 1200, 180, 420, 330, t, { city: true, night: dark > 0.3, sky0: dark > 0.3 ? '#1c2a44' : '#9fc3d6', sky1: dark > 0.3 ? '#3a4a66' : '#efe2c4', seed: kind === 'sf' ? 4 : 9 });
+      bookshelf(c, 220, 260, 300, 380, kind === 'sf' ? 2 : 5); if (kind === 'sf') frameArt(c, 620, 200, 180, 130, 'land'); else plant(c, 620, 640, 1.2); } });
+}
+function office(ctx, t, kind = 'irs', dark = 0) {
+  const pal = { irs: ['#c9c2a8', '#7f8a78'], fed: ['#b8b9ad', '#5f6b70'], fbi: ['#bdb8a6', '#5a6a7a'], nl: ['#c2c8c4', '#5a6e82'] }[kind];
+  room(ctx, t, { wall: pal[0], wall2: pal[1], floor: '#4a4f54', tiles: true, wainscot: 660, dark, lamps: [[700, 80], [1260, 80]],
+    items: c => {
+      windowFrame(c, 1340, 200, 360, 280, t, { city: true, sky0: '#a9c6d6', sky1: '#e9e2cc', seed: 11 });
+      cabinet(c, 200, 660); cabinet(c, 320, 660); wallClock(c, 560, 220, 44, t, 3);
+      if (kind === 'fbi') { rr(c, 720, 170, 460, 300, 4); fillStroke(c, '#b08a5a', INK, 4); [[780, 210, '#efe6d2'], [900, 260, '#e9c46a'], [1040, 200, '#efe6d2'], [820, 360, '#efe6d2'], [1060, 340, '#dfe9ef']].forEach(([x, y, col], i) => { c.save(); c.translate(x, y); c.rotate((hash(i) - .5) * 0.2); rr(c, 0, 0, 90, 70, 2); fillStroke(c, col, INK, 2); c.restore(); });
+        c.strokeStyle = '#b3261e'; c.lineWidth = 3; c.beginPath(); c.moveTo(825, 245); c.lineTo(945, 295); c.lineTo(1085, 235); c.moveTo(945, 295); c.lineTo(865, 395); c.stroke(); flag(c, 640, 330, 'us'); }
+      else if (kind === 'nl') { flag(c, 640, 330, 'nl'); frameArt(c, 860, 200, 260, 180, 'land'); }
+      else { flag(c, 640, 330, 'us'); frameArt(c, 860, 200, 200, 160, 'seal'); }
+      plant(c, 1760, FLOOR, 1.1);
+    } });
+}
+function hallway(ctx, t, kind = 'sf') {
+  room(ctx, t, { wall: kind === 'sf' ? '#d9c39a' : '#c8cfc6', wall2: kind === 'sf' ? '#8a6a48' : '#6e7a72', floor: kind === 'sf' ? '#6b4a34' : '#585c60', wainscot: 600, tiles: kind !== 'sf', lamps: [[1000, 60]],
+    items: c => { door(c, 520, FLOOR - 400, 220, 400, { color: kind === 'sf' ? '#7a5136' : '#5a6a7a', sign: kind === 'sf' ? 'APT 3' : '2B' }); frameArt(c, 1000, 220, 200, 150, 'land'); door(c, 1500, FLOOR - 400, 220, 400, { color: kind === 'sf' ? '#7a5136' : '#5a6a7a' }); } });
+}
+function libraryExt(ctx, t) {
+  cityStreet(ctx, t, { cols: ['#d9d2bf', '#8fae8a'], sky0: '#9fc0d6', sky1: '#efe2c4' });
+  // the library building in front: low modern block with big windows
+  ctx.fillStyle = '#d8cbb0'; ctx.fillRect(420, 380, 1080, FLOOR - 380); ctx.strokeStyle = INK; ctx.lineWidth = 3.5; ctx.strokeRect(420, 380, 1080, FLOOR - 380);
+  rr(ctx, 400, 350, 1120, 40, 3); fillStroke(ctx, '#8a7a5e', INK, 3);
+  for (let i = 0; i < 5; i++) { rr(ctx, 470 + i * 200, 440, 160, 220, 3); fillStroke(ctx, '#7fa3b6', INK, 3); ctx.fillStyle = 'rgba(255,255,255,.25)'; ctx.beginPath(); ctx.moveTo(480 + i * 200, 450); ctx.lineTo(540 + i * 200, 450); ctx.lineTo(480 + i * 200, 540); ctx.fill(); }
+  rr(ctx, 860, 690, 200, 150, 3); fillStroke(ctx, '#5a6a7a', INK, 3);
+  rr(ctx, 700, 395, 520, 34, 3); fillStroke(ctx, '#efe6d2', INK, 2.5); ctx.fillStyle = INK; ctx.font = '900 24px "Nunito"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('PUBLIC LIBRARY', 960, 413);
+  plant(ctx, 520, FLOOR, 1.3); plant(ctx, 1400, FLOOR, 1.3);
+}
+function library(ctx, t) {
+  room(ctx, t, { wall: '#d6c8a6', wall2: '#9a7a54', floor: '#6b4a34', wainscot: 900, lamps: [[640, 40], [1280, 40]],
+    items: c => { bookshelf(c, 80, 230, 360, 610, 3); bookshelf(c, 1480, 230, 360, 610, 6); windowFrame(c, 620, 170, 680, 330, t, { trees: true, sky0: '#a9cde0', sky1: '#e8e4cc', frame: '#efe6d2' });
+      rr(c, 760, 90, 400, 46, 3); fillStroke(c, '#efe6d2', INK, 2.5); c.fillStyle = INK; c.font = '900 26px "Nunito"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('QUIET PLEASE', 960, 113); } });
+}
+function libTable(ctx, t, x, w, withLaptop) { tableSide(ctx, x, w, 700, '#8a6440'); if (withLaptop) laptopSide(ctx, x + 250, 700, t, { face: 1 }); }
+function deskSmall(ctx, x, t) { tableSide(ctx, x - 100, 280, 710, '#6b5a48'); laptopSide(ctx, x + 150, 710, t, { face: -1 }); }
+function benthallFlat(ctx, t) { rossRoom(ctx, t, 0.3, 'quebec'); }
+function villaDay(ctx, t) {
+  villaNight(ctx, t, { dawn: 1.0 });
+  ctx.fillStyle = 'rgba(255,220,160,.18)'; ctx.fillRect(-400, -400, W + 800, H + 800);
+}
+function hansaShop(ctx, t) {
+  room(ctx, t, { wall: '#3a3050', wall2: '#2a2440', floor: '#2a2523', wainscot: 640, dark: 0.05, lamps: [[960, 40]],
+    items: c => { rr(c, 700, 160, 520, 150, 8); fillStroke(c, '#5a3f7a', INK, 4); c.fillStyle = '#efe6d2'; c.font = '96px "Lilita One"'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('HANSA', 960, 240);
+      door(c, 860, FLOOR - 400, 200, 400, { color: '#2a2440' }); glowSpot(c, 960, 500, 300, 'rgba(160,120,255,.2)'); } });
+  rr(ctx, 1120, 690, 420, 150, 4); fillStroke(ctx, '#4a3a5a', INK, 3.5);
+}
+</script></body></html>

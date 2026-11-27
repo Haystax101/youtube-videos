@@ -118,7 +118,8 @@ export function villaNight(ctx, t, o = {}) {
 // a car (side-on) — x = rear, faces right. opts.color, lights, crumple 0..1
 export function car(ctx, x, y, t, o = {}) {
   const col = o.color || '#c9c3b6', cr = o.crumple || 0, L = 420 - cr * 26;
-  ctx.save(); ctx.translate(x, y);
+  ctx.save(); ctx.translate(x, y); if (o.flip) { ctx.translate(L, 0); ctx.scale(-1, 1); }
+  if (o.sport) { sportCar(ctx, t, o); ctx.restore(); return; }
   ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(L / 2, 4, L / 2 + 20, 14, 0, 0, 7); ctx.fill();
   ctx.beginPath(); ctx.moveTo(10, -40); ctx.lineTo(0, -88); ctx.lineTo(30, -100); ctx.lineTo(110, -108); ctx.lineTo(160, -168); ctx.lineTo(300, -170); ctx.lineTo(350, -112);
   ctx.lineTo(L - 10, -100 + cr * 8); ctx.lineTo(L, -70 + cr * 10); ctx.lineTo(L - 6 - cr * 8, -36); ctx.closePath(); fillStroke(ctx, col, INK, 3.5);
@@ -132,6 +133,17 @@ export function car(ctx, x, y, t, o = {}) {
   if (cr > 0.2) { ctx.strokeStyle = INK; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(L - 60, -98); ctx.lineTo(L - 44, -84); ctx.lineTo(L - 58, -70); ctx.lineTo(L - 40, -56); ctx.stroke(); }
   if (o.siren) { const on = Math.floor(t * 4) % 2; rr(ctx, 210, -186, 60, 16, 4); fillStroke(ctx, on ? '#e04a3c' : '#3b6fd6', INK, 2.5); glowSpot(ctx, 240, -180, 160, on ? 'rgba(230,70,60,.55)' : 'rgba(70,120,240,.55)'); }
   ctx.restore();
+}
+
+function sportCar(ctx, t, o) {
+  const col = o.color || '#e9b23a';
+  ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(220, 4, 240, 14, 0, 0, 7); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(0, -30); ctx.lineTo(4, -78); ctx.lineTo(120, -96); ctx.lineTo(200, -138); ctx.lineTo(290, -136); ctx.lineTo(440, -70); ctx.lineTo(446, -34); ctx.closePath(); fillStroke(ctx, col, INK, 3.5);
+  ctx.beginPath(); ctx.moveTo(206, -130); ctx.lineTo(282, -128); ctx.lineTo(350, -96); ctx.lineTo(150, -96); ctx.closePath(); fillStroke(ctx, '#2d3a44', INK, 3);
+  ctx.strokeStyle = INK; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.moveTo(120, -60); ctx.lineTo(380, -60); ctx.stroke();
+  ctx.fillStyle = 'rgba(0,0,0,.18)'; ctx.fillRect(10, -54, 430, 22);
+  [96, 352].forEach(wx => { ctx.beginPath(); ctx.arc(wx, -30, 32, 0, 7); fillStroke(ctx, '#1c1c1e', INK, 3); ctx.beginPath(); ctx.arc(wx, -30, 16, 0, 7); fillStroke(ctx, '#c9c9cf', INK, 2); });
+  ctx.fillStyle = '#fff1c4'; rr(ctx, 420, -72, 20, 10, 4); ctx.fill();
 }
 
 // ---------- SET: the boss's room at night (laptop on a desk, screen glow) ----------
