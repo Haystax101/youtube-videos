@@ -1,1 +1,2 @@
 episodes/015-shot-gave-speech
+# v2: pearly faces, sharp DoF, am_michael voice
