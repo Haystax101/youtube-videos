@@ -1,0 +1,61 @@
+<!doctype html><html><head><meta charset="utf-8"><title>002 thumbnails</title>
+<style>html,body{margin:0;background:#000}#stage{position:relative;width:1920px;height:1080px;overflow:hidden}canvas{display:block}</style>
+</head><body><div id="stage"><canvas id="cv"></canvas></div>
+<script type="module">
+import { W, H, INK, YEL, RED, drawChar, camera, clamp, lerp, hash, textOutlined, rr, fillStroke } from '/prototypes/casefile2d/engine.js';
+import { corkboard, glowSpot } from '/prototypes/casefile2d/sets.js';
+import { FLOOR } from '/prototypes/casefile2d/sets2.js';
+import { printer, officeFloor, hackerDen } from '/prototypes/casefile2d/sets3.js';
+const CLERK = { name: 'Clerk', hair: 'side', hairColor: '#1e1816', outfit: 'shirt', color: '#e9eef2', tie: '#2b4f8a', legs: '#2f3440', glasses: true, id: 101 };
+const HACK = { name: 'Hacker', hair: 'buzz', hairColor: '#141414', outfit: 'hoodie', color: '#22262e', legs: '#1a1c22', id: 140 };
+// ---- shared thumbnail grammar: tag boxes, arrows, big outlined words ----
+const tag = (ctx, s, x, y, { bg = RED, fg = '#fff', size = 64, rot = 0 } = {}) => { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.font = `${size}px "Lilita One"`; const w = ctx.measureText(s).width + size * 0.7, h = size * 1.25;
+  ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(-w / 2 + 8, -h / 2 + 10, w, h); rr(ctx, -w / 2, -h / 2, w, h, 8); fillStroke(ctx, bg, INK, 6); ctx.fillStyle = fg; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(s, 0, 4); ctx.restore(); };
+const arrow = (ctx, x0, y0, x1, y1, col = RED, lw = 16) => { ctx.save(); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; const a = Math.atan2(y1 - y0, x1 - x0), mx = (x0 + x1) / 2 - (y1 - y0) * 0.25, my = (y0 + y1) / 2 + (x1 - x0) * 0.25;
+  for (const [c, w] of [[INK, lw + 12], [col, lw]]) { ctx.strokeStyle = c; ctx.lineWidth = w; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.quadraticCurveTo(mx, my, x1, y1); ctx.stroke();
+    const b = Math.atan2(y1 - my, x1 - mx); ctx.beginPath(); ctx.moveTo(x1 - Math.cos(b - 0.5) * 60, y1 - Math.sin(b - 0.5) * 60); ctx.lineTo(x1, y1); ctx.lineTo(x1 - Math.cos(b + 0.5) * 60, y1 - Math.sin(b + 0.5) * 60); ctx.stroke(); } ctx.restore(); };
+const big = (ctx, s, x, y, size, fill = YEL, align = 'left') => textOutlined(ctx, s, x, y, { size, fill, lw: size * 0.16, align });
+const slip = (ctx, x, y, s, rot, { circle = true, w = 620 } = {}) => { ctx.save(); ctx.translate(x, y); ctx.rotate(rot); ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.fillRect(-w / 2 + 14, -150, w, 330);
+  rr(ctx, -w / 2, -170, w, 330, 4); fillStroke(ctx, '#fbf7ec', INK, 4); ctx.fillStyle = '#7a6a58'; ctx.font = '30px "Special Elite"'; ctx.textAlign = 'left'; ctx.textBaseline = 'middle'; ctx.fillText('SWIFT · PAYMENT ORDER', -w / 2 + 34, -120);
+  ctx.fillStyle = INK; ctx.font = '40px "Special Elite"'; ctx.fillText('PAY: $20,000,000', -w / 2 + 34, -50); ctx.font = '50px "Special Elite"'; ctx.fillText(s, -w / 2 + 34, 40);
+  if (circle) { ctx.strokeStyle = RED; ctx.lineWidth = 9; ctx.beginPath(); ctx.ellipse(-w / 2 + 34 + 330, 40, 190, 52, -0.04, 0, 7); ctx.stroke(); } ctx.restore(); };
+const money = (ctx, x, y, r, s = 1) => { ctx.save(); ctx.translate(x, y); ctx.rotate(r); ctx.scale(s, s); rr(ctx, -80, -38, 160, 76, 6); fillStroke(ctx, '#7fa36a', INK, 3.5); ctx.fillStyle = '#5c7f4c'; ctx.fillRect(-60, -24, 120, 48); ctx.fillStyle = '#e9f2d8'; ctx.font = '40px "Lilita One"'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('$', 0, 2); ctx.restore(); };
+const nkFlag = (ctx, x, y, w) => { ctx.save(); ctx.translate(x, y); const h = w / 2; ctx.fillStyle = '#024fa2'; ctx.fillRect(0, 0, w, h); ctx.fillStyle = '#fff'; ctx.fillRect(0, h * 0.16, w, h * 0.68); ctx.fillStyle = '#ed1c27'; ctx.fillRect(0, h * 0.2, w, h * 0.6);
+  ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(w * 0.33, h / 2, h * 0.22, 0, 7); ctx.fill(); ctx.fillStyle = '#ed1c27'; ctx.beginPath(); for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, r = i % 2 ? h * 0.08 : h * 0.2; ctx.lineTo(w * 0.33 + Math.cos(a) * r, h / 2 + Math.sin(a) * r); } ctx.fill(); ctx.strokeStyle = INK; ctx.lineWidth = 4; ctx.strokeRect(0, 0, w, h); ctx.restore(); };
+
+const { boot } = await import('/prototypes/casefile2d/runtime.js');
+await boot(new URL('./', location.href).href, () => {
+  const S = []; const add = (name, draw, dark = 0.06) => S.push({ t0: S.length, name, draw: (ctx, t, k, L) => draw(ctx, t), dark });
+  // A. EVIDENCE BOARD (fern grammar, our corkboard): censored hacker photo, NK flag, the typo slip, red strings, one red word
+  add('A evidence', (ctx, t) => { corkboard(ctx, t, { local: 9, cards: [] });
+    ctx.strokeStyle = '#c7342a'; ctx.lineWidth = 6; [[760, 300, 300, 260], [760, 300, 1450, 330], [760, 300, 1480, 790]].forEach(([a, b, c, d]) => { ctx.beginPath(); ctx.moveTo(a, b); ctx.lineTo(c, d); ctx.stroke(); });
+    ctx.save(); ctx.translate(760, 500); ctx.rotate(-0.03); ctx.scale(1.25, 1.25); ctx.fillStyle = 'rgba(0,0,0,.4)'; ctx.fillRect(-250, -300, 520, 620); rr(ctx, -260, -310, 520, 620, 4); fillStroke(ctx, '#f2ead8', INK, 4); rr(ctx, -225, -275, 450, 470, 2); fillStroke(ctx, '#7d8a96', INK, 3);
+    ctx.save(); ctx.beginPath(); ctx.rect(-225, -275, 450, 470); ctx.clip(); drawChar(ctx, { ...HACK, x: 0, y: 470, s: 2.1, face: 0, mood: 'angry', qaSkip: true }, 2); ctx.restore();
+    ctx.fillStyle = '#111'; ctx.fillRect(-170, -95, 340, 62); ctx.fillStyle = INK; ctx.font = '700 46px "Caveat"'; ctx.textAlign = 'center'; ctx.fillText('Lazarus?', 0, 255); ctx.restore();
+    ctx.save(); ctx.translate(300, 300); ctx.rotate(0.06); ctx.scale(1.3, 1.3); rr(ctx, -150, -90, 300, 180, 4); fillStroke(ctx, '#f2ead8', INK, 4); nkFlag(ctx, -125, -65, 250); ctx.restore();
+    ctx.save(); ctx.translate(1450, 380); ctx.scale(1.12, 1.12); slip(ctx, 0, 0, 'SHALIKA FANDATION', 0.05, { w: 640 }); ctx.restore();
+    ctx.save(); ctx.translate(1480, 800); ctx.rotate(-0.05); ctx.scale(1.1, 1.1); rr(ctx, -230, -150, 460, 300, 4); fillStroke(ctx, '#f2ead8', INK, 4); for (let i = 0; i < 9; i++) money(ctx, -130 + (i % 3) * 130, -60 + Math.floor(i / 3) * 70, (hash(i) - .5) * .3, 0.75); ctx.restore();
+    [[300, 190], [760, 120], [1450, 200], [1480, 640]].forEach(([x, y]) => { ctx.beginPath(); ctx.arc(x, y, 14, 0, 7); fillStroke(ctx, '#c7342a', INK, 3); });
+    tag(ctx, '$1 BILLION', 640, 960, { size: 130, rot: -0.04 }); });
+  // B. LABELLED SCENE (gloam/lume grammar): dark stage, red hacker, money streaming out of the bank's printer, tags
+  add('B labelled', (ctx, t) => { ctx.fillStyle = '#0e1117'; ctx.fillRect(-400, -400, W + 800, H + 800); glowSpot(ctx, 1300, 600, 700, 'rgba(255,60,40,.22)'); glowSpot(ctx, 420, 620, 520, 'rgba(255,40,30,.25)');
+    ctx.fillStyle = '#1a1f29'; ctx.fillRect(-400, 860, W + 800, 400);
+    ctx.save(); ctx.translate(430, 900); ctx.scale(2.3, 2.3); ctx.filter = 'none'; drawChar(ctx, { ...HACK, color: '#c7342a', legs: '#8a1f18', x: 0, y: 0, face: 1, mood: 'smug', arms: [1.2, 1.4], qaSkip: true }, 2); ctx.restore();
+    rr(ctx, 560, 560, 300, 24, 4); fillStroke(ctx, '#3a3f46', INK, 3); rr(ctx, 600, 430, 210, 136, 8); fillStroke(ctx, '#2b3440', INK, 4); glowSpot(ctx, 700, 490, 160, 'rgba(120,255,160,.4)');
+    for (let i = 0; i < 16; i++) { const p = i / 15, x = lerp(1300, 820, p), y = 420 - Math.sin(p * Math.PI) * 240 + (hash(i) - .5) * 80; money(ctx, x, y, (hash(i * 3) - .5) * 1.2, 0.9); }
+    ctx.save(); ctx.translate(1500, 900); ctx.scale(1.5, 1.5); printer(ctx, 0, 0, 0.2, { error: true, paper: 0.8 }); ctx.restore(); glowSpot(ctx, 1500 + 113 * 1.5, 900 - 240 * 1.5, 160, 'rgba(255,40,30,.6)');
+    tag(ctx, 'NORTH KOREA', 430, 140, { size: 72 }); tag(ctx, 'BANGLADESH BANK', 1500, 240, { size: 60, bg: '#f6efdd', fg: INK }); big(ctx, '$951,000,000', 960, 1000, 120, YEL, 'center'); }, 0.1);
+  // C. KENTO grammar: huge reacting face in our style, big yellow two-line title, small red tag + arrow at the slip
+  add('C face', (ctx, t) => { officeFloor(ctx, t, { desks: [], printerX: 300, printer: { error: true } }); ctx.fillStyle = 'rgba(20,10,10,.25)'; ctx.fillRect(-400, -400, W + 800, H + 800);
+    ctx.save(); ctx.translate(1380, 1900); ctx.scale(5.2, 5.2); drawChar(ctx, { ...CLERK, x: 0, y: 0, face: -1, mood: 'shock', qaSkip: true }, 2); ctx.restore();
+    slip(ctx, 560, 800, 'SHALIKA FANDATION', -0.06, { w: 700 });
+    big(ctx, '$1 BILLION', 60, 150, 170); big(ctx, 'BANK HACK', 60, 330, 170);
+    tag(ctx, 'ONE TYPO', 260, 560, { size: 76, rot: -0.04 }); arrow(ctx, 160, 610, 250, 860); }, 0.08);
+  // D. OBJECT + MYSTERY: the printer alone at night, red ERR glow, money spilling, one tag
+  add('D printer', (ctx, t) => { officeFloor(ctx, t, { desks: [], printerX: 960, printer: { error: true, paper: 0.9 }, night: true, dark: 0.55 });
+    ctx.save(); ctx.translate(1100, 1000); ctx.scale(1.8, 1.8); printer(ctx, 0, 0, 0.2, { error: true, paper: 0.9 }); ctx.restore(); glowSpot(ctx, 1100 + 113 * 1.8, 1000 - 240 * 1.8, 220, 'rgba(255,40,30,.6)');
+    for (let i = 0; i < 14; i++) money(ctx, 900 + hash(i) * 460, 520 - hash(i * 5) * 380, (hash(i * 3) - .5) * 1.4, 0.9);
+    tag(ctx, '$1 BILLION', 420, 200, { size: 110, rot: -0.04 }); arrow(ctx, 470, 290, 880, 560); big(ctx, 'BROKEN?', 60, 960, 170, '#fff', 'left'); }, 0.14);
+  return S;
+}, { duration: 4 });
+</script></body></html>
