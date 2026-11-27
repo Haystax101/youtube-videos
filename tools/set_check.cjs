@@ -11,7 +11,7 @@ const server = http.createServer((req, res) => { const p = path.join(REPO, decod
   const b = await chromium.launch({ args: ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
   const p = await b.newPage({ viewport: { width: 1080, height: 1920 } }); p.on('pageerror', e => console.log('ERR', e.message));
   await p.goto(`http://localhost:${server.address().port}/${path.relative(REPO, page).split(path.sep).join('/')}`); await p.waitForFunction('window.READY', null, { timeout: 240000 });
-  if (!await p.evaluate('typeof window.SETCHECK')) { console.log('page has no window.SETCHECK'); process.exit(2); }
+  if (await p.evaluate('typeof window.SETCHECK') !== 'function') { console.log('page has no window.SETCHECK'); process.exit(2); }
   const dur = await p.evaluate('window.DURATION'); const open = new Map(), out = []; let prev = null;
   const JUMP = 5.0;   // m/s: anything faster within one shot is a teleport (a pop), not a walk or a roll
   for (let t = 0; t <= dur; t += step) {

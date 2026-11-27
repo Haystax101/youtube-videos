@@ -1,2 +1,2 @@
 prototypes/shiratori
-# v4: overlap-check fixes on top of v3
+# v5: screen-space ink outlines, clean sfx picks, voice-first balance

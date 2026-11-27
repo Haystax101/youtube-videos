@@ -363,9 +363,9 @@ function caption(t) { let cur = null; for (const w of WORDS) if (t >= w.s - 0.06
   capEl.textContent = clean(cur.w).replace(/^nineteen$/i, '1936').replace(/^thirty-six$/i, '1936'); const k = clamp((t - cur.s + 0.06) / 0.09); capEl.style.transform = `scale(${0.82 + 0.18 * k})`; capEl.style.opacity = k; }
 
 // ---------- per frame ----------
-let curEnv = '';
+let curEnv = '', curShot = null;
 window.renderFrame = (t) => {
-  const si = shotAt(t), s = S[si], nxt = S[si + 1], u = t - s.t, len = (nxt ? nxt.t : DUR) - s.t, un = clamp(u / len);
+  const si = shotAt(t), s = (curShot = S[si]), nxt = S[si + 1], u = t - s.t, len = (nxt ? nxt.t : DUR) - s.t, un = clamp(u / len);
   CAST.forEach(c => c.root.visible = false); puffs.forEach(p => p.visible = false); CUFFS.visible = false; STREAM.visible = false;
   for (const g of [WIRE, BOWL, CIG, CIG2, KEYS, FU.userData.broom]) if (g.parent) g.parent.remove(g);
   // per-shot world state
@@ -411,7 +411,7 @@ window.renderFrame = (t) => {
 };
 // overlap check hook (tools/check_overlap.cjs): characters on screen; anyone on the bench may touch it
 const NAMES = ['shiratori', 'guard1', 'guard2', 'cop', 'warden'];
-window.QA = { scene, camera: cam, THREE, actors: () => CAST.map((c, i) => ({ name: NAMES[i], root: c.root, head: c.head, seat: c.root.visible && Math.abs(c.root.position.y - BENCH_SIT) < 0.05 ? VIL.userData.bench : null })).filter(a => a.root.visible) };
+window.QA = { scene, camera: cam, THREE, actors: () => CAST.map((c, i) => ({ name: NAMES[i], root: c.root, head: c.head, seat: c.root.visible && Math.abs(c.root.position.y - BENCH_SIT) < 0.05 ? VIL.userData.bench : (c === SH && curShot && curShot.flapOpen ? FRONTS[1] : null) })).filter(a => a.root.visible) };
 window.DURATION = DUR; window.SHOTS = S.map(s => s.t);
 renderFrame(0); window.READY = true; window.DONE = true;
 </script></body></html>

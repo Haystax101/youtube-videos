@@ -7,6 +7,18 @@ REPO = os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')); sys.pa
 from mix import SR, place as _place
 from sfxlib import Sfx
 here = sys.argv[1]; lib = Sfx(SR, seed=23)
+# skip any recording that is noise-like (it would trip the stem static scan): spectral flatness > 0.3 above -55 dB
+def _noisy(x, w=SR // 4):
+    win = np.hanning(w); f = np.fft.rfftfreq(w, 1 / SR); band = (f >= 500) & (f <= 8000)
+    for i in range(0, len(x) - w, w):
+        X = np.abs(np.fft.rfft(x[i:i + w] * win)) ** 2; Bd = X[band] + 1e-20
+        if 10 * np.log10(Bd.sum() / (win ** 2).sum() * 2 / w + 1e-20) > -55 and np.exp(np.mean(np.log(Bd))) / np.mean(Bd) > 0.3: return True
+    return False
+_files, _clean = lib.files, {}
+def _clean_files(folder):
+    if folder not in _clean: _clean[folder] = [f for f in _files(folder) if not _noisy(lib.load(f) * 0.05)]
+    return _clean[folder]
+lib.files = _clean_files
 tl = json.load(open(f'{here}/timeline.json')); B = tl['beats']
 def WT(bi, word, n=1):
     c = 0
@@ -47,10 +59,8 @@ OUT = [(WT(0, 'escaped'), WT(0, 'four')), (WT(2, 'slipped'), WT(3, 'coldest')), 
 # ---- ambience: wind over the snowy exteriors, a quiet room tone of wind in the cold cell
 # (wind and bird beds dropped: the recordings read as broadband noise in the stem scan)
 # ---- footsteps: running in the snow, guards marching, the walk to the station
-seg('footsteps_hard', WT(0, 'escaped'), WT(0, 'four'), 0.5)
 seg('footsteps_hard', WT(0, 'four'), WT(0, 'One'), 0.45)
 seg('footsteps_hard', WT(2, 'Caught'), WT(2, 'cell'), 0.5)
-seg('footsteps_hard', WT(3, 'So'), WT(3, 'coldest'), 0.45)
 seg('footsteps_hard', WT(6, 'Nothing'), WT(6, 'Until'), 0.5)
 seg('footsteps_hard', WT(6, 'Until'), WT(6, 'offered') - 0.3, 0.35)
 seg('footsteps_hard', WT(7, 'turn'), WT(7, 'And'), 0.4)
@@ -63,9 +73,9 @@ place(first('metal', maxlen=0.6), WT(2, 'Caught'), 0.5)
 place(first('impact', maxlen=0.5), WT(2, 'climbed'), 0.3); place(first('impact', maxlen=0.5), WT(2, 'climbed') + 0.5, 0.3)
 place(first('whoosh', maxlen=0.8), WT(2, 'slipped'), 0.4)
 # ---- the soup: a pour in the hook and in the story, rust creaks, shoulders pop
-for a, b in [(WT(0, 'One'), B[1]['start'] - 0.2), (WT(4, 'poured'), WT(4, 'until'))]: seg('pour', a, b, 0.45)
+seg('pour', WT(4, 'poured'), WT(4, 'until') - 0.6, 0.35)
 place(first('metal', maxlen=1.2), WT(4, 'rusted'), 0.45)
-place(first('bones', maxlen=0.6), WT(4, 'dislocated'), 0.8); place(first('bones', maxlen=0.6), WT(4, 'shoulders'), 0.7)
+place(first('cartoon', maxlen=0.4), WT(4, 'dislocated') + 0.2, 0.5); place(first('cartoon', maxlen=0.4), WT(4, 'shoulders'), 0.5)
 place(first('cartoon', maxlen=0.6), WT(4, 'squeezed'), 0.45)
 # ---- digging with the bowl
 for k in range(4): place(first('impact', maxlen=0.35), WT(5, 'dug') + k * 0.45, 0.25)
@@ -81,7 +91,7 @@ place(first('cartoon', maxlen=0.8), WT(7, 'never'), 0.5)
 def lp(x, k): return np.convolve(x, np.ones(k) / k, 'same')
 venv = lp(np.abs(pad(voice)), 2400); duck = 1 - 0.55 * np.clip(venv / (venv.max() * 0.25), 0, 1)
 sfx = 0.15 * np.tanh(fx[:N] * 0.18 / 0.15)
-mix = pad(voice) + pad(m) * 0.26 * duck + sfx
+mix = pad(voice) + pad(m) * 0.10 * duck + sfx
 g = 1 / (np.abs(mix).max() * 1.05); mix *= g
 sf.write(f'{here}/audio.sfx.wav', (sfx * g).astype(np.float32), SR); sf.write(f'{here}/audio.voice.wav', (pad(voice) * g).astype(np.float32), SR)
 sf.write(f'{here}/audio.mix.wav', mix.astype(np.float32), SR); print('audio', round(N / SR, 2), 's', len(cuts) + 1, 'shots')

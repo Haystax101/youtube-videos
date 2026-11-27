@@ -19,12 +19,19 @@ function toonGrad(THREE) {
 }
 // Ink outline (inverted hull): a dark back-face shell pushed out along the normals, like the reference's drawn linework.
 const INKM = {};
-export function inkMaterial(THREE, width = 0.011) {
-  if (INKM[width]) return INKM[width];
+export function inkMaterial(THREE, width = 0.011, px = 3.2) {
+  const key = width + '|' + px; if (INKM[key]) return INKM[key];
+  // a small world-space push (seals the hull) plus a screen-space push so the line stays ~px pixels wide at any
+  // distance (sized for a 1080x1920 frame), like hand-drawn linework
   const m = new THREE.MeshBasicMaterial({ color: '#1c1417', side: THREE.BackSide, toneMapped: false });
-  m.onBeforeCompile = (sh) => { sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>\n  transformed += normalize(normal) * ${width.toFixed(5)};`); };
-  m.customProgramCacheKey = () => 'ink' + width;
-  return (INKM[width] = m);
+  m.onBeforeCompile = (sh) => {
+    sh.vertexShader = sh.vertexShader.replace('#include <begin_vertex>', `#include <begin_vertex>\n  transformed += normalize(normal) * ${width.toFixed(5)};`)
+      .replace('#include <project_vertex>', `#include <project_vertex>
+  { vec3 nv = normalize(normalMatrix * normal); vec2 d = nv.xy; float l = length(d); if (l > 1e-4) d /= l;
+    gl_Position.xy += d * vec2(${(2 * px / 1080).toFixed(5)}, ${(2 * px / 1920).toFixed(5)}) * gl_Position.w; }`);
+  };
+  m.customProgramCacheKey = () => 'ink' + key;
+  return (INKM[key] = m);
 }
 export function addInk(THREE, root, width = 0.011, skip = new Set()) {
   const meshes = []; root.traverse((o) => { if (o.isMesh && !skip.has(o) && !o.userData.noInk && !(o.material && o.material.transparent)) meshes.push(o); });
@@ -139,7 +146,7 @@ export function makeBighead(THREE, spec = {}) {
   const Y = new THREE.Vector3(0, 1, 0), tmp = new THREE.Vector3();
   function bone(m, a, b) { tmp.subVectors(b, a); const L = tmp.length(); m.position.copy(a).addScaledVector(tmp, 0.5); m.scale.set(1, Math.max(0.01, L), 1); m.quaternion.setFromUnitVectors(Y, tmp.normalize()); }
   function arm(s, elbow, hand) { const A = arms[s]; const e = new THREE.Vector3(...elbow), h = new THREE.Vector3(...hand); bone(A.up, A.sh, e); bone(A.lo, e, h); A.hand.position.copy(h); A.elb.position.copy(e); }
-  if (spec.ink !== false) addInk(THREE, root, spec.ink || 0.011, new Set([decal]));
+  if (spec.ink !== false) addInk(THREE, root, spec.ink || 0.006, new Set([decal]));
   let lastExpr = '', lastT = -1;
   const api = {
     root, head, hips, decal, arms, legs, spec,
