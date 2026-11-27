@@ -1,0 +1,192 @@
+{
+ "title": "He Promised To Beat The Hackers. Allegedly, He Paid Them.",
+ "channel": "dark-stories",
+ "style": "set",
+ "look": "vivid",
+ "noGary": true,
+ "voices": {
+  "narrator": "am_fenrir"
+ },
+ "speed": 1.1,
+ "tail": 1.2,
+ "pronounce": {
+  "Juan": "Hwahn",
+  "Palacio": "Pah-lah-see-oh",
+  "Escobar": "Ess-coh-bar",
+  "ProPublica": "Pro Publica",
+  "Ransomware": "Ransom-wear",
+  "ransomware": "ransom-wear"
+ },
+ "experiment": {
+  "vars": {
+   "format": "dark_story",
+   "length": "long_short",
+   "voice": "am_fenrir",
+   "music": "orchestral_suspense",
+   "look": "vivid",
+   "topic": "recent_news"
+  },
+  "hypothesis": "A days-old news story with a double-cross twist (the FBI played both the victim and the gang) holds viewers as well as the older Darknet Diaries stories.",
+  "source_lead": "KrebsOnSecurity, 'CTO of RansomwareHelp Indicted for Wire Fraud' (Nov 2026); TechCrunch 25 Nov 2026",
+  "facts": [
+   {
+    "claim": "A federal grand jury in Rhode Island indicted Juan Ricardo Palacio Escobar, 52, co-founder and CTO (some reports: former CTO) of the Florida ransomware recovery firm RansomwareHelp, on three counts of wire fraud, each up to 20 years. Charges are allegations; he is presumed innocent.",
+    "source": "https://krebsonsecurity.com/ (CTO of 'RansomwareHelp' Indicted for Wire Fraud); https://techcrunch.com/2026/11/25/doj-accuses-former-cyber-executive-of-defrauding-ransomware-victims-by-secretly-paying-hackers/"
+   },
+   {
+    "claim": "Prosecutors say the firm claimed proprietary technology could decrypt files, advertised a success rate of 'over 99%' (archived site), and in fact had no ability to decrypt; it paid ransomware actors for keys and charged victims more.",
+    "source": "TechCrunch 25 Nov 2026; https://mallory.ai/stories/01a213e9-e884-721c-bd51-0ed013d3032b"
+   },
+   {
+    "claim": "FBI sting: undercover agents posed as both a victim company and a ransomware gang. The fake victim sent a phony ransom note and said it did not wish to pay. Palacio allegedly contacted the undercover 'gang' to negotiate, agreed about $6,000 in bitcoin for a decryptor, and charged the fake victim $16,010 ($2,750 diagnostic fee plus $13,260).",
+    "source": "Krebs; TechCrunch; https://boingboing.net/2026/11/26/ransomwarehelp-just-paid-off-crooks-and-tacked-on-a-fee.html"
+   },
+   {
+    "claim": "Arrested in Las Vegas in October 2026 (one report: 22 October).",
+    "source": "Krebs (via cyberstack.org summary); https://glonce.com/ransomwarehelp-cto-charged-with-wire-fraud-after-fbi/"
+   },
+   {
+    "claim": "ProPublica (May 2019) found two US recovery firms, Proven Data (New York) and MonsterCloud (Florida), that advertised their own decryption but mostly paid the hackers; it traced Proven Data bitcoin payments to the SamSam attackers in Iran.",
+    "source": "https://features.propublica.org/ransomware/ransomware-attack-data-recovery-firms-paying-hackers"
+   },
+   {
+    "claim": "US Treasury OFAC advisory (Sept 2021, updating Oct 2020): facilitating ransomware payments to sanctioned persons may violate OFAC regulations; payments may embolden attackers.",
+    "source": "https://ofac.treasury.gov/media/912441/download"
+   }
+  ],
+  "unconfirmed_left_out": [
+   "exact sting month (one source says June 2026)",
+   "properties bought with proceeds (one source)",
+   "2024 LockBit / accounting-firm quote (one source)",
+   "his nationality/residence (sources differ)",
+   "release on bond 20 Nov (one source)"
+  ]
+ },
+ "beats": [
+  {
+   "label": "THE *FAKE* RESCUE",
+   "hook": true,
+   "hold": 0.25,
+   "lines": [
+    {
+     "text": "His company promised to beat the hackers. Allegedly, he was just paying them. And this time, the hackers were the F B I."
+    }
+   ]
+  },
+  {
+   "label": "YOUR FILES, *LOCKED*",
+   "lines": [
+    {
+     "text": "Rewind. Ransomware is when criminals sneak into a company's computers, lock every single file, and demand money for the key. Pay up, and you might get your files back. Or you might not."
+    }
+   ]
+  },
+  {
+   "label": "WHY NOT *PAY?*",
+   "lines": [
+    {
+     "text": "Lots of victims don't want to. Paying funds the next attack. And in America, the Treasury even warns that paying some gangs can break sanctions law."
+    }
+   ]
+  },
+  {
+   "label": "A *RESCUE* FIRM",
+   "lines": [
+    {
+     "text": "So a firm in Florida called Ransomware Help offered another way. Prosecutors say it claimed its own technology could unlock your files, with a success rate of over ninety-nine percent."
+    }
+   ]
+  },
+  {
+   "label": "THE *CATCH*",
+   "lines": [
+    {
+     "text": "The catch? According to prosecutors, it had no way to unlock anything. Instead, they say, it quietly paid the criminals for the key, then charged its customers a lot more."
+    }
+   ]
+  },
+  {
+   "label": "AN *OLD* TRICK",
+   "lines": [
+    {
+     "text": "It's not a new trick. Back in twenty-nineteen, reporters at ProPublica found two American recovery firms doing the same thing, even paying hackers based in Iran."
+    }
+   ]
+  },
+  {
+   "label": "THE *STING*",
+   "hold": 0.35,
+   "lines": [
+    {
+     "text": "So the F B I set a trap. And they played both sides."
+    }
+   ]
+  },
+  {
+   "label": "SIDE ONE: *THE VICTIM*",
+   "lines": [
+    {
+     "text": "First, undercover agents posed as a company that had just been hit. They sent Ransomware Help the ransom note, and made one thing clear. They did not want to pay the hackers."
+    }
+   ]
+  },
+  {
+   "label": "SIDE TWO: *THE GANG*",
+   "lines": [
+    {
+     "text": "Other agents played the ransomware gang. And according to the indictment, the firm's chief technology officer, Juan Ricardo Palacio Escobar, contacted them directly, to haggle."
+    }
+   ]
+  },
+  {
+   "label": "THE *DEAL*",
+   "lines": [
+    {
+     "text": "He allegedly talked them down to about six thousand dollars in bitcoin, for the key."
+    }
+   ]
+  },
+  {
+   "label": "THE *BILL*",
+   "lines": [
+    {
+     "text": "Then the victim got the bill. A diagnostic fee, plus a recovery fee. Sixteen thousand and ten dollars, for what was presented as technical work."
+    }
+   ]
+  },
+  {
+   "label": "THE *SAME* PEOPLE",
+   "hold": 0.4,
+   "lines": [
+    {
+     "text": "He paid the hackers. But the hackers and the victim were the same people. The F B I had watched the whole deal, from both ends."
+    }
+   ]
+  },
+  {
+   "label": "*ARRESTED*",
+   "lines": [
+    {
+     "text": "In October, he was arrested in Las Vegas. A grand jury in Rhode Island has charged him with three counts of wire fraud, each carrying up to twenty years in prison. He has not been convicted, and he is presumed innocent."
+    }
+   ]
+  },
+  {
+   "label": "PAID *ANYWAY*",
+   "hold": 0.3,
+   "lines": [
+    {
+     "text": "If the charges are true, victims who refused to pay criminals were paying them anyway. Just with a markup."
+    }
+   ]
+  },
+  {
+   "label": "ASK *FIRST*",
+   "lines": [
+    {
+     "text": "So if your files ever get locked, ask any recovery firm straight out: do you pay the hackers? Keep backups that are not plugged in. And report it to the police. Follow for more true stories of internet crime."
+    }
+   ]
+  }
+ ]
+}

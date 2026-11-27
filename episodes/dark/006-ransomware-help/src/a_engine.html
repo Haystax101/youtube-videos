@@ -1,0 +1,118 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Poppins"; font-weight: 800; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2"); }
+@font-face { font-family: "Poppins"; font-weight: 600; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-600-normal.woff2") format("woff2"); }
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;font-family:Poppins,sans-serif}
+canvas{position:absolute;inset:0}
+#label{position:absolute;left:50%;top:170px;transform:translateX(-50%);max-width:900px;padding:14px 30px 16px;border-radius:22px;background:rgba(8,6,16,.72);border:3px solid rgba(255,255,255,.12);
+  color:#fff;font:800 50px Poppins;letter-spacing:1px;text-align:center;white-space:nowrap}
+#label .hot{color:#ff3b4a}
+#cap{position:absolute;left:0;right:0;top:1180px;text-align:center}
+#cap span{display:inline-block;font:800 104px Poppins;color:#fff;-webkit-text-stroke:18px #111;paint-order:stroke fill;letter-spacing:2px;transform-origin:50% 60%}
+#cap span.k{color:#ff3b4a}
+#rw{position:absolute;inset:0;pointer-events:none;opacity:0;background:repeating-linear-gradient(0deg,rgba(255,255,255,.08) 0 3px,rgba(0,0,0,.10) 3px 7px)}
+#rw b{position:absolute;left:70px;top:330px;font:800 90px Poppins;color:#fff;-webkit-text-stroke:12px #111;paint-order:stroke fill}
+</style>
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }</script>
+</head><body><div id="stage"><canvas id="gl" width="1080" height="1920"></canvas><canvas id="ov" width="1080" height="1920"></canvas><div id="rw"><b>◀◀ REWIND</b></div><div id="label"></div><div id="cap"><span></span></div></div>
+<script type="module">
+// DARK STORIES 006: RansomwareHelp (the FBI sting). Vivid reference look (Mt. Gox engine: smooth shading, Neutral tone mapping, pill-body cards).
+// (engine notes: Techniques: screen-space inverted-hull ink outlines
+// (constant pixel width) + depth/normal crease lines in a post pass, a soft 4-band toon ramp,
+// hand-painted canvas textures (tiles, wood, cork, rug), a real window that casts a warm
+// sun patch through venetian blinds, cool fill so shadows go blue, and a colour grade.)
+import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
+import { drawChar, KINDS } from './chars2d.js';
+import { makeSetCheck } from '/web/lib/stage2d.js';
+await Promise.all(['900 40px Poppins', '800 40px Poppins', '700 40px Poppins', '600 40px Poppins'].map(f => document.fonts.load(f))); // build-time canvases need the real font (serif fallback otherwise)
+const SCRIPT = await (await fetch('./script.json')).json();
+
+const W = 1080, H = 1920;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const sstep = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * k * (k * (k * 6 - 15) + 10); };
+const lerp = (a, b, k) => a + (b - a) * k;
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('gl'), antialias: true, preserveDrawingBuffer: true });
+renderer.setSize(W, H, false); renderer.toneMapping = THREE.NeutralToneMapping; renderer.toneMappingExposure = 1.05;
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(50, W / H, 0.05, 160);
+
+// ---------- materials ----------
+const RAMP = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 1; const x = c.getContext('2d');
+  for (let i = 0; i < 256; i++) { const u = i / 255; // soft-edged bands: deep shadow / shadow / mid / lit
+    let v = 0.50; v = lerp(v, 0.66, sstep(0.36, 0.42, u)); v = lerp(v, 0.86, sstep(0.52, 0.58, u)); v = lerp(v, 1.0, sstep(0.70, 0.76, u));
+    const g = Math.round(v * 255); x.fillStyle = `rgb(${g},${g},${g})`; x.fillRect(i, 0, 1, 1); }
+  const t = new THREE.CanvasTexture(c); t.minFilter = t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; return t; })();
+const RAMP_C = (() => { const c = document.createElement('canvas'); c.width = 256; c.height = 1; const x = c.getContext('2d');
+  for (let i = 0; i < 256; i++) { const u = i / 255; let v = 0.6; v = lerp(v, 1.0, sstep(0.46, 0.52, u)); const g = Math.round(v * 255); x.fillStyle = `rgb(${g},${g},${g})`; x.fillRect(i, 0, 1, 1); }
+  const t = new THREE.CanvasTexture(c); t.minFilter = t.magFilter = THREE.LinearFilter; t.generateMipmaps = false; return t; })();
+const matCache = {};
+const toon = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.82, ...o }); // smooth shading (reference look)
+const M = (color) => matCache[color] || (matCache[color] = toon(color));
+function canvasTex(w, h, draw, rep) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; if (rep) t.wrapS = t.wrapT = THREE.RepeatWrapping; return t; }
+const leafTex = (a, b, c, seed) => canvasTex(256, 256, (x, w, h) => { x.fillStyle = a; x.fillRect(0, 0, w, h); const r = rng(seed); for (let i = 0; i < 1400; i++) { x.fillStyle = r() < 0.45 ? b : c; x.beginPath(); const px = r() * w, py = r() * h, s = 4 + r() * 9; x.ellipse(px, py, s, s * 0.6, r() * 3, 0, 7); x.fill(); } }, 2);
+const LEAF1 = toon('#ffffff', { map: leafTex('#3f8a2e', '#2f6d22', '#5aa83c', 31), roughness: 0.9 }), LEAF2 = toon('#ffffff', { map: leafTex('#4c9a35', '#357a26', '#6dba48', 8), roughness: 0.9 }), LEAF3 = toon('#ffffff', { map: leafTex('#7a9a5a', '#5f7f45', '#9aba70', 5), roughness: 0.9 });
+const hsl = (h, s, l, a = 1) => `hsla(${h},${s}%,${l}%,${a})`;
+
+// ---------- ink: inverted hull pushed out in clip space, so lines are a constant pixel width ----------
+const INK = new THREE.Color('#0e0b16'); const INK_ENV = false; // reference look: no ink lines on the sets, only on the characters
+const hullMats = {};
+const hullMat = px => hullMats[px] || (hullMats[px] = new THREE.ShaderMaterial({
+  uniforms: { thick: { value: px }, res: { value: new THREE.Vector2(W, H) }, col: { value: INK } },
+  vertexShader: `uniform float thick; uniform vec2 res;
+    void main(){ vec4 c = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      vec3 n = normalize(normalMatrix * normal); vec4 cn = projectionMatrix * vec4(n, 0.0);
+      vec2 d = cn.xy; float L = length(d); d = L > 1e-5 ? d / L : vec2(0.0);
+      c.xy += d * thick * 1.7 * 2.0 / res * c.w; c.z += 0.0004 * c.w; gl_Position = c; }`,
+  fragmentShader: `uniform vec3 col; void main(){ gl_FragColor = vec4(col, 1.0); }`,
+  side: THREE.BackSide }));
+function hullGeo(geo) { if (geo.userData.hull) return geo.userData.hull; let g = geo.clone(); for (const k of Object.keys(g.attributes)) if (k !== 'position') g.deleteAttribute(k); g = mergeVertices(g, 1e-4); g.computeVertexNormals(); geo.userData.hull = g; return g; }
+function ink(mesh, px = 4.5, smooth = true) { if (!INK_ENV) return mesh; const h = new THREE.Mesh(smooth ? hullGeo(mesh.geometry) : mesh.geometry, hullMat(px)); h.userData.noOutline = true; h.userData.isHull = true; mesh.add(h); mesh.userData.hull = h; return mesh; }
+
+// helpers
+const ROOT = new THREE.Group(); scene.add(ROOT);
+function mesh(geo, mat, x = 0, y = 0, z = 0, parent = ROOT, px = 4.5) { const m = new THREE.Mesh(geo, typeof mat === 'string' ? M(mat) : mat); m.position.set(x, y, z); parent.add(m); if (px) ink(m, px); return m; }
+const rbox = (w, h, d, r = 0.015) => new RoundedBoxGeometry(w, h, d, 3, Math.min(r, w / 2.01, h / 2.01, d / 2.01));
+const cyl = (rt, rb, h, s = 24) => new THREE.CylinderGeometry(rt, rb, h, s);
+const sph = (r, s = 24) => new THREE.SphereGeometry(r, s, Math.round(s * 0.66));
+
+// ---------- flat cards (from the office-toon engine) ----------
+const cards = []; const _wp = V(0, 0, 0);
+function makeCard(G, kind, h = 1.75) {
+  const cv = document.createElement('canvas'); cv.width = 512; cv.height = 768; const tex = new THREE.CanvasTexture(cv); tex.colorSpace = THREE.SRGBColorSpace; tex.anisotropy = 8;
+  const w = h * 512 / 768, geo = new THREE.PlaneGeometry(w, h).translate(0, h / 2, 0);
+  const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ map: tex, alphaTest: 0.45, side: THREE.DoubleSide })); m.userData.noOutline = true; G.add(m);
+  const cmat = m.material, nmat = new THREE.ShaderMaterial({ uniforms: { map: { value: tex } }, side: THREE.DoubleSide,
+    vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+    fragmentShader: 'uniform sampler2D map; varying vec2 vUv; void main(){ if (texture2D(map, vUv).a < 0.45) discard; gl_FragColor = vec4(0.5, 0.5, 1.0, 1.0); }' });
+  const blob = new THREE.Mesh(new THREE.CircleGeometry(w * 0.33, 24), new THREE.MeshBasicMaterial({ color: '#05030a', transparent: true, opacity: 0.4, depthWrite: false })); blob.rotation.x = -Math.PI / 2; blob.scale.y = 0.55; blob.userData.noOutline = true; G.add(blob);
+  const c = { kind, cv, ctx: cv.getContext('2d'), tex, m, blob, cmat, nmat, pose: {}, pos: V(0, -50, 0), spin: 0, key: '', G, on: true, tint: null }; cards.push(c); return c;
+}
+function updateCard(c, t) {
+  c.m.visible = c.blob.visible = c.on && c.G.visible; if (!c.m.visible) return;
+  if (c.face) { const dx = camera.position.x - (c.G.position.x + c.pos.x), dz = camera.position.z - (c.G.position.z + c.pos.z); c.pose.back = dx * c.face.x + dz * c.face.z < -0.2; }
+  const animated = c.pose.zzz || c.pose.walk || c.pose.talk; const key = c.kind + JSON.stringify(c.pose) + (animated ? t.toFixed(3) : '');
+  if (key !== c.key) { drawChar(c.ctx, c.kind, c.pose, t); c.tex.needsUpdate = true; c.key = key; }
+  c.cmat.color.set(c.tint || '#ffffff');
+  c.m.position.copy(c.pos); c.m.updateMatrixWorld(); c.m.getWorldPosition(_wp);
+  c.m.rotation.y = Math.atan2(camera.position.x - _wp.x, camera.position.z - _wp.z);
+  { const dx = camera.position.x - _wp.x, dz = camera.position.z - _wp.z; if (dx * dx + dz * dz < 1.3 * 1.3 && !c.keepNear) { c.m.visible = c.blob.visible = false; return; } } // never a giant head right against the lens
+  const sx = Math.cos(c.spin || 0); c.m.scale.x = Math.sign(sx || 1) * Math.max(0.12, Math.abs(sx));
+  c.blob.position.set(c.pos.x, 0.012, c.pos.z); c.blob.visible = c.m.visible && c.pos.y < 0.1;
+}
+
+// ---------- cars: extruded side profiles ----------
+function profileCar(G, pts, len, width, col, o = {}) { // pts: side profile in (x along car, y up), extruded across width
+  const sh = new THREE.Shape(); sh.moveTo(pts[0][0], pts[0][1]); for (const p of pts.slice(1)) sh.lineTo(p[0], p[1]); sh.closePath();
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: width, bevelEnabled: true, bevelSize: 0.04, bevelThickness: 0.04, bevelSegments: 2 }); geo.translate(0, 0, -width / 2); geo.computeVertexNormals();
+  const root = new THREE.Group(); G.add(root); const body = mesh(geo, toon(col), 0, 0, 0, root, 4.5); body.material.flatShading = false;
+  const wheels = []; for (const [wx, wz] of o.wheels) { const wg = new THREE.Group(); wg.position.set(wx, o.wr, wz); root.add(wg); const w = mesh(cyl(o.wr, o.wr, 0.24, 20).rotateX(Math.PI / 2), '#16141c', 0, 0, 0, wg, 3.5); mesh(cyl(o.wr * 0.55, o.wr * 0.55, 0.26, 12).rotateX(Math.PI / 2), o.rim || '#b9bcc8', 0, 0, 0, wg, 2); wheels.push(wg); }
+  return { root, body, wheels };
+}
