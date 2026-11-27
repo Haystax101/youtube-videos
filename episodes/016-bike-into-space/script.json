@@ -1,0 +1,131 @@
+{
+ "title": "You could ride a bike into space from this moon",
+ "style": "set3d",
+ "look": "smol",
+ "noGary": false,
+ "voices": {
+  "narrator": "bm_george"
+ },
+ "speed": 1.12,
+ "tail": 0.8,
+ "pronounce": {
+  "Deimos": "Day-moss"
+ },
+ "beats": [
+  {
+   "id": "hook",
+   "hook": true,
+   "label": "20 KM/H. *INTO SPACE.*",
+   "lines": [
+    {
+     "text": "Twenty kilometres an hour. Ride a bike that fast on Mars's smallest moon, and you fly into space."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "land",
+   "label": "SECOND 1",
+   "lines": [
+    {
+     "text": "On Deimos, gravity is so weak, your whole body weighs about as much as a slice of bread."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "jump",
+   "label": "MINUTE 1",
+   "lines": [
+    {
+     "text": "Jump, and you float two kilometres up. You won't land for an hour."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "spin",
+   "label": "HOUR 1",
+   "lines": [
+    {
+     "text": "Try to cycle, and your tyres just spin. You're too light to grip."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "orbit",
+   "label": "HOUR 2",
+   "lines": [
+    {
+     "text": "So you pedal gently for forty five minutes. At fourteen kilometres an hour, the ground curves away faster than you fall. You're in orbit."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "escape",
+   "label": "LIFTOFF",
+   "lines": [
+    {
+     "text": "Six more, and you leave Deimos forever, as a tiny new moon of Mars, on a bicycle."
+    }
+   ],
+   "hold": 0.2
+  },
+  {
+   "id": "cta",
+   "lines": [
+    {
+     "text": "Follow for more interesting cartoons."
+    }
+   ],
+   "hold": 0.1
+  }
+ ],
+ "music": {
+  "mood": "hype"
+ },
+ "experiment": {
+  "vars": {
+   "music": "hype",
+   "ending_cta": "follow",
+   "narrator": "bm_george",
+   "voices.narrator": "bm_george",
+   "speed": 1.12,
+   "hook_form": "number_first",
+   "format": "gary_you",
+   "premise": "absurd_event",
+   "ending": "better",
+   "look": "smol",
+   "style": "set3d",
+   "character": "bighead",
+   "length": "long_40s"
+  },
+  "hypothesis": "An absurd single-event 'you' premise (006 bee stings, the best retainer, was one) told in the smol look with a number-first hook ('Twenty kilometres an hour...') over the most striking image, you on a bike flying off a tiny moon. Tests the hype score, a British male narrator (bm_george) at 1.12 and the follow CTA. Ends with you better off: a new moon of Mars.",
+  "fish": "#264 (you could cycle off Deimos into space)",
+  "notes": "Every number is computed from Deimos's measured mass and size (GM about 98,500 cubic metres per second squared, mean radius about 6.2 km): escape speed 5.6 m/s (20 km/h), circular orbit about 4 m/s (14 km/h), an 80 kg person weighs about 21 g (a slice of bread), a 3 m/s jump rises about 2.4 km and takes about an hour to come down, and with wheel grip of about 0.8 times your tiny weight it takes roughly 45 minutes of gentle pedalling to reach orbital speed. Physics is idealised (smooth path, no space suit drag, ignores Deimos's irregular shape).",
+  "facts": [
+   {
+    "claim": "Deimos, the smaller of Mars's two moons, is about 12 km across with surface gravity around 0.003 m/s squared and an escape velocity of about 5.6 m/s (20 km/h).",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Deimos_(moon)",
+     "https://science.nasa.gov/mars/moons/deimos/"
+    ]
+   },
+   {
+    "claim": "Deimos's escape speed is low enough that a person could reach it on a bicycle or even by a strong run; a jump would take a very long time to come back down.",
+    "sources": [
+     "https://www.space.com/20345-deimos-moon.html",
+     "https://en.wikipedia.org/wiki/Deimos_(moon)"
+    ]
+   },
+   {
+    "claim": "Traction depends on weight: with almost no weight, wheels have almost no grip, so you can only accelerate very gently.",
+    "sources": [
+     "https://en.wikipedia.org/wiki/Friction"
+    ]
+   }
+  ]
+ }
+}
