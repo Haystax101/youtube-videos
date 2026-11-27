@@ -1,2 +1,2 @@
-prototypes/shiratori
-# v5: screen-space ink outlines, clean sfx picks, voice-first balance
+episodes/dark/005-xbox-underground
+# rerun: blue tape z-fight, campus pole occluder
