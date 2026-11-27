@@ -1,2 +1,3 @@
-episodes/016-bike-into-space
-# v3: short question hook
+episodes/dark/long/001-dark-web-bosses
+local: 1
+# long-form dark 001, ElevenLabs narration aligned with tools/align_voice.py
