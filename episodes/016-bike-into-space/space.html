@@ -75,7 +75,17 @@ const T_MARS = tex((x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); 
 const M = { reg: std('#ffffff', { map: T_REG, roughness: 0.95 }), rock: std('#a98468', { roughness: 0.95, flatShading: true }), rockL: std('#d6b08c', { roughness: 0.95, flatShading: true }),
   white: std('#f6f6f2', { roughness: 0.5 }), orange: std('#ff7a2a', { roughness: 0.5 }), gold: std('#f0b83a', { roughness: 0.25, metalness: 0.75 }), steel: std('#c8d0da', { roughness: 0.3, metalness: 0.6 }),
   dark: std('#26282e', { roughness: 0.5 }), blue: std('#2a6ad8', { roughness: 0.4 }), red: std('#e8382a', { roughness: 0.35, metalness: 0.2 }), tyre: std('#22222a', { roughness: 0.9 }), lamp: new THREE.MeshBasicMaterial({ color: '#ffe8a8' }) };
-const MOON = add(new THREE.Mesh(new THREE.SphereGeometry(RM, 128, 96).rotateZ(Math.PI / 2), M.reg), MOONC.x, MOONC.y, MOONC.z); MOON.castShadow = false; MOON.name = 'moon';
+// triplanar regolith for the moon (no texture pinch at the poles, which the orbit shots look straight at)
+const M_MOON = std('#ffffff', { map: T_REG, roughness: 0.95 });
+M_MOON.onBeforeCompile = (sh) => {
+  sh.vertexShader = sh.vertexShader.replace('#include <common>', '#include <common>\nvarying vec3 vTP; varying vec3 vTN;')
+    .replace('#include <begin_vertex>', '#include <begin_vertex>\n  vTP = position; vTN = normal;');
+  sh.fragmentShader = sh.fragmentShader.replace('#include <common>', '#include <common>\nvarying vec3 vTP; varying vec3 vTN;')
+    .replace('#include <map_fragment>', `vec3 bw = pow(abs(normalize(vTN)), vec3(4.0)); bw /= (bw.x + bw.y + bw.z); vec3 q = vTP / 18.0;
+  vec4 tx = texture2D(map, q.yz) * bw.x + texture2D(map, q.xz) * bw.y + texture2D(map, q.xy) * bw.z; diffuseColor *= tx;`);
+};
+M_MOON.customProgramCacheKey = () => 'moon-triplanar';
+const MOON = add(new THREE.Mesh(new THREE.SphereGeometry(RM, 128, 96).rotateZ(Math.PI / 2), M_MOON), MOONC.x, MOONC.y, MOONC.z); MOON.castShadow = false; MOON.name = 'moon';
 { // gentle lumps: displace the sphere a little, then rims of craters and boulders near the top
   const pa = MOON.geometry.attributes.position, v = V(0, 0, 0), r = rng(4);
   const bumps = [...Array(40)].map(() => [V(r() - 0.5, r() - 0.5, r() - 0.5).normalize(), 0.15 + r() * 0.35, 0.8 + r() * 1.6]);
@@ -134,7 +144,7 @@ const TRAIL = new THREE.Group(); scene.add(TRAIL); for (let i = 0; i < 70; i++) 
 const RING = add(new THREE.Mesh(new THREE.TorusGeometry(1, 0.0025, 6, 160), new THREE.MeshBasicMaterial({ color: '#ffd23a', transparent: true, opacity: 0.8 })), 0, 0, 0); RING.castShadow = false; RING.visible = false;
 
 // ---------- characters ----------
-const YOU = makeBighead(THREE, { cloth: '#f4f4f0', belt: '#ff7a2a', buttons: '#2a6ad8', collar: '#ff7a2a', sleeve: '#f4f4f0', trousers: '#ecece6', shoe: '#5a5e68', limb: '#f4f4f0', hair: '#6a4630', brows: 'thick' });
+const YOU = makeBighead(THREE, { cloth: '#f4f4f0', belt: '#ff7a2a', buttons: '#2a6ad8', collar: '#ff7a2a', sleeve: '#f4f4f0', trousers: '#ecece6', shoe: '#5a5e68', limb: '#f4f4f0', hair: '#6a4630', brows: 'thick', glow: 0.9 });
 { const glass = add(new THREE.Mesh(new THREE.SphereGeometry(0.385, 36, 24), new THREE.MeshStandardMaterial({ color: '#cfe8ff', transparent: true, opacity: 0.09, roughness: 0.05, metalness: 0.1, depthWrite: false })), 0, 0.02, 0, YOU.head); glass.castShadow = false; glass.userData.noCheck = true; glass.renderOrder = 3;
   const hl = add(new THREE.Mesh(new THREE.SphereGeometry(0.386, 20, 12, 0.3, 0.6, 0.5, 0.5), new THREE.MeshBasicMaterial({ color: '#ffffff', transparent: true, opacity: 0.35, depthWrite: false })), 0, 0.02, 0, YOU.head); hl.castShadow = false; hl.userData.noCheck = true; hl.renderOrder = 4;
   const ring = add(new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.045, 10, 32), M.orange), 0, -0.3, 0, YOU.head); ring.rotation.x = Math.PI / 2;
@@ -177,7 +187,7 @@ shot(WT(1, 'On'), 'space', move(frame(at(LANDP, -0.6, 1.4, 0.8), 6.5, 30, 10, 50
 shot(WT(1, 'weak'), 'space', move(frame(at(STAND, 0, 1.0, 0), 2.6, 20, 6, 46), frame(at(STAND, 0, 1.2, 0), 2.4, 12, 6, 46), 0.4),
   (u, t) => { const hop = Math.abs(Math.sin(u * Math.PI)) * 0.45; place(YOU, at(STAND, 0, hop, 0), 0.4, hop > 0.05 ? 'float' : 'idle', 'surprised', t); if (hop < 0.1) dust(at(STAND, 0, 0.05, 0), t, 6, 0.4, 0.25, 0.4); });
 shot(WT(1, 'whole'), 'space', move(frame(at(BALP, 0, 1.0, 0), 4.6, 10, 8, 46), frame(at(BALP, 0, 1.0, 0), 4.0, 4, 8, 46), 0.2),
-  (u, t) => { const k = ease(0.0, 0.5, u); balance(k, t, 'focus'); }, { bread: 1 });
+  (u, t) => { const k = ease(0.0, 0.5, u); balance(k, t, 'focus'); }, { bread: 1, noWhip: 1 });
 shot(WT(1, 'slice'), 'space', move(frame(at(BALP, 1.5, 0.75, 0), 1.6, -16, 12, 40), frame(at(BALP, 1.5, 0.75, 0), 1.3, -8, 12, 40), 0.6), (u, t) => { balance(1, t, 'grin'); }, { bread: 1 });
 shot(WT(1, 'bread'), 'space', move(frame(at(BALP, -1.5, 1.2, 0), 1.6, 20, 8, 40), frame(at(BALP, -1.5, 1.2, 0), 1.35, 12, 8, 40), 0.7), (u, t) => { balance(1, t, 'grin'); }, { bread: 1 });
 function balance(k, t, expr) { const tilt = (1 - k) * -0.32; BAL.userData.beam.rotation.z = tilt; BAL.userData.pans.forEach(p => p.rotation.z = -tilt); BAL.updateMatrixWorld(true);
@@ -213,9 +223,9 @@ const leaveP = (u) => V(0.3, 3.6, -1.5).addScaledVector(LDIR, ease(0, 1, u) * 16
 shot(WT(5, 'leave'), 'space', (u) => { const p = leaveP(u); const A = frame(at(p, 0, 0.6, 0), 3.6 + u * 1.5, 160 - u * 10, 26, 50); A.dof = 0.2; return A; },
   (u, t) => { bikeFree(leaveP(u), new THREE.Quaternion().setFromEuler(new THREE.Euler(-0.35, Math.PI + 0.25, 0)), t, 'grin', 12); }, { trail: (u) => [V(0.3, 1.0, 1.5), leaveP(u)] });
 shot(WT(5, 'tiny'), 'space', move(frame(V(-60, 10, -230), 560, 64, 24, 40), frame(V(-60, 10, -230), 520, 58, 22, 40), 0),
-  (u, t) => { bikeFree(V(-20 - u * 4, 60, -110), FLYQ, t, 'grin', 8); }, { glow: 9, marsRing: 1 });
+  (u, t) => { bikeFree(V(-20 - u * 4, 60, -110), FLYQ, t, 'grin', 8); }, { glow: 9, marsRing: 1 , noWhip: 1 });
 shot(WT(6, 'Follow'), 'space', move(frame(V(-22.6, 60.9, -110), 2.8, 40, 6, 44), frame(V(-23.0, 60.9, -110), 2.4, 30, 6, 44), 0.6),
-  (u, t) => { bikeFree(V(-22.6 - u * 0.4, 60, -110), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0.6, 0.1)), t, 'grin', 5); YOU.pose('wave', t); YOU.hips.position.y = -0.12; YOU.legs.forEach(l => l.rotation.x = -1.1); });
+  (u, t) => { bikeFree(V(-22.6 - u * 0.4, 60, -110), new THREE.Quaternion().setFromEuler(new THREE.Euler(0, 0.6, 0.1)), t, 'grin', 5); YOU.pose('wave', t); YOU.hips.position.y = -0.12; YOU.legs.forEach(l => l.rotation.x = -1.1); }, { noWhip: 1 });
 
 const ray = new THREE.Raycaster(), fitCache = new Map();
 const OCC = []; scene.traverse(o => { if (o.isMesh && !o.isSprite && !o.isPoints && !o.userData.ink && !o.userData.noCheck && !o.userData.bike && !(o.material && o.material.transparent)) OCC.push(o); });
@@ -228,7 +238,8 @@ function fitShot(si) { if (fitCache.has(si)) return fitCache.get(si); const s = 
     if (hits.length) k = Math.min(k, (hits[0].distance - 0.12) / d); }
   sides.forEach(([m, sd]) => (m.side = sd)); k = Math.max(k, 0.25); fitCache.set(si, k); return k; }
 const shotAt = (t) => { let i = 0; for (let k = 0; k < S.length; k++) if (t >= S[k].t) i = k; return i; };
-S.forEach((s, i) => { s.whip = i > 0 && i % 3 !== 2; s.dir = i % 2 ? 1 : -1; });
+S.forEach((s, i) => { s.whip = i > 0 && i % 3 !== 2 && !s.noWhip;   // hard cuts in empty space: a whip over black reads as a blink
+  s.dir = i % 2 ? 1 : -1; });
 
 // ---------- captions: one word at a time; the hook label and the time chips ----------
 const capEl = document.querySelector('#cap span'), labEl = document.getElementById('lab'), chipEl = document.querySelector('#chip span');
