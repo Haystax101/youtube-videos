@@ -1,0 +1,65 @@
+{
+ "video": "episodes/dark/long/001-dark-web-bosses/video.mp4",
+ "duration": 594.87,
+ "result": "FAIL",
+ "checks": [
+  {
+   "check": "black",
+   "status": "PASS",
+   "detail": "no dark patches or black tiles"
+  },
+  {
+   "check": "guard",
+   "status": "PASS",
+   "detail": "0 glitch frame(s) re-rendered clean"
+  },
+  {
+   "check": "freeze",
+   "status": "PASS",
+   "detail": "picture keeps moving"
+  },
+  {
+   "check": "loudness",
+   "status": "PASS",
+   "detail": "-14.8 LUFS, true peak -4.2 dBTP (want -14 +/- 1.5, <= -1)"
+  },
+  {
+   "check": "clipping",
+   "status": "FAIL",
+   "detail": "music.wav: 0 noisy window(s) | sfx.wav: 9 noisy window(s): 44.75s, 48.25s, 55.00s, 89.25s, 94.50s, 101.25s, 246.00s, 479.00s, 484.25s | AUDIO PROBLEMS"
+  },
+  {
+   "check": "hiss",
+   "status": "FAIL",
+   "detail": "4 noisy window(s) in 1 s+ runs: 478.00s, 478.25s, 478.50s, 478.75s -> find the SFX/clip there"
+  },
+  {
+   "check": "silence",
+   "status": "PASS",
+   "detail": "no dead air"
+  },
+  {
+   "check": "balance",
+   "status": "PASS",
+   "detail": "narration -18.0 LUFS, music+SFX -30.0 LUFS: voice 12.0 LU on top (want >= 8)"
+  },
+  {
+   "check": "flicker",
+   "status": "WARN",
+   "detail": "7 one-frame pop(s), worst at 182.97s, 182.23s, 183.30s, 182.77s, 183.50s, 182.90s, 468.30s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
+  },
+  {
+   "check": "vanish",
+   "status": "FAIL",
+   "detail": "labels/cards blink out at 11.3-11.4s -> qa/vanish.jpg (vanished edges in green); usually two overlays fighting (z-order / depthTest on label planes) or a label toggled every other frame"
+  },
+  {
+   "check": "overlap",
+   "status": "FAIL",
+   "detail": "343.1s heads overlap: Agent85 / Agent86 | 343.2s heads overlap: Agent85 / Agent86 | 343.3s heads overlap: Agent85 / Agent86 | 343.4s heads overlap: Agent85 / Agent86 | 343.5s heads overlap: Agent85 / Agent86 | 343.6s heads overlap: Agent85 / Agent86 | 6 overlap(s) -> full list in qa/overlap.txt"
+  }
+ ],
+ "contact_sheet": "episodes/dark/long/001-dark-web-bosses/qa/contact.jpg",
+ "review": null,
+ "review_mtime": 1795798284.9227576
+}

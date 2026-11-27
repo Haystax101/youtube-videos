@@ -23,3 +23,5 @@ prototypes/*/qa/flicker.jpg
 episodes/**/qa/vanish.jpg
 prototypes/*/qa/vanish.jpg
 episodes/*/stills/
+episodes/**/chunks/
+episodes/**/qa/*.jpg
