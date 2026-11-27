@@ -32,6 +32,10 @@ im=vign(base('h1.jpg',1.35,1.12,1.15),0.4)
 flag(im,(60,70),150); tag(im,'HACKERS',(230,66),46)
 text(im,'$1 BILLION',(W*0.74,H-40),118,anchor='ms')
 d=ImageDraw.Draw(im)
+cx,cy,r=W//2-4,int(H*0.52),78
+sh=Image.new('RGBA',im.size,(0,0,0,0)); ImageDraw.Draw(sh).ellipse((cx-r+6,cy-r+10,cx+r+6,cy+r+10),fill=(0,0,0,190)); sh=sh.filter(ImageFilter.GaussianBlur(10)); im.paste(sh,(0,0),sh)
+d=ImageDraw.Draw(im); d.ellipse((cx-r-7,cy-r-7,cx+r+7,cy+r+7),fill='black'); d.ellipse((cx-r,cy-r,cx+r,cy+r),fill='#e0201b',outline='white',width=6)
+d.text((cx,cy+2),'VS',font=ImageFont.truetype(F,84),fill='white',anchor='mm',stroke_width=4,stroke_fill='black')
 im.save('T1-hackers-vs-bank.jpg',quality=93)
 # 2 robbing
 im=vign(base('r2.jpg',1.3,1.12,1.25),0.35)
