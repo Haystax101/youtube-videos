@@ -47,3 +47,17 @@ ice: ice crack | ice cracking | frozen lake crack | ice creak
 metal: metal creak | metal groan | rusty hinge | metal squeak
 farm: farm ambience | countryside birds | rooster | cows mooing
 tyre: tire squeal | wheel spin mud | mud squelch | tire inflate
+# 003 WannaCry long-form (28 Nov): computer, office, siren and transport sounds
+keyboard: keyboard typing | typing computer | mechanical keyboard
+click: mouse click | button click | ui click
+siren: ambulance siren | siren passing | emergency siren
+alarm: alarm beep | error beep | warning alarm | alert buzzer
+glitch: digital glitch | computer glitch | data corruption
+paper: newspaper | paper rustle | page turn | paper slam
+stamp: rubber stamp | stamp paper | stapler
+plane: airplane flyby | jet passing | airplane cabin
+port: container port | ship horn | crane machinery | forklift
+truck: truck idle | lorry engine | truck horn
+hum: server room | computer fan hum | power down
+powerdown: power down | power failure | electricity shut off
+ding: notification ding | bell ding | success chime
