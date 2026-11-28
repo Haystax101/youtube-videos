@@ -24,7 +24,7 @@ const PARK = { name: 'Park', hair: 'buzz', hairColor: '#141414', outfit: 'shirt'
 const IT = { name: 'It', hair: 'side', hairColor: '#2a1c16', outfit: 'shirt', color: '#d9e2ea', tie: '#2b4f8a', legs: '#2f3440', id: 212 };
 const STAFF = (i) => ({ name: 'Staff' + i, hair: ['short', 'side', 'long', 'buzz', 'messy'][i % 5], hairColor: ['#1e1816', '#6b4a2a', '#c9a24a', '#2a2420', '#3a2a20'][i % 5], outfit: ['shirt', 'suit', 'tee', 'shirt', 'tee'][i % 5], color: ['#d9e2ea', '#3a4150', '#b8584a', '#e7dcc4', '#2f7a72'][i % 5], legs: ['#2f3440', '#2a2b33', '#3a2f45', '#4a4238', '#24262d'][i % 5], id: 220 + i });
 const walkTo = (L, t0, d, x0, x1) => { const w = clamp((L - t0) / d); return { x: lerp(x0, x1, ease(w)), walk: w > 0 && w < 1 ? w * d * 2.2 : 0, face: x1 > x0 ? 1 : -1, moving: w > 0 && w < 1 }; };
-const shake = (t, t0, amp = 14, d = 0.5) => { const k = (t - t0) / d; if (k < 0 || k > 1) return [0, 0]; const a = amp * (1 - k); return [Math.sin(t * 38) * a, Math.cos(t * 31) * a]; };
+const shake = (t, t0, amp = 14, d = 0.5) => { const k = (t - t0) / d; if (k < 0 || k > 1) return [0, 0]; const a = amp * (1 - k); return [Math.sin(t * 13) * a * 0.6, Math.cos(t * 11) * a * 0.6]; };   // slow wobble: fast jitter reads as frame pops
 const face = (who) => (c, tt) => drawChar(c, { ...who, x: 0, y: 0, headOnly: true, qaSkip: true }, tt);
 const T = (c, s, x, y, font, fill = INK, align = 'center') => { c.save(); c.font = font; c.fillStyle = fill; c.textAlign = align; c.textBaseline = 'middle'; c.fillText(s, x, y); c.restore(); };
 const bg = (c, col) => { c.fillStyle = col; c.fillRect(-400, -400, W + 800, H + 800); };
@@ -112,7 +112,7 @@ function confHall(c, t, L) {
     T(cc, 'HACKER CONFERENCE', 960, 250, '84px "Lilita One"', '#fff'); T(cc, 'LAS VEGAS · 2017', 960, 350, '54px "Lilita One"', YEL);
     for (let i = 0; i < 6; i++) { glowSpot(cc, 160 + i * 320, 40, 220, `rgba(${i % 2 ? '120,90,255' : '60,200,255'},.25)`); }
   } });
-  for (let row = 0; row < 2; row++) for (let i = 0; i < 9; i++) { const x = 120 + i * 210 + row * 100; if (row === 0 && i === 4) continue; drawChar(c, { ...STAFF(i + row * 3), x, y: FLOOR + 40 + row * 120, s: 0.75 + row * 0.12, face: x < 960 ? 1 : -1, qaSkip: true, mood: 'smug' }, t); }
+  for (let row = 0; row < 2; row++) for (let i = 0; i < 9; i++) { const x = 120 + i * 210 + row * 100; if (row === 1 && (i === 3 || i === 4)) continue; drawChar(c, { ...STAFF(i + row * 3), x, y: FLOOR + 40 + row * 120, s: 0.75 + row * 0.12, face: x < 960 ? 1 : -1, qaSkip: true, mood: 'smug' }, t); }
 }
 // ---------- Kronos: a bank login whose password is copied away ----------
 function kronos(c, t, L) {
@@ -160,12 +160,12 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
   const add = (t0, name, draw, overlay, dark = 0.08) => S.push({ t0, name, draw, overlay, dark });
 
   // ================= COLD OPEN (a new setup every 3-4 s) =================
-  add(0, 'map to london', (ctx, t, k, L) => { const z = easeInOut(clamp(L / 3.2));
-    mapInsert(ctx, t, { vivid: V, view: { lon: lerp(10, LONDON[0], z), lat: lerp(35, LONDON[1], z), span: lerp(330, 14, Math.pow(z, 0.7)) }, local: L, highlight: { 'United Kingdom': '#d8432f' }, pins: [{ at: LONDON, label: 'LONDON', t0: 2.4 }] }); },
+  add(0, 'map to london', (ctx, t, k, L) => { const z = easeInOut(clamp(L / (B(0, 'the') - 0.25)));
+    mapInsert(ctx, t, { vivid: V, view: { lon: lerp(10, LONDON[0], z), lat: lerp(35, LONDON[1], z), span: lerp(330, 14, Math.pow(z, 0.7)) }, local: L, highlight: { 'United Kingdom': '#d8432f' }, pins: [{ at: LONDON, label: 'LONDON', t0: B(0, 'the') - 0.6 }] }); },
     (ctx, t, k, L) => { dateTag(ctx, '12 MAY 2017', L - 0.2); }, 0.04);
   add(B(0, 'the') - 0.1, 'royal london', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 930, y: 540, z: 1.12 }, k); hospitalFront(ctx, t, L, {});
-    ambulance(ctx, 1640, FLOOR + 150, t, { face: -1, s: 0.75 });
-    [0, 1, 2].forEach(i => { const w = walkTo(L, i * 0.5, 3, i % 2 ? 2000 : -100, 760 + i * 150); drawChar(ctx, { ...STAFF(i + 2), x: w.x, y: FLOOR + 60, s: 0.8, walk: w.walk, face: w.face, qaSkip: true }, t); }); },
+    ambulance(ctx, 260, FLOOR + 150, t, { face: 1, s: 0.75 });
+    [0, 1, 2].forEach(i => { const w = walkTo(L, i * 0.5, 2.6, 2050 + i * 80, 820 + i * 170); drawChar(ctx, { ...STAFF(i + 2), x: w.x, y: FLOOR + 60, s: 0.8, walk: w.walk, face: w.face, qaSkip: true }, t); }); },
     (ctx, t, k, L) => { dateTag(ctx, 'ROYAL LONDON HOSPITAL · EAST LONDON', L - 0.2); }, 0.04);
   add(B(0, 'that') - 0.1, 'ward goes red', (ctx, t, k, L) => { camera(ctx, { x: 760, y: 560, z: 1.15 }, { x: 860, y: 560, z: 1.3 }, k); ransomWard(ctx, t, L, { at: B(0, 'red') - B(0, 'that') - 0.6 });
     drawChar(ctx, { ...NURSE, x: 520, y: FLOOR, face: 1, mood: L > 2.6 ? 'worried' : 'neutral' }, t); },
@@ -178,7 +178,7 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
     (ctx, t, k, L) => { caption(ctx, 'OR LOSE THEM FOREVER', W / 2, 150, t - B(1, 'lose'), 1.8, { fill: RED }); }, 0.05);
   add(B(2, 0) - 0.05, 'ambulances away', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.05 }, { x: 1060, y: 560, z: 1.12 }, k); hospitalFront(ctx, t, L, { alarm: true });
     ambulance(ctx, lerp(900, 2600, easeInOut(clamp((L - 0.4) / 3.2))), FLOOR + 170, t, { lights: true, face: 1, s: 0.85 }); ambulance(ctx, lerp(-500, 300, easeOut(clamp(L / 1.2))), FLOOR + 160, t, { lights: true, face: 1, s: 0.8 }); },
-    (ctx, t, k, L) => { caption(ctx, 'AMBULANCES SENT AWAY', W / 2, 150, L - 0.4, 2.2); }, 0.04);
+    (ctx, t, k, L) => { caption(ctx, 'AMBULANCES SENT AWAY', W / 2, 1000, L - 0.4, 2.2); }, 0.04);
   add(B(2, 'operations') - 0.1, 'ops cancelled', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
     checklist(ctx, t, L, { title: "TODAY'S OPERATIONS", items: [{ text: 'HIP REPLACEMENT', at: 0.3, no: true }, { text: 'HEART SURGERY', at: 0.55, no: true }, { text: 'CANCER SCAN', at: 0.8, no: true }] }); },
     (ctx, t, k, L) => { caption(ctx, 'CANCELLED', W / 2, 1010, L - 0.5, 1.6, { fill: RED, size: 72 }); }, 0.04);
@@ -186,7 +186,7 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
     const wr = Math.sin(L * 9) * 0.12; drawChar(ctx, { ...DOC, x: 620, y: FLOOR, face: 1, mood: 'worried', eyes: 'down', arms: [1.3, 1.5 + wr], hold: (c) => { rr(c, -40, -60, 80, 110, 6); fillStroke(c, '#a8784a', INK, 3); rr(c, -32, -48, 64, 90, 3); fillStroke(c, '#fbf7ec', INK, 2); } }, t); },
     (ctx, t, k, L) => { caption(ctx, 'BACK TO PEN AND PAPER', W / 2, 150, L - 0.3, 2.2, { size: 64 }); }, 0.05);
   add(nth(2, 'and', 2) - 0.1, 'england trusts', (ctx, t, k, L) => { const o = nth(2, 'and', 2) - 0.1;
-    mapInsert(ctx, t, { vivid: V, view: { lon: -1.8, lat: 53.0, span: lerp(16, 13, k) }, local: L, highlight: { 'United Kingdom': '#e8e2d0' }, pins: ENGLAND.map((p, i) => ({ at: p, t0: B(2, 'third') - o - 0.4 + i * 0.05, color: '#d8261c' })) }); },
+    mapInsert(ctx, t, { vivid: V, view: { lon: -1.8, lat: 53.0, span: lerp(16, 13, k) }, local: L, highlight: { 'United Kingdom': '#f2c86b' }, pins: ENGLAND.map((p, i) => ({ at: p, t0: B(2, 'third') - o - 0.4 + i * 0.05, color: '#d8261c' })) }); },
     (ctx, t, k, L) => { caption(ctx, 'A THIRD OF NHS TRUSTS IN ENGLAND', W / 2, 1000, t - B(2, 'third'), 2.4, { size: 60 }); }, 0.04);
   add(nth(2, 'and', 3) - 0.1, 'europe', (ctx, t, k, L) => { const z = easeInOut(clamp(L / 1.4));
     mapInsert(ctx, t, { vivid: V, view: { lon: lerp(-2, 4, z), lat: lerp(53, 48, z), span: lerp(16, 46, z) }, local: L, highlight: { 'United Kingdom': '#d8432f', France: '#3b6fb6', Germany: '#3b6fb6', Spain: '#3b6fb6' }, pins: [{ at: LONDON, t0: 0 }] }); },
@@ -205,10 +205,10 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
     mapInsert(ctx, t, { vivid: V, view: { lon: lerp(-2, ILF[0], z), lat: lerp(53, ILF[1], z), span: lerp(14, 6, z) }, local: L, highlight: { 'United Kingdom': '#9fcf7a' }, pins: [{ at: ILF, label: 'DEVON', t0: 1.0 }] }); },
     (ctx, t, k, L) => { caption(ctx, 'MEANWHILE', W / 2, 150, L - 0.1, 1.6); }, 0.04);
   add(B(3, 'twenty') - 0.15, 'bedroom', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.08 }, { x: 1100, y: 560, z: 1.2 }, k); seaBedroom(ctx, t);
-    const w = walkTo(L, 0.1, 2.2, 600, 1180); drawChar(ctx, { ...MARCUS, x: w.x, y: FLOOR + 30, walk: w.walk, face: w.moving ? 1 : 0, mood: 'neutral' }, t); },
+    const w = walkTo(L, 0.1, 2.2, 500, 1110); drawChar(ctx, { ...MARCUS, x: w.x, y: FLOOR + 30, walk: w.walk, face: w.moving ? 1 : 0, mood: 'neutral' }, t); },
     (ctx, t, k, L) => { caption(ctx, '22 YEARS OLD', W / 2, 150, L - 0.2, 1.8); caption(ctx, 'A WEEK OFF WORK', W / 2, 150, t - B(3, 'week') + 0.1, 1.8, { size: 60 }); }, 0.05);
-  add(B(3, 'he') - 0.1, 'back from lunch', (ctx, t, k, L) => { camera(ctx, { x: 1400, y: 560, z: 1.5 }, { x: 1440, y: 540, z: 1.62 }, k); seaBedroom(ctx, t);
-    drawChar(ctx, { ...MARCUS, x: 1330, y: FLOOR + 30, face: 1, mood: 'neutral', arms: [1.1, 1.2], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); },
+  add(B(3, 'he') - 0.1, 'back from lunch', (ctx, t, k, L) => { camera(ctx, { x: 1200, y: 560, z: 1.5 }, { x: 1240, y: 540, z: 1.62 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1110, y: FLOOR + 30, face: 1, mood: 'neutral', arms: [0.55, 0.6], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); },
     (ctx, t, k, L) => { caption(ctx, 'BACK FROM LUNCH', W / 2, 150, L - 0.2, 1.6, { size: 60 }); }, 0.05);
   add(B(3, 'spends') - 0.15, 'buy domain', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.06 }, k); domainShop(ctx, t, L, { type: 1.0, clickAfter: B(3, 'website') - B(3, 'spends') - 0.6 }); }, null, 0.04);
   add(B(4, 0) - 0.05, 'attack stops', (ctx, t, k, L) => { const st = B(4, 'stops') - B(4, 0) + 0.05;
@@ -221,7 +221,7 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
     (ctx, t, k, L) => { caption(ctx, 'HOW DID IT STOP THE ATTACK?', W / 2, 1000, L - 0.4, 3.2, { size: 64 }); }, 0.04);
   add(B(5, 'why') - 0.1, 'arrest headline', (ctx, t, k, L) => { newspaper(ctx, t, { local: L, paper: 'THE DAILY RECORD', date: 'AUGUST 2017', headline: 'WANNA CRY HERO\nARRESTED BY FBI' }); }, null, 0.04);
   add(B(5, 'and') - 0.1, 'not the worst', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 540, z: 1.1 }, k); containerPort(ctx, t, L, { stopped: true }); },
-    (ctx, t, k, L) => { caption(ctx, 'NOT EVEN THE WORST ATTACK', W / 2, 150, t - B(5, 'not'), 2.6, { fill: RED, size: 64 }); }, 0.05);
+    (ctx, t, k, L) => { caption(ctx, 'NOT EVEN THE WORST ATTACK', W / 2, 1000, t - B(5, 'not'), 2.6, { fill: RED, size: 64 }); }, 0.05);
 
   // ================= CHAPTER 1: THE STOLEN WEAPON =================
   add(B(6, 0) - 0.05, 'ch1', (ctx, t, k, L) => { chapterCard(ctx, t, L, 1, 'THE STOLEN WEAPON'); }, null, 0.04);
@@ -230,7 +230,7 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
   add(B(7, 'for') - 0.1, 'collected weaknesses', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.08 }, k); weaponsLocker(ctx, t, L, { label: 'SECRET WEAKNESSES' }); }, null, 0.05);
   add(nth(7, 'it', 2) - 0.1, 'spy at work', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 580, z: 1.3 }, { x: 980, y: 560, z: 1.42 }, k);
     room(ctx, t, { wall: '#2a3348', wall2: '#202839', wainscot: 640, floor: '#1f2430', dark: 0.15, items: c => { serverRack(c, 300, FLOOR, 200, 480, t, 2); serverRack(c, 1560, FLOOR, 200, 480, t, 5); } });
-    drawChar(ctx, { ...SPY, x: 860, y: FLOOR, face: 1, mood: 'smug', arms: [1.3, 1.3 + Math.sin(t * 14) * 0.06], glow: { color: 'rgba(120,200,255,.5)', side: 1 } }, t);
+    drawChar(ctx, { ...SPY, x: 860, y: FLOOR, face: 1, mood: 'smug', arms: [0.7, 0.75 + Math.sin(t * 14) * 0.06], glow: { color: 'rgba(120,200,255,.5)', side: 1 } }, t);
     tableSide(ctx, 1080, 360, FLOOR - 200, '#3a3f46'); laptopSide(ctx, 1040, FLOOR - 200, t, { face: -1 }); },
     (ctx, t, k, L) => { caption(ctx, 'TO BREAK INTO TARGETS', W / 2, 150, t - B(7, 'break') + 0.4, 2.2, { size: 60 }); }, 0.1);
   add(B(8, 0) - 0.05, 'eternal blue', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 500, z: 1.25 }, k); weaponsLocker(ctx, t, L, { glow: 'ETERNAL BLUE', label: 'THE BEST ONE' }); },
@@ -249,7 +249,8 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
   add(B(9, 0) - 0.05, 'aug 2016', (ctx, t, k, L) => { calendarCard(ctx, t, L, 'AUGUST', '2016'); }, null, 0.04);
   add(B(9, 'a') - 0.1, 'shadow brokers', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 520, z: 1.25 }, k);
     bg(ctx, '#0c0f18'); glowSpot(ctx, 960, 380, 700, 'rgba(90,110,200,.2)'); ctx.fillStyle = '#141826'; ctx.fillRect(-400, FLOOR - 40, W + 800, 600);
-    [[640, 0.9], [960, 1.05], [1280, 0.9]].forEach(([x, s], i) => drawChar(ctx, { ...HOOD(i), x, y: FLOOR + (i === 1 ? 40 : 0), s, face: i === 0 ? 1 : i === 2 ? -1 : 0, mood: 'smug', glow: { color: 'rgba(120,140,255,.4)', side: i === 0 ? 1 : -1 } }, t)); },
+    for (let i = 0; i < 7; i++) { const mx = 300 + i * 220; rr(ctx, mx - 95, 260 + (i % 2) * 30, 190, 130, 8); fillStroke(ctx, '#0f1420', '#05070b', 4); ctx.fillStyle = i % 3 ? 'rgba(90,140,255,.55)' : 'rgba(110,230,150,.55)'; for (let r = 0; r < 5; r++) ctx.fillRect(mx - 80, 276 + (i % 2) * 30 + r * 20, 40 + hash(i * 7 + r + Math.floor(t * 2)) * 110, 8); glowSpot(ctx, mx, 330, 160, 'rgba(90,130,255,.12)'); }
+    [[640, 1.15], [960, 1.3], [1280, 1.15]].forEach(([x, s], i) => drawChar(ctx, { ...HOOD(i), x, y: FLOOR + (i === 1 ? 90 : 40), s, face: i === 0 ? 1 : i === 2 ? -1 : 0, mood: 'smug', glow: { color: 'rgba(120,140,255,.4)', side: i === 0 ? 1 : -1 } }, t)); },
     (ctx, t, k, L) => { caption(ctx, 'THE SHADOW BROKERS', W / 2, 150, t - B(9, 'shadow'), 9, { size: 84 }); }, 0.12);
   add(nth(9, 'and', 1) - 0.1, 'stolen tools', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.08 }, k); weaponsLocker(ctx, t, L, { glow: 'ETERNAL BLUE', take: 0.9, label: 'NSA HACKING TOOLS' }); },
     (ctx, t, k, L) => { caption(ctx, 'STOLEN?', W / 2, 1000, t - B(9, 'stolen'), 2.0, { fill: RED, size: 80 }); }, 0.05);
@@ -278,25 +279,25 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
   add(B(14, 0) - 0.05, 'bolted on', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 520, z: 1.3 }, k); hackerDen(ctx, t); },
     (ctx, t, k, L) => { chapterTag(ctx, 2, 'FRIDAY THE TWELFTH', L); caption(ctx, 'ETERNAL BLUE + RANSOMWARE', W / 2, 1000, t - B(14, 'bolted'), 2.6, { size: 64 }); }, 0.1);
   add(nth(14, 'ransomware', 2) - 0.1, 'ransomware defined', (ctx, t, k, L) => { lockFiles(ctx, t, L, { at: 0.5, t0: nth(14, 'ransomware', 2) - 0.1, price: B(14, 'charges') - nth(14, 'ransomware', 2) + 0.1 }); },
-    (ctx, t, k, L) => { caption(ctx, 'RANSOMWARE', W / 2, 110, L - 0.1, 9, { size: 84 }); }, 0.04);
+    (ctx, t, k, L) => { caption(ctx, 'RANSOMWARE', W / 2, 1010, L - 0.1, 9, { size: 84 }); }, 0.04);
   add(B(15, 0) - 0.05, 'wanna cry', (ctx, t, k, L) => { const [sx, sy] = shake(t, B(15, 'wanna'), 12, 0.5); camera(ctx, { x: 960 + sx, y: 540 + sy, z: 1.1 }, { x: 960 + sx, y: 540 + sy, z: 1.0 }, k); ransomScreen(ctx, t, L, { at: 0.1 }); },
     (ctx, t, k, L) => { caption(ctx, 'WANNA CRY', W / 2, 960, t - B(15, 'wanna'), 9, { size: 120, fill: '#fff' }); }, 0.04);
   add(B(16, 0) - 0.05, 'bad email', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.06 }, k);
     emailWindow(ctx, t, L, { from: 'Totally Real Bank', subject: 'Your invoice is attached', body: ['Hello,', '', 'Please open the attached invoice', 'to avoid extra charges.'], file: 'invoice.doc', click: 1.6 }); },
     (ctx, t, k, L) => { caption(ctx, 'NORMAL RANSOMWARE: A BAD EMAIL', W / 2, 1010, L - 0.2, 2.4, { size: 56 }); }, 0.04);
-  add(B(16, 'once') - 0.1, 'worm spreads', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.12 }, { x: 960, y: 540, z: 1.0 }, k); wormGrid(ctx, t, L, { start: [0, 0], at: 0.4, speed: 0.42 }); },
+  add(B(16, 'once') - 0.1, 'worm spreads', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.04 }, { x: 960, y: 540, z: 0.96 }, k); wormGrid(ctx, t, L, { start: [0, 0], at: 0.4, speed: 0.42 }); },
     (ctx, t, k, L) => { caption(ctx, 'EVERY UNPATCHED COMPUTER', W / 2, 1010, t - B(16, 'every'), 2.4, { size: 60 }); }, 0.04);
   add(B(16, 'and') - 0.1, 'again and again', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 0.92 }, k); wormGrid(ctx, t, L, { start: [7, 3], at: 0.0, speed: 0.22, bg: '#22161a' }); },
     (ctx, t, k, L) => { caption(ctx, 'IT WAS A WORM', W / 2, 1010, t - B(16, 'worm') + 0.3, 9, { size: 88, fill: RED }); }, 0.04);
   add(B(17, 0) - 0.05, 'nhs worst', (ctx, t, k, L) => { const o = B(17, 0) - 0.05;
-    mapInsert(ctx, t, { vivid: V, view: { lon: -1.8, lat: 53.0, span: lerp(13, 11.5, k) }, local: L, highlight: { 'United Kingdom': '#e8e2d0' }, pins: ENGLAND.map((p, i) => ({ at: p, t0: B(17, 'eighty') - o - 0.3 + i * 0.04, color: '#d8261c' })) }); },
+    mapInsert(ctx, t, { vivid: V, view: { lon: -1.8, lat: 53.0, span: lerp(13, 11.5, k) }, local: L, highlight: { 'United Kingdom': '#f2c86b' }, pins: ENGLAND.map((p, i) => ({ at: p, t0: B(17, 'eighty') - o - 0.3 + i * 0.04, color: '#d8261c' })) }); },
     (ctx, t, k, L) => { caption(ctx, 'HIT WORST OF ALL', W / 2, 150, L - 0.3, 1.8, { fill: RED }); caption(ctx, 'AT LEAST 81 TRUSTS', W / 2, 1000, t - B(17, 'eighty'), 2.6, { size: 72 }); }, 0.04);
   add(B(17, 'some') - 0.1, 'locked ward', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.05 }, { x: 1000, y: 560, z: 1.14 }, k); ransomWard(ctx, t, L, { at: 0.2 }); drawChar(ctx, { ...NURSE, x: 1300, y: FLOOR, face: -1, mood: 'worried' }, t); },
     (ctx, t, k, L) => { caption(ctx, 'LOCKED', W / 2, 150, L - 0.3, 1.6, { fill: RED, size: 80 }); }, 0.05);
   add(B(17, 'others') - 0.1, 'shut down', (ctx, t, k, L) => { camera(ctx, { x: 1060, y: 560, z: 1.3 }, { x: 1080, y: 540, z: 1.42 }, k); const off = L > 1.3;
     room(ctx, t, { wall: '#c9d4da', wall2: '#9aa9b2', wainscot: 620, floor: '#4f5a64', tiles: true, items: c => { serverRack(c, 1300, FLOOR, 220, 520, off ? 0 : t, 4); serverRack(c, 1560, FLOOR, 220, 520, off ? 0 : t, 6); } });
     if (off) { ctx.fillStyle = 'rgba(10,14,30,.4)'; ctx.fillRect(1180, 200, 640, FLOOR - 200); }
-    drawChar(ctx, { ...IT, x: 1060, y: FLOOR, face: 1, mood: off ? 'sad' : 'worried', arms: L < 1.3 ? [0.4, 1.4] : [0.3, 0.6] }, t); },
+    drawChar(ctx, { ...IT, x: 1190, y: FLOOR, face: 1, mood: off ? 'sad' : 'worried', arms: L < 1.3 ? [0.4, 1.4] : [0.3, 0.6] }, t); },
     (ctx, t, k, L) => { caption(ctx, 'SHUT DOWN TO STOP IT SPREADING', W / 2, 150, L - 0.3, 2.6, { size: 58 }); }, 0.06);
   add(B(17, 'every') - 0.1, 'one thing in common', (ctx, t, k, L) => { const o = B(17, 'every') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 600, z: 1.12 }, k);
     documentInsert(ctx, t, { local: L, header: 'Every infected N H S organisation', source: 'National Audit Office, 2017', lines: [{ text: 'One thing in common:', at: nth(17, 'one', 2) - o }, { text: 'NOT UPDATED', at: B(17, 'not') - o, size: 72, color: RED, circle: [0, 11, B(17, 'updated') - o + 0.2] }] }); }, null, 0.05);
@@ -305,12 +306,12 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
   add(B(19, 0) - 0.05, 'wallets', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); wallets(ctx, t, L, { q: B(19, 'no') - B(19, 0) }); },
     (ctx, t, k, L) => { caption(ctx, 'NO WAY TO TELL WHO PAID', W / 2, 1010, t - B(19, 'no'), 2.6, { size: 60 }); }, 0.04);
   add(B(19, 'so') - 0.1, 'never back', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 600, z: 1.16 }, k); ransomScreen(ctx, t, L, { clock: 4, tick: 1.6 }); },
-    (ctx, t, k, L) => { caption(ctx, 'PAID, BUT NO FILES BACK', W / 2, 150, L - 0.6, 9, { size: 64 }); }, 0.04);
+    (ctx, t, k, L) => { caption(ctx, 'PAID, BUT NO FILES BACK', W / 2, 1000, L - 0.6, 9, { size: 64 }); }, 0.04);
   add(B(20, 0) - 0.05, 'researchers race', (ctx, t, k, L) => { const LABS = [LONDON, [-122.4, 37.77], [-74.0, 40.71], [13.4, 52.5], [37.6, 55.75], [139.7, 35.7], [121.0, 14.6], [-79.4, 43.7], [34.78, 32.08], [2.35, 48.85], [151.2, -33.9], [103.8, 1.35]];
     mapInsert(ctx, t, { vivid: V, view: { lon: 15, lat: 30, span: lerp(320, 300, k) }, local: L, pins: LABS.map((p, i) => ({ at: p, t0: 0.2 + i * 0.12, color: '#2b6fd0' })) }); },
     (ctx, t, k, L) => { caption(ctx, 'RESEARCHERS RACE TO UNDERSTAND IT', W / 2, 1000, L - 0.3, 9, { size: 58 }); }, 0.04);
-  add(B(20, 'and') - 0.1, 'remember him', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 560, z: 1.25 }, { x: 1380, y: 520, z: 1.5 }, k); seaBedroom(ctx, t);
-    drawChar(ctx, { ...MARCUS, x: 1330, y: FLOOR + 30, face: 1, mood: 'neutral', arms: [1.1, 1.2 + Math.sin(t * 13) * 0.05], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); },
+  add(B(20, 'and') - 0.1, 'remember him', (ctx, t, k, L) => { camera(ctx, { x: 1100, y: 560, z: 1.25 }, { x: 1180, y: 520, z: 1.5 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1110, y: FLOOR + 30, face: 1, mood: 'neutral', arms: [0.55, 0.6 + Math.sin(t * 13) * 0.05], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); },
     (ctx, t, k, L) => { caption(ctx, 'REMEMBER HIM?', W / 2, 150, t - B(20, 'remember'), 9, { size: 80 }); }, 0.05);
 
   // ================= CHAPTER 3: THE BEDROOM IN DEVON =================
@@ -319,21 +320,21 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
   add(B(21, 'worked') - 0.25, 'ilfracombe', (ctx, t, k, L) => { const o = B(21, 'worked') - 0.25, z = easeInOut(clamp((L - (B(21, 'for') - o)) / 1.4));
     mapInsert(ctx, t, { vivid: V, view: { lon: lerp(ILF[0], -60, z), lat: lerp(ILF[1], 42, z), span: lerp(7, 120, z) }, local: L, highlight: { 'United Kingdom': '#9fcf7a', 'United States of America': '#7fb3e0' }, routes: [{ from: ILF, to: LA, at: B(21, 'for') - o + 0.6, dur: 1.0 }], pins: [{ at: ILF, label: 'ILFRACOMBE', t0: 0.4 }] }); },
     (ctx, t, k, L) => { caption(ctx, 'HIS BEDROOM, AT HIS PARENTS’ HOUSE', W / 2, 1000, L - 0.2, 2.6, { size: 54 }); caption(ctx, 'FOR A US SECURITY COMPANY', W / 2, 1000, t - B(21, 'security') + 0.2, 9, { size: 54 }); }, 0.04);
-  add(B(22, 0) - 0.05, 'reading code', (ctx, t, k, L) => { camera(ctx, { x: 1440, y: 560, z: 1.55 }, { x: 1460, y: 520, z: 1.7 }, k); seaBedroom(ctx, t);
-    drawChar(ctx, { ...MARCUS, x: 1330, y: FLOOR + 30, face: 1, mood: 'neutral', eyes: L > 2.2 ? 'open' : 'down', arms: [1.1, 1.2 + Math.sin(t * 13) * 0.05], glow: { color: 'rgba(255,110,80,.45)', side: 1 } }, t); },
+  add(B(22, 0) - 0.05, 'reading code', (ctx, t, k, L) => { camera(ctx, { x: 1240, y: 560, z: 1.55 }, { x: 1260, y: 520, z: 1.7 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1110, y: FLOOR + 30, face: 1, mood: 'neutral', eyes: L > 2.2 ? 'open' : 'down', arms: [0.55, 0.6 + Math.sin(t * 13) * 0.05], glow: { color: 'rgba(255,110,80,.45)', side: 1 } }, t); },
     (ctx, t, k, L) => { bubble(ctx, 1260, 330, 'HUH?', t - B(22, 'odd'), { think: true }); }, 0.05);
   add(B(22, 'before') - 0.1, 'code view', (ctx, t, k, L) => { const o = B(22, 'before') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 600, z: 1.08 }, k); codeView(ctx, t, L, { hl: B(22, 'visit') - o - 0.2, url: nth(22, 'it', 2) - o }); },
     (ctx, t, k, L) => { caption(ctx, 'NOT A REAL WEBSITE', W / 2, 90, t - B(22, 'random') + 0.6, 9, { size: 60, fill: RED }); }, 0.05);
-  add(B(23, 0) - 0.05, 'nobody owned it', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 400, z: 1.15 }, { x: 960, y: 420, z: 1.25 }, k); domainShop(ctx, t, L + 2, { type: 1.0, clickAfter: 99 }); },
-    (ctx, t, k, L) => { caption(ctx, 'NOBODY OWNED IT', W / 2, 1000, t - B(23, 'nobody'), 9, { size: 80 }); }, 0.04);
+  add(B(23, 0) - 0.05, 'nobody owned it', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 520, z: 1.04 }, k); domainShop(ctx, t, L + 2, { type: 1.0, clickAfter: 99 }); },
+    (ctx, t, k, L) => { caption(ctx, 'NOBODY OWNED IT', W / 2, 1030, t - B(23, 'nobody'), 9, { size: 80 }); }, 0.04);
   add(B(24, 0) - 0.05, 'count infections', (ctx, t, k, L) => { mapInsert(ctx, t, { vivid: V, view: { lon: 20, lat: 30, span: lerp(300, 280, k) }, local: L, dimAll: true, pins: infectPins(L, 0.3, 3.2) }); },
     (ctx, t, k, L) => { const n = Math.floor(clamp((L - 0.3) / 3.6) * 48000); textOutlined(ctx, 'INFECTED: ' + n.toLocaleString('en-GB'), W / 2, 130, { size: 72, fill: YEL, lw: 10 }); caption(ctx, 'SEE WHERE IT SPREADS', W / 2, 1000, t - B(24, 'see'), 9, { size: 60 }); }, 0.04);
   add(B(24, 'so') - 0.1, 'registered', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 580, z: 1.08 }, k); domainShop(ctx, t, L + 1.4, { type: 1.0, clickAfter: B(24, 'ten') - B(24, 'so') - 1.2 }); }, null, 0.04);
-  add(B(25, 0) - 0.05, 'no idea', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 520, z: 1.9 }, { x: 1320, y: 480, z: 2.2 }, k); seaBedroom(ctx, t);
-    drawChar(ctx, { ...MARCUS, x: 1330, y: FLOOR + 30, face: 1, mood: 'smug', arms: [0.3, 0.4], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); }, null, 0.06);
+  add(B(25, 0) - 0.05, 'no idea', (ctx, t, k, L) => { camera(ctx, { x: 1100, y: 520, z: 1.9 }, { x: 1120, y: 480, z: 2.2 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1110, y: FLOOR + 30, face: 1, mood: 'smug', arms: [0.3, 0.4], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); }, null, 0.06);
   add(B(26, 0) - 0.05, 'kill switch', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); killSwitch(ctx, t, L, {}); },
     (ctx, t, k, L) => { caption(ctx, 'A KILL SWITCH', W / 2, 1010, t - B(26, 'kill'), 2.4, { size: 76, fill: RED }); }, 0.04);
-  add(nth(26, 'if', 2) - 0.1, 'switch yes', (ctx, t, k, L) => { camera(ctx, { x: 1100, y: 540, z: 1.05 }, { x: 1200, y: 520, z: 1.15 }, k); killSwitch(ctx, t, L, { yes: 0.2 }); }, null, 0.04);
+  add(nth(26, 'if', 2) - 0.1, 'switch yes', (ctx, t, k, L) => { camera(ctx, { x: 1000, y: 540, z: 1.0 }, { x: 1080, y: 530, z: 1.08 }, k); killSwitch(ctx, t, L, { yes: 0.2 }); }, null, 0.04);
   add(B(27, 0) - 0.05, 'answer yes', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); killSwitch(ctx, t, L, { yes: B(27, 'yes') - B(27, 0) }); },
     (ctx, t, k, L) => { caption(ctx, 'ALL DAY: NO', W / 2, 1010, L - 0.2, 2.0, { size: 64, fill: RED }); caption(ctx, 'NOW: YES', W / 2, 1010, t - B(27, 'yes') + 0.1, 9, { size: 72, fill: '#9fe0a0' }); }, 0.04);
   add(B(27, 'across') - 0.1, 'infections stop', (ctx, t, k, L) => { mapInsert(ctx, t, { vivid: V, view: { lon: 20, lat: 25, span: lerp(300, 290, k) }, local: L, dimAll: true, pins: infectPins(L, -9, 1, { color: j => L > 0.3 + j * 0.015 ? '#3fae5e' : '#d8261c' }) }); },
@@ -357,13 +358,13 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
     (ctx, t, k, L) => { caption(ctx, 'HACKED CAMERAS AND ROUTERS', W / 2, 150, t - B(30, 'cameras') + 0.2, 2.6, { size: 60 }); caption(ctx, 'ALL AT ONCE', W / 2, 150, t - B(30, 'once') + 0.1, 2.0, { size: 72 }); }, 0.04);
   add(B(30, 'if') - 0.1, 'switch at risk', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); killSwitch(ctx, t, L, { yes: Math.floor(L * 3) % 2 ? 99 : -1 }); },
     (ctx, t, k, L) => { caption(ctx, 'IF IT FALLS, THE WORM IS FREE', W / 2, 1010, L - 0.3, 3.0, { size: 60, fill: RED }); }, 0.04);
-  add(B(30, 'hutchins') - 0.1, 'kept running', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 560, z: 1.3 }, { x: 1340, y: 540, z: 1.4 }, k); seaBedroom(ctx, t);
-    drawChar(ctx, { ...MARCUS, x: 1330, y: FLOOR + 30, face: 1, mood: 'angry', arms: [1.1, 1.3 + Math.sin(t * 16) * 0.08], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); },
+  add(B(30, 'hutchins') - 0.1, 'kept running', (ctx, t, k, L) => { camera(ctx, { x: 1100, y: 560, z: 1.3 }, { x: 1140, y: 540, z: 1.4 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1110, y: FLOOR + 30, face: 1, mood: 'angry', arms: [0.55, 0.65 + Math.sin(t * 16) * 0.08], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); },
     (ctx, t, k, L) => { caption(ctx, 'KEPT IT RUNNING', W / 2, 150, t - B(30, 'kept'), 9, { size: 72, fill: '#9fe0a0' }); }, 0.05);
   add(B(31, 0) - 0.05, 'to vegas', (ctx, t, k, L) => { const z = easeInOut(clamp(L / 2.6));
     mapInsert(ctx, t, { vivid: V, view: { lon: lerp(-40, -90, z), lat: lerp(48, 40, z), span: lerp(140, 110, z) }, local: L, highlight: { 'United Kingdom': '#9fcf7a', 'United States of America': '#7fb3e0' }, routes: [{ from: LONDON, to: VEGAS, at: 0.3, dur: 1.8 }], pins: [{ at: LONDON, t0: 0 }, { at: VEGAS, label: 'LAS VEGAS', t0: 1.8 }] }); },
     (ctx, t, k, L) => { dateTag(ctx, 'AUGUST 2017 · LAS VEGAS', L - 0.3); }, 0.04);
-  add(B(31, 'everyone') - 0.1, 'conference', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.0 }, { x: 960, y: 600, z: 1.12 }, k); confHall(ctx, t, L); drawChar(ctx, { ...MARCUS, x: 960, y: FLOOR + 40, s: 0.85, face: 0, mood: 'smug' }, t); },
+  add(B(31, 'everyone') - 0.1, 'conference', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.0 }, { x: 960, y: 600, z: 1.12 }, k); confHall(ctx, t, L); glowSpot(ctx, 960, FLOOR - 120, 360, 'rgba(255,240,190,.35)'); drawChar(ctx, { ...MARCUS, x: 960, y: FLOOR + 190, s: 1.0, face: 0, mood: 'smug' }, t); },
     (ctx, t, k, L) => { caption(ctx, 'THE MAN WHO STOPPED WANNA CRY', W / 2, 1010, L - 0.4, 9, { size: 56 }); }, 0.05);
   add(B(32, 0) - 0.05, 'airport', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.0 }, { x: 900, y: 560, z: 1.1 }, k); airportGate(ctx, t, { gate: 'GATE 14 · LONDON' });
     const w = walkTo(L, 0.2, 2.6, 300, 900); drawChar(ctx, { ...MARCUS, x: w.x, y: FLOOR + 20, walk: w.walk, face: 1, mood: 'neutral' }, t); },
@@ -375,8 +376,8 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
     (ctx, t, k, L) => { dateTag(ctx, '2 AUGUST 2017', L - 0.2); caption(ctx, 'ARRESTED BY THE FBI', W / 2, 150, t - B(32, 'arrested'), 9, { fill: RED, size: 76 }); }, 0.05);
   add(B(33, 0) - 0.05, 'charges', (ctx, t, k, L) => { const o = B(33, 0) - 0.05; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 900, y: 580, z: 1.1 }, k);
     documentInsert(ctx, t, { local: L, header: 'United States District Court  ·  2017', source: 'Indictment', lines: [{ text: 'UNITED STATES', at: 0.2 }, { text: 'v. MARCUS HUTCHINS', at: 0.5, size: 56 }, { text: 'Wanna Cry:  NOT MENTIONED', at: B(33, 'nothing') - o, color: RED }] }); }, null, 0.05);
-  add(B(33, 'years') - 0.1, 'teenager', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 560, z: 1.3 }, { x: 1340, y: 520, z: 1.45 }, k); seaBedroom(ctx, t, { dark: 0.55 });
-    drawChar(ctx, { ...MARCUS, s: 0.9, x: 1330, y: FLOOR + 30, face: 1, mood: 'smug', arms: [1.1, 1.2 + Math.sin(t * 13) * 0.05], glow: { color: 'rgba(255,110,80,.6)', side: 1 } }, t); },
+  add(B(33, 'years') - 0.1, 'teenager', (ctx, t, k, L) => { camera(ctx, { x: 1100, y: 560, z: 1.3 }, { x: 1140, y: 520, z: 1.45 }, k); seaBedroom(ctx, t, { dark: 0.55 });
+    drawChar(ctx, { ...MARCUS, s: 0.9, x: 1110, y: FLOOR + 30, face: 1, mood: 'smug', arms: [0.55, 0.6 + Math.sin(t * 13) * 0.05], glow: { color: 'rgba(255,110,80,.6)', side: 1 } }, t); },
     (ctx, t, k, L) => { caption(ctx, 'YEARS EARLIER, AS A TEENAGER', W / 2, 150, L - 0.2, 2.6, { size: 60 }); }, 0.06);
   add(B(33, 'hutchins') - 0.1, 'kronos', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); kronos(ctx, t, L); },
     (ctx, t, k, L) => { caption(ctx, 'STOLE BANK PASSWORDS', W / 2, 1010, t - B(33, 'stole'), 9, { size: 60, fill: RED }); }, 0.04);
@@ -391,7 +392,7 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
     (ctx, t, k, L) => { caption(ctx, 'BUT WHO STARTED IT?', W / 2, 1000, t - B(35, 'who'), 9, { size: 72 }); }, 0.04);
   add(B(36, 0) - 0.05, 'last video', (ctx, t, k, L) => { prevVideo(ctx, t, L); }, null, 0.04);
   add(B(36, 'and') - 0.1, 'like subscribe', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.0 }, { x: 1000, y: 560, z: 1.08 }, k);
-    const press = clamp((t - B(36, 'subscribe')) / 0.3) * (1 - clamp((t - B(36, 'subscribe') - 0.5) / 0.3)); subscribeSet(ctx, t, { press, thumb: clamp((t - B(36, 'like')) / 0.5) }); },
+    const press = clamp((t - B(36, 'subscribe')) / 0.3) * (1 - clamp((t - B(36, 'subscribe') - 0.5) / 0.3)); subscribeSet(ctx, t, { press, thumb: clamp((t - B(36, 'like')) / 0.5) }); monitor(ctx, 300, FLOOR - 520, 480, 270, ([x, y, w, h]) => { if (PREV.complete && PREV.naturalWidth) ctx.drawImage(PREV, x, y, w, h); }); },
     (ctx, t, k, L) => { caption(ctx, 'MORE WILD CYBER STORIES', W / 2, 140, t - B(36, 'wild'), 9, { size: 60 }); }, 0.05);
 
   // ================= CHAPTER 5: WHO DID IT =================
@@ -401,7 +402,7 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
       routes: [{ from: LONDON, to: PYONG, at: B(37, 'north') - o - 0.6, dur: 1.0 }, { from: DC, to: PYONG, at: B(37, 'north') - o - 0.4, dur: 1.0 }], pins: [{ at: PYONG, label: 'NORTH KOREA', t0: B(37, 'north') - o + 0.3 }] }); }, null, 0.04);
   add(B(38, 0) - 0.05, 'same group', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 520, z: 1.3 }, k); hackerDen(ctx, t); },
     (ctx, t, k, L) => { caption(ctx, 'THE SAME GROUP', W / 2, 150, L - 0.2, 2.0, { size: 76 }); caption(ctx, 'THE BANGLADESH BANK HEIST', W / 2, 1000, t - B(38, "bangladesh's") + 0.1, 2.6, { size: 60 }); }, 0.1);
-  add(B(38, 'in') - 0.1, 'park', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 500, z: 1.12 }, k); wantedPoster(ctx, t, L, { name: 'PARK JIN HYOK', sub: 'WANNA CRY · BANK HEIST', face: face(PARK) }); },
+  add(B(38, 'in') - 0.1, 'park', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 500, z: 1.12 }, k); wantedPoster(ctx, t, L, { name: 'PARK JIN HYOK', sub: 'WANNA CRY · BANK HEIST', face: (c, tt) => { c.save(); c.translate(0, -110); face(PARK)(c, tt); c.restore(); } }); },
     (ctx, t, k, L) => { caption(ctx, 'CHARGED · 2018', W / 2, 1010, L - 0.4, 2.4, { size: 60 }); }, 0.05);
   add(B(39, 0) - 0.05, 'denied', (ctx, t, k, L) => { newspaper(ctx, t, { local: L, paper: 'THE DAILY RECORD', date: 'DECEMBER 2017', headline: 'NORTH KOREA:\n"IT WASN\'T US"' }); }, null, 0.04);
   add(B(39, 'and') - 0.1, 'flop', (ctx, t, k, L) => { counter(ctx, t, L, { to: 140000, at: B(39, 'only') - B(39, 'and') - 0.2, dur: 1.4, pre: '$', label: 'ALL IT EVER COLLECTED', sub: 'in bitcoin, roughly', color: '#ffb36a' }); },
@@ -470,7 +471,7 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
     (ctx, t, k, L) => { caption(ctx, "SHIPS COULDN'T BE UNLOADED", W / 2, 150, L - 0.3, 9, { size: 60 }); }, 0.05);
   add(B(50, 'lorries') - 0.1, 'lorries queue', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 600, z: 1.1 }, { x: 1100, y: 620, z: 1.2 }, k); containerPort(ctx, t, L, { stopped: true, gate: true }); },
     (ctx, t, k, L) => { caption(ctx, 'LORRIES QUEUED FOR MILES', W / 2, 150, L - 0.2, 9, { size: 64 }); }, 0.05);
-  add(B(50, 'staff') - 0.1, 'own phones', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 540, z: 1.22 }, k);
+  add(B(50, 'staff') - 0.1, 'own phones', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.0 }, { x: 960, y: 560, z: 1.07 }, k);
     room(ctx, t, { wall: '#cfdbe0', wall2: '#9fb3bc', wainscot: 620, floor: '#4a5560', items: c => { rr(c, 660, 110, 600, 110, 10); fillStroke(c, '#3a8fd0', INK, 5); T(c, 'MAERSK', 960, 166, '64px "Lilita One"', '#fff'); windowFrame(c, 200, 260, 360, 260, t); windowFrame(c, 1360, 260, 360, 260, t); } });
     [520, 960, 1400].forEach((x, i) => drawChar(ctx, { ...STAFF(i), x, y: FLOOR + 20, face: i === 0 ? 1 : i === 2 ? -1 : 0, mood: 'worried', talk: Math.floor(t * 2 + i) % 2 === 0, arms: [0.2, 2.6], hold: (c) => { rr(c, -12, -60, 24, 56, 6); fillStroke(c, '#1f2228', INK, 3); } }, t)); },
     (ctx, t, k, L) => { caption(ctx, 'RUNNING ON THEIR OWN PHONES', W / 2, 1000, L - 0.4, 9, { size: 60 }); }, 0.05);
@@ -483,7 +484,7 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
   add(B(52, 0) - 0.05, 'all wiped but one', (ctx, t, k, L) => { const o = B(52, 0) - 0.05; mapInsert(ctx, t, { vivid: V, view: { lon: lerp(15, 0, easeInOut(clamp((L - 1.6) / 1.2))), lat: lerp(25, 8, easeInOut(clamp((L - 1.6) / 1.2))), span: lerp(300, 120, easeInOut(clamp((L - 1.6) / 1.2))) }, local: L, dimAll: true,
       pins: COPIES.map((p, i) => ({ at: p, t0: -9, color: L > 0.1 + i * 0.02 ? '#1a1a1e' : '#2b6fd0' })).concat([{ at: ACCRA, t0: -9, color: '#3fae5e', label: 'EXCEPT ONE' }]) }); },
     (ctx, t, k, L) => { caption(ctx, 'EVERY SINGLE ONE WIPED', W / 2, 1000, L - 0.2, 1.8, { size: 64, fill: RED }); }, 0.04);
-  add(B(52, 'in') - 0.1, 'power cut', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 560, z: 1.15 }, { x: 1400, y: 560, z: 1.3 }, k); powerCutOffice(ctx, t, L, { power: t > B(52, 'power') + 0.3 ? 0 : 1 }); },
+  add(B(52, 'in') - 0.1, 'power cut', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 1080, y: 550, z: 1.1 }, k); powerCutOffice(ctx, t, L, { power: t > B(52, 'power') + 0.3 ? 0 : 1 }); },
     (ctx, t, k, L) => { dateTag(ctx, 'AN OFFICE IN WEST AFRICA', L - 0.2); caption(ctx, 'A POWER CUT', W / 2, 1000, t - B(52, 'power'), 9, { size: 80, fill: YEL }); }, 0.05);
   add(B(52, 'it') - 0.1, 'only clean copy', (ctx, t, k, L) => { camera(ctx, { x: 1480, y: 560, z: 1.8 }, { x: 1480, y: 540, z: 2.0 }, k); powerCutOffice(ctx, t, L, { power: 0 }); glowSpot(ctx, 1480, 580, 360, `rgba(120,255,160,${0.25 + 0.1 * Math.sin(t * 3)})`); },
     (ctx, t, k, L) => { caption(ctx, 'THE ONLY CLEAN COPY ON EARTH', W / 2, 1000, L - 0.3, 9, { size: 60, fill: '#9fe0a0' }); }, 0.06);
@@ -505,14 +506,14 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
     (ctx, t, k, L) => { caption(ctx, 'SO HOW DID IT STOP THE ATTACK?', W / 2, 1000, L - 0.2, 9, { size: 64 }); }, 0.04);
   add(B(56, 0) - 0.05, 'luck', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); killSwitch(ctx, t, L + 3, { yes: 0 }); },
     (ctx, t, k, L) => { caption(ctx, 'LUCK', W / 2, 1000, t - B(56, 'luck'), 9, { size: 110 }); }, 0.04);
-  add(B(56, 'someone') - 0.1, 'sandwich', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 540, z: 1.5 }, { x: 1320, y: 520, z: 1.6 }, k); seaBedroom(ctx, t);
-    drawChar(ctx, { ...MARCUS, x: 1260, y: FLOOR + 30, face: 0, mood: 'smug', arms: [0.3, 1.7], hold: (c) => { c.save(); c.rotate(-0.2); c.beginPath(); c.moveTo(-50, 20); c.lineTo(50, 20); c.lineTo(0, -50); c.closePath(); fillStroke(c, '#e8c88a', INK, 3); c.beginPath(); c.moveTo(-40, 8); c.lineTo(40, 8); c.stroke(); c.fillStyle = '#6cc070'; c.fillRect(-38, 4, 76, 6); c.restore(); } }, t); },
+  add(B(56, 'someone') - 0.1, 'sandwich', (ctx, t, k, L) => { camera(ctx, { x: 1100, y: 540, z: 1.5 }, { x: 1120, y: 520, z: 1.6 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1110, y: FLOOR + 30, face: 0, mood: 'smug', arms: [0.3, 2.3], hold: (c) => { c.save(); c.rotate(-0.2); c.beginPath(); c.moveTo(-50, 20); c.lineTo(50, 20); c.lineTo(0, -50); c.closePath(); fillStroke(c, '#e8c88a', INK, 3); c.beginPath(); c.moveTo(-40, 8); c.lineTo(40, 8); c.stroke(); c.fillStyle = '#6cc070'; c.fillRect(-38, 4, 76, 6); c.restore(); } }, t); },
     (ctx, t, k, L) => { caption(ctx, 'THE PRICE OF A SANDWICH', W / 2, 150, t - B(56, 'price'), 9, { size: 64 }); }, 0.05);
   add(B(56, 'not') - 0.1, 'no switch to flip', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.05 }, { x: 960, y: 540, z: 1.12 }, k); containerPort(ctx, t, L, { stopped: true }); ctx.fillStyle = 'rgba(30,10,10,.25)'; ctx.fillRect(-400, -400, W + 800, H + 800); },
     (ctx, t, k, L) => { caption(ctx, 'NO SWITCH TO FLIP', W / 2, 150, t - nth(56, 'switch', 2) + 0.3, 2.4, { size: 72 }); caption(ctx, 'DEVASTATING', W / 2, 1000, t - B(56, 'devastating'), 9, { size: 90, fill: RED }); }, 0.06);
   add(B(57, 0) - 0.05, 'boring', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.06 }, { x: 960, y: 540, z: 1.0 }, k); updatePopup(ctx, t, L, { title: 'SECURITY UPDATE' }); },
     (ctx, t, k, L) => { caption(ctx, 'MUCH MORE BORING', W / 2, 1000, t - B(57, 'boring') + 0.3, 9, { size: 72 }); }, 0.04);
-  add(B(58, 0) - 0.05, 'fix existed', (ctx, t, k, L) => { calendarCard(ctx, t, L, 'MARCH 2017', 'FIX', { sub: 'TWO MONTHS BEFORE WANNA CRY' }); },
+  add(B(58, 0) - 0.05, 'fix existed', (ctx, t, k, L) => { calendarCard(ctx, t, L, 'MARCH 2017', 'FIX', { sub: 'RELEASED' }); },
     (ctx, t, k, L) => { caption(ctx, 'THE FIX EXISTED', W / 2, 1000, L - 0.1, 2.4, { size: 72, fill: '#9fe0a0' }); }, 0.04);
   add(B(58, 'most') - 0.1, 'never installed', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 900, y: 560, z: 1.12 }, k); updatePopup(ctx, t, L, { title: 'SECURITY UPDATE', click: 'later', clickAt: 1.4 }); },
     (ctx, t, k, L) => { caption(ctx, 'NEVER INSTALLED', W / 2, 1000, t - B(58, 'never'), 9, { size: 80, fill: RED }); }, 0.04);
@@ -521,10 +522,10 @@ await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
   add(nth(59, 'a', 2) - 0.1, 'recap nk', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 520, z: 1.3 }, k); hackerDen(ctx, t); },
     (ctx, t, k, L) => { caption(ctx, 'A CASH MACHINE', W / 2, 150, t - B(59, 'cash'), 9, { size: 72 }); }, 0.1);
   add(B(59, "russia's") - 0.1, 'recap russia', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.12 }, { x: 960, y: 540, z: 1.0 }, k); containerPort(ctx, t, L, { stopped: true }); },
-    (ctx, t, k, L) => { caption(ctx, 'COMPANIES WRECKED WORLDWIDE', W / 2, 150, L - 0.3, 9, { size: 60 }); }, 0.05);
+    (ctx, t, k, L) => { caption(ctx, 'COMPANIES WRECKED WORLDWIDE', W / 2, 1000, L - 0.3, 9, { size: 60 }); }, 0.05);
   add(nth(59, 'and', 2) - 0.1, 'one update', (ctx, t, k, L) => { const hov = 0.5 + 0.5 * Math.sin(L * 2); camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 580, z: 1.3 }, k); updatePopup(ctx, t, L, { title: 'SECURITY UPDATE' });
     const cx = lerp(1180, 1280, hov), cy = 830 + Math.sin(L * 3) * 20; ctx.save(); ctx.translate(cx, cy); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 52); ctx.lineTo(14, 40); ctx.lineTo(24, 62); ctx.lineTo(34, 58); ctx.lineTo(24, 36); ctx.lineTo(42, 36); ctx.closePath(); fillStroke(ctx, '#fff', INK, 3); ctx.restore(); },
-    (ctx, t, k, L) => { caption(ctx, 'CHAOS OR SAFETY', W / 2, 150, t - B(59, 'chaos'), 9, { size: 72 }); caption(ctx, 'ONE UPDATE', W / 2, 1000, t - B(59, 'update'), 9, { size: 84 }); }, 0.04);
+    (ctx, t, k, L) => { caption(ctx, 'CHAOS OR SAFETY', W / 2, 1000, t - B(59, 'chaos'), B(59, 'update') - B(59, 'chaos') - 0.15, { size: 72 }); caption(ctx, 'ONE UPDATE', W / 2, 1000, t - B(59, 'update'), 9, { size: 84 }); }, 0.04);
   add(B(60, 0) - 0.05, 'let it', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); updatePopup(ctx, t, L, { title: 'RESTART TO UPDATE', lines: ['Your computer needs', 'to restart.'], now: 'RESTART', click: 'now', clickAt: B(60, 'let') - B(60, 0) + 0.2 }); },
     (ctx, t, k, L) => { caption(ctx, 'MAYBE LET IT', W / 2, 1000, t - B(60, 'let'), 9, { size: 84, fill: '#9fe0a0' }); }, 0.04);
   add(B(61, 0) - 0.05, 'would you', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.07 }, k);

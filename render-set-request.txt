@@ -1,3 +1,3 @@
-episodes/dark/long/002-bangladesh-bank
+episodes/dark/long/003-wannacry
 local: 1
-# long-form dark 002, Chatterbox Michael narration aligned with tools/align_voice.py (with audio.sh)
+# long-form dark 003 WannaCry, Chatterbox Michael narration (cbvoice-003-wannacry-46151440768)
