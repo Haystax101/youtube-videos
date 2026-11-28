@@ -1,2 +1,2 @@
 episodes/018-bee-sting-nose
-# v1
+# v2 pinned kokoro

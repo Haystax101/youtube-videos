@@ -140,9 +140,9 @@ export function makeBighead(THREE, spec = {}) {
   const hg = new THREE.SphereGeometry(R, 48, 32), col = []; const cs = new THREE.Color(spec.skin), cp = new THREE.Color(spec.scalp);
   for (let i = 0; i < hg.attributes.position.count; i++) { const y = hg.attributes.position.getY(i) / R; const k = THREE.MathUtils.smoothstep(y, 0.35, 0.62); const c = cs.clone().lerp(cp, k * (spec.hair || spec.hat !== 'none' ? 0 : 1)); col.push(c.r, c.g, c.b); }
   hg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
-  const headMesh = add(new THREE.Mesh(hg, toon(THREE, new THREE.Color(spec.skin).multiplyScalar(0.2), { vertexColors: true, emissive: spec.skin, emissiveIntensity: spec.glow ?? 0.8 })), 0, 0, 0, head);
+  const headMesh = add(new THREE.Mesh(hg, toon(THREE, new THREE.Color(spec.skin).multiplyScalar(0.3), { vertexColors: true, emissive: spec.skin, emissiveIntensity: spec.glow ?? 0.52 })), 0, 0, 0, head);
   if (spec.hair) add(new THREE.Mesh(new THREE.SphereGeometry(R * 1.045, 40, 20, 0, Math.PI * 2, 0, Math.PI * 0.36), toon(THREE, spec.hair)), 0, 0, -0.03, head).rotation.x = -0.42;
-  if (spec.ears !== false) for (const s of [-1, 1]) add(new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 8).scale(0.5, 1, 0.8), toon(THREE, new THREE.Color(spec.skin).multiplyScalar(0.2), { emissive: spec.skin, emissiveIntensity: spec.glow ?? 0.8 })), s * R * 0.98, -0.02, 0, head);
+  if (spec.ears !== false) for (const s of [-1, 1]) add(new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 8).scale(0.5, 1, 0.8), toon(THREE, new THREE.Color(spec.skin).multiplyScalar(0.3), { emissive: spec.skin, emissiveIntensity: spec.glow ?? 0.52 })), s * R * 0.98, -0.02, 0, head);
   const FS = 1024, fc = document.createElement('canvas'); fc.width = fc.height = FS; const fx = fc.getContext('2d');
   const ftex = new THREE.CanvasTexture(fc); ftex.colorSpace = THREE.SRGBColorSpace; ftex.anisotropy = 8;
   const decal = add(new THREE.Mesh(new THREE.SphereGeometry(R * 1.004, 40, 30, Math.PI / 2 - 1.05, 2.1, 0.02, Math.PI * 0.78),
