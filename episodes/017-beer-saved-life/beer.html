@@ -376,8 +376,8 @@ shot(WT(2, 'liver'), 'liver', move(frame(at(LV, 0, 1.4, -0.4), 7.0, 8, 10, 54), 
   (u, t) => { }, { mols: 'meth' });
 shot(WT(2, 'formic'), 'liver', move(frame(at(LV, GATE.x + 0.4, GATE.y, GATE.z), 2.2, 30, 8, 44), frame(at(LV, GATE.x + 0.4, GATE.y, GATE.z), 1.8, 22, 6, 44), 0.5),
   (u, t) => { }, { mols: 'meth' });
-shot(WT(2, 'blind'), 'liver', move(frame(at(LV, EYEP.x, EYEP.y, EYEP.z), 2.4, -16, 4, 42), frame(at(LV, EYEP.x, EYEP.y, EYEP.z), 1.9, -8, 4, 42), 0.5),
-  (u, t) => { }, { mols: 'meth', cloud: (u) => 0.2 + u * 0.6 });
+shot(WT(2, 'blind'), 'liver', move(frame(at(LV, EYEP.x, EYEP.y, EYEP.z), 3.0, -16, 4, 42), frame(at(LV, EYEP.x, EYEP.y, EYEP.z), 2.6, -8, 4, 42), 0.5),
+  (u, t) => { }, { mols: 'meth', cloud: (u) => 0.15 + u * 0.4 });
 shot(WT(2, 'kill'), 'liver', move(frame(at(LV, 0.6, 1.5, -0.4), 8.0, -10, 14, 58), frame(at(LV, 0.6, 1.5, -0.4), 9.0, -4, 18, 58), 0.1),
   (u, t) => { }, { mols: 'meth', cloud: () => 0.85, alarm: 1 });
 // ---- HOUR 1: beer's ethanol jumps the queue; the methanol waits
