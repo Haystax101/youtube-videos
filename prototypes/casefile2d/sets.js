@@ -276,6 +276,12 @@ export function documentInsert(ctx, t, o = {}) {
 let WORLD = null;
 export async function loadWorld(url) {
   WORLD = await (await fetch(url)).json();
+  // rings that cross the date line (Russia, Fiji) jump from +180 to -180 and draw a bar across the whole map:
+  // unwrap them so they run past +180 instead (Antarctica is left alone; it sits below the -80 clamp)
+  for (const f of WORLD) for (const poly of f.c) for (const ring of poly) {
+    let jump = false; for (let i = 1; i < ring.length; i++) if (Math.abs(ring[i][0] - ring[i - 1][0]) > 180) jump = true;
+    if (jump && Math.min(...ring.map(p => p[1])) > -60) for (const p of ring) if (p[0] < 0) p[0] += 360;
+  }
   for (const f of WORLD) { let a = 1e9, b = 1e9, c = -1e9, d = -1e9; for (const poly of f.c) for (const ring of poly) for (const [x, y] of ring) { a = Math.min(a, x); b = Math.min(b, y); c = Math.max(c, x); d = Math.max(d, y); } f.bb = [a, b, c, d]; }
 }
 // view: { lon, lat, span (degrees of longitude across the screen) }, interpolated by caller.
@@ -292,16 +298,19 @@ export function mapInsert(ctx, t, o = {}) {
   for (const pass of [0, 1]) {
     for (const f of WORLD) {
       // cull by bounding box (never by vertices: a big country can cover the view with none of its points on screen)
-      const [ax, ay] = P([f.bb[0], f.bb[3]]), [bx, by] = P([f.bb[2], f.bb[1]]);
+      // draw each country at whichever 360-degree copies are on screen (unwrapped Russia also shows west of Alaska)
+      for (const off of [-360, 0, 360]) {
+      const [ax, ay] = P([f.bb[0] + off, f.bb[3]]), [bx, by] = P([f.bb[2] + off, f.bb[1]]);
       if (bx < -200 || ax > W + 200 || by < -200 || ay > H + 200) continue;
       ctx.beginPath();
       for (const poly of f.c) for (const ring of poly) {
-        ring.forEach((pt, i) => { const [x, y] = P(pt); if (i === 0) ctx.moveTo(x + (pass ? 0 : 6), y + (pass ? 0 : 8)); else ctx.lineTo(x + (pass ? 0 : 6), y + (pass ? 0 : 8)); }); ctx.closePath();
+        ring.forEach((pt, i) => { const [x, y] = P([pt[0] + off, pt[1]]); if (i === 0) ctx.moveTo(x + (pass ? 0 : 6), y + (pass ? 0 : 8)); else ctx.lineTo(x + (pass ? 0 : 6), y + (pass ? 0 : 8)); }); ctx.closePath();
       }
       if (!pass) { ctx.fillStyle = 'rgba(30,50,55,.35)'; ctx.fill(); continue; }
       const hk = hl[f.n]; ctx.fillStyle = hk ? hk : (o.dim && o.dim !== f.n ? '#d9cdb0' : '#e3d6b6');
       if (o.dimAll && !hk) ctx.fillStyle = '#c9bea4';
       ctx.fill(); ctx.strokeStyle = 'rgba(60,50,40,.55)'; ctx.lineWidth = 1.6; ctx.stroke();
+      }
     }
   }
   // coast ink
