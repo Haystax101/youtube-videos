@@ -1,6 +1,8 @@
 """Subtitles (.srt) from an episode's timeline.json word timings: python3 tools/make_srt.py EP OUT.srt"""
 import json, re, sys
-FIX = [(r'\b((?:[A-Z] ){1,4}[A-Z])(?=s?\b)', lambda m: m.group(1).replace(' ', '')), (r'\bAlpha Bay\b', 'AlphaBay'),
+FIX = [(r'\b((?:[A-Z] ){1,4}[A-Z])(?=s?\b)', lambda m: m.group(1).replace(' ', '')), (r'\bAlpha Bay\b', 'AlphaBay'), (r'\bWanna Cry\b', 'WannaCry'), (r'\bNot Petya\b', 'NotPetya'), (r'\bMursk\b', 'Maersk'),
+       (r'\bIlfracoom\b', 'Ilfracombe'), (r'\bHyuk\b', 'Hyok'), (r'\bdee doss\b', 'DDoS'), (r'\bME Doc\b', 'M.E.Doc'), (r'\bMalware Tech\b', 'MalwareTech'),
+       (r'\bEternal Blue\b', 'EternalBlue'),
        (r'\btwenty (ten|eleven|twelve|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen|twenty)\b', lambda m: str(2000 + ['ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'].index(m.group(1)) + 10))]
 def clean(t):
     for a, b in FIX: t = re.sub(a, b, t)
@@ -15,7 +17,7 @@ for i, w in enumerate(words):
     nxt = words[i + 1] if i + 1 < len(words) else None
     end = (nxt is None or len(text) > 60 or w['w'][-1] in '.?!' or (w['w'][-1] in ',;:' and len(text) > 30)
            or (nxt and nxt['s'] - w['e'] > 0.6))
-    if end and nxt and w['w'].lower() in ('twenty', 'the', 'a', 'of') and len(text) < 75: end = False
+    if end and nxt and w['w'].lower() in ('twenty', 'the', 'a', 'of', 'not', 'wanna', 'eternal') and len(text) < 75: end = False
     if end: cues.append(cur); cur = []
 out = []
 for n, c in enumerate(cues, 1):
