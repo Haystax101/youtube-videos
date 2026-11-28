@@ -1,0 +1,65 @@
+{
+ "video": "episodes/018-bee-sting-nose/final.mp4",
+ "duration": 31.0,
+ "result": "PASS",
+ "checks": [
+  {
+   "check": "black",
+   "status": "PASS",
+   "detail": "no dark patches or black tiles"
+  },
+  {
+   "check": "freeze",
+   "status": "PASS",
+   "detail": "picture keeps moving"
+  },
+  {
+   "check": "loudness",
+   "status": "PASS",
+   "detail": "-14.9 LUFS, true peak -4.3 dBTP (want -14 +/- 1.5, <= -1)"
+  },
+  {
+   "check": "clipping",
+   "status": "PASS",
+   "detail": "AUDIO OK"
+  },
+  {
+   "check": "hiss",
+   "status": "PASS",
+   "detail": "no broadband static"
+  },
+  {
+   "check": "silence",
+   "status": "PASS",
+   "detail": "no dead air"
+  },
+  {
+   "check": "balance",
+   "status": "PASS",
+   "detail": "narration -18.5 LUFS, music+SFX -27.0 LUFS: voice 8.5 LU on top (want >= 8)"
+  },
+  {
+   "check": "flicker",
+   "status": "WARN",
+   "detail": "2 one-frame pop(s), worst at 2.10s, 17.17s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
+  },
+  {
+   "check": "vanish",
+   "status": "PASS",
+   "detail": "nothing blinks out for a frame"
+  },
+  {
+   "check": "length",
+   "status": "PASS",
+   "detail": "31.0 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
+  },
+  {
+   "check": "overlap",
+   "status": "PASS",
+   "detail": "0 on-screen overlap(s)"
+  }
+ ],
+ "contact_sheet": "episodes/018-bee-sting-nose/qa/contact.jpg",
+ "review": null,
+ "review_mtime": 1795866642.64979
+}
