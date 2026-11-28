@@ -1,2 +1,2 @@
 episodes/018-bee-sting-nose
-# v2 pinned kokoro
+# v3 install order

@@ -129,7 +129,7 @@ export function makeBighead(THREE, spec = {}) {
   const root = new THREE.Group(), hips = new THREE.Group(); root.add(hips);
   const R = 0.32, add = (m, x, y, z, p = hips) => { m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; p.add(m); return m; };
   const clothM = toon(THREE, '#ffffff', { map: clothTex(THREE, spec) });
-  const legM = toon(THREE, spec.trousers || spec.cloth), shoeM = toon(THREE, spec.shoe), skinM = toon(THREE, new THREE.Color(spec.limb).multiplyScalar(0.25), { emissive: spec.limb, emissiveIntensity: 0.8 }), armM = toon(THREE, spec.sleeve || spec.cloth);
+  const legM = toon(THREE, spec.trousers || spec.cloth), shoeM = toon(THREE, spec.shoe), skinM = toon(THREE, new THREE.Color(spec.limb).multiplyScalar(0.3), { emissive: spec.limb, emissiveIntensity: 0.52 }), armM = toon(THREE, spec.sleeve || spec.cloth);
   // body: a peg / bell lathe
   const prof = []; for (let i = 0; i <= 12; i++) { const v = i / 12; prof.push(new THREE.Vector2(0.115 + 0.065 * Math.sin(v * Math.PI * 0.85) + (1 - v) * 0.045, 0.2 + v * 0.46)); } prof.push(new THREE.Vector2(0.001, 0.66)); prof.unshift(new THREE.Vector2(0.001, 0.2));
   const body = add(new THREE.Mesh(new THREE.LatheGeometry(prof, 28), clothM), 0, 0, 0); body.rotation.y = Math.PI;   // texture seam at the back
