@@ -1,0 +1,601 @@
+{
+ "duration": 30.166,
+ "beats": [
+  {
+   "i": 0,
+   "start": 0.15,
+   "end": 2.417,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Doctors",
+     "s": 0.15,
+     "e": 0.524,
+     "speaker": "narrator"
+    },
+    {
+     "w": "saved",
+     "s": 0.524,
+     "e": 0.885,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 0.885,
+     "e": 1.068,
+     "speaker": "narrator"
+    },
+    {
+     "w": "life",
+     "s": 1.068,
+     "e": 1.258,
+     "speaker": "narrator"
+    },
+    {
+     "w": "by",
+     "s": 1.258,
+     "e": 1.436,
+     "speaker": "narrator"
+    },
+    {
+     "w": "pouring",
+     "s": 1.436,
+     "e": 1.809,
+     "speaker": "narrator"
+    },
+    {
+     "w": "in",
+     "s": 1.809,
+     "e": 1.987,
+     "speaker": "narrator"
+    },
+    {
+     "w": "beer.",
+     "s": 1.987,
+     "e": 2.177,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 1,
+   "start": 2.417,
+   "end": 7.618,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Vietnam,",
+     "s": 2.417,
+     "e": 2.946,
+     "speaker": "narrator"
+    },
+    {
+     "w": "twenty",
+     "s": 2.946,
+     "e": 3.357,
+     "speaker": "narrator"
+    },
+    {
+     "w": "eighteen.",
+     "s": 3.357,
+     "e": 3.782,
+     "speaker": "narrator"
+    },
+    {
+     "w": "At",
+     "s": 3.922,
+     "e": 4.107,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 4.107,
+     "e": 4.286,
+     "speaker": "narrator"
+    },
+    {
+     "w": "party,",
+     "s": 4.286,
+     "e": 4.767,
+     "speaker": "narrator"
+    },
+    {
+     "w": "he",
+     "s": 4.767,
+     "e": 4.953,
+     "speaker": "narrator"
+    },
+    {
+     "w": "drinks",
+     "s": 4.953,
+     "e": 5.164,
+     "speaker": "narrator"
+    },
+    {
+     "w": "homemade",
+     "s": 5.164,
+     "e": 5.733,
+     "speaker": "narrator"
+    },
+    {
+     "w": "rice",
+     "s": 5.733,
+     "e": 5.931,
+     "speaker": "narrator"
+    },
+    {
+     "w": "wine,",
+     "s": 5.931,
+     "e": 6.233,
+     "speaker": "narrator"
+    },
+    {
+     "w": "laced",
+     "s": 6.233,
+     "e": 6.61,
+     "speaker": "narrator"
+    },
+    {
+     "w": "with",
+     "s": 6.61,
+     "e": 6.809,
+     "speaker": "narrator"
+    },
+    {
+     "w": "methanol.",
+     "s": 6.809,
+     "e": 7.378,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 2,
+   "start": 7.618,
+   "end": 13.085,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "In",
+     "s": 7.618,
+     "e": 7.808,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hospital,",
+     "s": 7.808,
+     "e": 8.496,
+     "speaker": "narrator"
+    },
+    {
+     "w": "his",
+     "s": 8.496,
+     "e": 8.692,
+     "speaker": "narrator"
+    },
+    {
+     "w": "liver",
+     "s": 8.692,
+     "e": 9.079,
+     "speaker": "narrator"
+    },
+    {
+     "w": "turns",
+     "s": 9.079,
+     "e": 9.288,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 9.288,
+     "e": 9.485,
+     "speaker": "narrator"
+    },
+    {
+     "w": "methanol",
+     "s": 9.485,
+     "e": 10.067,
+     "speaker": "narrator"
+    },
+    {
+     "w": "into",
+     "s": 10.067,
+     "e": 10.446,
+     "speaker": "narrator"
+    },
+    {
+     "w": "formic",
+     "s": 10.446,
+     "e": 10.839,
+     "speaker": "narrator"
+    },
+    {
+     "w": "acid,",
+     "s": 10.839,
+     "e": 11.325,
+     "speaker": "narrator"
+    },
+    {
+     "w": "which",
+     "s": 11.325,
+     "e": 11.534,
+     "speaker": "narrator"
+    },
+    {
+     "w": "can",
+     "s": 11.534,
+     "e": 11.73,
+     "speaker": "narrator"
+    },
+    {
+     "w": "blind",
+     "s": 11.73,
+     "e": 11.94,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you,",
+     "s": 11.94,
+     "e": 12.242,
+     "speaker": "narrator"
+    },
+    {
+     "w": "then",
+     "s": 12.242,
+     "e": 12.445,
+     "speaker": "narrator"
+    },
+    {
+     "w": "kill",
+     "s": 12.445,
+     "e": 12.648,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you.",
+     "s": 12.648,
+     "e": 12.845,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 3,
+   "start": 13.085,
+   "end": 18.073,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "But",
+     "s": 13.085,
+     "e": 13.254,
+     "speaker": "narrator"
+    },
+    {
+     "w": "livers",
+     "s": 13.254,
+     "e": 13.594,
+     "speaker": "narrator"
+    },
+    {
+     "w": "prefer",
+     "s": 13.594,
+     "e": 13.933,
+     "speaker": "narrator"
+    },
+    {
+     "w": "normal",
+     "s": 13.933,
+     "e": 14.272,
+     "speaker": "narrator"
+    },
+    {
+     "w": "alcohol.",
+     "s": 14.272,
+     "e": 14.77,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Keep",
+     "s": 14.91,
+     "e": 15.104,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 15.104,
+     "e": 15.291,
+     "speaker": "narrator"
+    },
+    {
+     "w": "liver",
+     "s": 15.291,
+     "e": 15.659,
+     "speaker": "narrator"
+    },
+    {
+     "w": "busy",
+     "s": 15.659,
+     "e": 16.021,
+     "speaker": "narrator"
+    },
+    {
+     "w": "with",
+     "s": 16.021,
+     "e": 16.215,
+     "speaker": "narrator"
+    },
+    {
+     "w": "that,",
+     "s": 16.215,
+     "e": 16.509,
+     "speaker": "narrator"
+    },
+    {
+     "w": "and",
+     "s": 16.509,
+     "e": 16.696,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 16.696,
+     "e": 16.884,
+     "speaker": "narrator"
+    },
+    {
+     "w": "methanol",
+     "s": 16.884,
+     "e": 17.439,
+     "speaker": "narrator"
+    },
+    {
+     "w": "just",
+     "s": 17.439,
+     "e": 17.633,
+     "speaker": "narrator"
+    },
+    {
+     "w": "waits.",
+     "s": 17.633,
+     "e": 17.833,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 4,
+   "start": 18.073,
+   "end": 22.487,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Get",
+     "s": 18.073,
+     "e": 18.307,
+     "speaker": "doctor"
+    },
+    {
+     "w": "me",
+     "s": 18.307,
+     "e": 18.534,
+     "speaker": "doctor"
+    },
+    {
+     "w": "beer.",
+     "s": 18.534,
+     "e": 18.777,
+     "speaker": "doctor"
+    },
+    {
+     "w": "Lots",
+     "s": 18.917,
+     "e": 19.177,
+     "speaker": "doctor"
+    },
+    {
+     "w": "of",
+     "s": 19.177,
+     "e": 19.42,
+     "speaker": "doctor"
+    },
+    {
+     "w": "it.",
+     "s": 19.42,
+     "e": 19.663,
+     "speaker": "doctor"
+    },
+    {
+     "w": "Down",
+     "s": 19.803,
+     "e": 19.969,
+     "speaker": "narrator"
+    },
+    {
+     "w": "a",
+     "s": 19.969,
+     "e": 20.119,
+     "speaker": "narrator"
+    },
+    {
+     "w": "tube,",
+     "s": 20.119,
+     "e": 20.371,
+     "speaker": "narrator"
+    },
+    {
+     "w": "one",
+     "s": 20.371,
+     "e": 20.532,
+     "speaker": "narrator"
+    },
+    {
+     "w": "can",
+     "s": 20.532,
+     "e": 20.692,
+     "speaker": "narrator"
+    },
+    {
+     "w": "every",
+     "s": 20.692,
+     "e": 21.152,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hour.",
+     "s": 21.152,
+     "e": 21.318,
+     "speaker": "narrator"
+    },
+    {
+     "w": "Fifteen",
+     "s": 21.458,
+     "e": 21.981,
+     "speaker": "narrator"
+    },
+    {
+     "w": "cans.",
+     "s": 21.981,
+     "e": 22.247,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 5,
+   "start": 22.487,
+   "end": 27.454,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Meanwhile,",
+     "s": 22.487,
+     "e": 23.043,
+     "speaker": "narrator"
+    },
+    {
+     "w": "dialysis",
+     "s": 23.043,
+     "e": 23.667,
+     "speaker": "narrator"
+    },
+    {
+     "w": "washes",
+     "s": 23.667,
+     "e": 24.088,
+     "speaker": "narrator"
+    },
+    {
+     "w": "the",
+     "s": 24.088,
+     "e": 24.298,
+     "speaker": "narrator"
+    },
+    {
+     "w": "methanol",
+     "s": 24.298,
+     "e": 24.922,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out.",
+     "s": 24.922,
+     "e": 25.133,
+     "speaker": "narrator"
+    },
+    {
+     "w": "He",
+     "s": 25.273,
+     "e": 25.413,
+     "speaker": "narrator"
+    },
+    {
+     "w": "walks",
+     "s": 25.413,
+     "e": 25.568,
+     "speaker": "narrator"
+    },
+    {
+     "w": "out",
+     "s": 25.568,
+     "e": 25.713,
+     "speaker": "narrator"
+    },
+    {
+     "w": "of",
+     "s": 25.713,
+     "e": 25.853,
+     "speaker": "narrator"
+    },
+    {
+     "w": "hospital,",
+     "s": 25.853,
+     "e": 26.362,
+     "speaker": "narrator"
+    },
+    {
+     "w": "fully",
+     "s": 26.362,
+     "e": 26.648,
+     "speaker": "narrator"
+    },
+    {
+     "w": "recovered.",
+     "s": 26.648,
+     "e": 27.214,
+     "speaker": "narrator"
+    }
+   ]
+  },
+  {
+   "i": 6,
+   "start": 27.454,
+   "end": 29.366,
+   "deathAt": null,
+   "words": [
+    {
+     "w": "Comment",
+     "s": 27.454,
+     "e": 27.822,
+     "speaker": "narrator"
+    },
+    {
+     "w": "what",
+     "s": 27.822,
+     "e": 28.009,
+     "speaker": "narrator"
+    },
+    {
+     "w": "you",
+     "s": 28.009,
+     "e": 28.19,
+     "speaker": "narrator"
+    },
+    {
+     "w": "want",
+     "s": 28.19,
+     "e": 28.377,
+     "speaker": "narrator"
+    },
+    {
+     "w": "to",
+     "s": 28.377,
+     "e": 28.552,
+     "speaker": "narrator"
+    },
+    {
+     "w": "know",
+     "s": 28.552,
+     "e": 28.739,
+     "speaker": "narrator"
+    },
+    {
+     "w": "next.",
+     "s": 28.739,
+     "e": 28.926,
+     "speaker": "narrator"
+    }
+   ]
+  }
+ ]
+}

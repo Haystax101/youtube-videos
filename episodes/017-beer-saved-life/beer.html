@@ -1,0 +1,519 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Poppins"; font-weight: 800; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2"); }
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden}
+canvas{position:absolute;inset:0}
+#cap{position:absolute;left:0;right:0;top:1180px;text-align:center}
+#cap span{display:inline-block;font:800 104px Poppins;color:#fff;-webkit-text-stroke:16px #17121c;paint-order:stroke fill;transform-origin:50% 60%;text-shadow:0 8px 0 rgba(0,0,0,.3)}
+#lab{position:absolute;left:60px;right:60px;top:250px;text-align:center;font:800 88px/1.08 Poppins;color:#fff;-webkit-text-stroke:14px #17121c;paint-order:stroke fill;text-shadow:0 8px 0 rgba(0,0,0,.3);transform-origin:50% 50%}
+#lab b{color:#ff3b30}
+#chip{position:absolute;left:0;right:0;top:300px;text-align:center}
+#chip span{display:inline-block;font:800 64px Poppins;color:#17121c;background:#ffd23a;padding:10px 34px;border-radius:22px;border:7px solid #17121c;box-shadow:0 8px 0 rgba(0,0,0,.3);transform-origin:50% 50%}
+</style>
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }</script>
+</head><body><div id="stage"><canvas id="gl" width="1080" height="1920"></canvas><div id="lab"></div><div id="chip"><span></span></div><div id="cap"><span></span></div></div>
+<script type="module">
+// "Saved by beer": Quang Tri, Vietnam, December 2018: a man poisoned by methanol-laced rice wine is kept alive with
+// fifteen cans of beer down a tube while dialysis cleans his blood. Smol look (prototypes/smol-look).
+// Sets: the courtyard party (origin), inside the liver (x = -80), the hospital ward (z = 80), the hospital front (x = 80).
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { makeBighead, toon, talkFlap } from '../../prototypes/smol-look/bighead.js';
+import { makeLook } from '../../prototypes/smol-look/look.js';
+const TL = await (await fetch('./timeline.json')).json();
+const SCRIPT = await (await fetch('./script.json')).json();
+const W = 1080, H = 1920, DUR = TL.duration + 0.5;
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const ease = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * (3 - 2 * k); };
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const WORDS = TL.beats.flatMap((b, bi) => b.words.map(w => ({ ...w, bi })));
+const clean = w => w.replace(/[^A-Za-z0-9'-]/g, '');
+const WT = (bi, word, n = 1) => { let c = 0; for (const w of WORDS) if (w.bi === bi && clean(w.w).toLowerCase() === word.toLowerCase() && ++c === n) return w.s; throw new Error(`no word ${word} in beat ${bi}`); };
+
+// ---------- renderer ----------
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(50, W / H, 0.05, 900);
+const L = makeLook(THREE, { canvas: document.getElementById('gl'), W, H, scene, cam, addons: { EffectComposer, RenderPass, ShaderPass, UnrealBloomPass }, exposure: 1.05, sat: 1.1, bloom: 0.3 });
+const renderer = L.renderer;
+const hemi = new THREE.HemisphereLight('#bcd0ff', '#4a3a30', 0.6); scene.add(hemi);
+const key = new THREE.DirectionalLight('#9fb6ff', 1.2); key.castShadow = true; key.shadow.mapSize.set(4096, 4096); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.03;
+{ const sc = key.shadow.camera; sc.left = sc.bottom = -14; sc.right = sc.top = 14; sc.near = 1; sc.far = 120; } scene.add(key, key.target);
+const ENV = {
+  party: { bg: '#1a2550', fog: ['#22305e', 18, 70], hemi: ['#ffe8cc', '#7a5a58', 1.6], key: ['#cfd8ff', 1.3], exp: 1.12, set: 'party' },
+  liver: { bg: '#6a1e30', fog: ['#7a2638', 14, 60], hemi: ['#ffe4e8', '#a04a58', 2.2], key: ['#fff0e8', 2.0], exp: 1.0, set: 'liver' },
+  hosp: { bg: '#9fd0f0', fog: ['#c8e4f2', 30, 120], hemi: ['#eaf6ff', '#b8aa90', 1.6], key: ['#fff2dc', 2.1], exp: 0.98, set: 'hosp' },
+  out: { bg: '#7cc6f2', fog: ['#bfe4f8', 40, 160], hemi: ['#ffffff', '#b0a080', 1.6], key: ['#fff4dc', 2.6], exp: 1.0, set: 'out' },
+};
+const KEY_DIR = { party: V(-8, 18, 12), liver: V(-6, 12, 14), hosp: V(-14, 16, 8), out: V(-12, 20, 14) };
+scene.fog = new THREE.Fog('#151a30', 20, 60);
+const LZ = V(0, 0, 1), LX = V(1, 0, 0), LY = V(0, 1, 0);
+function snapFocus(f, dir, half) { LZ.copy(dir).normalize(); LX.set(0, 1, 0).cross(LZ).normalize(); LY.copy(LZ).cross(LX); const tx = 2 * half / 4096;
+  const a = Math.round(f.dot(LX) / tx) * tx, b = Math.round(f.dot(LY) / tx) * tx, c = f.dot(LZ); return f.clone().copy(LX).multiplyScalar(a).addScaledVector(LY, b).addScaledVector(LZ, c); }
+
+// ---------- textures + helpers ----------
+function tex(draw, w = 256, h = 256, rx = 1, ry = rx) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); return t; }
+const std = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, ...o });
+function add(m, x = 0, y = 0, z = 0, p = scene) { m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; p.add(m); return m; }
+const box = (w, h, d, mat, x, y, z, p, r = 0.02) => add(new THREE.Mesh(r ? new RoundedBoxGeometry(w, h, d, 2, Math.min(r, w / 2.1, h / 2.1, d / 2.1)) : new THREE.BoxGeometry(w, h, d), mat), x, y, z, p);
+const cyl = (r1, r2, h, mat, x, y, z, p, seg = 20) => add(new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, h, seg), mat), x, y, z, p);
+const plane = (w, h, mat, x, y, z, p, ry = 0, rx = 0) => { const m = add(new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat), x, y, z, p); m.rotation.set(rx, ry, 0); return m; };
+const woodTex = (base, dark, n = 6, rx = 1, ry = 1) => tex((x, w, h) => { x.fillStyle = base; x.fillRect(0, 0, w, h); const r = rng(base.length * 7 + n); for (let i = 0; i < n; i++) { const y = i * h / n; x.fillStyle = dark; x.fillRect(0, y, w, 3); for (let k = 0; k < 14; k++) { x.strokeStyle = `rgba(60,35,20,${0.06 + r() * 0.08})`; x.lineWidth = 1 + r() * 2; x.beginPath(); const yy = y + 4 + r() * (h / n - 8); x.moveTo(0, yy); x.bezierCurveTo(w * 0.3, yy + (r() - 0.5) * 8, w * 0.7, yy + (r() - 0.5) * 8, w, yy + (r() - 0.5) * 6); x.stroke(); } } }, 256, 256, rx, ry);
+const T_BRICK = tex((x, w, h) => { x.fillStyle = '#e2cbb4'; x.fillRect(0, 0, w, h); const r = rng(9); for (let row = 0; row < 16; row++) for (let c = -1; c < 8; c++) { const bx = c * 32 + (row % 2 ? 16 : 0), by = row * 16; x.fillStyle = ['#b04a30', '#bd583c', '#a2432c', '#c76246', '#99402a'][Math.floor(r() * 5)]; x.fillRect(bx + 1.5, by + 1.5, 29, 13); x.fillStyle = 'rgba(255,220,200,.14)'; x.fillRect(bx + 2, by + 2, 27, 3); } }, 256, 256, 6, 3);
+const T_COBBLE = tex((x, w, h) => { x.fillStyle = '#5a5866'; x.fillRect(0, 0, w, h); const r = rng(14); for (let row = 0; row < 12; row++) for (let c = -1; c < 13; c++) { const bx = c * 22 + (row % 2 ? 11 : 0) + r() * 2, by = row * 22 + r() * 2; x.fillStyle = ['#7a7684', '#8a8494', '#6e6a7a', '#857f8a', '#938c98'][Math.floor(r() * 5)]; x.beginPath(); x.roundRect(bx + 2, by + 2, 18, 18, 6); x.fill(); x.fillStyle = 'rgba(255,255,255,.12)'; x.beginPath(); x.roundRect(bx + 4, by + 3, 12, 5, 3); x.fill(); } }, 264, 264, 14, 8);
+const T_PAVE = tex((x, w, h) => { x.fillStyle = '#b8ac9c'; x.fillRect(0, 0, w, h); x.strokeStyle = '#8a7e70'; x.lineWidth = 4; for (let i = 0; i <= w; i += 64) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i, h); x.stroke(); } for (let j = 0; j <= h; j += 64) { x.beginPath(); x.moveTo(0, j); x.lineTo(w, j); x.stroke(); } }, 256, 256, 20, 2);
+const T_WOOL = tex((x, w, h) => { x.fillStyle = '#4a5c94'; x.fillRect(0, 0, w, h); for (let y = 0; y < h; y += 4) for (let i = 0; i < w; i += 4) { x.fillStyle = (i / 4 + y / 4) % 2 ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.08)'; x.fillRect(i, y, 4, 2); } const r = rng(31); for (let i = 0; i < 500; i++) { x.fillStyle = `rgba(150,170,230,${0.03 + r() * 0.04})`; x.fillRect(r() * w, r() * h, 6, 1); } }, 256, 256, 6, 6);
+const T_PAPER = tex((x, w, h) => { x.fillStyle = '#fbf5e6'; x.fillRect(0, 0, w, h); x.fillStyle = '#1e2240'; x.font = 'bold 30px Georgia'; x.textAlign = 'center'; x.fillText('PROGRESSIVE', w / 2, 52); x.font = 'bold 22px Georgia'; x.fillText('CAUSE', w / 2, 80);
+  const r = rng(44); for (let y = 112; y < h - 20; y += 17) { let xx = 28; while (xx < w - 40) { const l = 12 + r() * 46; x.fillStyle = 'rgba(40,40,60,.62)'; x.fillRect(xx, y, Math.min(l, w - 28 - xx), 5); xx += l + 8; } } }, 256, 340);
+const T_FLAG = tex((x, w, h) => { for (let i = 0; i < 13; i++) { x.fillStyle = i % 2 ? '#f6f2ea' : '#c8202e'; x.fillRect(0, i * h / 13, w, h / 13 + 1); } x.fillStyle = '#20306e'; x.fillRect(0, 0, w * 0.42, h * 7 / 13); x.fillStyle = '#ffffff';
+  for (let r = 0; r < 6; r++) for (let c = 0; c < 8; c++) { const cx = 16 + c * (w * 0.42 - 32) / 7, cy = 14 + r * (h * 7 / 13 - 28) / 5; x.beginPath(); for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? 3 : 7.5; x.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); } x.fill(); } }, 512, 270);
+const T_TILE = tex((x, w, h) => { for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { x.fillStyle = (i + j) % 2 ? '#e8ece6' : '#7fa6a0'; x.fillRect(i * 64, j * 64, 64, 64); } }, 256, 256, 4, 4);
+const T_XRAY = tex((x, w, h) => { const g = x.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, w * 0.7); g.addColorStop(0, '#2b4e72'); g.addColorStop(1, '#0c1830'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+  x.strokeStyle = 'rgba(230,244,255,.85)'; x.lineCap = 'round'; x.lineWidth = 26; x.beginPath(); x.moveTo(w / 2, 30); x.lineTo(w / 2, h - 20); x.stroke();
+  x.lineWidth = 13; for (let i = 0; i < 7; i++) { const y = 92 + i * 52; for (const d of [-1, 1]) { x.beginPath(); x.moveTo(w / 2 + d * 16, y); x.bezierCurveTo(w / 2 + d * 130, y - 34, w / 2 + d * 220, y + 10, w / 2 + d * 200, y + 70); x.stroke(); } }
+  x.lineWidth = 15; for (const d of [-1, 1]) { x.beginPath(); x.moveTo(w / 2 + d * 20, 64); x.quadraticCurveTo(w / 2 + d * 120, 40, w / 2 + d * 210, 58); x.stroke(); }
+  x.fillStyle = '#ffffff'; x.shadowColor = '#ffffff'; x.shadowBlur = 18; x.beginPath(); x.ellipse(w / 2 - 128, 214, 13, 20, 0.5, 0, 7); x.fill(); x.shadowBlur = 0;
+  x.strokeStyle = '#ff5a4a'; x.lineWidth = 6; x.beginPath(); x.arc(w / 2 - 128, 214, 40, 0, 7); x.stroke(); }, 512, 512);
+const T_SIGN = tex((x, w, h) => { x.fillStyle = '#1c2a4e'; x.fillRect(0, 0, w, h); x.strokeStyle = '#e8c060'; x.lineWidth = 8; x.strokeRect(8, 8, w - 16, h - 16); x.fillStyle = '#ffe9a8'; x.font = 'bold 64px Georgia'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('GILPATRICK HOTEL', w / 2, h / 2 + 4); }, 768, 128);
+const T_BANNER = tex((x, w, h) => { x.fillStyle = '#f6efe0'; x.fillRect(0, 0, w, h); x.fillStyle = '#c8202e'; x.fillRect(0, 0, w, 16); x.fillRect(0, h - 16, w, 16); x.fillStyle = '#20306e'; x.font = 'bold 84px Georgia'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('ROOSEVELT  1912', w / 2, h / 2 + 4); }, 1024, 160);
+const T_WIN = tex((x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#ffe2a0'); g.addColorStop(1, '#ffb45a'); x.fillStyle = g; x.fillRect(0, 0, w, h); x.fillStyle = 'rgba(120,60,30,.35)'; x.fillRect(0, 0, w * 0.18, h); x.fillRect(w * 0.82, 0, w * 0.18, h); }, 64, 96);
+const T_CURTAIN = tex((x, w, h) => { const g = x.createLinearGradient(0, 0, w, 0); for (let i = 0; i <= 8; i++) g.addColorStop(i / 8, i % 2 ? '#a3162a' : '#d22a3c'); x.fillStyle = g; x.fillRect(0, 0, w, h); }, 256, 64, 3, 1);
+const M = { brick: std('#ffffff', { map: T_BRICK }), cobble: std('#ffffff', { map: T_COBBLE, roughness: 0.7 }), pave: std('#ffffff', { map: T_PAVE }), wool: std('#ffffff', { map: T_WOOL, roughness: 1 }),
+  stone: std('#e9dcc6'), trim: std('#f4ead8'), dark: std('#2a2220'), iron: std('#2c2e36', { roughness: 0.5, metalness: 0.4 }), brass: std('#d8a640', { roughness: 0.3, metalness: 0.7 }),
+  win: new THREE.MeshStandardMaterial({ map: T_WIN, emissive: '#ffc070', emissiveMap: T_WIN, emissiveIntensity: 1.1 }), lamp: new THREE.MeshBasicMaterial({ color: '#ffe0a0' }),
+  floor: std('#ffffff', { map: woodTex('#b5794a', '#7a4a2a', 8, 6, 6) }), stage: std('#ffffff', { map: woodTex('#c48a52', '#8a5a32', 8, 4, 4) }), gold: std('#e8b84a', { roughness: 0.35, metalness: 0.6 }),
+  red: std('#c8202e'), navy: std('#20306e'), white: std('#f6f2ea'), cream: std('#f2e4c8'), mint: std('#bfe6d6'), tile: std('#ffffff', { map: T_TILE, roughness: 0.4 }), cushion: std('#b8243a', { roughness: 0.9 }) };
+const lamps = [];
+function lamp(x, y, z, color = '#ffb85a', I = 6, dist = 9, p = scene, set = 'street', bulb = true) { const l = new THREE.PointLight(color, I, dist, 1.6); l.position.set(x, y, z); l.userData.set = set; p.add(l); lamps.push(l);
+  if (bulb) { const g = add(new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 10), M.lamp), x, y, z, p); g.castShadow = false; g.userData.noCheck = true; } return l; }
+// a bunting fan (half disc in red, white and blue rings) facing +z
+function fan(r, p, x, y, z, ry = 0) { const g = new THREE.Group(); g.position.set(x, y, z); g.rotation.y = ry; p.add(g);
+  [[r, M.navy], [r * 0.72, M.white], [r * 0.46, M.red]].forEach(([rr, m], i) => { const d = add(new THREE.Mesh(new THREE.CircleGeometry(rr, 28, Math.PI, Math.PI), m), 0, 0, 0.01 + i * 0.012, g); d.castShadow = false; });
+  for (let k = 1; k < 8; k++) { const a = Math.PI + k * Math.PI / 8, rb = add(new THREE.Mesh(new THREE.BoxGeometry(0.02, r, 0.01), M.white), Math.cos(a) * r / 2, Math.sin(a) * r / 2, 0.05, g); rb.rotation.z = a - Math.PI / 2; rb.castShadow = false; }
+  return g; }
+// a building front (facing +z in its group): windows, pilasters, cornice, optional awning shop front
+function facade(p, x, z, ry, w, h, col, o = {}) { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; p.add(g);
+  const wm = o.brick ? M.brick : std(col); plane(w, h, wm, 0, h / 2, 0, g);
+  box(w + 0.3, 0.35, 0.4, M.trim, 0, h - 0.1, 0.15, g, 0.03); box(w + 0.1, 0.18, 0.25, M.trim, 0, h - 0.5, 0.1, g, 0.02);
+  const nx = Math.max(2, Math.round(w / 1.6)), floors = Math.max(1, Math.floor((h - 2.6) / 2));
+  for (let f = 0; f < floors; f++) for (let i = 0; i < nx; i++) { const wx = -w / 2 + (i + 0.5) * w / nx, wy = 3.4 + f * 2;
+    const lit = (i * 7 + f * 3 + Math.round(x)) % 4 !== 0;
+    plane(0.62, 1.05, lit ? M.win : std('#2a3a66', { roughness: 0.3 }), wx, wy, 0.02, g).userData.noCheck = true;
+    box(0.78, 0.1, 0.16, M.trim, wx, wy - 0.58, 0.08, g, 0.01); box(0.8, 0.14, 0.12, M.trim, wx, wy + 0.6, 0.06, g, 0.01); box(0.06, 1.05, 0.06, M.trim, wx, wy, 0.04, g, 0); }
+  for (let i = 0; i <= nx; i++) box(0.22, h - 0.6, 0.14, M.trim, -w / 2 + i * w / nx, (h - 0.6) / 2, 0.07, g, 0.01);
+  if (o.shop) { box(w - 0.4, 2.2, 0.08, std(o.shop), 0, 1.1, 0.04, g, 0.02); plane(w - 1.2, 1.4, M.win, 0, 1.2, 0.09, g).userData.noCheck = true;
+    const aw = add(new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, w - 0.4, 24, 1, true, 0, Math.PI / 2), std('#ffffff', { map: tex((x2, ww, hh) => { for (let k = 0; k < 8; k++) { x2.fillStyle = k % 2 ? '#f6f2ea' : o.awning || '#2a8a6a'; x2.fillRect(0, k * hh / 8, ww, hh / 8); } }, 64, 128), side: THREE.DoubleSide })), 0, 2.4, 0.2, g); aw.rotation.set(0, 0, Math.PI / 2); aw.rotation.order = 'ZYX'; aw.rotateX(Math.PI); }
+  return g; }
+
+// ---------- extra textures ----------
+const T_PLASTER = tex((x, w, h) => { x.fillStyle = '#f2c55a'; x.fillRect(0, 0, w, h); const r = rng(5); for (let i = 0; i < 260; i++) { x.fillStyle = `rgba(${r() < 0.5 ? '200,140,50' : '255,230,160'},${0.05 + r() * 0.08})`; x.beginPath(); x.ellipse(r() * w, r() * h, 4 + r() * 18, 3 + r() * 10, r() * 3, 0, 7); x.fill(); } }, 256, 256, 4, 2);
+const T_FLOORTILE = tex((x, w, h) => { for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { const X = i * 64, Y = j * 64; x.fillStyle = '#e8dcc6'; x.fillRect(X, Y, 64, 64); x.fillStyle = (i + j) % 2 ? '#c2502e' : '#2e7a8a'; x.beginPath(); x.moveTo(X + 32, Y + 6); x.lineTo(X + 58, Y + 32); x.lineTo(X + 32, Y + 58); x.lineTo(X + 6, Y + 32); x.fill();
+  x.fillStyle = '#f6ecd6'; x.beginPath(); x.arc(X + 32, Y + 32, 9, 0, 7); x.fill(); x.strokeStyle = '#b8a888'; x.lineWidth = 2; x.strokeRect(X + 1, Y + 1, 62, 62); } }, 256, 256, 6, 6);
+const T_CAN = tex((x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#1f7a4a'); g.addColorStop(1, '#14603a'); x.fillStyle = g; x.fillRect(0, 0, w, h); x.fillStyle = '#ffd23a'; x.fillRect(0, h * 0.3, w, h * 0.4); x.fillStyle = '#c8202e';
+  for (let k = 0; k < 2; k++) { x.font = 'bold 64px Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('BIA', w * (0.25 + k * 0.5), h * 0.5 + 3); } x.fillStyle = '#ffffff'; x.fillRect(0, h * 0.27, w, 6); x.fillRect(0, h * 0.71, w, 6); }, 512, 160);
+const T_CELLS = tex((x, w, h) => { x.fillStyle = '#c24a5c'; x.fillRect(0, 0, w, h); const r = rng(12); for (let i = 0; i < 70; i++) { const cx = r() * w, cy = r() * h, rr = 14 + r() * 26; x.fillStyle = `rgba(${r() < 0.5 ? '255,150,160' : '150,40,60'},.35)`; x.beginPath(); x.arc(cx, cy, rr, 0, 7); x.fill(); x.fillStyle = 'rgba(120,20,40,.4)'; x.beginPath(); x.arc(cx + 3, cy + 2, rr * 0.3, 0, 7); x.fill(); } }, 256, 256, 3, 2);
+const T_SIGNV = tex((x, w, h) => { x.fillStyle = '#ffffff'; x.fillRect(0, 0, w, h); x.fillStyle = '#1f5aa8'; x.font = 'bold 92px Arial'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('BỆNH VIỆN', w / 2 + 50, h / 2 + 4);
+  x.fillStyle = '#e8282e'; x.fillRect(70, h / 2 - 50, 34, 100); x.fillRect(37, h / 2 - 17, 100, 34); }, 1024, 160);
+const T_SCREEN = tex((x, w, h) => { x.fillStyle = '#0c1a24'; x.fillRect(0, 0, w, h); x.strokeStyle = '#4af08a'; x.lineWidth = 5; x.beginPath(); for (let i = 0; i <= w; i += 4) { const k = (i % 128) / 128; const y = h * 0.55 - (k > 0.4 && k < 0.46 ? 60 : k > 0.46 && k < 0.5 ? -30 : 0); i ? x.lineTo(i, y) : x.moveTo(i, y); } x.stroke();
+  x.fillStyle = '#4af08a'; x.font = 'bold 40px Arial'; x.fillText('72', 18, 46); x.fillStyle = '#5ac8ff'; x.fillText('98%', w - 100, 46); }, 256, 160);
+const T_EYE = tex((x, w, h) => { x.fillStyle = '#ffffff'; x.fillRect(0, 0, w, h); x.strokeStyle = 'rgba(220,80,90,.5)'; x.lineWidth = 3; const r = rng(3); for (let i = 0; i < 14; i++) { x.beginPath(); x.moveTo(r() * w, r() < 0.5 ? 0 : h); x.quadraticCurveTo(w / 2 + (r() - 0.5) * w * 0.6, h / 2 + (r() - 0.5) * h * 0.6, w / 2 + (r() - 0.5) * 120, h / 2 + (r() - 0.5) * 120); x.stroke(); }
+  const g = x.createRadialGradient(w / 2, h / 2, 10, w / 2, h / 2, 80); g.addColorStop(0, '#2a1a0e'); g.addColorStop(0.35, '#6a4020'); g.addColorStop(1, '#a8743a'); x.fillStyle = g; x.beginPath(); x.arc(w / 2, h / 2, 80, 0, 7); x.fill(); x.fillStyle = '#0c0808'; x.beginPath(); x.arc(w / 2, h / 2, 34, 0, 7); x.fill();
+  x.fillStyle = '#ffffff'; x.beginPath(); x.arc(w / 2 + 22, h / 2 - 22, 12, 0, 7); x.fill(); x.lineWidth = 6; x.strokeStyle = '#1d1416'; x.beginPath(); x.arc(w / 2, h / 2, 80, 0, 7); x.stroke(); }, 512, 512);
+const MB = { plaster: std('#ffffff', { map: T_PLASTER }), ftile: std('#ffffff', { map: T_FLOORTILE, roughness: 0.5 }), shutter: std('#2a8ac8', { roughness: 0.6 }), shutterD: std('#1f6a9e'), alu: std('#c8ccd4', { metalness: 0.6, roughness: 0.35 }),
+  red: std('#e8382e', { roughness: 0.45 }), blue: std('#2a7ae8', { roughness: 0.45 }), glass: std('#e8f4f0', { transparent: true, opacity: 0.45, roughness: 0.05 }), wine: std('#f4ecd0', { transparent: true, opacity: 0.75, roughness: 0.1 }),
+  can: std('#ffffff', { map: T_CAN, metalness: 0.35, roughness: 0.3 }), canTop: std('#d8dce2', { metalness: 0.8, roughness: 0.25 }), beer: new THREE.MeshStandardMaterial({ color: '#ffb820', emissive: '#d88a10', emissiveIntensity: 0.35, roughness: 0.15 }),
+  leaf: std('#3aa858'), leafD: std('#2a8040'), pot: std('#c4683a'), flesh: std('#ffffff', { map: T_CELLS, roughness: 0.7 }), liver: toon(THREE, '#a8324a'), liverL: toon(THREE, '#c8485e'),
+  enz: toon(THREE, '#ff9a2a'), enzD: toon(THREE, '#e0701a'), meth: toon(THREE, '#3a8cff'), methL: toon(THREE, '#9ac8ff'), eth: toon(THREE, '#ffc21a'), ethL: toon(THREE, '#fff0a0'), acid: toon(THREE, '#e8282e'), white: toon(THREE, '#ffffff'), ink: toon(THREE, '#1d1416'),
+  tube: std('#e8f6ff', { transparent: true, opacity: 0.55, roughness: 0.1 }), blood: std('#d81e34', { roughness: 0.3 }) };
+
+// ================= SET A: the courtyard party, Quang Tri, at night (origin) =================
+const PA = new THREE.Group(); scene.add(PA);
+const STOOL_TOP = 0.4, SIT_S = STOOL_TOP - 0.04, TABLE = V(0, 0, 0), BOTTLES = [];
+{ add(new THREE.Mesh(new THREE.PlaneGeometry(14, 12).rotateX(-Math.PI / 2), MB.ftile), 0, 0, 0, PA);
+  // the house front behind: plaster wall, a raised step, folding blue shutter doors, a window with bars, the family altar shelf
+  plane(14, 5, MB.plaster, 0, 2.5, -3.2, PA); box(14, 0.22, 0.7, std('#d8c8a8'), 0, 0.11, -2.9, PA, 0.02); box(14, 0.3, 0.3, std('#e8a83a'), 0, 3.9, -3.05, PA, 0.02);
+  for (let i = 0; i < 6; i++) { const x = -1.5 + i * 0.6; box(0.56, 2.4, 0.06, i % 2 ? MB.shutter : MB.shutterD, x, 1.42, -3.15, PA, 0.02); for (let k = 0; k < 7; k++) box(0.44, 0.03, 0.03, std('#1a5a8a'), x, 0.45 + k * 0.3, -3.11, PA, 0); }
+  box(3.8, 0.16, 0.16, std('#7a4a2a'), 0, 2.68, -3.1, PA, 0.02);
+  const wn = plane(1.2, 1.0, new THREE.MeshStandardMaterial({ map: T_WIN, emissive: '#ffc070', emissiveMap: T_WIN, emissiveIntensity: 1.1 }), 3.6, 1.9, -3.18, PA); wn.userData.noCheck = true; for (let k = 0; k < 5; k++) box(0.03, 1.0, 0.03, M.iron, 3.12 + k * 0.24, 1.9, -3.14, PA, 0);
+  box(1.4, 0.06, 0.4, std('#a83224'), -3.6, 2.2, -3.0, PA, 0.01); box(1.4, 0.7, 0.04, std('#c8282e'), -3.6, 2.6, -3.17, PA, 0.01); cyl(0.08, 0.1, 0.16, std('#e8b84a', { metalness: 0.6, roughness: 0.3 }), -3.6, 2.31, -3.0, PA, 14);
+  for (const dx of [-0.45, 0.45]) { cyl(0.012, 0.012, 0.3, std('#c8282e'), -3.6 + dx, 2.38, -3.0, PA, 6); add(new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 6), M.lamp), -3.6 + dx, 2.55, -3.0, PA).userData.noCheck = true; }
+  ['#ff8a3a', '#ffd23a', '#7ac83a'].forEach((c, i) => add(new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), std(c)), -3.85 + i * 0.12, 2.29, -2.9, PA));
+  // side walls: a low courtyard wall with a gate on the left, the neighbour's wall on the right
+  plane(12, 1.6, std('#e8e0d0'), -6.5, 0.8, 0, PA, Math.PI / 2); box(0.3, 0.12, 12, std('#c8b898'), -6.45, 1.62, 0, PA, 0.02); plane(12, 2.4, MB.plaster, 6.5, 1.2, 0, PA, -Math.PI / 2);
+  // string lights across the courtyard
+  const cols = ['#ff5a5a', '#ffd23a', '#5ad8ff', '#7aff6a', '#ff8ae0'];
+  for (const [z0, z1, y] of [[-3.0, 2.5, 3.1], [-3.0, 2.5, 3.0]]) { const n = 18, xA = y > 3.05 ? -5.5 : 5.5, xB = -xA;
+    for (let i = 0; i <= n; i++) { const k = i / n, x = lerp(xA, xB, k), z = lerp(z0, z1, k), yy = y - Math.sin(k * Math.PI) * 0.6; const b = add(new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), new THREE.MeshBasicMaterial({ color: cols[i % 5] })), x, yy, z, PA); b.userData.noCheck = true; b.castShadow = false;
+      if (i < n) { const x2 = lerp(xA, xB, (i + 1) / n), z2 = lerp(z0, z1, (i + 1) / n), y2 = y - Math.sin((i + 1) / n * Math.PI) * 0.6, w = add(new THREE.Mesh(new THREE.CylinderGeometry(0.006, 0.006, 1, 4), M.dark), (x + x2) / 2, (yy + y2) / 2, (z + z2) / 2, PA);
+        w.scale.y = Math.hypot(x2 - x, y2 - yy, z2 - z); w.quaternion.setFromUnitVectors(V(0, 1, 0), V(x2 - x, y2 - yy, z2 - z).normalize()); w.castShadow = false; w.userData.noCheck = true; } } }
+  lamp(-2.0, 2.6, -0.6, '#ffc88a', 7, 9, PA, 'party', false); lamp(2.2, 2.6, 0.4, '#ff9ad0', 5, 8, PA, 'party', false); lamp(0, 3.2, 1.6, '#ffe0b0', 6, 9, PA, 'party', false);
+  // a fluorescent tube over the doors
+  const fl = box(1.2, 0.06, 0.06, new THREE.MeshBasicMaterial({ color: '#eaffff' }), 0, 3.0, -3.05, PA, 0.02); fl.userData.noCheck = true; lamp(0, 2.8, -2.6, '#dff6ff', 5, 7, PA, 'party', false);
+  // potted plants, a banana plant, a parked scooter, a crate of empties
+  for (const [x, z, s] of [[-5.4, -2.4, 1.2], [5.3, -2.5, 1.0], [-5.6, 1.6, 0.9], [5.6, 1.2, 1.1]]) { cyl(0.28 * s, 0.22 * s, 0.4 * s, MB.pot, x, 0.2 * s, z, PA, 16);
+    for (let k = 0; k < 7; k++) { const lf = add(new THREE.Mesh(new THREE.SphereGeometry(0.22 * s, 10, 8), k % 2 ? MB.leaf : MB.leafD), x + Math.sin(k * 2.1) * 0.22 * s, (0.6 + (k % 3) * 0.22) * s, z + Math.cos(k * 2.1) * 0.22 * s, PA); lf.scale.set(0.6, 1.5, 0.4); lf.rotation.set(Math.sin(k) * 0.6, k, Math.cos(k) * 0.6); } }
+  { const g = new THREE.Group(); g.position.set(-4.2, 0, -1.6); g.rotation.y = 0.5; PA.add(g); for (const z of [-0.55, 0.55]) { const w = add(new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.07, 10, 20), M.dark), 0, 0.27, z, g); w.rotation.y = Math.PI / 2; }
+    box(0.3, 0.32, 0.9, std('#d8282e', { roughness: 0.35 }), 0, 0.5, 0, g, 0.12); box(0.26, 0.12, 0.5, M.dark, 0, 0.72, -0.15, g, 0.05); cyl(0.02, 0.02, 0.6, M.alu, 0, 0.9, 0.48, g, 6).rotation.x = 0.3; box(0.6, 0.04, 0.04, M.alu, 0, 1.16, 0.56, g, 0.01); add(new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), M.lamp), 0, 0.92, 0.62, g); }
+  { const cr = box(0.5, 0.3, 0.36, std('#e8c02a', { roughness: 0.5 }), 3.4, 0.15, -2.1, PA, 0.03); for (let i = 0; i < 6; i++) { const b = cyl(0.04, 0.04, 0.3, std('#2a7a3a', { roughness: 0.2 }), 3.24 + (i % 3) * 0.16, 0.4, -2.18 + Math.floor(i / 3) * 0.16, PA, 10); } }
+  // the low aluminium table, plates, bowls, the rice wine in plastic water bottles, little glasses, a bucket of ice
+  box(1.2, 0.04, 0.8, MB.alu, 0, 0.48, 0, PA, 0.02); for (const sx of [-0.55, 0.55]) for (const sz of [-0.35, 0.35]) cyl(0.02, 0.02, 0.46, MB.alu, sx, 0.23, sz, PA, 6);
+  for (const [x, z, c] of [[-0.3, 0.12, '#f6f6f2'], [0.32, -0.12, '#f6f6f2'], [0.05, 0.22, '#e8f0f8']]) { cyl(0.13, 0.1, 0.03, std(c, { roughness: 0.3 }), x, 0.515, z, PA, 20); }
+  for (const [x, z, c] of [[-0.3, 0.12, '#e8a83a'], [0.32, -0.12, '#7ac83a']]) for (let k = 0; k < 5; k++) add(new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 6), std(c)), x + Math.sin(k * 1.3) * 0.05, 0.545, z + Math.cos(k * 1.3) * 0.05, PA);
+  cyl(0.11, 0.09, 0.12, std('#c8ccd4', { metalness: 0.7, roughness: 0.25 }), -0.38, 0.56, -0.24, PA, 16); for (let k = 0; k < 6; k++) add(new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, 0.05), MB.glass), -0.38 + Math.sin(k) * 0.05, 0.62, -0.24 + Math.cos(k) * 0.05, PA).userData.noCheck = true;
+  for (const [x, z] of [[0.05, -0.22], [0.25, 0.18]]) { const g = new THREE.Group(); g.position.set(x, 0.5, z); PA.add(g); BOTTLES.push(g);
+    cyl(0.055, 0.055, 0.26, MB.wine, 0, 0.13, 0, g, 16); cyl(0.056, 0.056, 0.08, std('#2a6ad8', { roughness: 0.4 }), 0, 0.15, 0, g, 16); cyl(0.022, 0.03, 0.06, MB.wine, 0, 0.29, 0, g, 10); cyl(0.024, 0.024, 0.03, std('#e8282e'), 0, 0.33, 0, g, 10); }
+  for (const [x, z] of [[-0.48, 0.28], [0.5, 0.26], [0.42, -0.3], [-0.15, -0.32]]) cyl(0.03, 0.024, 0.06, MB.glass, x, 0.53, z, PA, 10).userData.noCheck = true;
+  // plastic stools, red and blue
+  PA.userData.stools = new THREE.Group(); PA.add(PA.userData.stools);
+  for (const [x, z, m] of [[-1.05, -0.15, MB.red], [1.05, -0.15, MB.blue], [0, -1.05, MB.blue], [0.95, 0.95, MB.red], [-1.6, 1.4, MB.blue]]) { const g = new THREE.Group(); g.position.set(x, 0, z); PA.userData.stools.add(g);
+    box(0.36, 0.04, 0.36, m, 0, STOOL_TOP - 0.02, 0, g, 0.02); for (const sx of [-1, 1]) for (const sz of [-1, 1]) { const l = cyl(0.025, 0.035, STOOL_TOP - 0.04, m, sx * 0.14, (STOOL_TOP - 0.04) / 2, sz * 0.14, g, 8); l.rotation.set(sz * 0.12, 0, -sx * 0.12); } }
+}
+
+// ================= SET B: inside the liver (x = -80): fleshy walls, the liver, the enzyme at its gate, the eye =================
+const LV = V(-80, 0, 0), LG = new THREE.Group(); LG.position.copy(LV); scene.add(LG);
+const ENZ = new THREE.Group(), EYE = new THREE.Group(), MOLS = [], ALARM = [];
+const GATE = V(-0.6, 1.3, 0.2), EYEP = V(2.6, 1.9, -0.6);
+{ plane(30, 14, MB.flesh, 0, 5, -5, LG); add(new THREE.Mesh(new THREE.PlaneGeometry(30, 14).rotateX(-Math.PI / 2), MB.flesh), 0, 0, 0, LG);
+  const r = rng(7); for (let i = 0; i < 26; i++) { const c = add(new THREE.Mesh(new THREE.SphereGeometry(0.4 + r() * 0.9, 20, 14), toon(THREE, r() < 0.5 ? '#e06a7a' : '#c84a5e')), (r() - 0.5) * 22, r() * 6, -4.5 - r() * 2, LG); c.scale.set(1, 0.8 + r() * 0.4, 0.6); }
+  for (let i = 0; i < 14; i++) { const c = add(new THREE.Mesh(new THREE.SphereGeometry(0.25 + r() * 0.4, 16, 12), toon(THREE, r() < 0.5 ? '#f08a96' : '#d0566a')), (r() - 0.5) * 16, 0.1, -3 + r() * 6, LG); c.scale.y = 0.5; if (Math.abs(c.position.x) < 4 && c.position.z > -1.5) c.position.x += Math.sign(c.position.x || 1) * 4; }
+  // blood vessels: thick red tubes snaking across the back
+  for (let k = 0; k < 4; k++) { const pts = []; for (let i = 0; i <= 8; i++) pts.push(V(-12 + i * 3, 1 + k * 1.4 + Math.sin(i * 1.3 + k) * 0.7, -4.2 + Math.cos(i + k) * 0.3)); const tb = add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts), 60, 0.18 + k * 0.03, 10), toon(THREE, k % 2 ? '#e8283e' : '#6a5ad8')), 0, 0, 0, LG); tb.castShadow = false; }
+  // the liver: two big glossy lobes
+  const lob = (x, y, z, sx, sy, sz, m) => { const o = add(new THREE.Mesh(new THREE.SphereGeometry(1, 40, 28), m), x, y, z, LG); o.scale.set(sx, sy, sz); return o; };
+  lob(0.9, 1.4, -1.4, 1.9, 1.05, 1.0, MB.liver); lob(-0.5, 1.2, -1.2, 1.2, 0.85, 0.9, MB.liverL); lob(1.9, 1.7, -1.7, 1.0, 0.8, 0.7, MB.liverL);
+  // the conveyor channel coming in from the left to the gate
+  const ch = add(new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.34, 7, 24, 1, true, 0, Math.PI), std('#f0a0aa', { side: THREE.DoubleSide, roughness: 0.4 })), -4.2, 1.0, 0.2, LG); ch.rotation.set(0, 0, Math.PI / 2); ch.rotateY(Math.PI / 2); ch.rotation.order = 'XYZ';
+  ch.rotation.set(Math.PI, 0, Math.PI / 2);
+  // the enzyme: a round orange chomper with eyes, at the liver's gate
+  ENZ.position.copy(GATE); LG.add(ENZ);
+  { const top = new THREE.Group(), bot = new THREE.Group(); ENZ.add(top, bot); ENZ.userData.top = top; ENZ.userData.bot = bot;
+    add(new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), MB.enz), 0, 0, 0, top); add(new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2), MB.enzD), 0, 0, 0, bot);
+    add(new THREE.Mesh(new THREE.CircleGeometry(0.49, 30).rotateX(-Math.PI / 2), toon(THREE, '#6a1a24')), 0, 0.001, 0, bot).userData.noCheck = true; add(new THREE.Mesh(new THREE.CircleGeometry(0.49, 30).rotateX(Math.PI / 2), toon(THREE, '#8a2430')), 0, -0.001, 0, top).userData.noCheck = true;
+    for (const s of [-1, 1]) { const e = add(new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 12), MB.white), s * 0.2, 0.32, 0.3, top); add(new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 8), MB.ink), 0.0, 0.0, 0.08, e); }
+    for (let k = 0; k < 5; k++) { const tth = add(new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.1, 6), MB.white), -0.3 + k * 0.15, -0.04, 0.38, top); tth.rotation.x = Math.PI; }
+    for (const s of [-1, 1]) { const ft = add(new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 8), MB.enzD), s * 0.25, -0.5, 0.05, ENZ); ft.scale.set(1, 0.5, 1.4); }
+    ENZ.rotation.y = -Math.PI / 2 + 0.5; }
+  // the eye (what formic acid attacks first): a big eyeball with an optic nerve, and a cloud that thickens over it
+  EYE.position.copy(EYEP); LG.add(EYE);
+  { const ball = add(new THREE.Mesh(new THREE.SphereGeometry(0.7, 40, 28), std('#ffffff', { map: T_EYE, roughness: 0.25 })), 0, 0, 0, EYE); ball.rotation.y = -Math.PI / 2 - 0.5;
+    const nv = add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([V(0, 0, -0.5), V(0.4, -0.3, -1.2), V(1.2, -0.2, -1.8)]), 20, 0.12, 8), toon(THREE, '#f4d0a0')), 0, 0, 0, EYE);
+    const cloud = add(new THREE.Mesh(new THREE.SphereGeometry(0.72, 32, 20), std('#8a8a90', { transparent: true, opacity: 0, roughness: 0.9, depthWrite: false })), 0, 0, 0, EYE); cloud.castShadow = false; EYE.userData.cloud = cloud; EYE.userData.ball = ball; EYE.rotation.y = 0.5; }
+  // molecules: methanol (blue), ethanol from the beer (gold), formic acid (red spikes)
+  const mol = (kind) => { const g = new THREE.Group(); LG.add(g); g.userData.kind = kind; g.visible = false;
+    if (kind === 'acid') { const c = add(new THREE.Mesh(new THREE.IcosahedronGeometry(0.16, 0), MB.acid), 0, 0, 0, g); for (let i = 0; i < 12; i++) { const d = V(Math.sin(i * 2.4) * Math.cos(i), Math.cos(i * 2.4), Math.sin(i) * Math.sin(i * 2.4)).normalize(); const sp = add(new THREE.Mesh(new THREE.ConeGeometry(0.05, 0.16, 6), MB.acid), d.x * 0.17, d.y * 0.17, d.z * 0.17, g); sp.quaternion.setFromUnitVectors(V(0, 1, 0), d); } }
+    else { const m = kind === 'meth' ? MB.meth : MB.eth, l = kind === 'meth' ? MB.methL : MB.ethL; add(new THREE.Mesh(new THREE.SphereGeometry(0.16, 20, 14), m), 0, 0, 0, g); add(new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 12), m), 0.2, 0.05, 0, g); if (kind === 'eth') add(new THREE.Mesh(new THREE.SphereGeometry(0.13, 16, 12), m), -0.2, 0.06, 0.02, g);
+      for (let i = 0; i < 4; i++) add(new THREE.Mesh(new THREE.SphereGeometry(0.065, 12, 8), l), Math.sin(i * 1.7) * 0.2, 0.17 * Math.cos(i * 2.3), Math.cos(i * 1.7) * 0.14, g);
+      for (const s of [-1, 1]) { const e = add(new THREE.Mesh(new THREE.SphereGeometry(0.04, 10, 8), MB.white), s * 0.06, 0.05, 0.14, g); add(new THREE.Mesh(new THREE.SphereGeometry(0.022, 8, 6), MB.ink), 0, 0, 0.025, e); } }
+    MOLS.push(g); return g; };
+  for (let i = 0; i < 10; i++) mol('meth'); for (let i = 0; i < 10; i++) mol('eth'); for (let i = 0; i < 12; i++) mol('acid');
+  for (const x of [-5, 0, 5]) { const a = lamp(x, 4.2, 1.5, '#ff2020', 0, 14, LG, 'liver', false); ALARM.push(a); }
+  lamp(-1, 3.2, 2.5, '#fff0f0', 8, 12, LG, 'liver', false); lamp(3, 2.6, 1.8, '#ffd8e0', 5, 9, LG, 'liver', false);
+}
+const MOLK = (k) => MOLS.filter(m => m.userData.kind === k);
+
+// ================= SET C: the hospital ward (z = 80) =================
+// ================= SET D: the hospital room (z = 80) =================
+const P0 = V(0, 0, 80), HS = new THREE.Group(); HS.position.copy(P0); scene.add(HS);
+const BED_TOP = 0.56, BED_SIT = 0.52, LIGHTBOX = new THREE.Group();
+{ add(new THREE.Mesh(new THREE.PlaneGeometry(10, 10).rotateX(-Math.PI / 2), M.tile), 0, 0, 0, HS);
+  plane(10, 4, M.mint, 0, 2, -3, HS); plane(10, 4, M.mint, -4, 2, 0, HS, Math.PI / 2); plane(10, 4, M.mint, 4, 2, 0, HS, -Math.PI / 2); plane(10, 10, std('#f4f6f2'), 0, 4, 0, HS, 0, Math.PI / 2);
+  box(10, 0.9, 0.06, std('#7fb8a6'), 0, 0.45, -2.96, HS, 0); for (const s of [-1, 1]) box(0.06, 0.9, 10, std('#7fb8a6'), s * 3.96, 0.45, 0, HS, 0);
+  // window on the left wall: bright daylight, a sill, a plant
+  const wv = plane(1.8, 1.8, new THREE.MeshBasicMaterial({ color: '#d8f0ff' }), -3.97, 2.1, -0.6, HS, Math.PI / 2); wv.userData.noCheck = true;
+  for (const dz of [-0.9, 0, 0.9]) box(0.08, 1.9, 0.08, M.white, -3.92, 2.1, -0.6 + dz, HS, 0); for (const dy of [-0.9, 0, 0.9]) box(0.08, 0.08, 1.9, M.white, -3.92, 2.1 + dy, -0.6, HS, 0);
+  box(0.3, 0.08, 2.1, M.white, -3.85, 1.16, -0.6, HS, 0.02); cyl(0.12, 0.09, 0.22, std('#c46a3a'), -3.8, 1.31, -1.1, HS, 12);
+  for (let k = 0; k < 6; k++) { const lf = add(new THREE.Mesh(new THREE.SphereGeometry(0.1, 10, 8), std('#3a9a4a')), -3.8 + Math.sin(k) * 0.08, 1.5 + (k % 3) * 0.06, -1.1 + Math.cos(k * 2) * 0.08, HS); lf.scale.set(0.6, 1.4, 0.6); }
+  const sun = new THREE.SpotLight('#fff0d0', 18, 12, 0.5, 0.6, 1.2); sun.position.set(-5, 3.2, -0.6); sun.target.position.set(0, 0, 0.4); HS.add(sun, sun.target); sun.userData.set = 'hosp'; lamps.push(sun);
+  // the iron bed with white sheets
+  const BED = new THREE.Group(); BED.position.set(-0.4, 0, -1.6); HS.add(BED); HS.userData.bed = BED;
+  { const wp = std('#f2f4f6', { roughness: 0.4, metalness: 0.3 }); for (const sx of [-1.05, 1.05]) { for (const sz of [-0.5, 0.5]) cyl(0.035, 0.035, sx < 0 ? 1.2 : 0.9, wp, sx, (sx < 0 ? 1.2 : 0.9) / 2, sz, BED, 8);
+      box(0.05, 0.05, 1.0, wp, sx, sx < 0 ? 1.15 : 0.85, 0, BED, 0.01); for (let k = -2; k <= 2; k++) cyl(0.015, 0.015, sx < 0 ? 0.6 : 0.35, wp, sx, sx < 0 ? 0.85 : 0.67, k * 0.18, BED, 6); }
+    box(2.1, 0.22, 1.0, std('#f8f8f4', { roughness: 0.9 }), 0, BED_TOP - 0.11, 0, BED, 0.08); box(2.12, 0.04, 1.02, std('#cfe0f2', { roughness: 0.9 }), 0.25, BED_TOP - 0.02, 0, BED, 0.02);
+    box(0.5, 0.14, 0.7, std('#ffffff', { roughness: 0.9 }), -0.75, BED_TOP + 0.07, 0, BED, 0.07); }
+  // the x-ray light box on the back wall
+  LIGHTBOX.position.set(1.9, 1.75, -2.94); HS.add(LIGHTBOX);
+  { box(1.5, 1.5, 0.12, std('#d8dce0', { metalness: 0.4, roughness: 0.4 }), 0, 0, 0.06, LIGHTBOX, 0.03); const xr = plane(1.3, 1.3, new THREE.MeshStandardMaterial({ map: T_XRAY, emissive: '#ffffff', emissiveMap: T_XRAY, emissiveIntensity: 1.0 }), 0, 0, 0.125, LIGHTBOX); xr.userData.noCheck = true; }
+  // cabinet with bottles, a framed chart, a ceiling lamp, a vase of flowers
+  box(1.0, 1.2, 0.45, std('#f2f4f6', { roughness: 0.4 }), 3.3, 0.6, -2.7, HS, 0.03); plane(0.8, 0.5, std('#cfe6ff', { transparent: true, opacity: 0.5 }), 3.3, 0.9, -2.47, HS).userData.noCheck = true;
+  ['#3a7ac8', '#c8463a', '#e0a83a', '#4aa86a'].forEach((c, i) => cyl(0.05, 0.05, 0.22, std(c, { roughness: 0.2 }), 3.0 + i * 0.2, 1.31, -2.7, HS, 10));
+  plane(0.7, 0.9, std('#fbf6ea'), -1.9, 2.3, -2.97, HS).userData.noCheck = true; box(0.78, 0.98, 0.04, std('#8a5a32'), -1.9, 2.3, -2.99, HS, 0.01);
+  cyl(0.01, 0.01, 0.8, M.iron, 0, 3.6, 0, HS, 4); cyl(0.05, 0.35, 0.25, std('#2a6a5a'), 0, 3.15, 0, HS, 20); lamp(0, 3.0, 0, '#fff0d8', 6, 9, HS, 'hosp');
+  box(0.5, 0.6, 0.45, std('#d8c0a0'), -2.0, 0.3, -2.4, HS, 0.03); cyl(0.09, 0.12, 0.28, std('#3a8ac8', { roughness: 0.2 }), -2.0, 0.74, -2.4, HS, 12);
+  ['#ff5a6a', '#ffd23a', '#ff8a3a', '#e85ad8', '#ffffff'].forEach((c, i) => { const f = add(new THREE.Mesh(new THREE.SphereGeometry(0.06, 10, 8), std(c)), -2.0 + Math.sin(i * 1.3) * 0.1, 0.98 + (i % 2) * 0.06, -2.4 + Math.cos(i * 1.3) * 0.08, HS); f.userData.noCheck = true; });
+}
+// beer by the bed: the drip stand with a funnel, the tube to his nose, the stack of empties, the clock, a monitor, the dialysis machine
+const IVP = V(-0.4 + 0.55, 0, -1.6 + 0.75), FUNNEL = new THREE.Group(), EMPTIES = [], WCLOCK = new THREE.Group(), DIAL = new THREE.Group();
+{ cyl(0.02, 0.02, 1.9, M.iron, IVP.x, 0.95, IVP.z, HS, 8); for (let k = 0; k < 4; k++) { const f = cyl(0.015, 0.015, 0.35, M.iron, IVP.x + Math.cos(k * 1.57) * 0.15, 0.04, IVP.z + Math.sin(k * 1.57) * 0.15, HS, 6); f.rotation.set(Math.sin(k * 1.57) * 1.4, 0, -Math.cos(k * 1.57) * 1.4); }
+  box(0.4, 0.02, 0.02, M.iron, IVP.x, 1.86, IVP.z, HS, 0);
+  FUNNEL.position.set(IVP.x + 0.12, 1.5, IVP.z); HS.add(FUNNEL); const fn = add(new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.015, 0.16, 20, 1, true), std('#f2f6f8', { side: THREE.DoubleSide, roughness: 0.3 })), 0, 0, 0, FUNNEL); fn.userData.noCheck = true;
+  const fill = add(new THREE.Mesh(new THREE.CylinderGeometry(0.064, 0.024, 0.07, 20), MB.beer), 0, -0.025, 0, FUNNEL); fill.userData.noCheck = true; FUNNEL.userData.fill = fill;
+  // the side table and the growing stack of empty cans
+  box(0.55, 0.6, 0.45, std('#e8eef2', { roughness: 0.4 }), 1.25, 0.3, -1.9, HS, 0.03);
+  const can = () => { const g = new THREE.Group(); cyl(0.045, 0.045, 0.13, MB.can, 0, 0, 0, g, 20); cyl(0.04, 0.045, 0.012, MB.canTop, 0, 0.071, 0, g, 20); cyl(0.04, 0.045, 0.012, MB.canTop, 0, -0.071, 0, g, 20); return g; };
+  let n = 0; for (const [row, cnt] of [[0, 5], [1, 4], [2, 3], [3, 2], [4, 1]]) for (let i = 0; i < cnt; i++) { const c = can(); c.position.set(1.25 + (i - (cnt - 1) / 2) * 0.095, 0.665 + row * 0.135, -1.9); c.rotation.y = n * 0.7; HS.add(c); c.traverse(o => o.userData.noCheck = true); EMPTIES.push(c); n++; }
+  HS.userData.can = can;
+  // a wall clock above the door frame
+  WCLOCK.position.set(0.9, 2.85, -2.95); HS.add(WCLOCK); { cyl(0.3, 0.3, 0.06, std('#ffffff'), 0, 0, 0.03, WCLOCK, 32).rotation.x = Math.PI / 2; const rim = add(new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.03, 8, 32), std('#2a2a30')), 0, 0, 0.06, WCLOCK);
+    for (let k = 0; k < 12; k++) box(0.02, k % 3 ? 0.04 : 0.07, 0.01, M.dark, Math.sin(k * Math.PI / 6) * 0.24, Math.cos(k * Math.PI / 6) * 0.24, 0.065, WCLOCK, 0).rotation.z = -k * Math.PI / 6;
+    const hh = new THREE.Group(), mh = new THREE.Group(); hh.position.z = mh.position.z = 0.07; WCLOCK.add(hh, mh); box(0.024, 0.15, 0.01, M.dark, 0, 0.065, 0, hh, 0); box(0.016, 0.22, 0.01, std('#c8282e'), 0, 0.1, 0.005, mh, 0); WCLOCK.userData.hh = hh; WCLOCK.userData.mh = mh; }
+  // a heart monitor on a bracket
+  box(0.5, 0.36, 0.08, std('#3a4048', { roughness: 0.4 }), -1.6, 1.85, -2.9, HS, 0.03); const sc = plane(0.42, 0.28, new THREE.MeshStandardMaterial({ map: T_SCREEN, emissive: '#ffffff', emissiveMap: T_SCREEN, emissiveIntensity: 0.9 }), -1.6, 1.85, -2.855, HS); sc.userData.noCheck = true;
+  // the dialysis machine: a cabinet with a screen, a spinning pump wheel, red tubes to his arm
+  DIAL.position.set(-1.75, 0, -1.25); DIAL.rotation.y = 0.5; HS.add(DIAL); DIAL.visible = false;
+  { box(0.55, 1.25, 0.5, std('#f0f4f6', { roughness: 0.35 }), 0, 0.625, 0, DIAL, 0.04); const ds = plane(0.4, 0.26, new THREE.MeshStandardMaterial({ map: T_SCREEN, emissive: '#ffffff', emissiveMap: T_SCREEN, emissiveIntensity: 0.9 }), 0, 1.05, 0.255, DIAL); ds.userData.noCheck = true;
+    const wh = new THREE.Group(); wh.position.set(0, 0.68, 0.27); DIAL.add(wh); cyl(0.12, 0.12, 0.04, std('#c8d0da', { metalness: 0.5, roughness: 0.3 }), 0, 0, 0, wh, 20).rotation.x = Math.PI / 2; for (let k = 0; k < 3; k++) box(0.03, 0.2, 0.02, std('#3a7ac8'), 0, 0, 0.03, wh, 0.01).rotation.z = k * Math.PI / 3; DIAL.userData.wheel = wh;
+    for (let k = 0; k < 3; k++) cyl(0.04, 0.04, 0.2, std(['#e8f4ff', '#f4d0d0', '#d0e8f4'][k], { transparent: true, opacity: 0.85 }), -0.15 + k * 0.15, 0.36, 0.27, DIAL, 10);
+    cyl(0.015, 0.015, 0.7, M.iron, 0.2, 1.6, 0, DIAL, 6); cyl(0.07, 0.07, 0.2, std('#f4f8ff', { transparent: true, opacity: 0.8 }), 0.2, 1.85, 0, DIAL, 12); }
+  // the ward door on the right wall
+  box(0.06, 2.2, 1.1, std('#7ab8a8'), 3.95, 1.1, 0.8, HS, 0.02); box(0.08, 0.06, 0.06, M.brass, 3.9, 1.05, 0.4, HS, 0.01);
+}
+// pouring stream (can to funnel) and the tube (funnel to nose) are rebuilt per frame
+const STREAM = add(new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.016, 1, 10), MB.beer), 0, 0, 0); STREAM.visible = false; STREAM.castShadow = false; STREAM.userData.noCheck = true;
+let TUBE = null; const TUBE_M = std('#f2fbff', { transparent: true, opacity: 0.7, roughness: 0.1 });
+let DTUBE = null; const DTUBE_M = std('#d81e34', { roughness: 0.3 });
+
+// ================= SET D: the hospital front in the sun (x = 80) =================
+const O0 = V(80, 0, 0), OS = new THREE.Group(); OS.position.copy(O0); scene.add(OS);
+const DOOR = V(0, 0.45, -3.2);
+{ add(new THREE.Mesh(new THREE.PlaneGeometry(40, 30).rotateX(-Math.PI / 2), std('#ffffff', { map: T_PAVE })), 0, 0, 0, OS); add(new THREE.Mesh(new THREE.PlaneGeometry(40, 6).rotateX(-Math.PI / 2), std('#949aa6')), 0, 0.01, 6, OS);
+  for (let i = -6; i <= 6; i++) box(1.2, 0.012, 0.12, std('#f2f2ea'), i * 3, 0.016, 6, OS, 0);
+  // the building: white with teal bands, glass doors, a big sign, balconies with plants
+  box(16, 8, 1.0, std('#f6f6f2'), 0, 4, -4.0, OS, 0.05); for (const y of [2.8, 5.4]) box(16.1, 0.25, 1.1, std('#2aa8a0'), 0, y, -3.95, OS, 0.03);
+  for (let f = 0; f < 2; f++) for (let i = 0; i < 7; i++) { const x = -6.6 + i * 2.2; if (f === 0 && Math.abs(x) < 1.6) continue; plane(1.3, 1.5, std('#7ac8f0', { roughness: 0.1, metalness: 0.3 }), x, 4.1 + f * 2.6 - (f === 0 ? 2.6 : 0) + 0.0, -3.48, OS).userData.noCheck = true; }
+  const sg = plane(6, 0.94, new THREE.MeshStandardMaterial({ map: T_SIGNV, emissive: '#ffffff', emissiveMap: T_SIGNV, emissiveIntensity: 0.25 }), 0, 3.4, -3.42, OS); sg.userData.noCheck = true;
+  box(3.4, 2.4, 0.2, std('#2a3a48'), 0, 1.65, -3.5, OS, 0.03); for (const s of [-1, 1]) plane(1.4, 2.1, std('#a8dcf4', { roughness: 0.05, metalness: 0.4 }), s * 0.75, 1.55, -3.38, OS).userData.noCheck = true;
+  box(5.0, 0.15, 1.6, std('#e8e8e2'), 0, 0.075, -2.6, OS, 0.02); box(4.6, 0.15, 1.2, std('#e8e8e2'), 0, 0.225, -2.8, OS, 0.02); box(4.2, 0.15, 0.9, std('#e8e8e2'), 0, 0.375, -2.95, OS, 0.02);
+  box(5.4, 0.12, 2.2, std('#2aa8a0'), 0, 2.95, -2.6, OS, 0.03); for (const s of [-1, 1]) cyl(0.07, 0.07, 2.9, std('#f2f2ea'), s * 2.5, 1.45, -1.7, OS, 12);
+  // palms, flower beds, scooters by the kerb
+  const palm = (x, z, h) => { cyl(0.12, 0.18, h, std('#a8804a'), x, h / 2, z, OS, 10); for (let k = 0; k < 7; k++) { const lf = add(new THREE.Mesh(new THREE.SphereGeometry(0.9, 12, 6), MB.leaf), x + Math.cos(k * 0.9) * 0.7, h + 0.1, z + Math.sin(k * 0.9) * 0.7, OS); lf.scale.set(1, 0.12, 0.3); lf.rotation.set(0, -k * 0.9, -0.35); } };
+  palm(-5.5, -1.6, 4.2); palm(5.6, -1.4, 4.6); palm(-9, 2.5, 3.8); palm(9.5, 2.2, 4.0);
+  for (const s of [-1, 1]) { box(3.2, 0.4, 1.0, std('#d8c8a8'), s * 4.6, 0.2, -2.6, OS, 0.03); for (let k = 0; k < 9; k++) add(new THREE.Mesh(new THREE.SphereGeometry(0.16, 10, 8), std(['#ff5a8a', '#ffd23a', '#ff8a3a', '#e85ad8'][k % 4])), s * 4.6 - 1.3 + k * 0.32, 0.5, -2.6 + Math.sin(k) * 0.25, OS); }
+  const scooter = (x, z, ry, c) => { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; OS.add(g); for (const zz of [-0.55, 0.55]) { const w = add(new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.07, 10, 20), M.dark), 0, 0.27, zz, g); w.rotation.y = Math.PI / 2; }
+    box(0.3, 0.32, 0.9, std(c, { roughness: 0.35 }), 0, 0.5, 0, g, 0.12); box(0.26, 0.12, 0.5, M.dark, 0, 0.72, -0.15, g, 0.05); box(0.6, 0.04, 0.04, M.alu, 0, 1.16, 0.56, g, 0.01); cyl(0.02, 0.02, 0.6, M.alu, 0, 0.9, 0.48, g, 6).rotation.x = 0.3; };
+  scooter(-3.4, 2.6, 1.2, '#2a7ae8'); scooter(-2.6, 2.9, 1.3, '#ffd23a'); scooter(3.6, 2.7, 1.9, '#e8382e'); scooter(4.5, 2.5, 1.8, '#7ac83a');
+  // white puffy clouds on the sky
+  for (const [x, y, s] of [[-12, 13, 3], [6, 15, 4], [16, 12, 2.6], [-2, 17, 2.2]]) for (let k = 0; k < 4; k++) { const c = add(new THREE.Mesh(new THREE.SphereGeometry(s * (0.5 + (k % 2) * 0.2), 16, 12), new THREE.MeshBasicMaterial({ color: '#ffffff', fog: false })), x + k * s * 0.6, y + (k % 2) * s * 0.2, -30, OS); c.castShadow = false; c.userData.noCheck = true; }
+  lamp(0, 2.6, -1.8, '#fff8e8', 4, 8, OS, 'out', false);
+}
+
+// ---------- characters ----------
+const NHAT = makeBighead(THREE, { cloth: '#3f9a6a', collar: '#2a7a50', sleeve: '#3f9a6a', trousers: '#3a4a6a', hair: '#2a2024', brows: 'thick' });
+const PAT = makeBighead(THREE, { cloth: '#eef4fa', stripes: '#a8c8e8', collar: '#ffffff', sleeve: '#eef4fa', trousers: '#dfe8f4', hair: '#2a2024', brows: 'thick' });
+const DOCT = makeBighead(THREE, { cloth: '#f6f8fa', collar: '#cfe0f2', buttons: '#9aa8b8', lapels: '#e2e8ee', sleeve: '#f6f8fa', trousers: '#3a5a8a', hair: '#1e1a1c', glasses: true, brows: 'thick' });
+const NURSE = makeBighead(THREE, { cloth: '#6ac8c0', collar: '#ffffff', sleeve: '#6ac8c0', trousers: '#6ac8c0', hair: '#2a1e1c', brows: 'thin' });
+const PALS = [makeBighead(THREE, { cloth: '#e8a83a', collar: '#ffffff', sleeve: '#e8a83a', trousers: '#4a3a2a', hair: '#2a2024', stubble: true, brows: 'thick' }),
+  makeBighead(THREE, { cloth: '#d8483e', stripes: '#f2c0a8', sleeve: '#d8483e', trousers: '#2a3048', hair: '#3a2a22', tache: true, tacheC: '#2a2024' }),
+  makeBighead(THREE, { cloth: '#4a6ad8', collar: '#ffffff', sleeve: '#4a6ad8', trousers: '#3a3440', hat: 'flatcap', hatC: '#5a5a62', glasses: true }),
+  makeBighead(THREE, { cloth: '#f2f2ea', stripes: '#7ac8a0', sleeve: '#f2f2ea', trousers: '#5a4a3a', hair: '#1e1a1c', brows: 'thin' })];
+const CAST = [NHAT, PAT, DOCT, NURSE, ...PALS]; CAST.forEach(c => scene.add(c.root));
+const NAMES = ['nhat', 'patient', 'doctor', 'nurse', 'pal0', 'pal1', 'pal2', 'pal3'];
+// props: a little glass of rice wine, a beer can in hand, a crate of full cans
+const CUP = new THREE.Group(); { cyl(0.035, 0.028, 0.07, MB.glass, 0, 0.0, 0.0, CUP, 12).userData.noCheck = true; cyl(0.03, 0.026, 0.045, MB.wine, 0, -0.008, 0, CUP, 12).userData.noCheck = true; }
+const CUPS = [0, 1, 2, 3].map(() => CUP.clone(true));
+const HCAN = HS.userData.can(); HCAN.scale.setScalar(1.25);
+const CRATE = new THREE.Group(); { box(0.42, 0.18, 0.3, std('#e8c02a', { roughness: 0.5 }), 0, 0, 0, CRATE, 0.02); for (let i = 0; i < 6; i++) { const c = HS.userData.can(); c.position.set(-0.13 + (i % 3) * 0.13, 0.12, -0.07 + Math.floor(i / 3) * 0.14); CRATE.add(c); } }
+CRATE.traverse(o => { if (o.isMesh) o.userData.noCheck = true; }); HCAN.traverse(o => { if (o.isMesh) o.userData.noCheck = true; });
+const hold = (c, side, g, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0) => { c.hand(side).add(g); g.position.set(x, y, z); g.rotation.set(rx, ry, rz); };
+
+// ---------- shots: start time (voice time), environment, camera(u) and action(u, t) ----------
+const at = (b, x, y, z) => b.clone().add(V(x, y, z));
+const D2R = Math.PI / 180;
+function frame(tg, width, yaw, elev = 8, fov = 38) { const hf = 2 * Math.atan(Math.tan(fov * D2R / 2) * W / H), d = width / 2 / Math.tan(hf / 2);
+  const dir = V(Math.sin(yaw * D2R) * Math.cos(elev * D2R), Math.sin(elev * D2R), Math.cos(yaw * D2R) * Math.cos(elev * D2R)); return { p: tg.clone().addScaledVector(dir, d), l: tg.clone(), fov }; }
+const mix = (A, B, k, dof) => ({ p: A.p.clone().lerp(B.p, k), l: A.l.clone().lerp(B.l, k), fov: lerp(A.fov, B.fov, k), dof });
+const move = (A, B, dof = 0) => (u) => mix(A, B, ease(0, 1, u), dof);
+const DOC_WORDS = WORDS.filter(w => w.speaker === 'doctor');
+const docTalk = (t) => DOC_WORDS.some(w => t >= w.s - 0.03 && t < w.e + 0.03) ? talkFlap(t) : 0;
+const RIGHT = Math.PI / 2;
+function place(c, p, ry = 0, pose = 'idle', expr = 'neutral', t = 0, o) { c.root.visible = true; c.root.position.copy(p); c.root.rotation.set(0, ry, 0); c.pose(pose, t, o); c.face(expr, t, c === DOCT ? docTalk(t) : 0); }
+const face = (from, to) => Math.atan2(to.x - from.x, to.z - from.z);
+const S = [];
+const shot = (t, env, camf, act, o = {}) => S.push({ t, env, camf, act, ...o });
+// positions
+HS.children.forEach(m => { if (m.geometry && m.geometry.type === 'PlaneGeometry' && m.geometry.parameters.width === 10) m.castShadow = false; });   // walls and ceiling let the sun in
+const SEATS = [V(-1.05, SIT_S, -0.15), V(1.05, SIT_S, -0.15), V(0, SIT_S, -1.05), V(0.95, SIT_S, 0.95)];
+const NHATS = SEATS[2];
+function party(t, mode = 'chat') { // Nhat at the back stool facing the camera side; pals around the table
+  place(NHAT, NHATS, 0, mode === 'drink' ? 'drink' : 'toast', mode === 'drink' ? 'happy' : 'grin', t, { ph: 0 }); hold(NHAT, 'r', CUPS[0], 0, 0.02, 0.02); NHAT.hips.position.y = -0.12; NHAT.legs.forEach(l => l.rotation.x = -1.45);
+  [0, 1, 3].forEach((si, k) => { const c = PALS[k], p = SEATS[si]; place(c, p, face(p, TABLE), mode === 'drink' || k === 1 ? 'toast' : 'clap', ['grin', 'happy', 'grin'][k], t + k * 0.7, { ph: k * 1.3 }); c.hips.position.y = -0.12; c.legs.forEach(l => l.rotation.x = -1.45); if (mode === 'drink' || k === 1) hold(c, 'r', CUPS[k + 1], 0, 0.02, 0.02); });
+  const p = V(-1.7, 0, -1.6); place(PALS[3], p, face(p, TABLE), 'wave', 'happy', t + 0.3); }
+const BEDP = at(P0, -0.4, BED_SIT, -1.6), BEDF = 0;
+function patient(pose, expr, t) { place(PAT, BEDP, BEDF, pose, expr, t); PAT.hips.position.y = -0.12; PAT.legs.forEach(l => l.rotation.x = -1.45); }
+const DOCP = at(P0, 0.85, 0, -0.55), NURP = at(P0, -1.55, 0, -0.35);
+// the can pouring into the funnel: the pourer holds the can tipped over the funnel mouth
+const STEP = box(0.5, 0.42, 0.42, std('#4a8ac8', { roughness: 0.5 }), IVP.x + 0.5, 0.21, IVP.z + 0.3, HS, 0.04); STEP.visible = false;
+function pourer(c, t, k = 1) { STEP.visible = true; const p = at(P0, IVP.x + 0.5, 0.42, IVP.z + 0.3); place(c, p, face(p, at(P0, IVP.x + 0.12, 0, IVP.z)), 'idle', 'focus', t);
+  const f = FUNNEL.getWorldPosition(V()), tip = 1.75 + 0.15 * Math.sin(t * 1.3) * 0, cp = f.clone().add(V(0.09, 0.2, 0.02)); HS.add(HCAN); HCAN.position.copy(cp.clone().sub(P0)); HCAN.rotation.set(0, 0, 1.95 * k);
+  c.root.updateMatrixWorld(true); const h = c.root.worldToLocal(cp.clone().add(V(0.05, -0.02, 0))); c.pose('pour', t, { hand: [h.x, h.y, h.z] }); return p; }
+
+// ---- HOOK (cold open): the doctor tipping a can of beer into the funnel, the tube to the patient, his grin
+shot(WT(0, 'Doctors'), 'hosp', move(frame(at(P0, 0.05, 1.25, -1.1), 2.8, -25, 6, 46), frame(at(P0, 0.05, 1.25, -1.1), 2.4, -15, 5, 46), 0.25),
+  (u, t) => { patient('thumb', 'grin', t); pourer(DOCT, t); }, { tube: 1, pour: 1, keep: [DOCT] });
+shot(WT(0, 'life'), 'hosp', move(frame(at(P0, IVP.x + 0.2, 1.6, IVP.z), 1.0, -40, 4, 40), frame(at(P0, IVP.x + 0.2, 1.58, IVP.z), 0.8, -30, 2, 40), 0.7),
+  (u, t) => { patient('idle', 'happy', t); pourer(DOCT, t); }, { tube: 1, pour: 1, keep: [DOCT] });
+shot(WT(0, 'pouring'), 'hosp', move(frame(at(BEDP, 0, 0.95, 0), 1.4, 24, 4, 40), frame(at(BEDP, 0, 0.95, 0), 1.15, 14, 4, 40), 0.75),
+  (u, t) => { patient('thumb', u < 0.3 ? 'surprised' : 'grin', t); }, { tube: 1 });
+// ---- DAY 1: the courtyard party
+shot(WT(1, 'Vietnam'), 'party', move(frame(V(0, 0.8, -0.6), 7.5, 20, 26, 56), frame(V(0, 0.8, -0.6), 6.5, 10, 22, 56), 0.1),
+  (u, t) => { party(t, 'chat'); });
+shot(WT(1, 'party'), 'party', move(frame(V(0.2, 0.85, -0.3), 3.0, -24, 8, 50), frame(V(0.2, 0.85, -0.3), 2.6, -16, 8, 50), 0.4),
+  (u, t) => { party(t, 'toast'); });
+shot(WT(1, 'drinks'), 'party', move(frame(at(NHATS, 0, 0.62, 0), 1.3, 12, 4, 40), frame(at(NHATS, 0, 0.62, 0), 1.1, 4, 4, 40), 0.75),
+  (u, t) => { party(t, 'drink'); });
+shot(WT(1, 'laced'), 'party', move(frame(V(0.05, 0.66, -0.22), 0.7, 30, 10, 36), frame(V(0.05, 0.66, -0.22), 0.5, 20, 8, 36), 0.8),
+  (u, t) => { party(t, 'chat'); }, { glowBottle: 1 });
+// ---- DAY 3: the ward, then inside the liver: methanol in, formic acid out, the eye clouds, the alarm
+shot(WT(2, 'In'), 'hosp', move(frame(at(BEDP, 0.1, 0.9, 0), 2.6, -20, 8, 46), frame(at(BEDP, 0.1, 0.9, 0), 2.2, -12, 8, 46), 0.4),
+  (u, t) => { patient('clutch', 'pain', t); });
+shot(WT(2, 'liver'), 'liver', move(frame(at(LV, 0, 1.4, -0.4), 7.0, 8, 10, 54), frame(at(LV, 0, 1.4, -0.4), 6.0, 2, 8, 54), 0.1),
+  (u, t) => { }, { mols: 'meth' });
+shot(WT(2, 'formic'), 'liver', move(frame(at(LV, GATE.x + 0.4, GATE.y, GATE.z), 2.2, 30, 8, 44), frame(at(LV, GATE.x + 0.4, GATE.y, GATE.z), 1.8, 22, 6, 44), 0.5),
+  (u, t) => { }, { mols: 'meth' });
+shot(WT(2, 'blind'), 'liver', move(frame(at(LV, EYEP.x, EYEP.y, EYEP.z), 2.4, -16, 4, 42), frame(at(LV, EYEP.x, EYEP.y, EYEP.z), 1.9, -8, 4, 42), 0.5),
+  (u, t) => { }, { mols: 'meth', cloud: (u) => 0.2 + u * 0.6 });
+shot(WT(2, 'kill'), 'liver', move(frame(at(LV, 0.6, 1.5, -0.4), 8.0, -10, 14, 58), frame(at(LV, 0.6, 1.5, -0.4), 9.0, -4, 18, 58), 0.1),
+  (u, t) => { }, { mols: 'meth', cloud: () => 0.85, alarm: 1 });
+// ---- HOUR 1: beer's ethanol jumps the queue; the methanol waits
+shot(WT(3, 'But'), 'liver', move(frame(at(LV, -1.2, 1.3, 0), 5.0, 14, 8, 50), frame(at(LV, -1.2, 1.3, 0), 4.4, 6, 8, 50), 0.2),
+  (u, t) => { }, { mols: 'eth' });
+shot(WT(3, 'busy'), 'liver', move(frame(at(LV, GATE.x + 0.2, GATE.y, GATE.z), 2.0, -26, 6, 42), frame(at(LV, GATE.x + 0.2, GATE.y, GATE.z), 1.7, -18, 6, 42), 0.5),
+  (u, t) => { }, { mols: 'eth', fast: 1 });
+shot(WT(3, 'methanol'), 'liver', move(frame(at(LV, -2.6, 0.5, 1.4), 2.6, 20, 12, 44), frame(at(LV, -2.6, 0.5, 1.4), 2.2, 12, 10, 44), 0.5),
+  (u, t) => { }, { mols: 'eth', queue: 1 });
+// ---- HOUR 15: "Get me beer. Lots of it." The crate, the funnel, the clock, the stack of empties
+shot(WT(4, 'Get'), 'hosp', move(frame(at(DOCP, 0, 0.95, 0), 1.5, -30, 4, 40), frame(at(DOCP, 0, 0.95, 0), 1.25, -22, 4, 40), 0.7),
+  (u, t) => { place(DOCT, DOCP, -0.6, 'point', 'focus', t); patient('idle', 'worried', t); }, { keep: [DOCT] });
+shot(WT(4, 'Lots'), 'hosp', move(frame(at(P0, 1.6, 0.9, 0.2), 3.0, -50, 8, 48), frame(at(P0, 1.6, 0.9, 0.2), 2.6, -42, 8, 48), 0.4),
+  (u, t) => { const p = at(P0, 3.4 - ease(0, 0.8, u) * 1.4, 0, 0.6); place(NURSE, p, -RIGHT, ease(0, 0.8, u) < 1 ? 'walk' : 'hold', 'grin', t * 1.4); NURSE.pose(ease(0, 0.8, u) < 1 ? 'walk' : 'idle', t * 1.4); NURSE.pose('hold', t); if (ease(0, 0.8, u) < 1) { NURSE.legs[0].rotation.x = Math.sin(t * 9) * 0.4; NURSE.legs[1].rotation.x = -Math.sin(t * 9) * 0.4; }
+    hold(NURSE, 'r', CRATE, -0.07, 0.04, 0.06); place(DOCT, DOCP, -0.6, 'point', 'grin', t); }, { keep: [DOCT, NURSE] });
+shot(WT(4, 'Down'), 'hosp', move(frame(at(P0, IVP.x - 0.1, 1.45, IVP.z), 1.8, -40, 10, 42), frame(at(P0, IVP.x - 0.1, 1.4, IVP.z), 1.5, -32, 8, 42), 0.6),
+  (u, t) => { patient('idle', 'happy', t); pourer(NURSE, t); }, { tube: 1, pour: 1, keep: [NURSE] });
+shot(WT(4, 'hour'), 'hosp', move(frame(at(P0, 0.9, 2.85, -2.95), 0.9, 0, 0, 36), frame(at(P0, 0.9, 2.85, -2.95), 0.8, 0, 0, 36), 0.4), (u, t) => { }, { clock: (u) => u });
+shot(WT(4, 'Fifteen'), 'hosp', move(frame(at(P0, 0.45, 0.95, -1.75), 2.5, 22, 8, 48), frame(at(P0, 0.45, 0.95, -1.75), 2.1, 16, 6, 48), 0.3),
+  (u, t) => { patient('thumb', 'grin', t); place(NURSE, NURP, 0.7, 'clap', 'happy', t); }, { tube: 1, empties: (u) => 5 + u * 10, clock: () => 1 });
+// ---- WEEK 2: dialysis cleans him out; he walks out into the sun
+shot(WT(5, 'Meanwhile'), 'hosp', move(frame(at(P0, -1.0, 1.0, -1.5), 2.8, 34, 8, 46), frame(at(P0, -1.0, 1.0, -1.5), 2.4, 26, 8, 46), 0.5),
+  (u, t) => { patient('idle', 'kind', t); }, { dial: 1 });
+shot(WT(5, 'washes'), 'liver', move(frame(at(LV, -0.6, 1.4, 0.2), 5.0, 4, 8, 50), frame(at(LV, -0.6, 1.4, 0.2), 4.4, -4, 8, 50), 0.2),
+  (u, t) => { }, { mols: 'out' });
+shot(WT(5, 'walks'), 'out', move(frame(at(O0, 0, 1.0, -1.6), 6.0, 10, 8, 52), frame(at(O0, 0, 1.0, -1.2), 5.2, 4, 8, 52), 0.1),
+  (u, t) => { const k = ease(0, 1, u), p = at(O0, 0, 0, -2.4 + k * 2.2); p.y = Math.max(0, 0.45 - Math.max(0, p.z - O0.z + 2.95) * 0.3); place(NHAT, p, 0, 'walk', 'grin', t); NHAT.pose('wave', t); NHAT.legs[0].rotation.x = Math.sin(t * 7) * 0.45; NHAT.legs[1].rotation.x = -Math.sin(t * 7) * 0.45;
+    place(DOCT, at(O0, -1.6, 0.45, -3.0), 0.3, 'wave', 'happy', t); place(NURSE, at(O0, 1.6, 0.45, -3.0), -0.3, 'clap', 'happy', t); });
+shot(WT(5, 'fully'), 'out', move(frame(at(O0, 0, 0.95, -0.2), 1.6, 16, 6, 42), frame(at(O0, 0, 0.95, -0.2), 1.35, 8, 6, 42), 0.6),
+  (u, t) => { place(NHAT, at(O0, 0, 0, -0.2), 0, 'cheer', 'grin', t); });
+// ---- the CTA: waving goodbye in the sun
+shot(WT(6, 'Comment'), 'out', move(frame(at(O0, 0, 1.1, -1.2), 4.0, -12, 8, 52), frame(at(O0, 0, 1.2, -1.2), 4.6, -8, 9, 52), 0.1),
+  (u, t) => { place(NHAT, at(O0, 0, 0, -0.2), 0, 'wave', 'grin', t); place(DOCT, at(O0, -1.6, 0.45, -3.0), 0.3, 'thumb', 'happy', t); place(NURSE, at(O0, 1.6, 0.45, -3.0), -0.3, 'wave', 'happy', t); });
+
+const ray = new THREE.Raycaster(), fitCache = new Map();
+const OCC = []; scene.traverse(o => { if (o.isMesh && !o.isSprite && !o.isPoints && !o.userData.ink && !o.userData.noCheck && !(o.material && o.material.transparent)) OCC.push(o); });
+const inClone = () => false;
+function fitShot(si) { if (fitCache.has(si)) return fitCache.get(si); const s = S[si]; let k = 1; const sides = [];
+  scene.updateMatrixWorld(true); const seen = new Set(); scene.traverse(o => { if (o.isMesh && o.material && !Array.isArray(o.material) && !seen.has(o.material)) { seen.add(o.material); sides.push([o.material, o.material.side]); o.material.side = THREE.DoubleSide; } });
+  const vis = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
+  for (const u of [0, 0.25, 0.5, 0.75, 1]) { const c = s.camf(u), dir = c.p.clone().sub(c.l), d = dir.length(); ray.set(c.l, dir.normalize()); ray.far = d;
+    ray.camera = cam; const hits = ray.intersectObjects(OCC, false).filter(h => h.object.isMesh && vis(h.object) && !inClone(h.object) && !CAST.some(ch => { for (let o = h.object; o; o = o.parent) if (o === ch.root) return true; return false; }) && h.distance > 0.35);
+    if (hits.length) k = Math.min(k, (hits[0].distance - 0.12) / d); }
+  sides.forEach(([m, sd]) => (m.side = sd)); k = Math.max(k, 0.25); fitCache.set(si, k); return k; }
+const shotAt = (t) => { let i = 0; for (let k = 0; k < S.length; k++) if (t >= S[k].t) i = k; return i; };
+S.forEach((s, i) => { s.whip = i > 0 && i % 3 !== 2 && !s.noWhip; s.dir = i % 2 ? 1 : -1; });
+
+// ---------- captions: one word at a time; the hook label and the time chips ----------
+const capEl = document.querySelector('#cap span'), labEl = document.getElementById('lab'), chipEl = document.querySelector('#chip span');
+const CAPMAP = { twenty: '2018', eighteen: '', fifteen: '15' };
+function caption(t) { let cur = null; for (const w of WORDS) if (t >= w.s - 0.06 && t < w.e + 0.12) cur = w; if (!cur) { capEl.textContent = ''; return; }
+  const cw = clean(cur.w), lk = cw.toLowerCase(); capEl.textContent = lk in CAPMAP ? CAPMAP[lk] : cw; capEl.style.color = cur.speaker === 'doctor' ? '#ffd23a' : '#ffffff';
+  const k = clamp((t - cur.s + 0.06) / 0.09); capEl.style.transform = `scale(${0.82 + 0.18 * k})`; capEl.style.opacity = capEl.textContent ? k : 0; }
+const HOOKL = (SCRIPT.beats[0].label || '').replace(/\*(.+?)\*/g, '<b>$1</b>').replace('. ', '.<br>');
+function labels(t) { const b1 = TL.beats[1];
+  if (t < b1.start - 0.1) { if (labEl.innerHTML !== HOOKL) labEl.innerHTML = HOOKL; const k = clamp(t / 0.18); labEl.style.opacity = 1; labEl.style.transform = `scale(${0.7 + 0.3 * k})`; } else labEl.style.opacity = 0;
+  let txt = '', k = 0; TL.beats.forEach((b, i) => { const lb = SCRIPT.beats[i] && SCRIPT.beats[i].label; if (i > 0 && lb && t >= b.start - 0.05 && t < b.start + 1.9) { txt = lb; k = clamp((t - b.start + 0.05) / 0.15) * clamp((b.start + 1.9 - t) / 0.2); } });
+  chipEl.textContent = txt; chipEl.style.opacity = txt ? k : 0; chipEl.style.transform = `scale(${0.6 + 0.4 * k})`; }
+
+// characters between the camera and its target, or right at the lens, step out of the shot
+const hideCache = new Map();
+function autoHide(si, t) { if (!hideCache.has(si)) { const s = S[si], c = s.camf(0.5), fk = fitShot(si); const p = c.p.clone().sub(c.l).multiplyScalar(fk).add(c.l), seg = new THREE.Line3(p, c.l), q = V(0, 0, 0), out = [];
+    CAST.forEach((ch, i) => { if (!ch.root.visible || ch === PAT || ch === NHAT || (s.keep || []).includes(ch)) return; ch.root.updateMatrixWorld(true); const h = ch.head.getWorldPosition(V(0, 0, 0)); seg.closestPointToPoint(h, true, q); const along = q.distanceTo(p) / Math.max(1e-3, seg.distance());
+      if (h.distanceTo(p) < 1.1 || (q.distanceTo(h) < 0.42 && along < 0.75)) out.push(i); }); hideCache.set(si, out); }
+  for (const i of hideCache.get(si)) CAST[i].root.visible = false; }
+
+// molecules in the liver: a stream along the channel into the enzyme's mouth; what comes out depends on the mode
+function molecules(mode, t, un, fast) {
+  MOLS.forEach(m => m.visible = false); const chomp = Math.abs(Math.sin(t * (fast ? 12 : 7))); ENZ.userData.top.rotation.x = -chomp * 0.6; ENZ.userData.bot.rotation.x = chomp * 0.2; ENZ.position.y = GATE.y + Math.abs(Math.sin(t * 3.5)) * 0.04;
+  const lane = (k, speed) => { const ph = (t * speed + k) % 1; return V(lerp(-6.5, GATE.x - 0.3, ph), 1.05 + Math.sin(ph * 12 + k * 3) * 0.04, 0.2 + Math.sin(k * 7) * 0.08); };
+  if (mode === 'meth') { MOLK('meth').forEach((m, i) => { m.visible = true; m.position.copy(lane(i / 10, 0.22)); m.rotation.set(t + i, t * 0.7, 0); });
+    MOLK('acid').forEach((m, i) => { const ph = (t * 0.3 + i / 12) % 1; m.visible = true; const a = V(GATE.x + 0.4, GATE.y, GATE.z), b = V(EYEP.x - 0.5, EYEP.y + Math.sin(i * 2) * 0.4, EYEP.z + 0.3 + Math.cos(i * 3) * 0.3); m.position.copy(a.lerp(b, ph)); m.position.y += Math.sin(ph * Math.PI) * 0.8; m.rotation.set(t * 3 + i, t * 2, 0); m.scale.setScalar(0.6 + ph * 0.5); }); }
+  if (mode === 'eth') { MOLK('eth').forEach((m, i) => { m.visible = true; m.position.copy(lane(i / 10, fast ? 0.34 : 0.26)); m.rotation.set(t + i, t * 0.7, 0); });
+    MOLK('meth').forEach((m, i) => { m.visible = true; const q = V(-1.6 - i * 0.42, 0.35 + Math.abs(Math.sin(t * 5 + i)) * 0.12, 1.2 + (i % 2) * 0.12); m.position.copy(q); m.rotation.set(0, 0.4 + Math.sin(t * 2 + i) * 0.3, 0); }); }
+  if (mode === 'out') { MOLK('meth').forEach((m, i) => { m.visible = true; const ph = (t * 0.35 + i / 10) % 1; m.position.set(lerp(GATE.x - 0.6, -8, ph), 1.0 + ph * 2.5 + Math.sin(i) * 0.3, 0.6 + Math.cos(i * 3) * 0.6); m.rotation.set(t * 2 + i, t, 0); });
+    MOLK('eth').forEach((m, i) => { if (i > 5) return; m.visible = true; m.position.copy(lane(i / 6, 0.2)); }); }
+  MOLS.forEach(m => { if (m.visible) m.position.add(LV); m.position.sub(LV); }); }
+
+// ---------- per frame ----------
+let curEnv = '', curShot = null;
+window.renderFrame = (t) => {
+  const si = shotAt(t), s = (curShot = S[si]), nxt = S[si + 1], u = t - s.t, len = (nxt ? nxt.t : DUR) - s.t, un = clamp(u / len);
+  window.SHOT = si;
+  CAST.forEach(c => c.root.visible = false);
+  for (const g of [HCAN, CRATE, ...CUPS]) if (g.parent) g.parent.remove(g); STEP.visible = false;
+  STREAM.visible = false; FUNNEL.userData.fill.visible = !!s.tube; DIAL.visible = !!s.dial;
+  EMPTIES.forEach((c, i) => c.visible = i < (s.empties ? Math.floor(s.empties(un)) : 0));
+  { const k = s.clock ? s.clock(un) : 0; const mins = k * 14 * 60; WCLOCK.userData.mh.rotation.z = -mins / 60 * Math.PI * 2; WCLOCK.userData.hh.rotation.z = -(2 + mins / 60) / 12 * Math.PI * 2; }
+  if (s.dial) DIAL.userData.wheel.rotation.z = -t * 6;
+  EYE.userData.cloud.material.opacity = s.cloud ? s.cloud(un) : 0; EYE.userData.ball.material.color.set(s.cloud ? '#e8e0e0' : '#ffffff');
+  ALARM.forEach(a => a.intensity = s.alarm ? 30 * Math.max(0, Math.sin(t * 9)) : 0);
+  BOTTLES.forEach(b => b.children[0].material.emissive && b.children[0].material.emissive.set(s.glowBottle ? '#2a6aff' : '#000000'));
+  MB.wine.emissive.set(s.glowBottle ? '#3a7aff' : '#000000'); MB.wine.emissiveIntensity = s.glowBottle ? 0.25 + 0.2 * Math.sin(t * 6) : 0;
+  molecules(s.mols || 'none', t, un, s.fast);
+  s.act(un, t);
+  autoHide(si, t);
+  // the tube from the funnel to the patient's nose, and the pour
+  if (TUBE) { HS.remove(TUBE); TUBE.geometry.dispose(); TUBE = null; }
+  if (s.tube && PAT.root.visible) { PAT.root.updateMatrixWorld(true); const nose = PAT.head.localToWorld(V(0.0, -0.06, 0.31)).sub(P0), f = FUNNEL.position.clone().add(V(0, -0.09, 0));
+    const curve = new THREE.CatmullRomCurve3([f, f.clone().add(V(0.05, -0.4, 0.1)), V((f.x + nose.x) / 2 + 0.1, nose.y - 0.15, (f.z + nose.z) / 2 + 0.25), nose.clone().add(V(0.06, -0.06, 0.06)), nose]);
+    TUBE = new THREE.Mesh(new THREE.TubeGeometry(curve, 40, 0.012, 8), TUBE_M); TUBE.userData.noCheck = true; HS.add(TUBE); }
+  if (s.pour && HCAN.parent) { HCAN.updateMatrixWorld(true); const m = HCAN.localToWorld(V(0, 0.09, 0)), f = FUNNEL.localToWorld(V(0, 0.02, 0)); if (m.y > f.y) { STREAM.visible = true; STREAM.position.copy(m).lerp(f, 0.5); STREAM.scale.y = m.distanceTo(f); STREAM.quaternion.setFromUnitVectors(V(0, 1, 0), m.clone().sub(f).normalize()); } }
+  if (DTUBE) { HS.remove(DTUBE); DTUBE.geometry.dispose(); DTUBE = null; }
+  if (s.dial && PAT.root.visible) { PAT.root.updateMatrixWorld(true); DIAL.updateMatrixWorld(true); const a = PAT.arms.l.hand.getWorldPosition(V(0, 0, 0)).sub(P0), d = DIAL.localToWorld(V(-0.15, 0.36, 0.27)).sub(P0);
+    DTUBE = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([d, d.clone().add(V(0.2, -0.25, 0.2)), a.clone().add(V(-0.2, -0.2, 0.05)), a]), 30, 0.014, 8), DTUBE_M); DTUBE.userData.noCheck = true; HS.add(DTUBE); }
+  // environment
+  if (s.env !== curEnv) { curEnv = s.env; const E = ENV[s.env]; scene.background = new THREE.Color(E.bg); scene.fog.color.set(E.fog[0]); scene.fog.near = E.fog[1]; scene.fog.far = E.fog[2];
+    hemi.color.set(E.hemi[0]); hemi.groundColor.set(E.hemi[1]); hemi.intensity = E.hemi[2]; key.color.set(E.key[0]); key.intensity = E.key[1]; renderer.toneMappingExposure = E.exp;
+    lamps.forEach(l => l.visible = l.userData.set === E.set); }
+  // camera + whip pans
+  const c = s.camf(un), fk = s.noFit ? 1 : fitShot(si);
+  if (fk < 0.999) { c.p.sub(c.l).multiplyScalar(fk).add(c.l); c.fov = Math.min(84, 2 * Math.atan(Math.tan(c.fov * D2R / 2) / fk) / D2R); }
+  cam.position.copy(c.p); cam.fov = c.fov; cam.updateProjectionMatrix(); cam.lookAt(c.l);
+  let whip = 0, wdir = 0; const WD = 0.13;
+  if (nxt && nxt.whip && nxt.t - t < WD) { whip = 1 - (nxt.t - t) / WD; wdir = nxt.dir; }
+  if (s.whip && u < WD) { whip = 1 - u / WD; wdir = -s.dir; }
+  if (whip > 0) cam.rotateY(wdir * whip * whip * 0.45);
+  L.whip(wdir * whip * whip * 0.05, 0);
+  // focus spans every face in frame (george: faces must never be blurred); only the set behind/in front softens
+  cam.updateMatrixWorld(); let fd = cam.position.distanceTo(c.l), zone = 0.6; { const fwd = cam.getWorldDirection(V(0, 0, 0)), hp = V(0, 0, 0); let lo = 1e9, hi = -1;
+    CAST.forEach(ch => { if (!ch.root.visible) return; ch.head.getWorldPosition(hp); const d = hp.clone().sub(cam.position), z = d.dot(fwd); if (z < 0.2) return; const off = d.clone().addScaledVector(fwd, -z).length() / z; if (off < 0.75) { lo = Math.min(lo, z); hi = Math.max(hi, z); } });
+    if (hi > 0) { fd = (lo + hi) / 2; zone = (hi - lo) / 2 + 0.6; } }
+  L.dof(fd, (c.dof || 0) * 0.4, zone);
+  CAST.forEach(ch => { if (ch.root.visible) ch.look(cam, ch === PAT && s.tube ? 0.35 : 0.9); });
+  // shadow focus
+  const half = s.env === 'out' || s.env === 'liver' ? 13 : 8; const sc = key.shadow.camera; if (sc.right !== half) { sc.left = sc.bottom = -half; sc.right = sc.top = half; sc.updateProjectionMatrix(); }
+  const f = snapFocus(c.l.clone().setY(0), KEY_DIR[s.env], half); key.target.position.copy(f); key.position.copy(f).add(KEY_DIR[s.env].clone().normalize().multiplyScalar(40));
+  caption(t); labels(t);
+  scene.updateMatrixWorld(true);
+  if (window.NODRAW) return;
+  L.render();
+};
+// overlap check hook (tools/check_overlap.cjs): sitters may touch their stools and the bed
+window.QA = { scene, camera: cam, THREE, actors: () => CAST.map((c, i) => { let seat = null;
+    if (c === PAT) seat = HS.userData.bed; else if (c.root.position.distanceTo(TABLE) < 2 && c.root.position.y > 0.1) seat = PA.userData.stools;
+    return { name: NAMES[i], root: c.root, head: c.head, seat }; }).filter(a => a.root.visible) };
+window.DURATION = DUR; window.SHOTS = S.map(s => s.t);
+renderFrame(0); window.READY = true; window.DONE = true;
+</script></body></html>

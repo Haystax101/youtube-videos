@@ -226,6 +226,11 @@ export function makeBighead(THREE, spec = {}) {
       if (name === 'crouch') { hips.position.y = -0.1; legs.forEach((l) => { l.rotation.x = -0.5; }); arm('l', [-0.26, 0.4, 0.06], [-0.3, 0.24, -0.1]); arm('r', [0.26, 0.4, 0.06], [0.3, 0.24, -0.1]); hips.rotation.x = 0.25; }
       if (name === 'float') { const a = Math.sin(t * 1.6); legs[0].rotation.x = 0.3 + a * 0.15; legs[1].rotation.x = -0.2 - a * 0.15; arm('l', [-0.3, 0.6, 0.04], [-0.44, 0.72 + a * 0.05, 0.06]); arm('r', [0.3, 0.6, 0.04], [0.44, 0.72 - a * 0.05, 0.06]); }
       if (name === 'thumb') arm('r', [0.28, 0.5, 0.12], [0.26, 0.64, 0.24]);
+      // drinking and toasting (beer Short, 28 Nov): put the cup in hand('r')
+      if (name === 'drink') { arm('r', [0.2, 0.5, 0.2], [0.05, 0.8, 0.32]); head.rotation.x = -0.12; }
+      // pouring from a raised hand (beer Short, 28 Nov): o.hand / o.elbow in root space put the right hand on the prop
+      if (name === 'pour') { arm('r', o.elbow || [0.3, 0.74, 0.14], o.hand || [0.2, 1.02, 0.32]); arm('l', [-0.26, 0.46, 0.08], [-0.22, 0.32, 0.14]); }
+      if (name === 'toast') { const a = Math.sin(t * 5 + (o.ph || 0)) * 0.03; arm('r', [0.26, 0.62, 0.18], [0.2, 0.84 + a, 0.38]); }
     },
   };
   api.face('neutral'); api.pose('idle');

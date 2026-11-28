@@ -42,12 +42,11 @@
         "bm_george",
         "af_heart",
         "af_bella",
-        "af_nicole",
         "bf_emma"
       ],
       "set_by": "script.voices.narrator",
       "since": "2026-11-25",
-      "why": "only am_michael has been used on lowpoly; voice is a big part of retention in faceless Shorts | 2026-11-25: george wants women's and softer voices A/B tested: added af_bella (warm US female), af_nicole (soft, breathy US female) and bf_emma (British female)."
+      "why": "only am_michael has been used on lowpoly; voice is a big part of retention in faceless Shorts | 2026-11-25: george wants women's and softer voices A/B tested: added af_bella (warm US female), af_nicole (soft, breathy US female) and bf_emma (British female). | af_nicole dropped 27 Nov: george said it sounded like whispering."
     },
     "speed": {
       "arms": [
