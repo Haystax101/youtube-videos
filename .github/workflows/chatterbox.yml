@@ -3,6 +3,8 @@ name: Voice with Chatterbox michael
 # Voices an episode with Chatterbox cloning a Kokoro am_michael clip (tools/chatterbox_voice.py) and
 # publishes voice.wav + timeline.json to the pre-release cbvoice-<slug>-<run id>.
 # Start it by writing the episode folder into chatterbox-request.txt and pushing.
+# Long videos: add a line "parts: 8" to split the beats across 8 parallel runners (each runner voices a
+# contiguous share; a final job joins them, identical to a single run).
 on:
   push:
     paths: [chatterbox-request.txt]
@@ -11,9 +13,12 @@ permissions:
   contents: write
 
 jobs:
-  voice:
+  setup:
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    outputs:
+      ep: ${{ steps.p.outputs.ep }}
+      n: ${{ steps.p.outputs.n }}
+      parts: ${{ steps.p.outputs.parts }}
     steps:
       - uses: actions/checkout@v4
       - id: p
@@ -22,6 +27,21 @@ jobs:
           case "$EP" in episodes/*|prototypes/*) ;; *) echo "bad episode path: $EP"; exit 1 ;; esac
           case "$EP" in *..*) echo "bad episode path: $EP"; exit 1 ;; esac
           test -f "$EP/script.json"; echo "ep=$EP" >> "$GITHUB_OUTPUT"
+          N="$(grep -oE '^parts:[[:space:]]*[0-9]+' chatterbox-request.txt | grep -oE '[0-9]+' || true)"; N="${N:-1}"
+          [ "$N" -ge 1 ] && [ "$N" -le 16 ] || { echo "parts must be 1-16"; exit 1; }
+          echo "n=$N" >> "$GITHUB_OUTPUT"
+          echo "parts=$(python3 -c "import json;print(json.dumps(list(range($N))))")" >> "$GITHUB_OUTPUT"
+
+  voice:
+    needs: setup
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    strategy:
+      fail-fast: false
+      matrix:
+        part: ${{ fromJSON(needs.setup.outputs.parts) }}
+    steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -42,13 +62,35 @@ jobs:
           [ -f models/kokoro-v1.0.onnx ] || curl -sL -o models/kokoro-v1.0.onnx $base/kokoro-v1.0.onnx
           [ -f models/voices-v1.0.bin ] || curl -sL -o models/voices-v1.0.bin $base/voices-v1.0.bin
       - name: Lint narration
-        run: python3 tools/lint_voice.py "${{ steps.p.outputs.ep }}"
+        run: python3 tools/lint_voice.py "${{ needs.setup.outputs.ep }}"
       - name: Voice
-        run: python3 tools/chatterbox_voice.py "${{ steps.p.outputs.ep }}"
+        run: python3 tools/chatterbox_voice.py "${{ needs.setup.outputs.ep }}" --part "${{ matrix.part }}/${{ needs.setup.outputs.n }}"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cbpart-${{ matrix.part }}
+          path: ${{ needs.setup.outputs.ep }}/cbparts/
+          retention-days: 3
+
+  merge:
+    needs: [setup, voice]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -q numpy soundfile
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: cbpart-*
+          path: ${{ needs.setup.outputs.ep }}/cbparts
+          merge-multiple: true
+      - name: Join
+        run: python3 tools/chatterbox_voice.py "${{ needs.setup.outputs.ep }}" --merge
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
-          EP: ${{ steps.p.outputs.ep }}
+          EP: ${{ needs.setup.outputs.ep }}
         run: |
           NAME="$(basename "$EP")"; TAG="cbvoice-$NAME-${{ github.run_id }}"
           gh release create "$TAG" "$EP/voice.wav" "$EP/timeline.json" --prerelease \

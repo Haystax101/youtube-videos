@@ -62,11 +62,12 @@ def tempo(x, f):
     return y
 
 
-def main(ep_dir):
+def voice_beats(ep, script, which):
+    """Voice the beats whose index is in `which`; returns {i: (audio incl. trailing hold, words relative to beat start)}."""
     import torch, torchaudio
     from chatterbox.tts import ChatterboxTTS
-    ep = Path(ep_dir); script = json.loads((ep / "script.json").read_text())
     voices = {"narrator": "am_michael", **script.get("voices", {})}
+    if voices["narrator"] == "chatterbox_michael": voices["narrator"] = "am_michael"
     if os.environ.get("CB_NARRATOR_REF"): voices["narrator"] = os.environ["CB_NARRATOR_REF"]
     say = {**PRONOUNCE, **{w.lower(): v for w, v in script.get("pronounce", {}).items()}}
     speed = script.get("cb_speed", 1.12)
@@ -79,10 +80,10 @@ def main(ep_dir):
             refs[v] = f"/tmp/ref_{v}.wav"; kokoro_ref(v, refs[v])
         return refs[v]
 
-    def silence(s): return np.zeros(int(s * SR), np.float32)
-    audio, t, beats_out = [silence(0.15)], 0.15, []
+    out = {}
     for i, beat in enumerate(script["beats"]):
-        b_start, words_out = t, []
+        if i not in which: continue
+        audio, t, words_out = [], 0.0, []
         for line in beat["lines"]:
             spk = line.get("speaker", "narrator")
             for sent in split_sentences(line["text"]):
@@ -97,12 +98,24 @@ def main(ep_dir):
                 wts = [syllables(w) + (0.6 if re.search(r"[,;:]$", w) else 0) for w in words]
                 wt = t
                 for w, g in zip(words, wts):
-                    d = dur * g / sum(wts); words_out.append({"w": w, "s": round(wt, 3), "e": round(wt + d, 3), "speaker": spk}); wt += d
+                    d = dur * g / sum(wts); words_out.append({"w": w, "s": wt, "e": wt + d, "speaker": spk}); wt += d
                 audio.append(x); t += dur
-                audio.append(silence(0.1)); t += 0.1
+                audio.append(np.zeros(int(0.1 * SR), np.float32)); t += 0.1
                 print(f"beat {i} {spk}: {dur:.2f}s  {sent}", flush=True)
-        hold = beat.get("hold", 0.1); audio.append(silence(hold)); t += hold
-        beats_out.append({"i": i, "start": round(b_start, 3), "end": round(t, 3), "deathAt": None, "words": words_out})
+        hold = beat.get("hold", 0.1); audio.append(np.zeros(int(hold * SR), np.float32))
+        out[i] = (np.concatenate(audio), words_out)
+    return out
+
+
+def assemble(ep, script, parts):
+    """Join per-beat audio in order (same layout as a single full run) -> EP/voice.wav + EP/timeline.json."""
+    def silence(s): return np.zeros(int(s * SR), np.float32)
+    audio, t, beats_out = [silence(0.15)], len(silence(0.15)) / SR, []
+    for i in range(len(script["beats"])):
+        x, words = parts[i]; b_start = t
+        beats_out.append({"i": i, "start": round(b_start, 3), "end": round(t + len(x) / SR, 3), "deathAt": None,
+                          "words": [{**w, "s": round(b_start + w["s"], 3), "e": round(b_start + w["e"], 3)} for w in words]})
+        audio.append(x); t += len(x) / SR
     tail = script.get("tail", 1.2); audio.append(silence(tail)); t += tail
     wav = np.concatenate(audio); wav = wav / max(1e-6, np.abs(wav).max()) * 0.9
     sf.write(ep / "voice.wav", wav, SR)
@@ -110,5 +123,37 @@ def main(ep_dir):
     print(f"voiced {len(beats_out)} beats, {t:.1f}s")
 
 
+def split_parts(script, n):
+    """Contiguous beat ranges with roughly equal word counts."""
+    wc = [sum(len(l["text"].split()) for l in b["lines"]) for b in script["beats"]]
+    total, groups, acc, k = sum(wc), [[] for _ in range(n)], 0, 0
+    for i, w in enumerate(wc):
+        if acc >= total * (k + 1) / n and k < n - 1: k += 1
+        groups[k].append(i); acc += w
+    return groups
+
+
+def main(ep_dir, part=None, merge=False):
+    """Full run: python3 tools/chatterbox_voice.py EP
+    Long videos on parallel runners: --part k/n writes EP/cbparts/bNNN.wav + .json for one share of the beats,
+    then --merge joins every part into voice.wav + timeline.json (identical layout to a full run)."""
+    ep = Path(ep_dir); script = json.loads((ep / "script.json").read_text())
+    if merge:
+        parts = {}
+        for i in range(len(script["beats"])):
+            x, _ = sf.read(ep / "cbparts" / f"b{i:03d}.wav", dtype="float32")
+            parts[i] = (x, json.loads((ep / "cbparts" / f"b{i:03d}.json").read_text()))
+        return assemble(ep, script, parts)
+    if part:
+        k, n = map(int, part.split("/")); which = set(split_parts(script, n)[k])
+        res = voice_beats(ep, script, which); (ep / "cbparts").mkdir(exist_ok=True)
+        for i, (x, words) in res.items():
+            sf.write(ep / "cbparts" / f"b{i:03d}.wav", x, SR)
+            (ep / "cbparts" / f"b{i:03d}.json").write_text(json.dumps(words))
+        print(f"part {k}/{n}: beats {sorted(which)}"); return
+    assemble(ep, script, voice_beats(ep, script, set(range(len(script["beats"])))))
+
+
 if __name__ == "__main__":
-    main(sys.argv[1])
+    a = sys.argv[1:]
+    main(a[0], part=a[a.index("--part") + 1] if "--part" in a else None, merge="--merge" in a)

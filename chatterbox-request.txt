@@ -1,2 +1,3 @@
-episodes/018-bee-sting-nose
-# v3 install order
+episodes/dark/long/003-wannacry
+parts: 8
+# long-form dark 003 WannaCry, voiced in 8 parallel parts

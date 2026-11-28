@@ -1,0 +1,556 @@
+{
+ "title": "How Did a $10 Website Stop a Global Cyberattack?",
+ "channel": "dark-stories",
+ "format": "landscape",
+ "look": "casefile2d",
+ "voices": {
+  "narrator": "chatterbox_michael"
+ },
+ "speed": 1.0,
+ "tail": 1.0,
+ "pronounce": {},
+ "chapters": [
+  {
+   "beat": 0,
+   "title": "COLD OPEN"
+  },
+  {
+   "beat": 6,
+   "title": "CHAPTER 1: THE STOLEN WEAPON"
+  },
+  {
+   "beat": 14,
+   "title": "CHAPTER 2: FRIDAY THE TWELFTH"
+  },
+  {
+   "beat": 21,
+   "title": "CHAPTER 3: THE BEDROOM IN DEVON"
+  },
+  {
+   "beat": 29,
+   "title": "CHAPTER 4: THE HERO"
+  },
+  {
+   "beat": 37,
+   "title": "CHAPTER 5: WHO DID IT"
+  },
+  {
+   "beat": 42,
+   "title": "CHAPTER 6: SIX WEEKS LATER"
+  },
+  {
+   "beat": 49,
+   "title": "CHAPTER 7: THE POWER CUT"
+  },
+  {
+   "beat": 55,
+   "title": "CHAPTER 8: SO HOW DID A TEN DOLLAR WEBSITE STOP IT?"
+  }
+ ],
+ "experiment": {
+  "titles": [
+   "How Did a $10 Website Stop a Global Cyberattack?",
+   "How Did a $10 Website Save Britain's Hospitals?",
+   "The Hack That Shut Down Britain's Hospitals"
+  ],
+  "facts_file": "/mnt/project-files/dark-stories/long/003-wannacry/003-wannacry-script.md (Sources)"
+ },
+ "beats": [
+  {
+   "id": "coldop1",
+   "lines": [
+    {
+     "text": "May twelfth, twenty seventeen. The Royal London Hospital, in the east end of London. That afternoon, one computer after another starts showing the same red screen."
+    }
+   ]
+  },
+  {
+   "id": "coldop2",
+   "lines": [
+    {
+     "text": "Your files have been encrypted, it says. Pay three hundred dollars in bitcoin, or lose them forever."
+    }
+   ]
+  },
+  {
+   "id": "coldop3",
+   "lines": [
+    {
+     "text": "Within hours, ambulances are being sent away from its emergency department. Operations are cancelled. Doctors go back to pen and paper. And it is not just this hospital. A third of the N H S trusts in England are hit. And it is not just Britain. Car factories in France, railways in Germany and phone companies in Spain go down too. Two hundred thousand computers in a hundred and fifty countries are hit in a single afternoon."
+    }
+   ]
+  },
+  {
+   "id": "coldop4",
+   "lines": [
+    {
+     "text": "Meanwhile, in a small seaside town in Devon, a twenty two year old is on a week off work. He gets back from lunch, opens his laptop, and spends ten dollars and sixty nine cents on a website name."
+    }
+   ]
+  },
+  {
+   "id": "coldop5",
+   "lines": [
+    {
+     "text": "And all over the world, the attack stops."
+    }
+   ]
+  },
+  {
+   "id": "coldop6",
+   "lines": [
+    {
+     "text": "So how did a ten dollar website stop a global cyberattack? Why, three months later, did the F B I arrest the man who bought it? And why was this not even the worst attack of that summer?"
+    }
+   ]
+  },
+  {
+   "id": "thesto1",
+   "lines": [
+    {
+     "text": "To answer that, we have to start with a theft."
+    }
+   ]
+  },
+  {
+   "id": "thesto2",
+   "lines": [
+    {
+     "text": "America's biggest spy agency, the N S A, is very good at hacking. For years, it quietly collected weaknesses in popular software. It kept them secret, so it could use them to break into the computers of its targets."
+    }
+   ]
+  },
+  {
+   "id": "thesto3",
+   "lines": [
+    {
+     "text": "The best one was called Eternal Blue. It went after a weakness in Windows, in the part that lets computers on the same network share files. With it, you could take over a Windows computer without anyone clicking anything."
+    }
+   ]
+  },
+  {
+   "id": "thesto4",
+   "lines": [
+    {
+     "text": "Then, in August twenty sixteen, a group nobody had heard of appeared online. They called themselves the Shadow Brokers. And they claimed they had stolen the N S A's hacking tools."
+    }
+   ]
+  },
+  {
+   "id": "thesto5",
+   "lines": [
+    {
+     "text": "At first they tried to auction the tools off. Almost nobody bid. So in April twenty seventeen, they did something much worse. They gave Eternal Blue away, free, to anyone on the internet."
+    }
+   ]
+  },
+  {
+   "id": "thesto6",
+   "lines": [
+    {
+     "text": "There was one piece of good news. A month earlier, Microsoft had quietly released a fix. Any computer that had installed the update was safe."
+    }
+   ]
+  },
+  {
+   "id": "thesto7",
+   "lines": [
+    {
+     "text": "You would think the N H S would be first in line. It runs the hospitals. It holds the medical records of almost everyone in England. And in March, its own cyber security team had sent out a warning: install this update."
+    }
+   ]
+  },
+  {
+   "id": "thesto8",
+   "lines": [
+    {
+     "text": "Many trusts didn't. And neither did millions of other computers, all over the world."
+    }
+   ]
+  },
+  {
+   "id": "friday1",
+   "lines": [
+    {
+     "text": "Four weeks later, someone took Eternal Blue and bolted it onto a piece of ransomware. Ransomware locks up your files and charges you to get them back."
+    }
+   ]
+  },
+  {
+   "id": "friday2",
+   "lines": [
+    {
+     "text": "They called it Wanna Cry."
+    }
+   ]
+  },
+  {
+   "id": "friday3",
+   "lines": [
+    {
+     "text": "Normal ransomware needs someone to open a bad email. Wanna Cry did not. Once it got inside one computer, it used Eternal Blue to jump to every other unpatched computer it could reach. And from each of those, it jumped again. It was a worm."
+    }
+   ]
+  },
+  {
+   "id": "friday4",
+   "lines": [
+    {
+     "text": "In Britain, the N H S was hit worst of all. At least eighty one trusts were affected. Some had their computers locked. Others shut down their own systems to stop it spreading. Every single N H S organisation that got infected had one thing in common. Its computers had not been updated."
+    }
+   ]
+  },
+  {
+   "id": "friday5",
+   "lines": [
+    {
+     "text": "A later government report estimated that around nineteen thousand appointments were cancelled. The total cost to the N H S came to about ninety two million pounds."
+    }
+   ]
+  },
+  {
+   "id": "friday6",
+   "lines": [
+    {
+     "text": "And paying did not help much either. The attackers had no reliable way of telling who had paid, so many victims who paid never got their files back."
+    }
+   ]
+  },
+  {
+   "id": "friday7",
+   "lines": [
+    {
+     "text": "By Friday afternoon, security researchers around the world were racing to work out what this thing was. And one of them was that twenty two year old in Devon. Remember him? The one with the ten dollar website."
+    }
+   ]
+  },
+  {
+   "id": "thebed1",
+   "lines": [
+    {
+     "text": "His name was Marcus Hutchins. Online, he went by Malware Tech. He worked from his bedroom in his parents' house in Ilfracoom, for a security company in America."
+    }
+   ]
+  },
+  {
+   "id": "thebed2",
+   "lines": [
+    {
+     "text": "He got hold of a copy of Wanna Cry and started reading the code. And he noticed something odd. Before it did anything else, the worm tried to visit a website. It was not a real website, just a long, random string of letters and numbers ending in dot com."
+    }
+   ]
+  },
+  {
+   "id": "thebed3",
+   "lines": [
+    {
+     "text": "And nobody owned it."
+    }
+   ]
+  },
+  {
+   "id": "thebed4",
+   "lines": [
+    {
+     "text": "Researchers like Hutchins often buy addresses like this. When infected computers try to visit, you can count them, and see where the outbreak is spreading. So he registered it, for ten dollars and sixty nine cents."
+    }
+   ]
+  },
+  {
+   "id": "thebed5",
+   "lines": [
+    {
+     "text": "He had no idea what would happen next."
+    }
+   ]
+  },
+  {
+   "id": "thebed6",
+   "lines": [
+    {
+     "text": "It turned out the website was a kill switch. Every time Wanna Cry started up on a new computer, it checked whether that address existed. If it did not, the worm got to work. If it did, the worm simply shut itself down."
+    }
+   ]
+  },
+  {
+   "id": "thebed7",
+   "lines": [
+    {
+     "text": "All day, the answer had been no. Now, thanks to a twenty two year old in his bedroom, the answer was yes. Across the world, new infections stopped."
+    }
+   ]
+  },
+  {
+   "id": "thebed8",
+   "lines": [
+    {
+     "text": "Nobody is completely sure why the attackers built it in. The most popular theory is that it was meant to help Wanna Cry hide from researchers' test machines, and it backfired."
+    }
+   ]
+  },
+  {
+   "id": "theher1",
+   "lines": [
+    {
+     "text": "Within days, Hutchins was famous. Newspapers called him the accidental hero who saved the N H S from Wanna Cry. Reporters turned up at his parents' door."
+    }
+   ]
+  },
+  {
+   "id": "theher2",
+   "lines": [
+    {
+     "text": "And then the attackers tried to take the kill switch down. They hit it with what is called a dee doss attack. That stands for distributed denial of service. Thousands of hacked devices, in this case mostly cheap internet cameras and routers, all visit the same website at once, until it collapses under the traffic. If the website went down, the kill switch went down with it, and the worm would be free again. Hutchins and his friends kept it running."
+    }
+   ]
+  },
+  {
+   "id": "theher3",
+   "lines": [
+    {
+     "text": "In August, he flew to Las Vegas for one of the biggest hacker conferences in the world. Everyone wanted to meet the man who stopped Wanna Cry."
+    }
+   ]
+  },
+  {
+   "id": "theher4",
+   "lines": [
+    {
+     "text": "He never made it home. On the second of August, the F B I arrested him at the airport."
+    }
+   ]
+  },
+  {
+   "id": "theher5",
+   "lines": [
+    {
+     "text": "The charges had nothing to do with Wanna Cry. Years earlier, as a teenager, before he became a security researcher, Hutchins had helped write and sell malware that stole people's bank passwords. It was called Kronos."
+    }
+   ]
+  },
+  {
+   "id": "theher6",
+   "lines": [
+    {
+     "text": "He pleaded guilty in twenty nineteen. The judge said he had turned his life around well before his arrest, and gave him time already served and a year of supervised release, with no prison."
+    }
+   ]
+  },
+  {
+   "id": "theher7",
+   "lines": [
+    {
+     "text": "So the man who stopped Wanna Cry was a former hacker. But who actually started it?"
+    }
+   ]
+  },
+  {
+   "id": "theher8",
+   "lines": [
+    {
+     "text": "If you watched our last video, on the billion dollar heist in Bangladesh, you have already met them. If you haven't watched it yet, it's worth a look after you're finished here. And while you're at it, drop us a like and subscribe to hear more wild cyber stories."
+    }
+   ]
+  },
+  {
+   "id": "whodid1",
+   "lines": [
+    {
+     "text": "In December twenty seventeen, Britain and America both announced publicly that Wanna Cry was the work of North Korea."
+    }
+   ]
+  },
+  {
+   "id": "whodid2",
+   "lines": [
+    {
+     "text": "It was the same group of state hackers that tried to steal a billion dollars from Bangladesh's central bank. In twenty eighteen, America charged one alleged member, a programmer called Park Jin Hyuk, over both attacks."
+    }
+   ]
+  },
+  {
+   "id": "whodid3",
+   "lines": [
+    {
+     "text": "North Korea denied everything. And as a money maker, Wanna Cry was a flop. For all the chaos, it collected only around a hundred and forty thousand dollars in bitcoin."
+    }
+   ]
+  },
+  {
+   "id": "whodid4",
+   "lines": [
+    {
+     "text": "So we know who fired Wanna Cry. But the identity of the Shadow Brokers, who stole the weapon in the first place, has never been proven."
+    }
+   ]
+  },
+  {
+   "id": "whodid5",
+   "lines": [
+    {
+     "text": "And Eternal Blue was still out there. Six weeks later, someone used it to build something much worse."
+    }
+   ]
+  },
+  {
+   "id": "sixwee1",
+   "lines": [
+    {
+     "text": "June twenty seventh, twenty seventeen, the day before a national holiday in Ukraine."
+    }
+   ]
+  },
+  {
+   "id": "sixwee2",
+   "lines": [
+    {
+     "text": "Most businesses in Ukraine used the same accounting software, called M E Doc. Hackers had broken into the small family company that made it, and slipped their own code into one of its updates."
+    }
+   ]
+  },
+  {
+   "id": "sixwee3",
+   "lines": [
+    {
+     "text": "When companies installed the update, they let the attackers in. The new malware spread with Eternal Blue, and with stolen passwords, through every network it touched. Within hours, banks, airports, power companies and government offices in Ukraine went dark. Even the radiation monitors at Chernobyl had to be checked by hand."
+    }
+   ]
+  },
+  {
+   "id": "sixwee4",
+   "lines": [
+    {
+     "text": "It looked like ransomware too, with the same kind of red screen and the same demand for three hundred dollars in bitcoin."
+    }
+   ]
+  },
+  {
+   "id": "sixwee5",
+   "lines": [
+    {
+     "text": "But this one was a fake. It was not built to make money. It was built to destroy. Even if you paid, your files were never coming back."
+    }
+   ]
+  },
+  {
+   "id": "sixwee6",
+   "lines": [
+    {
+     "text": "Researchers named it Not Petya. America and Britain later blamed a unit of Russia's military intelligence."
+    }
+   ]
+  },
+  {
+   "id": "sixwee7",
+   "lines": [
+    {
+     "text": "And this time, there was no kill switch."
+    }
+   ]
+  },
+  {
+   "id": "thepow1",
+   "lines": [
+    {
+     "text": "Not Petya did not stay in Ukraine. Any company with an office there was exposed. And one of them was Mursk, the biggest shipping company in the world."
+    }
+   ]
+  },
+  {
+   "id": "thepow2",
+   "lines": [
+    {
+     "text": "In about seven minutes, Mursk's network was wiped. Tens of thousands of computers, and thousands of servers, gone. Its port terminals around the world could not unload ships. Lorries queued for miles. Staff used their own phones to keep the business going."
+    }
+   ]
+  },
+  {
+   "id": "thepow3",
+   "lines": [
+    {
+     "text": "To rebuild, Mursk needed one thing more than anything. A copy of the master list of every user and every password in the company. They kept about a hundred and fifty copies, on servers all over the world."
+    }
+   ]
+  },
+  {
+   "id": "thepow4",
+   "lines": [
+    {
+     "text": "Every single one had been wiped, except one. In an office in West Africa, a power cut had knocked a server offline just before the attack. It was the only clean copy left on Earth. Someone had to physically get on a plane with it so the company could start again."
+    }
+   ]
+  },
+  {
+   "id": "thepow5",
+   "lines": [
+    {
+     "text": "Mursk later put its losses at up to three hundred million dollars. The drug company Merck lost hundreds of millions more. In total, the American government estimated the damage from Not Petya at more than ten billion dollars."
+    }
+   ]
+  },
+  {
+   "id": "thepow6",
+   "lines": [
+    {
+     "text": "It is still often called the most destructive cyberattack in history."
+    }
+   ]
+  },
+  {
+   "id": "sohowd1",
+   "lines": [
+    {
+     "text": "So, how did a ten dollar website stop a global cyberattack?"
+    }
+   ]
+  },
+  {
+   "id": "sohowd2",
+   "lines": [
+    {
+     "text": "The honest answer is luck. Wanna Cry had a kill switch, probably by mistake. Someone curious found it, and bought it for the price of a sandwich. Not Petya was built by different people, but they did not make the same mistake. There was no website to buy and no switch to flip, and the outcome was devastating."
+    }
+   ]
+  },
+  {
+   "id": "sohowd3",
+   "lines": [
+    {
+     "text": "But the real reason both attacks spread so far is much more boring."
+    }
+   ]
+  },
+  {
+   "id": "sohowd4",
+   "lines": [
+    {
+     "text": "The fix existed. Microsoft released it two months before Wanna Cry. Most of the computers that went down had simply never installed it."
+    }
+   ]
+  },
+  {
+   "id": "sohowd5",
+   "lines": [
+    {
+     "text": "A spy agency's secret weapon got stolen and handed to everyone. A dictatorship tried to turn it into a cash machine. Russia's military used it to wreck companies all over the world. And in the end, the difference between chaos and safety was often just one update that nobody got round to clicking."
+    }
+   ]
+  },
+  {
+   "id": "sohowd6",
+   "lines": [
+    {
+     "text": "So the next time your computer asks to restart for updates, maybe let it."
+    }
+   ]
+  },
+  {
+   "id": "sohowd7",
+   "lines": [
+    {
+     "text": "Would you have bought the website? Or would you have kept the ten dollars? Tell us in the comments."
+    }
+   ]
+  }
+ ]
+}
