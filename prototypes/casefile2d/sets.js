@@ -274,6 +274,7 @@ export function documentInsert(ctx, t, o = {}) {
 
 // ---------- INSERT: map ----------
 let WORLD = null;
+const VIVID = ['#f2c86b', '#e8936a', '#9fcf7a', '#f4e3a1', '#d9a3c7', '#86c5a8', '#f0b27a', '#c8d77a', '#e7a9a0'];
 export async function loadWorld(url) {
   WORLD = await (await fetch(url)).json();
   // rings that cross the date line (Russia, Fiji) jump from +180 to -180 and draw a bar across the whole map:
@@ -289,9 +290,11 @@ export async function loadWorld(url) {
 export function mapInsert(ctx, t, o = {}) {
   const v = o.view, k = o.local || 0, s = W / v.span;
   const P = ([lon, lat]) => { const y = Math.log(Math.tan(Math.PI / 4 + clamp(lat, -80, 84) * Math.PI / 360)), y0 = Math.log(Math.tan(Math.PI / 4 + v.lat * Math.PI / 360)); return [W / 2 + (lon - v.lon) * s, H / 2 - (y - y0) * 180 / Math.PI * s]; };
-  ctx.fillStyle = '#7fa3a6'; ctx.fillRect(-300, -300, 2520, 1680);
+  const VIV = o.vivid;   // vivid: bright sea, every country its own colour (george 28 Nov: Both Wars maps are more colourful)
+  ctx.fillStyle = VIV ? '#3f8fbf' : '#7fa3a6'; ctx.fillRect(-300, -300, 2520, 1680);
+  if (VIV) { const g = ctx.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 1200); g.addColorStop(0, 'rgba(120,200,230,.35)'); g.addColorStop(1, 'rgba(10,40,80,.25)'); ctx.fillStyle = g; ctx.fillRect(-300, -300, 2520, 1680); }
   // ocean texture lines
-  ctx.strokeStyle = 'rgba(255,255,255,.06)'; ctx.lineWidth = 2; for (let i = 0; i < 30; i++) { ctx.beginPath(); ctx.moveTo(-300, i * 40); ctx.lineTo(2220, i * 40 + 20); ctx.stroke(); }
+  ctx.strokeStyle = VIV ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,.06)'; ctx.lineWidth = 2; for (let i = 0; i < 30; i++) { ctx.beginPath(); ctx.moveTo(-300, i * 40); ctx.lineTo(2220, i * 40 + 20); ctx.stroke(); }
   if (!WORLD) return;
   const hl = o.highlight || {};
   // land with a soft offset shadow first
@@ -309,7 +312,8 @@ export function mapInsert(ctx, t, o = {}) {
       if (!pass) { ctx.fillStyle = 'rgba(30,50,55,.35)'; ctx.fill(); continue; }
       const hk = hl[f.n]; ctx.fillStyle = hk ? hk : (o.dim && o.dim !== f.n ? '#d9cdb0' : '#e3d6b6');
       if (o.dimAll && !hk) ctx.fillStyle = '#c9bea4';
-      ctx.fill(); ctx.strokeStyle = 'rgba(60,50,40,.55)'; ctx.lineWidth = 1.6; ctx.stroke();
+      if (VIV && !hk) { let hsh = 0; for (const ch of f.n) hsh = (hsh * 31 + ch.charCodeAt(0)) >>> 0; ctx.fillStyle = VIVID[hsh % VIVID.length]; if (o.dimAll) ctx.globalAlpha = 0.75; }
+      ctx.fill(); ctx.globalAlpha = 1; ctx.strokeStyle = VIV ? 'rgba(40,35,30,.7)' : 'rgba(60,50,40,.55)'; ctx.lineWidth = VIV ? 2 : 1.6; ctx.stroke();
       }
     }
   }

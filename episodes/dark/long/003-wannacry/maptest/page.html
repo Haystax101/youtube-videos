@@ -1,0 +1,10 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}#stage{position:relative;width:1920px;height:1080px;overflow:hidden}canvas{display:block}</style></head><body><div id="stage"><canvas id="cv"></canvas></div>
+<script type="module">
+import { mapInsert } from '/prototypes/casefile2d/sets.js';
+const { boot } = await import('/prototypes/casefile2d/runtime.js');
+await boot(new URL('./', location.href).href, () => [
+ { t0: 0, t1: 1, draw: (ctx, t, k, L) => mapInsert(ctx, t, { view: { lon: 15, lat: 30, span: 330 }, local: 3, vivid: true, highlight: { 'United Kingdom': '#d8432f' }, pins: [{ at: [-0.06, 51.52], label: 'LONDON' }] }) },
+ { t0: 1, t1: 2, draw: (ctx, t, k, L) => mapInsert(ctx, t, { view: { lon: 5, lat: 50, span: 50 }, local: 3, vivid: true, highlight: { 'United Kingdom': '#d8432f', France: '#3b6fb6', Germany: '#3b6fb6', Spain: '#3b6fb6' }, pins: [{ at: [-0.06, 51.52], label: 'LONDON' }] }) },
+ { t0: 2, t1: 4, draw: (ctx, t, k, L) => mapInsert(ctx, t, { view: { lon: 31, lat: 49, span: 40 }, local: 3, vivid: true, dimAll: true, highlight: { Ukraine: '#e8c13a' }, pins: [{ at: [30.52, 50.45], label: 'KYIV' }] }) },
+], { duration: 4 });
+</script></body></html>
