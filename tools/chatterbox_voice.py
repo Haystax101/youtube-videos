@@ -89,7 +89,7 @@ def voice_beats(ep, script, which):
             for sent in split_sentences(line["text"]):
                 spoken = " ".join(say.get(w.lower().strip(".,?!;:"), w.lower().strip(".,?!;:")) + w[len(w.rstrip(".,?!;:")):]
                                   if w.lower().strip(".,?!;:") in say else w for w in sent.split())
-                torch.manual_seed(1234 + i * 31 + len(words_out))
+                torch.manual_seed(1234 + i * 31 + len(words_out) + 1000 * line.get("seed", 0))  # "seed": N on a line re-rolls a bad take
                 wav = model.generate(spoken, audio_prompt_path=ref(spk), exaggeration=ex, cfg_weight=cfg)
                 x = torchaudio.functional.resample(wav, model.sr, SR)[0].numpy().astype(np.float32)
                 x = tempo(trim(x), speed * line.get("speed", 1.0))

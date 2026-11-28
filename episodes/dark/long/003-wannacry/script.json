@@ -180,7 +180,8 @@
    "id": "friday2",
    "lines": [
     {
-     "text": "They called it Wanna Cry."
+     "text": "They called it Wanna Cry.",
+     "seed": 1
     }
    ]
   },
@@ -292,7 +293,8 @@
    "id": "theher1",
    "lines": [
     {
-     "text": "Within days, Hutchins was famous. Newspapers called him the accidental hero who saved the N H S from Wanna Cry. Reporters turned up at his parents' door."
+     "text": "Within days, Hutchins was famous. Newspapers called him the accidental hero who saved the N H S from Wanna Cry. Reporters turned up at his parents' door.",
+     "seed": 1
     }
    ]
   },
@@ -460,7 +462,7 @@
    "id": "thepow2",
    "lines": [
     {
-     "text": "In about seven minutes, Mursk's network was wiped. Tens of thousands of computers, and thousands of servers, gone. Its port terminals around the world could not unload ships. Lorries queued for miles. Staff used their own phones to keep the business going."
+     "text": "In about seven minutes, Mursk's network was wiped. Tens of thousands of computers and thousands of servers were gone. Its port terminals around the world could not unload ships. Lorries queued for miles. Staff used their own phones to keep the business going."
     }
    ]
   },
@@ -468,7 +470,7 @@
    "id": "thepow3",
    "lines": [
     {
-     "text": "To rebuild, Mursk needed one thing more than anything. A copy of the master list of every user and every password in the company. They kept about a hundred and fifty copies, on servers all over the world."
+     "text": "To rebuild, Mursk needed one thing more than anything: a copy of the master list of every user and every password in the company. They kept about a hundred and fifty copies, on servers all over the world."
     }
    ]
   },
@@ -500,7 +502,8 @@
    "id": "sohowd1",
    "lines": [
     {
-     "text": "So, how did a ten dollar website stop a global cyberattack?"
+     "text": "So, how did a ten dollar website stop a global cyberattack?",
+     "seed": 1
     }
    ]
   },

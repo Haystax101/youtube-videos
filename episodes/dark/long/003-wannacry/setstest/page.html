@@ -1,0 +1,29 @@
+<!doctype html><html><head><meta charset="utf-8"><style>html,body{margin:0;background:#000}#stage{position:relative;width:1920px;height:1080px;overflow:hidden}canvas{display:block}</style></head><body><div id="stage"><canvas id="cv"></canvas></div>
+<script type="module">
+import { drawChar } from '/prototypes/casefile2d/engine.js';
+import * as S5 from '/prototypes/casefile2d/sets5.js';
+const { boot } = await import('/prototypes/casefile2d/runtime.js');
+const L = 3;
+const shots = [
+ (c,t)=>S5.ransomScreen(c,t,L,{}),
+ (c,t)=>{S5.hospitalFront(c,t,L,{alarm:true}); S5.ambulance(c,1500,1010,t,{lights:true,face:-1,s:0.8});},
+ (c,t)=>S5.carFactory(c,t,L,{stop:1}),
+ (c,t)=>S5.departureBoard(c,t,0.5,{}),
+ (c,t)=>S5.phoneOffice(c,t,L,{at:0.8}),
+ (c,t)=>{S5.seaBedroom(c,t,{}); drawChar(c,{x:1450,y:1000,face:1,hair:'short',hairColor:'#6b4a2a',outfit:'tee',color:'#3a3f46',legs:'#2f3440',mood:'neutral',id:5},t);},
+ (c,t)=>S5.domainShop(c,t,L+1,{}),
+ (c,t)=>S5.killSwitch(c,t,L,{yes:2}),
+ (c,t)=>S5.spyHQ(c,t,{label:'N S A'}),
+ (c,t)=>S5.weaponsLocker(c,t,L,{glow:'ETERNAL BLUE'}),
+ (c,t)=>S5.auctionCard(c,t,L,{}),
+ (c,t)=>S5.updatePopup(c,t,L,{clickAt:2.5,click:'now'}),
+ (c,t)=>S5.ddosSwarm(c,t,L,{}),
+ (c,t)=>S5.airportGate(c,t,{}),
+ (c,t)=>S5.softwareUpdate(c,t,L,{bug:1.5}),
+ (c,t)=>S5.chernobyl(c,t,{sign:true}),
+ (c,t)=>S5.containerPort(c,t,L,{stopped:true,gate:true}),
+ (c,t)=>{S5.powerCutOffice(c,t,L,{power:0});},
+ (c,t)=>{c.fillStyle='#8fc3e6';c.fillRect(0,0,1920,1080);S5.airliner(c,960,500,1.2,{});},
+];
+await boot(new URL('./', location.href).href, () => shots.map((d,i)=>({t0:i,t1:i+1,draw:(ctx,t)=>d(ctx,t)})), {duration: shots.length});
+</script></body></html>

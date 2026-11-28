@@ -1,0 +1,537 @@
+<!doctype html><html><head><meta charset="utf-8"><title>How Did a $10 Website Stop a Global Cyberattack?</title>
+<style>html,body{margin:0;background:#000}#stage{position:relative;width:1920px;height:1080px;overflow:hidden}canvas{display:block}</style>
+</head><body><div id="stage"><canvas id="cv"></canvas></div>
+<script type="module">
+import { W, H, INK, YEL, RED, PAPER, drawChar, camera, caption, dateTag, nameCard, clamp, lerp, ease, easeOut, easeInOut, pop, hash, textOutlined, rr, fillStroke, shade } from '/prototypes/casefile2d/engine.js';
+import { corkboard, mapInsert, glowSpot, documentInsert } from '/prototypes/casefile2d/sets.js';
+import { FLOOR, newspaper, statBars, room, windowFrame, plant, courtroom, subscribeSet, door, serverRack, bookshelf, tableSide, laptopSide, cabinet } from '/prototypes/casefile2d/sets2.js';
+import { emailWindow, ransomWard, checklist, wantedPoster, bug } from '/prototypes/casefile2d/sets4.js';
+import { hackerDen, bubble, calendarCard } from '/prototypes/casefile2d/sets3.js';
+import { ransomScreen, monitor, ambulance, hospitalFront, carFactory, departureBoard, phoneOffice, seaBedroom, domainShop, killSwitch, spyHQ, weaponsLocker, auctionCard, updatePopup, ddosSwarm, airportGate, softwareUpdate, chernobyl, containerPort, powerCutOffice, airliner } from '/prototypes/casefile2d/sets5.js';
+window.QA2D = true;
+
+const PREV = new Image(); PREV.src = new URL('./prev002.jpg', location.href).href; try { await PREV.decode(); } catch (e) {}
+
+// ---------- cast (our own characters) ----------
+const MARCUS = { name: 'Marcus', hair: 'messy', hairColor: '#b98a4a', outfit: 'tee', color: '#2f3440', legs: '#3a4a63', id: 201 };
+const DOC = { name: 'Doc', hair: 'short', hairColor: '#3a2a20', outfit: 'shirt', color: '#eef3f5', legs: '#2f5a7a', glasses: true, id: 202 };
+const NURSE = { name: 'Nurse', hair: 'long', hairColor: '#6b4a2a', outfit: 'tee', color: '#3f8f9f', legs: '#3f8f9f', id: 203 };
+const SPY = { name: 'Spy', hair: 'short', hairColor: '#2a2420', outfit: 'agent', color: '#2a2f38', legs: '#24262d', glasses: true, id: 204 };
+const HOOD = (i) => ({ name: 'Hood' + i, hair: 'beanie', hairColor: '#15171c', outfit: 'hoodie', color: ['#23262d', '#2c2f3a', '#1f2228'][i % 3], legs: '#1a1c22', mood: 'smug', id: 205 + i });
+const FBI1 = { name: 'Fbi1', hair: 'short', hairColor: '#5a3a22', outfit: 'agent', color: '#1f2733', legs: '#1f2733', id: 210 };
+const FBI2 = { name: 'Fbi2', hair: 'long', hairColor: '#c9a24a', outfit: 'agent', color: '#1f2733', legs: '#1f2733', glasses: true, id: 211 };
+const PARK = { name: 'Park', hair: 'buzz', hairColor: '#141414', outfit: 'shirt', color: '#3b4a63', legs: '#2a2b33', glasses: true, id: 132 };
+const IT = { name: 'It', hair: 'side', hairColor: '#2a1c16', outfit: 'shirt', color: '#d9e2ea', tie: '#2b4f8a', legs: '#2f3440', id: 212 };
+const STAFF = (i) => ({ name: 'Staff' + i, hair: ['short', 'side', 'long', 'buzz', 'messy'][i % 5], hairColor: ['#1e1816', '#6b4a2a', '#c9a24a', '#2a2420', '#3a2a20'][i % 5], outfit: ['shirt', 'suit', 'tee', 'shirt', 'tee'][i % 5], color: ['#d9e2ea', '#3a4150', '#b8584a', '#e7dcc4', '#2f7a72'][i % 5], legs: ['#2f3440', '#2a2b33', '#3a2f45', '#4a4238', '#24262d'][i % 5], id: 220 + i });
+const walkTo = (L, t0, d, x0, x1) => { const w = clamp((L - t0) / d); return { x: lerp(x0, x1, ease(w)), walk: w > 0 && w < 1 ? w * d * 2.2 : 0, face: x1 > x0 ? 1 : -1, moving: w > 0 && w < 1 }; };
+const shake = (t, t0, amp = 14, d = 0.5) => { const k = (t - t0) / d; if (k < 0 || k > 1) return [0, 0]; const a = amp * (1 - k); return [Math.sin(t * 38) * a, Math.cos(t * 31) * a]; };
+const face = (who) => (c, tt) => drawChar(c, { ...who, x: 0, y: 0, headOnly: true, qaSkip: true }, tt);
+const T = (c, s, x, y, font, fill = INK, align = 'center') => { c.save(); c.font = font; c.fillStyle = fill; c.textAlign = align; c.textBaseline = 'middle'; c.fillText(s, x, y); c.restore(); };
+const bg = (c, col) => { c.fillStyle = col; c.fillRect(-400, -400, W + 800, H + 800); };
+const deskBg = (c, col) => { bg(c, col); c.fillStyle = 'rgba(255,255,255,.035)'; for (let x = -400; x < W + 400; x += 80) c.fillRect(x, -400, 3, H + 800); glowSpot(c, W / 2, H / 2, 900, 'rgba(120,170,220,.12)'); };
+const padlock = (c, x, y, s = 1, col = YEL) => { c.save(); c.translate(x, y); c.scale(s, s); c.strokeStyle = INK; c.lineWidth = 16; c.beginPath(); c.arc(0, -28, 30, Math.PI, 0); c.stroke(); c.strokeStyle = col; c.lineWidth = 9; c.beginPath(); c.arc(0, -28, 30, Math.PI, 0); c.stroke(); rr(c, -46, -30, 92, 76, 10); fillStroke(c, col, INK, 4); c.fillStyle = INK; c.beginPath(); c.arc(0, 0, 9, 0, 7); c.fill(); c.fillRect(-4, 0, 8, 22); c.restore(); };
+const folder = (c, x, y, s = 1, col = '#f0c060') => { c.save(); c.translate(x, y); c.scale(s, s); rr(c, -70, -56, 60, 24, 6); fillStroke(c, shade(col, 0.85), INK, 3); rr(c, -70, -40, 140, 96, 8); fillStroke(c, col, INK, 4); c.restore(); };
+const pc = (c, x, y, s, screen) => { c.save(); c.translate(x, y); c.scale(s, s); rr(c, -80, -64, 160, 108, 8); fillStroke(c, '#cfd6de', INK, 4); rr(c, -68, -54, 136, 84, 4); c.fillStyle = screen || '#24344a'; c.fill(); c.strokeStyle = INK; c.lineWidth = 2.5; c.stroke(); rr(c, -14, 44, 28, 22, 3); fillStroke(c, '#9aa3ad', INK, 3); rr(c, -50, 64, 100, 14, 4); fillStroke(c, '#9aa3ad', INK, 3); c.restore(); };
+const tick = (c, x, y, s = 1, col = '#3fae5e') => { c.save(); c.translate(x, y); c.scale(s, s); c.beginPath(); c.arc(0, 0, 50, 0, 7); fillStroke(c, col, INK, 5); c.strokeStyle = '#fff'; c.lineWidth = 12; c.lineCap = 'round'; c.beginPath(); c.moveTo(-22, 0); c.lineTo(-6, 18); c.lineTo(24, -18); c.stroke(); c.restore(); };
+const cross = (c, x, y, s = 1) => { c.save(); c.translate(x, y); c.scale(s, s); c.strokeStyle = INK; c.lineWidth = 26; c.lineCap = 'round'; c.beginPath(); c.moveTo(-40, -40); c.lineTo(40, 40); c.moveTo(40, -40); c.lineTo(-40, 40); c.stroke(); c.strokeStyle = RED; c.lineWidth = 16; c.stroke(); c.restore(); };
+const stamp = (c, text, x, y, k, rot = -0.12, col = '#c7342a', size = 72) => { const st = clamp(k / 0.25); if (st <= 0) return; c.save(); c.translate(x, y); c.rotate(rot); c.scale(2 - st, 2 - st); c.globalAlpha = st; c.font = `${size}px "Lilita One"`; const w = c.measureText(text).width + 70; rr(c, -w / 2, -size * 0.85, w, size * 1.7, 12); c.strokeStyle = col; c.lineWidth = 10; c.stroke(); T(c, text, 0, 4, `${size}px "Lilita One"`, col); c.restore(); };
+
+// ---------- chapter title: full card and a small tag that slides in over the first shot ----------
+function chapterCard(c, t, L, n, title) {
+  const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#24344f'); g.addColorStop(1, '#141c2c'); c.fillStyle = g; c.fillRect(-400, -400, W + 800, H + 800);
+  c.fillStyle = 'rgba(255,255,255,.04)'; for (let i = 0; i < 24; i++) c.fillRect(-400, i * 50, W + 800, 2);
+  const p = easeOut(clamp(L / 0.45)); c.save(); c.translate(W / 2, H / 2 + (1 - p) * 60); c.rotate(-0.015); c.globalAlpha = p;
+  c.fillStyle = 'rgba(0,0,0,.35)'; c.fillRect(-620, -210, 1260, 440); rr(c, -640, -230, 1260, 440, 6); fillStroke(c, PAPER, INK, 5);
+  rr(c, -640, -230, 1260, 90, 6); fillStroke(c, RED, INK, 5); T(c, 'CHAPTER ' + n, -10, -184, '64px "Lilita One"', '#fff');
+  T(c, title, -10, 10, `${title.length > 16 ? 96 : 120}px "Lilita One"`, INK);
+  const u = easeOut(clamp((L - 0.4) / 0.6)); c.strokeStyle = RED; c.lineWidth = 8; c.lineCap = 'round'; c.beginPath(); c.moveTo(-420, 110); c.lineTo(-420 + 820 * u, 110); c.stroke();
+  c.restore();
+}
+function chapterTag(c, n, title, L) {
+  const p = easeOut(clamp(L / 0.4)) * (1 - clamp((L - 3.0) / 0.4)); if (p <= 0) return; c.save(); c.globalAlpha = p; c.translate(lerp(-500, 0, p), 0);
+  c.font = '58px "Lilita One"'; const w = Math.max(c.measureText(title).width, 260) + 80;
+  rr(c, 50, 60, w, 140, 10); fillStroke(c, PAPER, INK, 5); rr(c, 50, 60, w, 50, 10); fillStroke(c, RED, INK, 5);
+  T(c, 'CHAPTER ' + n, 90, 86, '34px "Lilita One"', '#fff', 'left'); T(c, title, 90, 152, '58px "Lilita One"', INK, 'left'); c.restore();
+}
+
+// ---------- a grid of computers; infection spreads out from one machine (a worm) ----------
+function wormGrid(c, t, L, o = {}) {
+  deskBg(c, o.bg || '#1b2230'); const cols = o.cols || 8, rows = o.rows || 4, sp = o.speed || 0.32, st = o.start || [1, 1], t0 = o.at || 0.3;
+  const pos = (q, r) => [W / 2 + (q - (cols - 1) / 2) * 215, 200 + r * 200 + (o.dy || 0)];
+  c.strokeStyle = 'rgba(160,190,220,.3)'; c.lineWidth = 4;
+  for (let r = 0; r < rows; r++) for (let q = 0; q < cols; q++) { const [x, y] = pos(q, r); if (q < cols - 1) { c.beginPath(); c.moveTo(x + 80, y); c.lineTo(x + 135, y); c.stroke(); } if (r < rows - 1) { c.beginPath(); c.moveTo(x, y + 80); c.lineTo(x, y + 120); c.stroke(); } }
+  for (let r = 0; r < rows; r++) for (let q = 0; q < cols; q++) { const [x, y] = pos(q, r), d = Math.abs(q - st[0]) + Math.abs(r - st[1]), safe = o.safe && o.safe.some(([a, b]) => a === q && b === r), at = t0 + d * sp + hash(q * 13 + r * 7) * sp * 0.6, on = !safe && L > at;
+    if (on && L < at + 0.5) { c.strokeStyle = `rgba(255,80,60,${1 - (L - at) / 0.5})`; c.lineWidth = 6; c.beginPath(); c.arc(x, y, 60 + (L - at) * 200, 0, 7); c.stroke(); }
+    if (on) glowSpot(c, x, y, 140, 'rgba(255,40,30,.25)');
+    pc(c, x, y, 0.95, on ? (o.dead ? '#0a0a0c' : '#a8231c') : safe ? '#2f8a4a' : '#24344a');
+    if (on && !o.dead) padlock(c, x, y - 12, 0.36); else if (safe) tick(c, x, y - 12, 0.4); else { c.fillStyle = 'rgba(140,200,255,.5)'; for (let k = 0; k < 3; k++) c.fillRect(x - 50, y - 40 + k * 16, 30 + hash(q + r * 9 + k) * 60, 6); } }
+}
+// ---------- ransomware, defined: files, then a padlock slams on, then a price tag ----------
+function lockFiles(c, t, L, o = {}) {
+  deskBg(c, '#26303a'); const at = o.at ?? 0.8, k = clamp((L - at) / 0.2);
+  for (let i = 0; i < 6; i++) { const x = 560 + (i % 3) * 400, y = 360 + Math.floor(i / 3) * 280; folder(c, x, y, 1.5, k > 0 ? '#a99a80' : ['#f0c060', '#7fb3e0', '#9fcf7a'][i % 3]); T(c, ['PHOTOS', 'RECORDS', 'X-RAYS', 'LETTERS', 'SCANS', 'WORK'][i], x, y + 110, '900 34px "Nunito"', '#e8eef4'); }
+  if (k > 0) { const [sx, sy] = shake(t, (o.t0 || 0) + at, 10, 0.4); c.save(); c.translate(sx, sy); c.strokeStyle = 'rgba(40,30,25,.9)'; c.lineWidth = 14; [[300, 220, 1620, 820], [1620, 220, 300, 820]].forEach(([a, b, cc, d]) => { c.beginPath(); c.moveTo(a, b); c.lineTo(cc, d); c.stroke(); }); padlock(c, 960, 520, 3.2 * (0.7 + 0.3 * pop(k))); c.restore(); }
+  const p = clamp((L - (o.price ?? at + 1.0)) / 0.3); if (p > 0) { c.save(); c.translate(1500, 200); c.rotate(0.12 + Math.sin(t * 3) * 0.04); c.scale(p, p); c.beginPath(); c.moveTo(-140, -60); c.lineTo(120, -60); c.lineTo(180, 0); c.lineTo(120, 60); c.lineTo(-140, 60); c.closePath(); fillStroke(c, YEL, INK, 5); c.beginPath(); c.arc(130, 0, 12, 0, 7); fillStroke(c, '#26303a', INK, 3); T(c, 'PAY UP', -10, 4, '58px "Lilita One"'); c.restore(); }
+}
+// ---------- code viewer with one line about to be highlighted ----------
+function codeView(c, t, L, o = {}) {
+  deskBg(c, '#141a24'); rr(c, 200, 100, 1520, 880, 14); fillStroke(c, '#1e2533', INK, 6); rr(c, 200, 100, 1520, 60, 14); fillStroke(c, '#2b3445', INK, 4);
+  T(c, 'wannacry.exe  ·  disassembly', 240, 131, '900 30px "Nunito"', '#9fb3cc', 'left');
+  const lines = ['start:', '  push  ebp', '  mov   ebp, esp', '  sub   esp, 0x50', '  ; before anything else...', '  lea   eax, [url]', '  call  InternetOpenUrl', '  test  eax, eax', '  jne   stop_everything', '  call  spread_and_encrypt'];
+  lines.forEach((s, i) => { const y = 220 + i * 62, hl = o.hl != null && i >= 5 && i <= 6 && L > o.hl; if (hl) { c.fillStyle = 'rgba(243,195,74,.25)'; c.fillRect(230, y - 28, 1460, 56); }
+    T(c, String(i + 1).padStart(2, ' '), 250, y, '34px "Courier New"', '#5a6a80', 'left'); T(c, s, 330, y, 'bold 38px "Courier New"', s.includes(';') ? '#7fae7f' : s.endsWith(':') ? '#f3c34a' : '#dfe8f2', 'left'); });
+  if (o.url != null) { const p = easeOut(clamp((L - o.url) / 0.4)); if (p > 0) { c.save(); c.globalAlpha = p; c.translate(960, 880 - (1 - p) * 30); rr(c, -740, -60, 1480, 120, 12); fillStroke(c, '#fbf7ec', INK, 5); T(c, 'url = "http://www.iuqerfsodp9ifjaposdfjhgosurijfaewrwergwea.com"', 0, 2, 'bold 33px "Courier New"', '#1d4e89'); c.restore(); } }
+}
+// ---------- victims paying into three shared wallets: nobody can tell who paid ----------
+function wallets(c, t, L, o = {}) {
+  deskBg(c, '#1f2733');
+  for (let i = 0; i < 8; i++) { const x = 230 + (i % 2) * 230, y = 170 + Math.floor(i / 2) * 230; pc(c, x, y, 0.75, '#a8231c'); padlock(c, x, y - 10, 0.3);
+    [0, 1, 2].forEach(j => { const p = clamp((L - 0.4 - i * 0.12) / 0.9); if (p <= 0 || (i + j) % 3) return; const x1 = 1440, y1 = 230 + j * 300; const q = easeInOut(p); c.strokeStyle = 'rgba(243,195,74,.55)'; c.lineWidth = 4; c.setLineDash([12, 10]); c.beginPath(); c.moveTo(x + 70, y); c.lineTo(lerp(x + 70, x1 - 130, q), lerp(y, y1, q)); c.stroke(); c.setLineDash([]); }); }
+  [0, 1, 2].forEach(j => { const y = 230 + j * 300; rr(c, 1310, y - 100, 380, 200, 18); fillStroke(c, '#3a4150', INK, 5); c.beginPath(); c.arc(1400, y, 52, 0, 7); fillStroke(c, '#f2a13a', INK, 4); T(c, '₿', 1400, y + 4, '70px "Lilita One"', '#fff'); T(c, 'WALLET ' + (j + 1), 1560, y, '44px "Lilita One"', '#f6efdd');
+    const q = clamp((L - (o.q ?? 2.2) - j * 0.2) / 0.3); if (q > 0) { c.save(); c.translate(1720, y - 70); c.scale(q, q); c.beginPath(); c.arc(0, 0, 46, 0, 7); fillStroke(c, '#fbf7ec', INK, 4); T(c, '?', 0, 4, '64px "Lilita One"', RED); c.restore(); } });
+}
+// ---------- a researcher's test machine: every website "exists", so the worm plays dead ----------
+function sandbox(c, t, L, o = {}) {
+  deskBg(c, '#20303a'); rr(c, 460, 170, 1000, 720, 24); c.fillStyle = 'rgba(180,230,255,.12)'; c.fill(); c.strokeStyle = '#bfe6f6'; c.lineWidth = 8; c.stroke();
+  T(c, 'RESEARCHER TEST MACHINE', 960, 230, '52px "Lilita One"', '#bfe6f6');
+  pc(c, 960, 560, 2.6, '#24344a'); const asleep = L > (o.sleep ?? 1.2);
+  c.save(); c.translate(960, 520); if (asleep) { c.rotate(Math.PI / 2 * 0.9); } bug(c, 0, 0, 2.2, t); c.restore();
+  if (asleep) { [0, 1, 2].forEach(i => { const z = ((L * 0.8 + i * 0.33) % 1); c.globalAlpha = 1 - z; T(c, 'z', 1120 + z * 120 + i * 30, 430 - z * 160, `${50 + i * 14}px "Lilita One"`, '#fff'); c.globalAlpha = 1; }); }
+  bubble(c, 700, 330, 'IS THIS A TRAP?', L - 0.3, { dur: (o.sleep ?? 1.2) - 0.1, size: 38 });
+}
+// ---------- DDoS defined: three words reveal ----------
+function ddosDef(c, t, L, at) {
+  deskBg(c, '#1d2430'); const p0 = easeOut(clamp(L / 0.4)); c.save(); c.globalAlpha = p0; textOutlined(c, 'D D o S', W / 2, 250, { size: 170, fill: YEL, lw: 18 }); c.restore();
+  [['DISTRIBUTED', 'many machines at once', '#7fb3e0'], ['DENIAL OF', 'nobody else gets in', '#f0a060'], ['SERVICE', 'the website', '#9fcf7a']].forEach(([w, s, col], i) => { const p = easeOut(clamp((L - at[i]) / 0.35)); if (p <= 0) return; const x = 420 + i * 540;
+    c.save(); c.translate(x, 640 + (1 - p) * 40); c.globalAlpha = p; rr(c, -240, -150, 480, 300, 16); fillStroke(c, PAPER, INK, 5); rr(c, -240, -150, 480, 18, 8); c.fillStyle = col; c.fill(); T(c, w, 0, -40, `${w.length > 10 ? 58 : 66}px "Lilita One"`); T(c, s, 0, 60, '900 34px "Nunito"', '#5a5048'); c.restore(); });
+}
+// ---------- hacker conference hall ----------
+function confHall(c, t, L) {
+  room(c, t, { wall: '#232a45', wall2: '#1b2036', wainscot: 700, floor: '#2b2f44', items: cc => {
+    rr(cc, 420, 90, 1080, 420, 10); fillStroke(cc, '#0f1426', INK, 6); const g = cc.createLinearGradient(420, 90, 1500, 510); g.addColorStop(0, '#5a2aa8'); g.addColorStop(1, '#1a8aa8'); cc.fillStyle = g; cc.fillRect(436, 106, 1048, 388);
+    T(cc, 'HACKER CONFERENCE', 960, 250, '84px "Lilita One"', '#fff'); T(cc, 'LAS VEGAS · 2017', 960, 350, '54px "Lilita One"', YEL);
+    for (let i = 0; i < 6; i++) { glowSpot(cc, 160 + i * 320, 40, 220, `rgba(${i % 2 ? '120,90,255' : '60,200,255'},.25)`); }
+  } });
+  for (let row = 0; row < 2; row++) for (let i = 0; i < 9; i++) { const x = 120 + i * 210 + row * 100; if (row === 0 && i === 4) continue; drawChar(c, { ...STAFF(i + row * 3), x, y: FLOOR + 40 + row * 120, s: 0.75 + row * 0.12, face: x < 960 ? 1 : -1, qaSkip: true, mood: 'smug' }, t); }
+}
+// ---------- Kronos: a bank login whose password is copied away ----------
+function kronos(c, t, L) {
+  deskBg(c, '#26303a'); rr(c, 300, 160, 900, 760, 16); fillStroke(c, '#f4f6f8', INK, 6); rr(c, 300, 160, 900, 90, 16); fillStroke(c, '#1d4e89', INK, 4); T(c, 'MY BANK · LOG IN', 750, 205, '52px "Lilita One"', '#fff');
+  T(c, 'USERNAME', 380, 330, '900 34px "Nunito"', '#6b625a', 'left'); rr(c, 380, 360, 740, 90, 10); fillStroke(c, '#fff', INK, 3); T(c, 'j.smith', 410, 405, '44px "Nunito"', INK, 'left');
+  T(c, 'PASSWORD', 380, 520, '900 34px "Nunito"', '#6b625a', 'left'); rr(c, 380, 550, 740, 90, 10); fillStroke(c, '#fff', INK, 3); const n = Math.floor(clamp(L / 1.2) * 10); T(c, '•'.repeat(n), 410, 598, '60px "Nunito"', INK, 'left');
+  rr(c, 560, 720, 380, 110, 16); fillStroke(c, '#2fb35e', INK, 4); T(c, 'LOG IN', 750, 776, '58px "Lilita One"', '#fff');
+  bug(c, 1560, 520, 3, t); T(c, 'KRONOS', 1560, 760, '72px "Lilita One"', RED);
+  for (let i = 0; i < 5; i++) { const p = ((L * 0.9 + i * 0.2) % 1); if (L < 0.8) break; const x = lerp(1120, 1460, p), y = 595 + Math.sin(p * Math.PI) * -80; T(c, '•', x, y, '70px "Nunito"', RED); }
+}
+// ---------- our previous video, in a player frame ----------
+function prevVideo(c, t, L) {
+  deskBg(c, '#1d2430'); const p = easeOut(clamp(L / 0.4)); c.save(); c.translate(W / 2, H / 2 - 40 + (1 - p) * 50); c.globalAlpha = p; c.rotate(-0.012);
+  rr(c, -690, -400, 1380, 860, 22); fillStroke(c, '#0f1218', INK, 6); if (PREV.complete && PREV.naturalWidth) c.drawImage(PREV, -660, -370, 1320, 742); c.strokeStyle = INK; c.lineWidth = 4; c.strokeRect(-660, -370, 1320, 742);
+  c.fillStyle = 'rgba(0,0,0,.45)'; c.beginPath(); c.arc(0, 0, 90, 0, 7); c.fill(); c.fillStyle = '#fff'; c.beginPath(); c.moveTo(-28, -44); c.lineTo(46, 0); c.lineTo(-28, 44); c.closePath(); c.fill();
+  rr(c, -660, 392, 1320, 12, 6); c.fillStyle = '#5a5f6a'; c.fill(); rr(c, -660, 392, 1320 * 0.35, 12, 6); c.fillStyle = '#e33b2e'; c.fill(); c.restore();
+  caption(c, 'OUR LAST VIDEO', W / 2, 1010, L - 0.2, 9, { size: 60 });
+}
+// ---------- counter for non-dollar amounts ----------
+function counter(c, t, L, o = {}) {
+  bg(c, o.bg || '#2f2a26'); const p = easeOut(clamp((L - (o.at || 0)) / (o.dur || 1.6))), v = Math.round((o.to || 0) * p);
+  if (o.icon) o.icon(c, p); textOutlined(c, (o.pre || '') + v.toLocaleString('en-GB') + (o.post || ''), W / 2, o.y || 470, { size: o.size || 160, fill: o.color || YEL, lw: 16 });
+  if (o.label) textOutlined(c, o.label, W / 2, 250, { size: 62, fill: '#f6efdd', lw: 10 }); if (o.sub) T(c, o.sub, W / 2, 640, '900 44px "Nunito"', '#d9cfbd');
+}
+// ---------- files torn apart (wiper) ----------
+function shred(c, t, L, o = {}) {
+  deskBg(c, '#1a1414'); const at = o.at ?? 0.6;
+  for (let i = 0; i < 6; i++) { const x = 560 + (i % 3) * 400, y = 380 + Math.floor(i / 3) * 300, p = clamp((L - at - i * 0.12) / 0.7);
+    if (p <= 0) { folder(c, x, y, 1.5, ['#f0c060', '#7fb3e0', '#9fcf7a'][i % 3]); continue; }
+    for (let k = 0; k < 8; k++) { const a = hash(i * 17 + k) * 6.28, d = easeOut(p) * (80 + hash(k + i) * 160); c.save(); c.translate(x + Math.cos(a) * d, y + Math.sin(a) * d + p * p * 120); c.rotate(a + p * 4); c.globalAlpha = 1 - p * 0.8; rr(c, -18, -10, 36, 20, 3); fillStroke(c, ['#f0c060', '#7fb3e0', '#9fcf7a'][i % 3], INK, 2); c.restore(); } }
+}
+// ---------- the world, with infection dots ----------
+const CITIES = [[-0.12, 51.5], [2.35, 48.85], [13.4, 52.5], [-3.7, 40.4], [12.5, 41.9], [37.6, 55.75], [30.5, 50.45], [28.97, 41.0], [31.2, 30.0], [55.3, 25.2], [72.88, 19.07], [77.2, 28.6], [88.36, 22.57], [100.5, 13.75], [106.8, -6.2], [103.8, 1.35], [114.2, 22.3], [121.47, 31.23], [116.4, 39.9], [126.98, 37.57], [139.7, 35.7], [121.0, 14.6], [151.2, -33.9], [144.96, -37.8], [174.76, -36.85], [-74.0, 40.71], [-87.6, 41.9], [-118.24, 34.05], [-122.4, 37.77], [-79.4, 43.7], [-99.13, 19.43], [-46.6, -23.5], [-58.4, -34.6], [-70.65, -33.45], [-77.04, -12.05], [-74.07, 4.71], [18.42, -33.92], [28.05, -26.2], [3.38, 6.52], [36.82, -1.29], [-7.6, 33.57], [51.4, 35.7], [46.7, 24.7], [67.0, 24.86], [90.41, 23.81], [105.85, 21.03], [-43.2, -22.9], [-123.1, 49.28], [60.6, 56.84], [82.9, 55.0], [44.5, 40.18], [23.7, 37.98], [19.04, 47.5], [21.0, 52.23], [18.07, 59.33], [10.75, 59.91], [-9.14, 38.72], [4.9, 52.37], [8.54, 47.37], [16.37, 48.2], [-96.8, 32.78], [-84.39, 33.75], [-80.19, 25.76], [-71.06, 42.36], [-66.9, 10.5], [-17.45, 14.7], [32.58, 0.35], [38.74, 9.03], [47.98, 29.37], [69.2, 34.53], [74.35, 31.55], [80.27, 13.08], [96.16, 16.8], [120.97, 23.7], [135.5, 34.7], [129.07, 35.18], [113.26, 23.13], [104.07, 30.67], [-3.19, 55.95], [-6.26, 53.35]];
+const order = CITIES.map((_, i) => i).sort((a, b) => hash(a * 3.1) - hash(b * 3.1));
+const infectPins = (L, t0, span, o = {}) => order.map((ci, j) => ({ at: CITIES[ci], t0: t0 + (j / order.length) * span, color: o.color ? o.color(j) : '#d8261c' })).filter(p => !o.max || order.indexOf(CITIES.indexOf(p.at)) < o.max);
+const ENGLAND = [[-0.12, 51.5], [-1.9, 52.48], [-2.24, 53.48], [-1.55, 53.8], [-2.98, 53.4], [-1.47, 53.38], [-1.15, 52.95], [-1.61, 54.97], [-2.59, 51.45], [-1.4, 50.9], [-1.26, 51.75], [0.12, 52.2], [1.3, 52.63], [-4.14, 50.37], [-0.34, 53.74], [0.52, 51.27], [-1.08, 50.8], [-2.1, 52.59], [-0.75, 51.33], [-1.13, 52.63], [-3.0, 53.8], [0.9, 51.9], [-2.7, 52.7], [-1.8, 51.6], [-0.4, 52.1], [0.25, 51.1], [-2.0, 53.0], [-1.3, 54.5]];
+const LONDON = [-0.06, 51.52], ILF = [-4.12, 51.21], VEGAS = [-115.14, 36.17], LA = [-118.24, 34.05], PYONG = [125.75, 39.02], DC = [-76.77, 39.11], KYIV = [30.52, 50.45], MOSCOW = [37.6, 55.75], ACCRA = [-0.19, 5.6], DHAKA = [90.41, 23.81];
+const V = true;   // vivid maps (george 28 Nov)
+
+const { boot } = await import('/prototypes/casefile2d/runtime.js');
+await boot(new URL('./', location.href).href, ({ cue, end, tl }) => {
+  const B = (b, w = 0) => cue(b, w);
+  const nth = (b, w, n) => { const ws = tl.beats[b].words.filter(x => x.w.toLowerCase().replace(/[^a-z0-9']/g, '') === w); if (!ws[n - 1]) throw new Error(`nth ${b} ${w} ${n}`); return ws[n - 1].s; };
+  const S = [];
+  const add = (t0, name, draw, overlay, dark = 0.08) => S.push({ t0, name, draw, overlay, dark });
+
+  // ================= COLD OPEN (a new setup every 3-4 s) =================
+  add(0, 'map to london', (ctx, t, k, L) => { const z = easeInOut(clamp(L / 3.2));
+    mapInsert(ctx, t, { vivid: V, view: { lon: lerp(10, LONDON[0], z), lat: lerp(35, LONDON[1], z), span: lerp(330, 14, Math.pow(z, 0.7)) }, local: L, highlight: { 'United Kingdom': '#d8432f' }, pins: [{ at: LONDON, label: 'LONDON', t0: 2.4 }] }); },
+    (ctx, t, k, L) => { dateTag(ctx, '12 MAY 2017', L - 0.2); }, 0.04);
+  add(B(0, 'the') - 0.1, 'royal london', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 930, y: 540, z: 1.12 }, k); hospitalFront(ctx, t, L, {});
+    ambulance(ctx, 1640, FLOOR + 150, t, { face: -1, s: 0.75 });
+    [0, 1, 2].forEach(i => { const w = walkTo(L, i * 0.5, 3, i % 2 ? 2000 : -100, 760 + i * 150); drawChar(ctx, { ...STAFF(i + 2), x: w.x, y: FLOOR + 60, s: 0.8, walk: w.walk, face: w.face, qaSkip: true }, t); }); },
+    (ctx, t, k, L) => { dateTag(ctx, 'ROYAL LONDON HOSPITAL · EAST LONDON', L - 0.2); }, 0.04);
+  add(B(0, 'that') - 0.1, 'ward goes red', (ctx, t, k, L) => { camera(ctx, { x: 760, y: 560, z: 1.15 }, { x: 860, y: 560, z: 1.3 }, k); ransomWard(ctx, t, L, { at: B(0, 'red') - B(0, 'that') - 0.6 });
+    drawChar(ctx, { ...NURSE, x: 520, y: FLOOR, face: 1, mood: L > 2.6 ? 'worried' : 'neutral' }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'THAT AFTERNOON', W / 2, 150, L - 0.2, 1.8); }, 0.05);
+  add(B(1, 0) - 0.05, 'ransom note', (ctx, t, k, L) => { const [sx, sy] = shake(t, B(1, 0) + 0.05, 10, 0.4); camera(ctx, { x: 960 + sx, y: 540 + sy, z: 1.0 }, { x: 980 + sx, y: 520 + sy, z: 1.12 }, k); ransomScreen(ctx, t, L, { at: 0.05 }); }, null, 0.04);
+  add(B(1, 'pay') - 0.1, 'doctor screen', (ctx, t, k, L) => { camera(ctx, { x: 1000, y: 560, z: 1.25 }, { x: 1020, y: 520, z: 1.4 }, k);
+    room(ctx, t, { wall: '#d3e6e3', wall2: '#a9c9c5', wainscot: 600, floor: '#7e9a98', items: c => { cabinet(c, 260, FLOOR - 230); } });
+    tableSide(ctx, 1150, 560, FLOOR - 200, '#c9b48c'); monitor(ctx, 1000, FLOOR - 470, 300, 190, r => ransomScreen(ctx, t, 3, { rect: r })); glowSpot(ctx, 1150, FLOOR - 380, 260, 'rgba(255,40,30,.25)');
+    drawChar(ctx, { ...DOC, x: 760, y: FLOOR, face: 1, mood: t > B(1, 'lose') - 0.2 ? 'shock' : 'worried', arms: t > B(1, 'lose') - 0.2 ? [1.8, 1.8] : [0.2, 0.3], glow: { color: 'rgba(255,60,40,.5)', side: 1 } }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'OR LOSE THEM FOREVER', W / 2, 150, t - B(1, 'lose'), 1.8, { fill: RED }); }, 0.05);
+  add(B(2, 0) - 0.05, 'ambulances away', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.05 }, { x: 1060, y: 560, z: 1.12 }, k); hospitalFront(ctx, t, L, { alarm: true });
+    ambulance(ctx, lerp(900, 2600, easeInOut(clamp((L - 0.4) / 3.2))), FLOOR + 170, t, { lights: true, face: 1, s: 0.85 }); ambulance(ctx, lerp(-500, 300, easeOut(clamp(L / 1.2))), FLOOR + 160, t, { lights: true, face: 1, s: 0.8 }); },
+    (ctx, t, k, L) => { caption(ctx, 'AMBULANCES SENT AWAY', W / 2, 150, L - 0.4, 2.2); }, 0.04);
+  add(B(2, 'operations') - 0.1, 'ops cancelled', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k);
+    checklist(ctx, t, L, { title: "TODAY'S OPERATIONS", items: [{ text: 'HIP REPLACEMENT', at: 0.3, no: true }, { text: 'HEART SURGERY', at: 0.55, no: true }, { text: 'CANCER SCAN', at: 0.8, no: true }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'CANCELLED', W / 2, 1010, L - 0.5, 1.6, { fill: RED, size: 72 }); }, 0.04);
+  add(B(2, 'doctors') - 0.1, 'pen and paper', (ctx, t, k, L) => { camera(ctx, { x: 640, y: 560, z: 1.45 }, { x: 660, y: 540, z: 1.6 }, k); ransomWard(ctx, t, 9, { at: 0 });
+    const wr = Math.sin(L * 9) * 0.12; drawChar(ctx, { ...DOC, x: 620, y: FLOOR, face: 1, mood: 'worried', eyes: 'down', arms: [1.3, 1.5 + wr], hold: (c) => { rr(c, -40, -60, 80, 110, 6); fillStroke(c, '#a8784a', INK, 3); rr(c, -32, -48, 64, 90, 3); fillStroke(c, '#fbf7ec', INK, 2); } }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'BACK TO PEN AND PAPER', W / 2, 150, L - 0.3, 2.2, { size: 64 }); }, 0.05);
+  add(nth(2, 'and', 2) - 0.1, 'england trusts', (ctx, t, k, L) => { const o = nth(2, 'and', 2) - 0.1;
+    mapInsert(ctx, t, { vivid: V, view: { lon: -1.8, lat: 53.0, span: lerp(16, 13, k) }, local: L, highlight: { 'United Kingdom': '#e8e2d0' }, pins: ENGLAND.map((p, i) => ({ at: p, t0: B(2, 'third') - o - 0.4 + i * 0.05, color: '#d8261c' })) }); },
+    (ctx, t, k, L) => { caption(ctx, 'A THIRD OF NHS TRUSTS IN ENGLAND', W / 2, 1000, t - B(2, 'third'), 2.4, { size: 60 }); }, 0.04);
+  add(nth(2, 'and', 3) - 0.1, 'europe', (ctx, t, k, L) => { const z = easeInOut(clamp(L / 1.4));
+    mapInsert(ctx, t, { vivid: V, view: { lon: lerp(-2, 4, z), lat: lerp(53, 48, z), span: lerp(16, 46, z) }, local: L, highlight: { 'United Kingdom': '#d8432f', France: '#3b6fb6', Germany: '#3b6fb6', Spain: '#3b6fb6' }, pins: [{ at: LONDON, t0: 0 }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'NOT JUST BRITAIN', W / 2, 150, L - 0.2, 1.6); }, 0.04);
+  add(B(2, 'car') - 0.1, 'car factory', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.05 }, { x: 960, y: 580, z: 1.12 }, k); carFactory(ctx, t, L, { stop: 0.7 }); },
+    (ctx, t, k, L) => { dateTag(ctx, 'CAR FACTORIES · FRANCE', L - 0.1); }, 0.04);
+  add(B(2, 'railways') - 0.1, 'railways', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 480, z: 1.05 }, { x: 960, y: 440, z: 1.14 }, k); departureBoard(ctx, t, L, { at: 0.9 }); },
+    (ctx, t, k, L) => { dateTag(ctx, 'RAILWAYS · GERMANY', L - 0.1); }, 0.04);
+  add(B(2, 'phone') - 0.1, 'phone company', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.08 }, k); phoneOffice(ctx, t, L, { at: 0.5, name: 'TELECOM · MADRID' }); },
+    (ctx, t, k, L) => { dateTag(ctx, 'PHONE COMPANIES · SPAIN', L - 0.1); }, 0.04);
+  add(B(2, 'two') - 0.1, 'world infected', (ctx, t, k, L) => {
+    mapInsert(ctx, t, { vivid: V, view: { lon: lerp(10, 25, k), lat: 25, span: lerp(330, 310, k) }, local: L, dimAll: true, pins: infectPins(L, 0, 3.0) }); },
+    (ctx, t, k, L) => { caption(ctx, '200,000 COMPUTERS', W / 2, 140, L - 0.2, 9, { size: 72 }); caption(ctx, '150 COUNTRIES', W / 2, 1000, t - nth(2, 'hundred', 2) - 0.2, 9, { size: 64, fill: '#fff' }); }, 0.04);
+  // Devon
+  add(B(3, 0) - 0.05, 'devon map', (ctx, t, k, L) => { const z = easeInOut(clamp(L / 2.2));
+    mapInsert(ctx, t, { vivid: V, view: { lon: lerp(-2, ILF[0], z), lat: lerp(53, ILF[1], z), span: lerp(14, 6, z) }, local: L, highlight: { 'United Kingdom': '#9fcf7a' }, pins: [{ at: ILF, label: 'DEVON', t0: 1.0 }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'MEANWHILE', W / 2, 150, L - 0.1, 1.6); }, 0.04);
+  add(B(3, 'twenty') - 0.15, 'bedroom', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.08 }, { x: 1100, y: 560, z: 1.2 }, k); seaBedroom(ctx, t);
+    const w = walkTo(L, 0.1, 2.2, 600, 1180); drawChar(ctx, { ...MARCUS, x: w.x, y: FLOOR + 30, walk: w.walk, face: w.moving ? 1 : 0, mood: 'neutral' }, t); },
+    (ctx, t, k, L) => { caption(ctx, '22 YEARS OLD', W / 2, 150, L - 0.2, 1.8); caption(ctx, 'A WEEK OFF WORK', W / 2, 150, t - B(3, 'week') + 0.1, 1.8, { size: 60 }); }, 0.05);
+  add(B(3, 'he') - 0.1, 'back from lunch', (ctx, t, k, L) => { camera(ctx, { x: 1400, y: 560, z: 1.5 }, { x: 1440, y: 540, z: 1.62 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1330, y: FLOOR + 30, face: 1, mood: 'neutral', arms: [1.1, 1.2], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'BACK FROM LUNCH', W / 2, 150, L - 0.2, 1.6, { size: 60 }); }, 0.05);
+  add(B(3, 'spends') - 0.15, 'buy domain', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.06 }, k); domainShop(ctx, t, L, { type: 1.0, clickAfter: B(3, 'website') - B(3, 'spends') - 0.6 }); }, null, 0.04);
+  add(B(4, 0) - 0.05, 'attack stops', (ctx, t, k, L) => { const st = B(4, 'stops') - B(4, 0) + 0.05;
+    mapInsert(ctx, t, { vivid: V, view: { lon: 20, lat: 25, span: lerp(310, 300, k) }, local: L, dimAll: true, pins: infectPins(L, -9, 1, { color: j => L > st + j * 0.012 ? '#3fae5e' : '#d8261c' }) }); },
+    (ctx, t, k, L) => { caption(ctx, 'THE ATTACK STOPS', W / 2, 1000, t - B(4, 'stops') + 0.1, 9, { size: 76, fill: '#9fe0a0' }); }, 0.04);
+  add(B(5, 0) - 0.05, 'questions board', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.07 }, k);
+    corkboard(ctx, t, { local: L, title: 'Wanna Cry', cards: [
+      { x: 960, y: 520, w: 300, h: 300, kind: 'note', title: 'A website', sub: 'bought for $10.69', at: 0.05, rot: -0.03, icon: (c, x, y) => { c.font = '80px "Lilita One"'; c.fillStyle = '#3e6b4a'; c.textAlign = 'center'; c.fillText('.COM', x, y); } },
+      { x: 480, y: 480, w: 210, h: 230, kind: 'q', at: 0.4, rot: 0.04 }, { x: 1440, y: 470, w: 210, h: 230, kind: 'q', at: 0.6, rot: -0.04 }], strings: [[0, 1, 0.6], [0, 2, 0.8]] }); },
+    (ctx, t, k, L) => { caption(ctx, 'HOW DID IT STOP THE ATTACK?', W / 2, 1000, L - 0.4, 3.2, { size: 64 }); }, 0.04);
+  add(B(5, 'why') - 0.1, 'arrest headline', (ctx, t, k, L) => { newspaper(ctx, t, { local: L, paper: 'THE DAILY RECORD', date: 'AUGUST 2017', headline: 'WANNA CRY HERO\nARRESTED BY FBI' }); }, null, 0.04);
+  add(B(5, 'and') - 0.1, 'not the worst', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 540, z: 1.1 }, k); containerPort(ctx, t, L, { stopped: true }); },
+    (ctx, t, k, L) => { caption(ctx, 'NOT EVEN THE WORST ATTACK', W / 2, 150, t - B(5, 'not'), 2.6, { fill: RED, size: 64 }); }, 0.05);
+
+  // ================= CHAPTER 1: THE STOLEN WEAPON =================
+  add(B(6, 0) - 0.05, 'ch1', (ctx, t, k, L) => { chapterCard(ctx, t, L, 1, 'THE STOLEN WEAPON'); }, null, 0.04);
+  add(B(7, 0) - 0.05, 'nsa hq', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 560, z: 1.12 }, k); spyHQ(ctx, t, { label: 'NSA' }); },
+    (ctx, t, k, L) => { caption(ctx, "AMERICA'S BIGGEST SPY AGENCY", W / 2, 150, L - 0.2, 2.6, { size: 64 }); }, 0.05);
+  add(B(7, 'for') - 0.1, 'collected weaknesses', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.08 }, k); weaponsLocker(ctx, t, L, { label: 'SECRET WEAKNESSES' }); }, null, 0.05);
+  add(nth(7, 'it', 2) - 0.1, 'spy at work', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 580, z: 1.3 }, { x: 980, y: 560, z: 1.42 }, k);
+    room(ctx, t, { wall: '#2a3348', wall2: '#202839', wainscot: 640, floor: '#1f2430', dark: 0.15, items: c => { serverRack(c, 300, FLOOR, 200, 480, t, 2); serverRack(c, 1560, FLOOR, 200, 480, t, 5); } });
+    drawChar(ctx, { ...SPY, x: 860, y: FLOOR, face: 1, mood: 'smug', arms: [1.3, 1.3 + Math.sin(t * 14) * 0.06], glow: { color: 'rgba(120,200,255,.5)', side: 1 } }, t);
+    tableSide(ctx, 1080, 360, FLOOR - 200, '#3a3f46'); laptopSide(ctx, 1040, FLOOR - 200, t, { face: -1 }); },
+    (ctx, t, k, L) => { caption(ctx, 'TO BREAK INTO TARGETS', W / 2, 150, t - B(7, 'break') + 0.4, 2.2, { size: 60 }); }, 0.1);
+  add(B(8, 0) - 0.05, 'eternal blue', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 500, z: 1.25 }, k); weaponsLocker(ctx, t, L, { glow: 'ETERNAL BLUE', label: 'THE BEST ONE' }); },
+    (ctx, t, k, L) => { caption(ctx, 'ETERNAL BLUE', W / 2, 1000, t - B(8, 'eternal'), 2.4, { size: 84, fill: '#7fc8ff' }); }, 0.05);
+  add(B(8, 'it') - 0.1, 'file sharing', (ctx, t, k, L) => { deskBg(ctx, '#1f2a38');
+    const P3 = [[420, 560], [960, 360], [1500, 560]]; ctx.strokeStyle = 'rgba(160,190,220,.6)'; ctx.lineWidth = 6; ctx.setLineDash([16, 12]); [[0, 1], [1, 2], [0, 2]].forEach(([a, b]) => { ctx.beginPath(); ctx.moveTo(...P3[a]); ctx.lineTo(...P3[b]); ctx.stroke(); }); ctx.setLineDash([]);
+    P3.forEach(([x, y], i) => { pc(ctx, x, y, 1.7, '#2a5a8a'); T(ctx, 'WINDOWS', x, y - 20, '34px "Lilita One"', '#cfe6ff'); });
+    [0, 1, 2].forEach(i => { const p = ((L * 0.5 + i / 3) % 1), [a, b] = [[0, 1], [1, 2], [2, 0]][i]; folder(ctx, lerp(P3[a][0], P3[b][0], p), lerp(P3[a][1], P3[b][1], p) - 40, 0.6, ['#f0c060', '#7fb3e0', '#9fcf7a'][i]); }); },
+    (ctx, t, k, L) => { caption(ctx, 'THE PART THAT SHARES FILES', W / 2, 1000, t - B(8, 'share') + 0.3, 2.4, { size: 60 }); }, 0.04);
+  add(B(8, 'with') - 0.1, 'no clicks', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 520, z: 1.12 }, k);
+    room(ctx, t, { wall: '#d9d2c2', wall2: '#b0a68f', wainscot: 620, floor: '#6b5a48', items: c => { windowFrame(c, 220, 170, 380, 300, t); plant(c, 1700, FLOOR, 1.1); } });
+    tableSide(ctx, 960, 700, FLOOR - 200, '#c9a878'); const red = L > 1.4; monitor(ctx, 810, FLOOR - 480, 300, 190, ([x, y, w, h]) => { ctx.fillStyle = red ? '#a8231c' : '#2a5a8a'; ctx.fillRect(x, y, w, h); if (red) padlock(ctx, x + w / 2, y + h / 2, 0.8); else T(ctx, 'WINDOWS', x + w / 2, y + h / 2, '34px "Lilita One"', '#cfe6ff'); });
+    // the mouse sits untouched
+    rr(ctx, 1180, FLOOR - 228, 50, 30, 14); fillStroke(ctx, '#e6e6e6', INK, 3); if (red) glowSpot(ctx, 960, FLOOR - 380, 300, 'rgba(255,40,30,.25)'); },
+    (ctx, t, k, L) => { caption(ctx, 'NOBODY CLICKS ANYTHING', W / 2, 150, t - B(8, 'without'), 2.4, { size: 64 }); }, 0.05);
+  add(B(9, 0) - 0.05, 'aug 2016', (ctx, t, k, L) => { calendarCard(ctx, t, L, 'AUGUST', '2016'); }, null, 0.04);
+  add(B(9, 'a') - 0.1, 'shadow brokers', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 520, z: 1.25 }, k);
+    bg(ctx, '#0c0f18'); glowSpot(ctx, 960, 380, 700, 'rgba(90,110,200,.2)'); ctx.fillStyle = '#141826'; ctx.fillRect(-400, FLOOR - 40, W + 800, 600);
+    [[640, 0.9], [960, 1.05], [1280, 0.9]].forEach(([x, s], i) => drawChar(ctx, { ...HOOD(i), x, y: FLOOR + (i === 1 ? 40 : 0), s, face: i === 0 ? 1 : i === 2 ? -1 : 0, mood: 'smug', glow: { color: 'rgba(120,140,255,.4)', side: i === 0 ? 1 : -1 } }, t)); },
+    (ctx, t, k, L) => { caption(ctx, 'THE SHADOW BROKERS', W / 2, 150, t - B(9, 'shadow'), 9, { size: 84 }); }, 0.12);
+  add(nth(9, 'and', 1) - 0.1, 'stolen tools', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.08 }, k); weaponsLocker(ctx, t, L, { glow: 'ETERNAL BLUE', take: 0.9, label: 'NSA HACKING TOOLS' }); },
+    (ctx, t, k, L) => { caption(ctx, 'STOLEN?', W / 2, 1000, t - B(9, 'stolen'), 2.0, { fill: RED, size: 80 }); }, 0.05);
+  add(B(10, 0) - 0.05, 'auction', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); auctionCard(ctx, t, L, { bids: 2, flop: B(10, 'almost') - B(10, 0) + 0.6 }); }, null, 0.04);
+  add(B(10, 'so') - 0.1, 'april 2017', (ctx, t, k, L) => { calendarCard(ctx, t, L, 'APRIL', '2017'); }, (ctx, t, k, L) => { caption(ctx, 'MUCH WORSE', W / 2, 1000, t - B(10, 'worse') + 0.2, 2, { fill: RED, size: 72 }); }, 0.04);
+  add(nth(10, 'they', 3) - 0.1, 'free to all', (ctx, t, k, L) => { const src = [10, 50];
+    mapInsert(ctx, t, { vivid: V, view: { lon: 15, lat: 25, span: 320 }, local: L, dimAll: true, routes: order.slice(0, 40).map((ci, j) => ({ from: src, to: CITIES[ci], at: 0.2 + j * 0.05, dur: 0.8, color: '#2b4f8a' })), pins: [{ at: src, label: '?', t0: 0 }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'FREE, TO ANYONE', W / 2, 1000, t - B(10, 'free'), 9, { size: 76 }); }, 0.04);
+  add(B(11, 0) - 0.05, 'microsoft fix', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); updatePopup(ctx, t, L, { title: 'SECURITY UPDATE · MARCH 2017', lines: ['Fixes the weakness', 'used by Eternal Blue.'] }); },
+    (ctx, t, k, L) => { caption(ctx, 'ONE PIECE OF GOOD NEWS', W / 2, 1000, L - 0.2, 2.2, { size: 60, fill: '#9fe0a0' }); }, 0.04);
+  add(B(11, 'any') - 0.1, 'safe pcs', (ctx, t, k, L) => { wormGrid(ctx, t, L, { cols: 6, rows: 3, dy: 60, safe: [0, 1, 2, 3, 4, 5].flatMap(q => [[q, 0], [q, 1], [q, 2]]) }); },
+    (ctx, t, k, L) => { caption(ctx, 'UPDATED = SAFE', W / 2, 110, t - B(11, 'safe') + 0.3, 2.4, { size: 72, fill: '#9fe0a0' }); }, 0.04);
+  add(B(12, 0) - 0.05, 'nhs first in line', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 500, z: 1.12 }, k); hospitalFront(ctx, t, L, { name: 'NHS HOSPITAL' }); },
+    (ctx, t, k, L) => { caption(ctx, 'FIRST IN LINE?', W / 2, 1000, t - B(12, 'first'), 2.2, { size: 72 }); }, 0.04);
+  add(B(12, 'it') - 0.1, 'records', (ctx, t, k, L) => { const o = B(12, 'it') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 580, z: 1.1 }, k);
+    documentInsert(ctx, t, { local: L, header: 'The N H S in England', lines: [{ text: 'Runs the hospitals', at: 0.2 }, { text: 'Holds the medical records', at: B(12, 'holds') - o }, { text: 'of almost everyone in England', at: B(12, 'almost') - o, hl: [0, 29, B(12, 'everyone') - o] }] }); }, null, 0.05);
+  add(nth(12, 'and', 1) - 0.1, 'warning email', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.06 }, k);
+    emailWindow(ctx, t, L, { from: 'NHS cyber security team', subject: 'CRITICAL: install this update', body: ['To all N H S organisations,', '', 'A critical Windows weakness is being', 'fixed by this update. Please install it', 'on every computer as soon as possible.'], file: 'MS17-010 update' }); },
+    (ctx, t, k, L) => { caption(ctx, 'MARCH 2017', W / 2, 1010, L - 0.2, 2.0, { size: 60 }); }, 0.04);
+  add(B(13, 0) - 0.05, 'remind me later', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 900, y: 560, z: 1.12 }, k); updatePopup(ctx, t, L, { title: 'SECURITY UPDATE', click: 'later', clickAt: 0.9 }); },
+    (ctx, t, k, L) => { caption(ctx, "MANY TRUSTS DIDN'T", W / 2, 1000, L - 0.9, 2.0, { fill: RED, size: 66 }); }, 0.04);
+  add(B(13, 'and') - 0.1, 'millions unpatched', (ctx, t, k, L) => { mapInsert(ctx, t, { vivid: V, view: { lon: lerp(0, 30, k), lat: 25, span: 320 }, local: L, dimAll: true, pins: infectPins(L, 0.1, 1.6, { color: () => '#e8a33a' }) }); },
+    (ctx, t, k, L) => { caption(ctx, 'MILLIONS OF COMPUTERS, NOT UPDATED', W / 2, 1000, L - 0.4, 9, { size: 60 }); }, 0.04);
+
+  // ================= CHAPTER 2: FRIDAY THE TWELFTH =================
+  add(B(14, 0) - 0.05, 'bolted on', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 520, z: 1.3 }, k); hackerDen(ctx, t); },
+    (ctx, t, k, L) => { chapterTag(ctx, 2, 'FRIDAY THE TWELFTH', L); caption(ctx, 'ETERNAL BLUE + RANSOMWARE', W / 2, 1000, t - B(14, 'bolted'), 2.6, { size: 64 }); }, 0.1);
+  add(nth(14, 'ransomware', 2) - 0.1, 'ransomware defined', (ctx, t, k, L) => { lockFiles(ctx, t, L, { at: 0.5, t0: nth(14, 'ransomware', 2) - 0.1, price: B(14, 'charges') - nth(14, 'ransomware', 2) + 0.1 }); },
+    (ctx, t, k, L) => { caption(ctx, 'RANSOMWARE', W / 2, 110, L - 0.1, 9, { size: 84 }); }, 0.04);
+  add(B(15, 0) - 0.05, 'wanna cry', (ctx, t, k, L) => { const [sx, sy] = shake(t, B(15, 'wanna'), 12, 0.5); camera(ctx, { x: 960 + sx, y: 540 + sy, z: 1.1 }, { x: 960 + sx, y: 540 + sy, z: 1.0 }, k); ransomScreen(ctx, t, L, { at: 0.1 }); },
+    (ctx, t, k, L) => { caption(ctx, 'WANNA CRY', W / 2, 960, t - B(15, 'wanna'), 9, { size: 120, fill: '#fff' }); }, 0.04);
+  add(B(16, 0) - 0.05, 'bad email', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.06 }, k);
+    emailWindow(ctx, t, L, { from: 'Totally Real Bank', subject: 'Your invoice is attached', body: ['Hello,', '', 'Please open the attached invoice', 'to avoid extra charges.'], file: 'invoice.doc', click: 1.6 }); },
+    (ctx, t, k, L) => { caption(ctx, 'NORMAL RANSOMWARE: A BAD EMAIL', W / 2, 1010, L - 0.2, 2.4, { size: 56 }); }, 0.04);
+  add(B(16, 'once') - 0.1, 'worm spreads', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.12 }, { x: 960, y: 540, z: 1.0 }, k); wormGrid(ctx, t, L, { start: [0, 0], at: 0.4, speed: 0.42 }); },
+    (ctx, t, k, L) => { caption(ctx, 'EVERY UNPATCHED COMPUTER', W / 2, 1010, t - B(16, 'every'), 2.4, { size: 60 }); }, 0.04);
+  add(B(16, 'and') - 0.1, 'again and again', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 0.92 }, k); wormGrid(ctx, t, L, { start: [7, 3], at: 0.0, speed: 0.22, bg: '#22161a' }); },
+    (ctx, t, k, L) => { caption(ctx, 'IT WAS A WORM', W / 2, 1010, t - B(16, 'worm') + 0.3, 9, { size: 88, fill: RED }); }, 0.04);
+  add(B(17, 0) - 0.05, 'nhs worst', (ctx, t, k, L) => { const o = B(17, 0) - 0.05;
+    mapInsert(ctx, t, { vivid: V, view: { lon: -1.8, lat: 53.0, span: lerp(13, 11.5, k) }, local: L, highlight: { 'United Kingdom': '#e8e2d0' }, pins: ENGLAND.map((p, i) => ({ at: p, t0: B(17, 'eighty') - o - 0.3 + i * 0.04, color: '#d8261c' })) }); },
+    (ctx, t, k, L) => { caption(ctx, 'HIT WORST OF ALL', W / 2, 150, L - 0.3, 1.8, { fill: RED }); caption(ctx, 'AT LEAST 81 TRUSTS', W / 2, 1000, t - B(17, 'eighty'), 2.6, { size: 72 }); }, 0.04);
+  add(B(17, 'some') - 0.1, 'locked ward', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.05 }, { x: 1000, y: 560, z: 1.14 }, k); ransomWard(ctx, t, L, { at: 0.2 }); drawChar(ctx, { ...NURSE, x: 1300, y: FLOOR, face: -1, mood: 'worried' }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'LOCKED', W / 2, 150, L - 0.3, 1.6, { fill: RED, size: 80 }); }, 0.05);
+  add(B(17, 'others') - 0.1, 'shut down', (ctx, t, k, L) => { camera(ctx, { x: 1060, y: 560, z: 1.3 }, { x: 1080, y: 540, z: 1.42 }, k); const off = L > 1.3;
+    room(ctx, t, { wall: '#c9d4da', wall2: '#9aa9b2', wainscot: 620, floor: '#4f5a64', tiles: true, items: c => { serverRack(c, 1300, FLOOR, 220, 520, off ? 0 : t, 4); serverRack(c, 1560, FLOOR, 220, 520, off ? 0 : t, 6); } });
+    if (off) { ctx.fillStyle = 'rgba(10,14,30,.4)'; ctx.fillRect(1180, 200, 640, FLOOR - 200); }
+    drawChar(ctx, { ...IT, x: 1060, y: FLOOR, face: 1, mood: off ? 'sad' : 'worried', arms: L < 1.3 ? [0.4, 1.4] : [0.3, 0.6] }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'SHUT DOWN TO STOP IT SPREADING', W / 2, 150, L - 0.3, 2.6, { size: 58 }); }, 0.06);
+  add(B(17, 'every') - 0.1, 'one thing in common', (ctx, t, k, L) => { const o = B(17, 'every') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 600, z: 1.12 }, k);
+    documentInsert(ctx, t, { local: L, header: 'Every infected N H S organisation', source: 'National Audit Office, 2017', lines: [{ text: 'One thing in common:', at: nth(17, 'one', 2) - o }, { text: 'NOT UPDATED', at: B(17, 'not') - o, size: 72, color: RED, circle: [0, 11, B(17, 'updated') - o + 0.2] }] }); }, null, 0.05);
+  add(B(18, 0) - 0.05, '19000 appointments', (ctx, t, k, L) => { counter(ctx, t, L, { to: 19000, at: B(18, 'nineteen') - B(18, 0) - 0.2, dur: 1.4, label: 'APPOINTMENTS CANCELLED', sub: 'government estimate', icon: (c, p) => { for (let i = 0; i < Math.floor(p * 14); i++) { const x = 560 + (i % 7) * 130, y = 780 + Math.floor(i / 7) * 120; rr(c, x - 50, y - 40, 100, 80, 8); fillStroke(c, '#efe6d2', INK, 3); c.fillStyle = RED; c.fillRect(x - 50, y - 40, 100, 20); cross(c, x, y + 10, 0.4); } } }); }, null, 0.04);
+  add(B(18, 'the') - 0.1, '92 million', (ctx, t, k, L) => { counter(ctx, t, L, { to: 92, at: 0.5, dur: 1.4, pre: '£', post: ' MILLION', size: 140, label: 'TOTAL COST TO THE NHS', color: '#ffb36a' }); }, null, 0.04);
+  add(B(19, 0) - 0.05, 'wallets', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); wallets(ctx, t, L, { q: B(19, 'no') - B(19, 0) }); },
+    (ctx, t, k, L) => { caption(ctx, 'NO WAY TO TELL WHO PAID', W / 2, 1010, t - B(19, 'no'), 2.6, { size: 60 }); }, 0.04);
+  add(B(19, 'so') - 0.1, 'never back', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 600, z: 1.16 }, k); ransomScreen(ctx, t, L, { clock: 4, tick: 1.6 }); },
+    (ctx, t, k, L) => { caption(ctx, 'PAID, BUT NO FILES BACK', W / 2, 150, L - 0.6, 9, { size: 64 }); }, 0.04);
+  add(B(20, 0) - 0.05, 'researchers race', (ctx, t, k, L) => { const LABS = [LONDON, [-122.4, 37.77], [-74.0, 40.71], [13.4, 52.5], [37.6, 55.75], [139.7, 35.7], [121.0, 14.6], [-79.4, 43.7], [34.78, 32.08], [2.35, 48.85], [151.2, -33.9], [103.8, 1.35]];
+    mapInsert(ctx, t, { vivid: V, view: { lon: 15, lat: 30, span: lerp(320, 300, k) }, local: L, pins: LABS.map((p, i) => ({ at: p, t0: 0.2 + i * 0.12, color: '#2b6fd0' })) }); },
+    (ctx, t, k, L) => { caption(ctx, 'RESEARCHERS RACE TO UNDERSTAND IT', W / 2, 1000, L - 0.3, 9, { size: 58 }); }, 0.04);
+  add(B(20, 'and') - 0.1, 'remember him', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 560, z: 1.25 }, { x: 1380, y: 520, z: 1.5 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1330, y: FLOOR + 30, face: 1, mood: 'neutral', arms: [1.1, 1.2 + Math.sin(t * 13) * 0.05], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'REMEMBER HIM?', W / 2, 150, t - B(20, 'remember'), 9, { size: 80 }); }, 0.05);
+
+  // ================= CHAPTER 3: THE BEDROOM IN DEVON =================
+  add(B(21, 0) - 0.05, 'marcus', (ctx, t, k, L) => { camera(ctx, { x: 1000, y: 560, z: 1.25 }, { x: 980, y: 520, z: 1.4 }, k); seaBedroom(ctx, t); drawChar(ctx, { ...MARCUS, x: 980, y: FLOOR + 30, face: 0, mood: 'smug' }, t); },
+    (ctx, t, k, L) => { chapterTag(ctx, 3, 'THE BEDROOM IN DEVON', L); nameCard(ctx, 'MARCUS HUTCHINS', 'ONLINE: MALWARE TECH', t - B(21, 'marcus')); }, 0.05);
+  add(B(21, 'worked') - 0.25, 'ilfracombe', (ctx, t, k, L) => { const o = B(21, 'worked') - 0.25, z = easeInOut(clamp((L - (B(21, 'for') - o)) / 1.4));
+    mapInsert(ctx, t, { vivid: V, view: { lon: lerp(ILF[0], -60, z), lat: lerp(ILF[1], 42, z), span: lerp(7, 120, z) }, local: L, highlight: { 'United Kingdom': '#9fcf7a', 'United States of America': '#7fb3e0' }, routes: [{ from: ILF, to: LA, at: B(21, 'for') - o + 0.6, dur: 1.0 }], pins: [{ at: ILF, label: 'ILFRACOMBE', t0: 0.4 }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'HIS BEDROOM, AT HIS PARENTS’ HOUSE', W / 2, 1000, L - 0.2, 2.6, { size: 54 }); caption(ctx, 'FOR A US SECURITY COMPANY', W / 2, 1000, t - B(21, 'security') + 0.2, 9, { size: 54 }); }, 0.04);
+  add(B(22, 0) - 0.05, 'reading code', (ctx, t, k, L) => { camera(ctx, { x: 1440, y: 560, z: 1.55 }, { x: 1460, y: 520, z: 1.7 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1330, y: FLOOR + 30, face: 1, mood: 'neutral', eyes: L > 2.2 ? 'open' : 'down', arms: [1.1, 1.2 + Math.sin(t * 13) * 0.05], glow: { color: 'rgba(255,110,80,.45)', side: 1 } }, t); },
+    (ctx, t, k, L) => { bubble(ctx, 1260, 330, 'HUH?', t - B(22, 'odd'), { think: true }); }, 0.05);
+  add(B(22, 'before') - 0.1, 'code view', (ctx, t, k, L) => { const o = B(22, 'before') - 0.1; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 600, z: 1.08 }, k); codeView(ctx, t, L, { hl: B(22, 'visit') - o - 0.2, url: nth(22, 'it', 2) - o }); },
+    (ctx, t, k, L) => { caption(ctx, 'NOT A REAL WEBSITE', W / 2, 90, t - B(22, 'random') + 0.6, 9, { size: 60, fill: RED }); }, 0.05);
+  add(B(23, 0) - 0.05, 'nobody owned it', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 400, z: 1.15 }, { x: 960, y: 420, z: 1.25 }, k); domainShop(ctx, t, L + 2, { type: 1.0, clickAfter: 99 }); },
+    (ctx, t, k, L) => { caption(ctx, 'NOBODY OWNED IT', W / 2, 1000, t - B(23, 'nobody'), 9, { size: 80 }); }, 0.04);
+  add(B(24, 0) - 0.05, 'count infections', (ctx, t, k, L) => { mapInsert(ctx, t, { vivid: V, view: { lon: 20, lat: 30, span: lerp(300, 280, k) }, local: L, dimAll: true, pins: infectPins(L, 0.3, 3.2) }); },
+    (ctx, t, k, L) => { const n = Math.floor(clamp((L - 0.3) / 3.6) * 48000); textOutlined(ctx, 'INFECTED: ' + n.toLocaleString('en-GB'), W / 2, 130, { size: 72, fill: YEL, lw: 10 }); caption(ctx, 'SEE WHERE IT SPREADS', W / 2, 1000, t - B(24, 'see'), 9, { size: 60 }); }, 0.04);
+  add(B(24, 'so') - 0.1, 'registered', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 580, z: 1.08 }, k); domainShop(ctx, t, L + 1.4, { type: 1.0, clickAfter: B(24, 'ten') - B(24, 'so') - 1.2 }); }, null, 0.04);
+  add(B(25, 0) - 0.05, 'no idea', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 520, z: 1.9 }, { x: 1320, y: 480, z: 2.2 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1330, y: FLOOR + 30, face: 1, mood: 'smug', arms: [0.3, 0.4], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); }, null, 0.06);
+  add(B(26, 0) - 0.05, 'kill switch', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); killSwitch(ctx, t, L, {}); },
+    (ctx, t, k, L) => { caption(ctx, 'A KILL SWITCH', W / 2, 1010, t - B(26, 'kill'), 2.4, { size: 76, fill: RED }); }, 0.04);
+  add(nth(26, 'if', 2) - 0.1, 'switch yes', (ctx, t, k, L) => { camera(ctx, { x: 1100, y: 540, z: 1.05 }, { x: 1200, y: 520, z: 1.15 }, k); killSwitch(ctx, t, L, { yes: 0.2 }); }, null, 0.04);
+  add(B(27, 0) - 0.05, 'answer yes', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); killSwitch(ctx, t, L, { yes: B(27, 'yes') - B(27, 0) }); },
+    (ctx, t, k, L) => { caption(ctx, 'ALL DAY: NO', W / 2, 1010, L - 0.2, 2.0, { size: 64, fill: RED }); caption(ctx, 'NOW: YES', W / 2, 1010, t - B(27, 'yes') + 0.1, 9, { size: 72, fill: '#9fe0a0' }); }, 0.04);
+  add(B(27, 'across') - 0.1, 'infections stop', (ctx, t, k, L) => { mapInsert(ctx, t, { vivid: V, view: { lon: 20, lat: 25, span: lerp(300, 290, k) }, local: L, dimAll: true, pins: infectPins(L, -9, 1, { color: j => L > 0.3 + j * 0.015 ? '#3fae5e' : '#d8261c' }) }); },
+    (ctx, t, k, L) => { caption(ctx, 'NEW INFECTIONS STOPPED', W / 2, 1000, L - 0.4, 9, { size: 72, fill: '#9fe0a0' }); }, 0.04);
+  add(B(28, 0) - 0.05, 'why built in', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 520, z: 1.28 }, k); hackerDen(ctx, t); }, (ctx, t, k, L) => { caption(ctx, 'WHY BUILD IT IN?', W / 2, 150, L - 0.3, 2.4, { size: 72 }); }, 0.1);
+  add(B(28, 'most') - 0.1, 'sandbox', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); sandbox(ctx, t, L, { sleep: B(28, 'hide') - B(28, 'most') }); },
+    (ctx, t, k, L) => { caption(ctx, 'AND IT BACKFIRED', W / 2, 1000, t - B(28, 'backfired'), 9, { size: 72, fill: RED }); }, 0.04);
+
+  // ================= CHAPTER 4: THE HERO =================
+  add(B(29, 0) - 0.05, 'famous', (ctx, t, k, L) => { newspaper(ctx, t, { local: L, paper: 'THE DAILY RECORD', date: 'MAY 2017', headline: 'ACCIDENTAL HERO\nSAVES THE NHS' }); },
+    (ctx, t, k, L) => { chapterTag(ctx, 4, 'THE HERO', L); }, 0.04);
+  add(B(29, 'reporters') - 0.1, 'reporters', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.05 }, { x: 960, y: 560, z: 1.14 }, k);
+    room(ctx, t, { wall: '#efe2c8', wall2: '#cdb994', wainscot: 820, floor: '#8a8f8a', bricks: true, items: c => { door(c, 860, 360, 200, FLOOR - 360, { color: '#2f5f8a' }); windowFrame(c, 300, 300, 320, 260, t); windowFrame(c, 1300, 300, 320, 260, t); plant(c, 1120, FLOOR, 0.9); } });
+    const flash = Math.floor(t * 7) % 5 === 0; [0, 1, 2, 3].forEach(i => { const x = [420, 640, 1280, 1500][i]; drawChar(ctx, { ...STAFF(i + 1), x, y: FLOOR + 60, face: x < 960 ? 1 : -1, arms: [0.3, 1.6], hold: (c) => { rr(c, -36, -28, 72, 56, 8); fillStroke(c, '#2b3038', INK, 3); c.beginPath(); c.arc(0, 0, 16, 0, 7); fillStroke(c, '#5a6a80', INK, 2); } }, t);
+      if (flash && i % 2 === Math.floor(t * 2) % 2) glowSpot(ctx, x + (x < 960 ? 80 : -80), FLOOR - 220, 160, 'rgba(255,255,255,.7)'); }); },
+    (ctx, t, k, L) => { caption(ctx, "AT HIS PARENTS' DOOR", W / 2, 150, L - 0.2, 2.2); }, 0.04);
+  add(B(30, 0) - 0.05, 'take it down', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); ddosSwarm(ctx, t, L, {}); },
+    (ctx, t, k, L) => { caption(ctx, 'THE ATTACKERS STRIKE BACK', W / 2, 1010, L - 0.3, 2.2, { size: 60 }); }, 0.04);
+  add(B(30, 'that') - 0.1, 'ddos defined', (ctx, t, k, L) => { const o = B(30, 'that') - 0.1; ddosDef(ctx, t, L, [B(30, 'distributed') - o, B(30, 'denial') - o, B(30, 'service') - o]); }, null, 0.04);
+  add(B(30, 'thousands') - 0.1, 'swarm', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.12 }, { x: 960, y: 540, z: 1.0 }, k); ddosSwarm(ctx, t, L + 1, {}); },
+    (ctx, t, k, L) => { caption(ctx, 'HACKED CAMERAS AND ROUTERS', W / 2, 150, t - B(30, 'cameras') + 0.2, 2.6, { size: 60 }); caption(ctx, 'ALL AT ONCE', W / 2, 150, t - B(30, 'once') + 0.1, 2.0, { size: 72 }); }, 0.04);
+  add(B(30, 'if') - 0.1, 'switch at risk', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); killSwitch(ctx, t, L, { yes: Math.floor(L * 3) % 2 ? 99 : -1 }); },
+    (ctx, t, k, L) => { caption(ctx, 'IF IT FALLS, THE WORM IS FREE', W / 2, 1010, L - 0.3, 3.0, { size: 60, fill: RED }); }, 0.04);
+  add(B(30, 'hutchins') - 0.1, 'kept running', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 560, z: 1.3 }, { x: 1340, y: 540, z: 1.4 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1330, y: FLOOR + 30, face: 1, mood: 'angry', arms: [1.1, 1.3 + Math.sin(t * 16) * 0.08], glow: { color: 'rgba(120,220,170,.45)', side: 1 } }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'KEPT IT RUNNING', W / 2, 150, t - B(30, 'kept'), 9, { size: 72, fill: '#9fe0a0' }); }, 0.05);
+  add(B(31, 0) - 0.05, 'to vegas', (ctx, t, k, L) => { const z = easeInOut(clamp(L / 2.6));
+    mapInsert(ctx, t, { vivid: V, view: { lon: lerp(-40, -90, z), lat: lerp(48, 40, z), span: lerp(140, 110, z) }, local: L, highlight: { 'United Kingdom': '#9fcf7a', 'United States of America': '#7fb3e0' }, routes: [{ from: LONDON, to: VEGAS, at: 0.3, dur: 1.8 }], pins: [{ at: LONDON, t0: 0 }, { at: VEGAS, label: 'LAS VEGAS', t0: 1.8 }] }); },
+    (ctx, t, k, L) => { dateTag(ctx, 'AUGUST 2017 · LAS VEGAS', L - 0.3); }, 0.04);
+  add(B(31, 'everyone') - 0.1, 'conference', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.0 }, { x: 960, y: 600, z: 1.12 }, k); confHall(ctx, t, L); drawChar(ctx, { ...MARCUS, x: 960, y: FLOOR + 40, s: 0.85, face: 0, mood: 'smug' }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'THE MAN WHO STOPPED WANNA CRY', W / 2, 1010, L - 0.4, 9, { size: 56 }); }, 0.05);
+  add(B(32, 0) - 0.05, 'airport', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.0 }, { x: 900, y: 560, z: 1.1 }, k); airportGate(ctx, t, { gate: 'GATE 14 · LONDON' });
+    const w = walkTo(L, 0.2, 2.6, 300, 900); drawChar(ctx, { ...MARCUS, x: w.x, y: FLOOR + 20, walk: w.walk, face: 1, mood: 'neutral' }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'HE NEVER MADE IT HOME', W / 2, 150, L - 0.2, 2.2, { size: 64 }); }, 0.04);
+  add(B(32, 'on') - 0.1, 'arrest', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 540, z: 1.26 }, k); airportGate(ctx, t, { gate: 'GATE 14 · LONDON' });
+    const a = walkTo(L, 0.3, 1.4, 1800, 1150), b = walkTo(L, 0.5, 1.4, -200, 720), got = t > B(32, 'arrested');
+    drawChar(ctx, { ...MARCUS, x: 920, y: FLOOR + 20, face: a.moving ? 1 : 0, mood: got ? 'shock' : 'worried', arms: got ? [0.9, 0.9] : undefined }, t);
+    drawChar(ctx, { ...FBI1, x: a.x, y: FLOOR + 20, walk: a.walk, face: -1, mood: 'angry' }, t); drawChar(ctx, { ...FBI2, x: b.x, y: FLOOR + 20, walk: b.walk, face: 1, mood: 'neutral' }, t); },
+    (ctx, t, k, L) => { dateTag(ctx, '2 AUGUST 2017', L - 0.2); caption(ctx, 'ARRESTED BY THE FBI', W / 2, 150, t - B(32, 'arrested'), 9, { fill: RED, size: 76 }); }, 0.05);
+  add(B(33, 0) - 0.05, 'charges', (ctx, t, k, L) => { const o = B(33, 0) - 0.05; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 900, y: 580, z: 1.1 }, k);
+    documentInsert(ctx, t, { local: L, header: 'United States District Court  ·  2017', source: 'Indictment', lines: [{ text: 'UNITED STATES', at: 0.2 }, { text: 'v. MARCUS HUTCHINS', at: 0.5, size: 56 }, { text: 'Wanna Cry:  NOT MENTIONED', at: B(33, 'nothing') - o, color: RED }] }); }, null, 0.05);
+  add(B(33, 'years') - 0.1, 'teenager', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 560, z: 1.3 }, { x: 1340, y: 520, z: 1.45 }, k); seaBedroom(ctx, t, { dark: 0.55 });
+    drawChar(ctx, { ...MARCUS, s: 0.9, x: 1330, y: FLOOR + 30, face: 1, mood: 'smug', arms: [1.1, 1.2 + Math.sin(t * 13) * 0.05], glow: { color: 'rgba(255,110,80,.6)', side: 1 } }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'YEARS EARLIER, AS A TEENAGER', W / 2, 150, L - 0.2, 2.6, { size: 60 }); }, 0.06);
+  add(B(33, 'hutchins') - 0.1, 'kronos', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); kronos(ctx, t, L); },
+    (ctx, t, k, L) => { caption(ctx, 'STOLE BANK PASSWORDS', W / 2, 1010, t - B(33, 'stole'), 9, { size: 60, fill: RED }); }, 0.04);
+  add(B(34, 0) - 0.05, 'guilty', (ctx, t, k, L) => { camera(ctx, { x: 1000, y: 640, z: 1.5 }, { x: 1040, y: 620, z: 1.65 }, k); courtroom(ctx, t); drawChar(ctx, { ...MARCUS, outfit: 'suit', color: '#2f3a4a', tie: '#2b4f8a', x: 1060, y: FLOOR, face: -1, mood: 'sad' }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'PLEADED GUILTY · 2019', W / 2, 1000, L - 0.2, 2.4); }, 0.05);
+  add(B(34, 'the') - 0.1, 'no prison', (ctx, t, k, L) => { camera(ctx, { x: 1060, y: 520, z: 1.9 }, { x: 1060, y: 500, z: 2.1 }, k); courtroom(ctx, t); drawChar(ctx, { ...MARCUS, outfit: 'suit', color: '#2f3a4a', tie: '#2b4f8a', x: 1060, y: FLOOR, face: 0, mood: t > B(34, 'no') ? 'smug' : 'worried' }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'TURNED HIS LIFE AROUND', W / 2, 1000, t - B(34, 'turned'), 2.4, { size: 60 }); caption(ctx, 'NO PRISON', W / 2, 1000, t - B(34, 'no'), 9, { size: 84, fill: '#9fe0a0' }); }, 0.05);
+  add(B(35, 0) - 0.05, 'who started', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.07 }, k);
+    corkboard(ctx, t, { local: L, title: 'Wanna Cry', cards: [
+      { x: 620, y: 540, w: 320, h: 340, kind: 'note', title: 'Stopped it', sub: 'Marcus Hutchins', at: 0.1, rot: -0.04, icon: (c, x, y) => { c.save(); c.translate(x, y + 70); c.scale(0.9, 0.9); face(MARCUS)(c, t); c.restore(); } },
+      { x: 1300, y: 540, w: 320, h: 340, kind: 'q', at: B(35, 'who') - B(35, 0), rot: 0.04 }], strings: [[0, 1, B(35, 'who') - B(35, 0) + 0.3]] }); },
+    (ctx, t, k, L) => { caption(ctx, 'BUT WHO STARTED IT?', W / 2, 1000, t - B(35, 'who'), 9, { size: 72 }); }, 0.04);
+  add(B(36, 0) - 0.05, 'last video', (ctx, t, k, L) => { prevVideo(ctx, t, L); }, null, 0.04);
+  add(B(36, 'and') - 0.1, 'like subscribe', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.0 }, { x: 1000, y: 560, z: 1.08 }, k);
+    const press = clamp((t - B(36, 'subscribe')) / 0.3) * (1 - clamp((t - B(36, 'subscribe') - 0.5) / 0.3)); subscribeSet(ctx, t, { press, thumb: clamp((t - B(36, 'like')) / 0.5) }); },
+    (ctx, t, k, L) => { caption(ctx, 'MORE WILD CYBER STORIES', W / 2, 140, t - B(36, 'wild'), 9, { size: 60 }); }, 0.05);
+
+  // ================= CHAPTER 5: WHO DID IT =================
+  add(B(37, 0) - 0.05, 'dec 2017', (ctx, t, k, L) => { calendarCard(ctx, t, L, 'DECEMBER', '2017'); }, (ctx, t, k, L) => { chapterTag(ctx, 5, 'WHO DID IT', L); }, 0.04);
+  add(B(37, 'britain') - 0.1, 'blame nk', (ctx, t, k, L) => { const o = B(37, 'britain') - 0.1;
+    mapInsert(ctx, t, { vivid: V, view: { lon: lerp(10, 40, k), lat: 38, span: 300 }, local: L, dimAll: true, highlight: { 'United Kingdom': '#3b6fb6', 'United States of America': '#3b6fb6', 'North Korea': '#d8261c' },
+      routes: [{ from: LONDON, to: PYONG, at: B(37, 'north') - o - 0.6, dur: 1.0 }, { from: DC, to: PYONG, at: B(37, 'north') - o - 0.4, dur: 1.0 }], pins: [{ at: PYONG, label: 'NORTH KOREA', t0: B(37, 'north') - o + 0.3 }] }); }, null, 0.04);
+  add(B(38, 0) - 0.05, 'same group', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 520, z: 1.3 }, k); hackerDen(ctx, t); },
+    (ctx, t, k, L) => { caption(ctx, 'THE SAME GROUP', W / 2, 150, L - 0.2, 2.0, { size: 76 }); caption(ctx, 'THE BANGLADESH BANK HEIST', W / 2, 1000, t - B(38, "bangladesh's") + 0.1, 2.6, { size: 60 }); }, 0.1);
+  add(B(38, 'in') - 0.1, 'park', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 500, z: 1.12 }, k); wantedPoster(ctx, t, L, { name: 'PARK JIN HYOK', sub: 'WANNA CRY · BANK HEIST', face: face(PARK) }); },
+    (ctx, t, k, L) => { caption(ctx, 'CHARGED · 2018', W / 2, 1010, L - 0.4, 2.4, { size: 60 }); }, 0.05);
+  add(B(39, 0) - 0.05, 'denied', (ctx, t, k, L) => { newspaper(ctx, t, { local: L, paper: 'THE DAILY RECORD', date: 'DECEMBER 2017', headline: 'NORTH KOREA:\n"IT WASN\'T US"' }); }, null, 0.04);
+  add(B(39, 'and') - 0.1, 'flop', (ctx, t, k, L) => { counter(ctx, t, L, { to: 140000, at: B(39, 'only') - B(39, 'and') - 0.2, dur: 1.4, pre: '$', label: 'ALL IT EVER COLLECTED', sub: 'in bitcoin, roughly', color: '#ffb36a' }); },
+    (ctx, t, k, L) => { caption(ctx, 'A FLOP', W / 2, 860, t - B(39, 'flop'), 1.4, { fill: RED, size: 90 }); }, 0.04);
+  add(B(40, 0) - 0.05, 'shadow unknown', (ctx, t, k, L) => { const o = B(40, 0) - 0.05; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.07 }, k);
+    corkboard(ctx, t, { local: L, title: 'Who did it?', cards: [
+      { x: 620, y: 540, w: 320, h: 340, kind: 'note', title: 'Fired Wanna Cry', sub: 'North Korea', at: 0.1, rot: -0.04, icon: (c, x, y) => { c.save(); c.translate(x, y + 70); c.scale(0.9, 0.9); face(PARK)(c, t); c.restore(); }, stamp: { text: 'KNOWN', at: 0.6 } },
+      { x: 1300, y: 540, w: 320, h: 340, kind: 'note', title: 'Stole the weapon', sub: 'the Shadow Brokers', at: B(40, 'but') - o, rot: 0.04, icon: (c, x, y) => { c.save(); c.translate(x, y + 70); c.scale(0.9, 0.9); face(HOOD(1))(c, t); c.restore(); } }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'NEVER PROVEN', W / 2, 1000, t - B(40, 'never'), 9, { size: 72, fill: RED }); }, 0.04);
+  add(B(41, 0) - 0.05, 'still out there', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 500, z: 1.2 }, k); weaponsLocker(ctx, t, L, { glow: 'ETERNAL BLUE', label: 'STILL OUT THERE' }); }, null, 0.06);
+  add(B(41, 'six') - 0.1, 'six weeks', (ctx, t, k, L) => { calendarCard(ctx, t, L, 'SIX WEEKS LATER', 'JUNE', { sub: '2017' }); },
+    (ctx, t, k, L) => { caption(ctx, 'SOMETHING MUCH WORSE', W / 2, 1000, t - B(41, 'much'), 9, { size: 64, fill: RED }); }, 0.04);
+
+  // ================= CHAPTER 6: SIX WEEKS LATER =================
+  add(B(42, 0) - 0.05, 'ukraine', (ctx, t, k, L) => { const z = easeInOut(clamp(L / 2.6));
+    mapInsert(ctx, t, { vivid: V, view: { lon: lerp(10, 31, z), lat: lerp(50, 49, z), span: lerp(60, 30, z) }, local: L, highlight: { Ukraine: '#e8c13a' }, pins: [{ at: KYIV, label: 'KYIV', t0: 1.6 }] }); },
+    (ctx, t, k, L) => { chapterTag(ctx, 6, 'SIX WEEKS LATER', L); dateTag(ctx, '27 JUNE 2017 · UKRAINE', L - 0.4); caption(ctx, 'THE DAY BEFORE A NATIONAL HOLIDAY', W / 2, 1000, t - B(42, 'day'), 9, { size: 56 }); }, 0.04);
+  add(B(43, 0) - 0.05, 'accounting office', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.05 }, { x: 960, y: 580, z: 1.14 }, k);
+    room(ctx, t, { wall: '#e8dcc2', wall2: '#c7b48e', wainscot: 620, floor: '#6a5a46', items: c => { windowFrame(c, 760, 150, 400, 300, t); bookshelf(c, 140, 200, 300, 400, 4); cabinet(c, 1640, FLOOR - 230); } });
+    [440, 960, 1480].forEach((x, i) => { drawChar(ctx, { ...STAFF(i + 2), x: x - 150, y: FLOOR, face: 1, mood: 'neutral', arms: [1.2, 1.25 + Math.sin(t * 12 + i) * 0.05] }, t); tableSide(ctx, x + 40, 300, FLOOR - 200, '#c9a878');
+      monitor(ctx, x - 50, FLOOR - 420, 180, 110, ([X, Y, Wd, Ht]) => { ctx.fillStyle = '#f4f6f8'; ctx.fillRect(X, Y, Wd, Ht); ctx.fillStyle = '#2b6fb3'; ctx.fillRect(X, Y, Wd, 26); T(ctx, 'M.E.DOC', X + Wd / 2, Y + 13, '20px "Lilita One"', '#fff'); ctx.fillStyle = '#c9d0d6'; for (let r = 0; r < 4; r++) ctx.fillRect(X + 10, Y + 40 + r * 16, Wd - 20, 6); }); }); },
+    (ctx, t, k, L) => { caption(ctx, 'THE SAME ACCOUNTING SOFTWARE', W / 2, 140, L - 0.4, 3.0, { size: 58 }); }, 0.05);
+  add(B(43, 'hackers') - 0.1, 'poisoned update', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.08 }, k); softwareUpdate(ctx, t, L, { bug: B(43, 'slipped') - B(43, 'hackers') + 0.2 }); },
+    (ctx, t, k, L) => { caption(ctx, 'THEIR OWN CODE, SLIPPED IN', W / 2, 1010, t - B(43, 'slipped'), 9, { size: 60, fill: RED }); }, 0.04);
+  add(B(44, 0) - 0.05, 'install', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.08 }, k); updatePopup(ctx, t, L, { title: 'M.E.DOC UPDATE', lines: ['A new version is ready.', 'Install now?'], click: 'now', clickAt: 0.8 }); },
+    (ctx, t, k, L) => { caption(ctx, 'LETTING THE ATTACKERS IN', W / 2, 1000, t - B(44, 'let'), 2.4, { size: 60, fill: RED }); }, 0.04);
+  add(B(44, 'new') - 0.1, 'spread ukraine', (ctx, t, k, L) => { wormGrid(ctx, t, L, { start: [3, 2], at: 0.2, speed: 0.26, bg: '#22161a' }); },
+    (ctx, t, k, L) => { caption(ctx, 'ETERNAL BLUE + STOLEN PASSWORDS', W / 2, 1010, L - 0.4, 9, { size: 56 }); }, 0.04);
+  add(B(44, 'within') - 0.1, 'ukraine dark', (ctx, t, k, L) => { const UA = [[30.52, 50.45], [24.03, 49.84], [36.23, 49.99], [30.72, 46.48], [35.05, 48.46], [33.39, 47.91], [32.06, 49.44], [28.47, 49.23], [25.94, 48.29], [34.55, 49.59], [37.8, 48.0], [31.29, 51.5], [26.25, 50.62], [32.0, 46.97], [30.93, 50.34]];
+    mapInsert(ctx, t, { vivid: V, view: { lon: 31, lat: 49, span: 22 }, local: L, dimAll: true, highlight: { Ukraine: '#e8c13a' }, pins: UA.map((p, i) => ({ at: p, t0: 0.2 + i * 0.14, color: '#d8261c' })) }); },
+    (ctx, t, k, L) => { const o = B(44, 'within') - 0.1; [['BANKS', 'banks'], ['AIRPORTS', 'airports'], ['POWER COMPANIES', 'power'], ['GOVERNMENT', 'government']].forEach(([s, w], i) => { const a = t - B(44, w); if (a > 0) textOutlined(ctx, s, 300 + (i % 2) * 1320, 160 + Math.floor(i / 2) * 760, { size: 56, fill: '#fff', lw: 9 }); }); }, 0.04);
+  add(B(44, 'even') - 0.1, 'chernobyl', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 560, z: 1.12 }, k); chernobyl(ctx, t, { sign: true }); },
+    (ctx, t, k, L) => { caption(ctx, 'CHECKED BY HAND', W / 2, 150, t - B(44, 'hand') + 0.3, 9, { size: 72 }); }, 0.05);
+  add(B(45, 0) - 0.05, 'looked like ransomware', (ctx, t, k, L) => { const [sx, sy] = shake(t, B(45, 0) + 0.1, 10, 0.4); camera(ctx, { x: 960 + sx, y: 540 + sy, z: 1.0 }, { x: 960 + sx, y: 540 + sy, z: 1.08 }, k); ransomScreen(ctx, t, L, { at: 0.1 }); },
+    (ctx, t, k, L) => { caption(ctx, 'THE SAME KIND OF RED SCREEN', W / 2, 960, L - 0.4, 9, { size: 60, fill: '#fff' }); }, 0.04);
+  add(B(46, 0) - 0.05, 'a fake', (ctx, t, k, L) => { const tear = clamp((L - 0.6) / 0.4); camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k);
+    ctx.save(); ctx.beginPath(); ctx.rect(-400, -400, W / 2 + 400 - tear * 30, H + 800); ctx.clip(); ctx.translate(-tear * 60, tear * 20); ctx.rotate(-tear * 0.03); ransomScreen(ctx, t, 3, {}); ctx.restore();
+    ctx.save(); ctx.beginPath(); ctx.rect(W / 2 + tear * 30, -400, W / 2 + 400, H + 800); ctx.clip(); ctx.translate(tear * 60, tear * 30); ctx.rotate(tear * 0.03); ransomScreen(ctx, t, 3, {}); ctx.restore();
+    if (tear > 0) { ctx.fillStyle = '#0b0b0e'; ctx.fillRect(W / 2 - tear * 30 - 60, -400, tear * 60 + 120, H + 800); } },
+    (ctx, t, k, L) => { caption(ctx, 'A FAKE', W / 2, 540, L - 0.7, 9, { size: 150, fill: RED }); }, 0.04);
+  add(nth(46, 'it', 2) - 0.1, 'built to destroy', (ctx, t, k, L) => { shred(ctx, t, L, { at: 0.4 }); },
+    (ctx, t, k, L) => { caption(ctx, 'BUILT TO DESTROY', W / 2, 140, t - B(46, 'destroy') + 0.1, 9, { size: 80, fill: RED }); }, 0.04);
+  add(B(46, 'even') - 0.1, 'never back 2', (ctx, t, k, L) => { counter(ctx, t, L, { to: 300, at: 0.1, dur: 0.6, pre: 'PAY $', size: 130, label: 'YOUR FILES', color: '#ffd166', bg: '#1a1414', sub: 'even if you paid' }); },
+    (ctx, t, k, L) => { stamp(ctx, 'GONE FOREVER', W / 2, 820, t - B(46, 'never') - 0.2, -0.08, '#d8261c', 84); }, 0.04);
+  add(B(47, 0) - 0.05, 'not petya', (ctx, t, k, L) => { const [sx, sy] = shake(t, B(47, 'not'), 10, 0.5); camera(ctx, { x: 960 + sx, y: 540 + sy, z: 1.1 }, { x: 960 + sx, y: 540 + sy, z: 1.0 }, k); bg(ctx, '#0b0b0e'); glowSpot(ctx, W / 2, H / 2, 800, 'rgba(200,30,20,.3)'); shred(ctx, t, 5, { at: 0 }); },
+    (ctx, t, k, L) => { caption(ctx, 'NOT PETYA', W / 2, 540, t - B(47, 'not'), 9, { size: 160, fill: RED }); }, 0.06);
+  add(B(47, 'america') - 0.1, 'russia', (ctx, t, k, L) => { const o = B(47, 'america') - 0.1;
+    mapInsert(ctx, t, { vivid: V, view: { lon: lerp(20, 40, k), lat: 52, span: 80 }, local: L, dimAll: true, highlight: { Russia: '#d8261c', Ukraine: '#e8c13a' }, routes: [{ from: MOSCOW, to: KYIV, at: B(47, "russia's") - o, dur: 0.8 }], pins: [{ at: MOSCOW, label: 'RUSSIA', t0: B(47, "russia's") - o }] }); },
+    (ctx, t, k, L) => { caption(ctx, "RUSSIA'S MILITARY INTELLIGENCE", W / 2, 1000, t - B(47, 'military'), 9, { size: 60 }); }, 0.04);
+  add(B(48, 0) - 0.05, 'no kill switch', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); killSwitch(ctx, t, L, {}); ctx.fillStyle = 'rgba(10,10,14,.35)'; ctx.fillRect(-400, -400, W + 800, H + 800); },
+    (ctx, t, k, L) => { stamp(ctx, 'NO KILL SWITCH', W / 2, 540, t - B(48, 'no'), -0.1, '#ff3b2e', 110); }, 0.05);
+
+  // ================= CHAPTER 7: THE POWER CUT =================
+  add(B(49, 0) - 0.05, 'out of ukraine', (ctx, t, k, L) => { mapInsert(ctx, t, { vivid: V, view: { lon: lerp(31, 20, k), lat: 40, span: lerp(60, 280, easeInOut(clamp(L / 2.2))) }, local: L, dimAll: true, highlight: { Ukraine: '#e8c13a' },
+      routes: order.slice(0, 26).map((ci, j) => ({ from: KYIV, to: CITIES[ci], at: 0.8 + j * 0.06, dur: 0.9, color: '#d8261c' })) }); },
+    (ctx, t, k, L) => { chapterTag(ctx, 7, 'THE POWER CUT', L); caption(ctx, 'ANY COMPANY WITH AN OFFICE THERE', W / 2, 1000, t - B(49, 'any'), 2.8, { size: 56 }); }, 0.04);
+  add(B(49, 'and') - 0.1, 'maersk', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 560, z: 1.1 }, k); containerPort(ctx, t, L, {}); },
+    (ctx, t, k, L) => { nameCard(ctx, 'MAERSK', 'BIGGEST SHIPPING COMPANY IN THE WORLD', t - B(49, 'mursk')); }, 0.04);
+  add(B(50, 0) - 0.05, 'seven minutes', (ctx, t, k, L) => { wormGrid(ctx, t, L, { start: [0, 3], at: 0.2, speed: 0.16, dead: true, bg: '#121016' }); },
+    (ctx, t, k, L) => { const s = Math.min(7, Math.floor(L * 2.2)); textOutlined(ctx, `0${s}:00`, W / 2, 1000, { size: 96, fill: RED, lw: 12 }); caption(ctx, 'ABOUT SEVEN MINUTES', W / 2, 110, L - 0.1, 9, { size: 64 }); }, 0.04);
+  add(B(50, 'tens') - 0.1, 'servers gone', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 560, z: 1.0 }, k);
+    room(ctx, t, { wall: '#2a3140', wall2: '#202634', wainscot: 640, floor: '#1d222c', tiles: true, items: c => { for (let i = 0; i < 7; i++) serverRack(c, 120 + i * 260, FLOOR, 220, 560, L > 0.4 + i * 0.25 ? 0 : t, i + 2); } });
+    for (let i = 0; i < 7; i++) if (L > 0.4 + i * 0.25) { ctx.fillStyle = 'rgba(5,5,10,.55)'; ctx.fillRect(10 + i * 260, FLOOR - 560, 220, 560); } },
+    (ctx, t, k, L) => { caption(ctx, 'TENS OF THOUSANDS OF COMPUTERS', W / 2, 140, L - 0.2, 9, { size: 56 }); caption(ctx, 'GONE', W / 2, 1000, t - B(50, 'gone'), 9, { size: 90, fill: RED }); }, 0.05);
+  add(B(50, 'its') - 0.1, 'port stopped', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.05 }, { x: 900, y: 540, z: 1.15 }, k); containerPort(ctx, t, L, { stopped: true }); },
+    (ctx, t, k, L) => { caption(ctx, "SHIPS COULDN'T BE UNLOADED", W / 2, 150, L - 0.3, 9, { size: 60 }); }, 0.05);
+  add(B(50, 'lorries') - 0.1, 'lorries queue', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 600, z: 1.1 }, { x: 1100, y: 620, z: 1.2 }, k); containerPort(ctx, t, L, { stopped: true, gate: true }); },
+    (ctx, t, k, L) => { caption(ctx, 'LORRIES QUEUED FOR MILES', W / 2, 150, L - 0.2, 9, { size: 64 }); }, 0.05);
+  add(B(50, 'staff') - 0.1, 'own phones', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 540, z: 1.22 }, k);
+    room(ctx, t, { wall: '#cfdbe0', wall2: '#9fb3bc', wainscot: 620, floor: '#4a5560', items: c => { rr(c, 660, 110, 600, 110, 10); fillStroke(c, '#3a8fd0', INK, 5); T(c, 'MAERSK', 960, 166, '64px "Lilita One"', '#fff'); windowFrame(c, 200, 260, 360, 260, t); windowFrame(c, 1360, 260, 360, 260, t); } });
+    [520, 960, 1400].forEach((x, i) => drawChar(ctx, { ...STAFF(i), x, y: FLOOR + 20, face: i === 0 ? 1 : i === 2 ? -1 : 0, mood: 'worried', talk: Math.floor(t * 2 + i) % 2 === 0, arms: [0.2, 2.6], hold: (c) => { rr(c, -12, -60, 24, 56, 6); fillStroke(c, '#1f2228', INK, 3); } }, t)); },
+    (ctx, t, k, L) => { caption(ctx, 'RUNNING ON THEIR OWN PHONES', W / 2, 1000, L - 0.4, 9, { size: 60 }); }, 0.05);
+  add(B(51, 0) - 0.05, 'master list', (ctx, t, k, L) => { const o = B(51, 0) - 0.05; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 580, z: 1.1 }, k);
+    documentInsert(ctx, t, { local: L, header: 'THE MASTER LIST', source: 'every user, every password', lines: [{ text: 'a.jensen     ••••••••', at: B(51, 'master') - o }, { text: 'm.larsen     ••••••••', at: B(51, 'master') - o + 0.2 }, { text: 'k.nielsen    ••••••••', at: B(51, 'master') - o + 0.4 }, { text: '... 80,000 more', at: B(51, 'every') - o }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'ONE THING MORE THAN ANYTHING', W / 2, 1000, L - 0.2, 2.4, { size: 56 }); }, 0.05);
+  const COPIES = order.slice(0, 60).map(ci => CITIES[ci]).filter(p => !(p[0] === 3.38 && p[1] === 6.52));
+  add(B(51, 'they') - 0.1, '150 copies', (ctx, t, k, L) => { mapInsert(ctx, t, { vivid: V, view: { lon: 15, lat: 25, span: lerp(310, 300, k) }, local: L, dimAll: true, pins: COPIES.concat([ACCRA]).map((p, i) => ({ at: p, t0: 0.2 + i * 0.03, color: '#2b6fd0' })) }); },
+    (ctx, t, k, L) => { caption(ctx, 'ABOUT 150 COPIES', W / 2, 1000, t - B(51, 'hundred'), 9, { size: 76 }); }, 0.04);
+  add(B(52, 0) - 0.05, 'all wiped but one', (ctx, t, k, L) => { const o = B(52, 0) - 0.05; mapInsert(ctx, t, { vivid: V, view: { lon: lerp(15, 0, easeInOut(clamp((L - 1.6) / 1.2))), lat: lerp(25, 8, easeInOut(clamp((L - 1.6) / 1.2))), span: lerp(300, 120, easeInOut(clamp((L - 1.6) / 1.2))) }, local: L, dimAll: true,
+      pins: COPIES.map((p, i) => ({ at: p, t0: -9, color: L > 0.1 + i * 0.02 ? '#1a1a1e' : '#2b6fd0' })).concat([{ at: ACCRA, t0: -9, color: '#3fae5e', label: 'EXCEPT ONE' }]) }); },
+    (ctx, t, k, L) => { caption(ctx, 'EVERY SINGLE ONE WIPED', W / 2, 1000, L - 0.2, 1.8, { size: 64, fill: RED }); }, 0.04);
+  add(B(52, 'in') - 0.1, 'power cut', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 560, z: 1.15 }, { x: 1400, y: 560, z: 1.3 }, k); powerCutOffice(ctx, t, L, { power: t > B(52, 'power') + 0.3 ? 0 : 1 }); },
+    (ctx, t, k, L) => { dateTag(ctx, 'AN OFFICE IN WEST AFRICA', L - 0.2); caption(ctx, 'A POWER CUT', W / 2, 1000, t - B(52, 'power'), 9, { size: 80, fill: YEL }); }, 0.05);
+  add(B(52, 'it') - 0.1, 'only clean copy', (ctx, t, k, L) => { camera(ctx, { x: 1480, y: 560, z: 1.8 }, { x: 1480, y: 540, z: 2.0 }, k); powerCutOffice(ctx, t, L, { power: 0 }); glowSpot(ctx, 1480, 580, 360, `rgba(120,255,160,${0.25 + 0.1 * Math.sin(t * 3)})`); },
+    (ctx, t, k, L) => { caption(ctx, 'THE ONLY CLEAN COPY ON EARTH', W / 2, 1000, L - 0.3, 9, { size: 60, fill: '#9fe0a0' }); }, 0.06);
+  add(B(52, 'someone') - 0.1, 'plane', (ctx, t, k, L) => { const g = ctx.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#6fb0e0'); g.addColorStop(1, '#d8ecf6'); ctx.fillStyle = g; ctx.fillRect(-400, -400, W + 800, H + 800);
+    for (let i = 0; i < 6; i++) { const x = ((i * 420 - L * 260) % 2600 + 2600) % 2600 - 400, y = 200 + (i % 3) * 230; ctx.fillStyle = 'rgba(255,255,255,.85)'; [[0, 0, 90], [80, -20, 70], [150, 10, 80], [-70, 10, 60]].forEach(([dx, dy, r]) => { ctx.beginPath(); ctx.arc(x + dx, y + dy, r, 0, 7); ctx.fill(); }); }
+    airliner(ctx, 960, 520 + Math.sin(L * 1.5) * 14, 1.25, { tail: '#3a8fd0' }); },
+    (ctx, t, k, L) => { caption(ctx, 'FLOWN OUT TO RESTART THE COMPANY', W / 2, 1000, L - 0.4, 9, { size: 56 }); }, 0.04);
+  add(B(53, 0) - 0.05, 'losses', (ctx, t, k, L) => { const o = B(53, 0) - 0.05; camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.04 }, k);
+    statBars(ctx, t, { local: L, max: 900, title: 'WHAT NOT PETYA COST', bars: [
+      { label: 'MAERSK', value: 300, at: 0.3, color: '#3a8fd0', show: p => 'UP TO $' + Math.round(300 * p) + 'M' },
+      { label: 'MERCK', value: 870, at: B(53, 'merck') - o, color: '#d98b4a', show: p => 'HUNDREDS OF MILLIONS' }] }); }, null, 0.04);
+  add(B(53, 'in') - 0.1, '10 billion', (ctx, t, k, L) => { counter(ctx, t, L, { to: 10, at: nth(53, 'more', 2) - B(53, 'in') - 0.3, dur: 1.2, pre: 'MORE THAN $', post: ' BILLION', size: 120, label: 'TOTAL DAMAGE · US GOVERNMENT ESTIMATE', color: '#ff7a5a', bg: '#1f1a18' }); }, null, 0.05);
+  add(B(54, 0) - 0.05, 'most destructive', (ctx, t, k, L) => { newspaper(ctx, t, { local: L, paper: 'THE DAILY RECORD', date: '2018', headline: 'THE MOST DESTRUCTIVE\nCYBERATTACK IN HISTORY' }); }, null, 0.04);
+
+  // ================= CHAPTER 8: SO HOW DID A TEN DOLLAR WEBSITE STOP IT? =================
+  add(B(55, 0) - 0.05, 'so how', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.07 }, k);
+    corkboard(ctx, t, { local: L + 2, title: 'Wanna Cry', cards: [
+      { x: 960, y: 520, w: 300, h: 300, kind: 'note', title: 'A website', sub: 'bought for $10.69', at: 0.05, rot: -0.03, icon: (c, x, y) => { c.font = '80px "Lilita One"'; c.fillStyle = '#3e6b4a'; c.textAlign = 'center'; c.fillText('.COM', x, y); } }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'SO HOW DID IT STOP THE ATTACK?', W / 2, 1000, L - 0.2, 9, { size: 64 }); }, 0.04);
+  add(B(56, 0) - 0.05, 'luck', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.05 }, k); killSwitch(ctx, t, L + 3, { yes: 0 }); },
+    (ctx, t, k, L) => { caption(ctx, 'LUCK', W / 2, 1000, t - B(56, 'luck'), 9, { size: 110 }); }, 0.04);
+  add(B(56, 'someone') - 0.1, 'sandwich', (ctx, t, k, L) => { camera(ctx, { x: 1300, y: 540, z: 1.5 }, { x: 1320, y: 520, z: 1.6 }, k); seaBedroom(ctx, t);
+    drawChar(ctx, { ...MARCUS, x: 1260, y: FLOOR + 30, face: 0, mood: 'smug', arms: [0.3, 1.7], hold: (c) => { c.save(); c.rotate(-0.2); c.beginPath(); c.moveTo(-50, 20); c.lineTo(50, 20); c.lineTo(0, -50); c.closePath(); fillStroke(c, '#e8c88a', INK, 3); c.beginPath(); c.moveTo(-40, 8); c.lineTo(40, 8); c.stroke(); c.fillStyle = '#6cc070'; c.fillRect(-38, 4, 76, 6); c.restore(); } }, t); },
+    (ctx, t, k, L) => { caption(ctx, 'THE PRICE OF A SANDWICH', W / 2, 150, t - B(56, 'price'), 9, { size: 64 }); }, 0.05);
+  add(B(56, 'not') - 0.1, 'no switch to flip', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.05 }, { x: 960, y: 540, z: 1.12 }, k); containerPort(ctx, t, L, { stopped: true }); ctx.fillStyle = 'rgba(30,10,10,.25)'; ctx.fillRect(-400, -400, W + 800, H + 800); },
+    (ctx, t, k, L) => { caption(ctx, 'NO SWITCH TO FLIP', W / 2, 150, t - nth(56, 'switch', 2) + 0.3, 2.4, { size: 72 }); caption(ctx, 'DEVASTATING', W / 2, 1000, t - B(56, 'devastating'), 9, { size: 90, fill: RED }); }, 0.06);
+  add(B(57, 0) - 0.05, 'boring', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.06 }, { x: 960, y: 540, z: 1.0 }, k); updatePopup(ctx, t, L, { title: 'SECURITY UPDATE' }); },
+    (ctx, t, k, L) => { caption(ctx, 'MUCH MORE BORING', W / 2, 1000, t - B(57, 'boring') + 0.3, 9, { size: 72 }); }, 0.04);
+  add(B(58, 0) - 0.05, 'fix existed', (ctx, t, k, L) => { calendarCard(ctx, t, L, 'MARCH 2017', 'FIX', { sub: 'TWO MONTHS BEFORE WANNA CRY' }); },
+    (ctx, t, k, L) => { caption(ctx, 'THE FIX EXISTED', W / 2, 1000, L - 0.1, 2.4, { size: 72, fill: '#9fe0a0' }); }, 0.04);
+  add(B(58, 'most') - 0.1, 'never installed', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 900, y: 560, z: 1.12 }, k); updatePopup(ctx, t, L, { title: 'SECURITY UPDATE', click: 'later', clickAt: 1.4 }); },
+    (ctx, t, k, L) => { caption(ctx, 'NEVER INSTALLED', W / 2, 1000, t - B(58, 'never'), 9, { size: 80, fill: RED }); }, 0.04);
+  add(B(59, 0) - 0.05, 'recap spy', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.0 }, { x: 960, y: 560, z: 1.12 }, k); spyHQ(ctx, t, { night: true, label: 'NSA' }); },
+    (ctx, t, k, L) => { caption(ctx, 'STOLEN AND HANDED TO EVERYONE', W / 2, 150, t - B(59, 'stolen'), 9, { size: 58 }); }, 0.06);
+  add(nth(59, 'a', 2) - 0.1, 'recap nk', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 520, z: 1.3 }, k); hackerDen(ctx, t); },
+    (ctx, t, k, L) => { caption(ctx, 'A CASH MACHINE', W / 2, 150, t - B(59, 'cash'), 9, { size: 72 }); }, 0.1);
+  add(B(59, "russia's") - 0.1, 'recap russia', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 520, z: 1.12 }, { x: 960, y: 540, z: 1.0 }, k); containerPort(ctx, t, L, { stopped: true }); },
+    (ctx, t, k, L) => { caption(ctx, 'COMPANIES WRECKED WORLDWIDE', W / 2, 150, L - 0.3, 9, { size: 60 }); }, 0.05);
+  add(nth(59, 'and', 2) - 0.1, 'one update', (ctx, t, k, L) => { const hov = 0.5 + 0.5 * Math.sin(L * 2); camera(ctx, { x: 960, y: 560, z: 1.12 }, { x: 960, y: 580, z: 1.3 }, k); updatePopup(ctx, t, L, { title: 'SECURITY UPDATE' });
+    const cx = lerp(1180, 1280, hov), cy = 830 + Math.sin(L * 3) * 20; ctx.save(); ctx.translate(cx, cy); ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, 52); ctx.lineTo(14, 40); ctx.lineTo(24, 62); ctx.lineTo(34, 58); ctx.lineTo(24, 36); ctx.lineTo(42, 36); ctx.closePath(); fillStroke(ctx, '#fff', INK, 3); ctx.restore(); },
+    (ctx, t, k, L) => { caption(ctx, 'CHAOS OR SAFETY', W / 2, 150, t - B(59, 'chaos'), 9, { size: 72 }); caption(ctx, 'ONE UPDATE', W / 2, 1000, t - B(59, 'update'), 9, { size: 84 }); }, 0.04);
+  add(B(60, 0) - 0.05, 'let it', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 540, z: 1.06 }, k); updatePopup(ctx, t, L, { title: 'RESTART TO UPDATE', lines: ['Your computer needs', 'to restart.'], now: 'RESTART', click: 'now', clickAt: B(60, 'let') - B(60, 0) + 0.2 }); },
+    (ctx, t, k, L) => { caption(ctx, 'MAYBE LET IT', W / 2, 1000, t - B(60, 'let'), 9, { size: 84, fill: '#9fe0a0' }); }, 0.04);
+  add(B(61, 0) - 0.05, 'would you', (ctx, t, k, L) => { camera(ctx, { x: 960, y: 540, z: 1.0 }, { x: 960, y: 560, z: 1.07 }, k);
+    corkboard(ctx, t, { local: L, title: 'Would you have bought it?', cards: [
+      { x: 620, y: 560, w: 340, h: 340, kind: 'note', title: 'Buy the website', sub: '$10.69', at: 0.2, rot: -0.04, icon: (c, x, y) => { c.font = '80px "Lilita One"'; c.fillStyle = '#3e6b4a'; c.textAlign = 'center'; c.fillText('.COM', x, y); } },
+      { x: 1300, y: 560, w: 340, h: 340, kind: 'note', title: 'Keep the money', sub: 'ten dollars', at: B(61, 'or') - B(61, 0), rot: 0.04, icon: (c, x, y) => { c.font = '96px "Lilita One"'; c.fillStyle = '#b8584a'; c.textAlign = 'center'; c.fillText('$10', x, y); } }] }); },
+    (ctx, t, k, L) => { caption(ctx, 'OR', W / 2, 560, t - B(61, 'or'), 9, { size: 110 }); caption(ctx, 'TELL US IN THE COMMENTS', W / 2, 1000, t - B(61, 'comments') + 0.3, 9, { size: 64 }); }, 0.04);
+  return S;
+}, { duration: window.TEST_DURATION });
+</script></body></html>
