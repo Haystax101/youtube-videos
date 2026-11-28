@@ -1,2 +1,2 @@
-episodes/017-beer-saved-life
-# beer v1
+episodes/018-bee-sting-nose
+# v1 chatterbox

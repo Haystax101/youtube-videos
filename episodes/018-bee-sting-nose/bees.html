@@ -1,0 +1,431 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Poppins"; font-weight: 800; src: url("/node_modules/@fontsource/poppins/files/poppins-latin-800-normal.woff2") format("woff2"); }
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden}
+canvas{position:absolute;inset:0}
+#cap{position:absolute;left:0;right:0;top:1180px;text-align:center}
+#cap span{display:inline-block;font:800 104px Poppins;color:#fff;-webkit-text-stroke:16px #17121c;paint-order:stroke fill;transform-origin:50% 60%;text-shadow:0 8px 0 rgba(0,0,0,.3)}
+#lab{position:absolute;left:60px;right:60px;top:250px;text-align:center;font:800 88px/1.08 Poppins;color:#fff;-webkit-text-stroke:14px #17121c;paint-order:stroke fill;text-shadow:0 8px 0 rgba(0,0,0,.3);transform-origin:50% 50%}
+#lab b{color:#ff3b30}
+#chip{position:absolute;left:0;right:0;top:300px;text-align:center}
+#chip span{display:inline-block;font:800 64px Poppins;color:#17121c;background:#ffd23a;padding:10px 34px;border-radius:22px;border:7px solid #17121c;box-shadow:0 8px 0 rgba(0,0,0,.3);transform-origin:50% 50%}
+</style>
+<script type="importmap">{ "imports": { "three": "/node_modules/three/build/three.module.js", "three/addons/": "/node_modules/three/examples/jsm/" } }</script>
+</head><body><div id="stage"><canvas id="gl" width="1080" height="1920"></canvas><div id="lab"></div><div id="chip"><span></span></div><div id="cap"><span></span></div></div>
+<script type="module">
+// "He let bees sting his face, on purpose": Cornell bee scientist Michael Smith stung himself at 25 spots, five a day
+// for 38 days in 2012, and scored the pain (nostril 9.0, upper lip 8.7; skull, toe and upper arm 2.3). Smol look.
+// Sets: the bee yard in the sun (origin), the bee lab (z = 80).
+import * as THREE from 'three';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import { makeBighead, toon, talkFlap, addInk } from '../../prototypes/smol-look/bighead.js';
+import { makeLook } from '../../prototypes/smol-look/look.js';
+const TL = await (await fetch('./timeline.json')).json();
+const SCRIPT = await (await fetch('./script.json')).json();
+const W = 1080, H = 1920, DUR = TL.duration + 0.5;
+const V = (x, y, z) => new THREE.Vector3(x, y, z);
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const ease = (a, b, x) => { const k = clamp((x - a) / (b - a)); return k * k * (3 - 2 * k); };
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+const WORDS = TL.beats.flatMap((b, bi) => b.words.map(w => ({ ...w, bi })));
+const clean = w => w.replace(/[^A-Za-z0-9'-]/g, '');
+const WT = (bi, word, n = 1) => { let c = 0; for (const w of WORDS) if (w.bi === bi && clean(w.w).toLowerCase() === word.toLowerCase() && ++c === n) return w.s; throw new Error(`no word ${word} in beat ${bi}`); };
+
+// ---------- renderer ----------
+const scene = new THREE.Scene();
+const cam = new THREE.PerspectiveCamera(50, W / H, 0.05, 900);
+const L = makeLook(THREE, { canvas: document.getElementById('gl'), W, H, scene, cam, addons: { EffectComposer, RenderPass, ShaderPass, UnrealBloomPass }, exposure: 1.05, sat: 1.1, bloom: 0.3 });
+const renderer = L.renderer;
+const hemi = new THREE.HemisphereLight('#bcd0ff', '#4a3a30', 0.6); scene.add(hemi);
+const key = new THREE.DirectionalLight('#9fb6ff', 1.2); key.castShadow = true; key.shadow.mapSize.set(4096, 4096); key.shadow.bias = -0.0004; key.shadow.normalBias = 0.03;
+{ const sc = key.shadow.camera; sc.left = sc.bottom = -14; sc.right = sc.top = 14; sc.near = 1; sc.far = 120; } scene.add(key, key.target);
+const ENV = {
+  yard: { bg: '#8fd4ff', fog: ['#cdeeff', 30, 120], hemi: ['#ffffff', '#8ab070', 1.6], key: ['#fff4dc', 2.5], exp: 1.0, set: 'yard' },
+  lab: { bg: '#d8f2e4', fog: ['#d8f2e4', 30, 120], hemi: ['#f4fbff', '#b0a080', 1.6], key: ['#fff6e8', 2.0], exp: 0.98, set: 'lab' },
+};
+const KEY_DIR = { yard: V(-10, 18, 12), lab: V(-14, 16, 8) };
+scene.fog = new THREE.Fog('#151a30', 20, 60);
+const LZ = V(0, 0, 1), LX = V(1, 0, 0), LY = V(0, 1, 0);
+function snapFocus(f, dir, half) { LZ.copy(dir).normalize(); LX.set(0, 1, 0).cross(LZ).normalize(); LY.copy(LZ).cross(LX); const tx = 2 * half / 4096;
+  const a = Math.round(f.dot(LX) / tx) * tx, b = Math.round(f.dot(LY) / tx) * tx, c = f.dot(LZ); return f.clone().copy(LX).multiplyScalar(a).addScaledVector(LY, b).addScaledVector(LZ, c); }
+
+// ---------- textures + helpers ----------
+function tex(draw, w = 256, h = 256, rx = 1, ry = rx) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rx, ry); return t; }
+const std = (color, o = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.85, ...o });
+function add(m, x = 0, y = 0, z = 0, p = scene) { m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; p.add(m); return m; }
+const box = (w, h, d, mat, x, y, z, p, r = 0.02) => add(new THREE.Mesh(r ? new RoundedBoxGeometry(w, h, d, 2, Math.min(r, w / 2.1, h / 2.1, d / 2.1)) : new THREE.BoxGeometry(w, h, d), mat), x, y, z, p);
+const cyl = (r1, r2, h, mat, x, y, z, p, seg = 20) => add(new THREE.Mesh(new THREE.CylinderGeometry(r1, r2, h, seg), mat), x, y, z, p);
+const plane = (w, h, mat, x, y, z, p, ry = 0, rx = 0) => { const m = add(new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat), x, y, z, p); m.rotation.set(rx, ry, 0); return m; };
+const woodTex = (base, dark, n = 6, rx = 1, ry = 1) => tex((x, w, h) => { x.fillStyle = base; x.fillRect(0, 0, w, h); const r = rng(base.length * 7 + n); for (let i = 0; i < n; i++) { const y = i * h / n; x.fillStyle = dark; x.fillRect(0, y, w, 3); for (let k = 0; k < 14; k++) { x.strokeStyle = `rgba(60,35,20,${0.06 + r() * 0.08})`; x.lineWidth = 1 + r() * 2; x.beginPath(); const yy = y + 4 + r() * (h / n - 8); x.moveTo(0, yy); x.bezierCurveTo(w * 0.3, yy + (r() - 0.5) * 8, w * 0.7, yy + (r() - 0.5) * 8, w, yy + (r() - 0.5) * 6); x.stroke(); } } }, 256, 256, rx, ry);
+const T_BRICK = tex((x, w, h) => { x.fillStyle = '#e2cbb4'; x.fillRect(0, 0, w, h); const r = rng(9); for (let row = 0; row < 16; row++) for (let c = -1; c < 8; c++) { const bx = c * 32 + (row % 2 ? 16 : 0), by = row * 16; x.fillStyle = ['#b04a30', '#bd583c', '#a2432c', '#c76246', '#99402a'][Math.floor(r() * 5)]; x.fillRect(bx + 1.5, by + 1.5, 29, 13); x.fillStyle = 'rgba(255,220,200,.14)'; x.fillRect(bx + 2, by + 2, 27, 3); } }, 256, 256, 6, 3);
+const T_COBBLE = tex((x, w, h) => { x.fillStyle = '#5a5866'; x.fillRect(0, 0, w, h); const r = rng(14); for (let row = 0; row < 12; row++) for (let c = -1; c < 13; c++) { const bx = c * 22 + (row % 2 ? 11 : 0) + r() * 2, by = row * 22 + r() * 2; x.fillStyle = ['#7a7684', '#8a8494', '#6e6a7a', '#857f8a', '#938c98'][Math.floor(r() * 5)]; x.beginPath(); x.roundRect(bx + 2, by + 2, 18, 18, 6); x.fill(); x.fillStyle = 'rgba(255,255,255,.12)'; x.beginPath(); x.roundRect(bx + 4, by + 3, 12, 5, 3); x.fill(); } }, 264, 264, 14, 8);
+const T_PAVE = tex((x, w, h) => { x.fillStyle = '#b8ac9c'; x.fillRect(0, 0, w, h); x.strokeStyle = '#8a7e70'; x.lineWidth = 4; for (let i = 0; i <= w; i += 64) { x.beginPath(); x.moveTo(i, 0); x.lineTo(i, h); x.stroke(); } for (let j = 0; j <= h; j += 64) { x.beginPath(); x.moveTo(0, j); x.lineTo(w, j); x.stroke(); } }, 256, 256, 20, 2);
+const T_WOOL = tex((x, w, h) => { x.fillStyle = '#4a5c94'; x.fillRect(0, 0, w, h); for (let y = 0; y < h; y += 4) for (let i = 0; i < w; i += 4) { x.fillStyle = (i / 4 + y / 4) % 2 ? 'rgba(255,255,255,.05)' : 'rgba(0,0,0,.08)'; x.fillRect(i, y, 4, 2); } const r = rng(31); for (let i = 0; i < 500; i++) { x.fillStyle = `rgba(150,170,230,${0.03 + r() * 0.04})`; x.fillRect(r() * w, r() * h, 6, 1); } }, 256, 256, 6, 6);
+const T_PAPER = tex((x, w, h) => { x.fillStyle = '#fbf5e6'; x.fillRect(0, 0, w, h); x.fillStyle = '#1e2240'; x.font = 'bold 30px Georgia'; x.textAlign = 'center'; x.fillText('PROGRESSIVE', w / 2, 52); x.font = 'bold 22px Georgia'; x.fillText('CAUSE', w / 2, 80);
+  const r = rng(44); for (let y = 112; y < h - 20; y += 17) { let xx = 28; while (xx < w - 40) { const l = 12 + r() * 46; x.fillStyle = 'rgba(40,40,60,.62)'; x.fillRect(xx, y, Math.min(l, w - 28 - xx), 5); xx += l + 8; } } }, 256, 340);
+const T_FLAG = tex((x, w, h) => { for (let i = 0; i < 13; i++) { x.fillStyle = i % 2 ? '#f6f2ea' : '#c8202e'; x.fillRect(0, i * h / 13, w, h / 13 + 1); } x.fillStyle = '#20306e'; x.fillRect(0, 0, w * 0.42, h * 7 / 13); x.fillStyle = '#ffffff';
+  for (let r = 0; r < 6; r++) for (let c = 0; c < 8; c++) { const cx = 16 + c * (w * 0.42 - 32) / 7, cy = 14 + r * (h * 7 / 13 - 28) / 5; x.beginPath(); for (let k = 0; k < 10; k++) { const a = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? 3 : 7.5; x.lineTo(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr); } x.fill(); } }, 512, 270);
+const T_TILE = tex((x, w, h) => { for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) { x.fillStyle = (i + j) % 2 ? '#e8ece6' : '#7fa6a0'; x.fillRect(i * 64, j * 64, 64, 64); } }, 256, 256, 4, 4);
+const T_XRAY = tex((x, w, h) => { const g = x.createRadialGradient(w / 2, h / 2, 20, w / 2, h / 2, w * 0.7); g.addColorStop(0, '#2b4e72'); g.addColorStop(1, '#0c1830'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+  x.strokeStyle = 'rgba(230,244,255,.85)'; x.lineCap = 'round'; x.lineWidth = 26; x.beginPath(); x.moveTo(w / 2, 30); x.lineTo(w / 2, h - 20); x.stroke();
+  x.lineWidth = 13; for (let i = 0; i < 7; i++) { const y = 92 + i * 52; for (const d of [-1, 1]) { x.beginPath(); x.moveTo(w / 2 + d * 16, y); x.bezierCurveTo(w / 2 + d * 130, y - 34, w / 2 + d * 220, y + 10, w / 2 + d * 200, y + 70); x.stroke(); } }
+  x.lineWidth = 15; for (const d of [-1, 1]) { x.beginPath(); x.moveTo(w / 2 + d * 20, 64); x.quadraticCurveTo(w / 2 + d * 120, 40, w / 2 + d * 210, 58); x.stroke(); }
+  x.fillStyle = '#ffffff'; x.shadowColor = '#ffffff'; x.shadowBlur = 18; x.beginPath(); x.ellipse(w / 2 - 128, 214, 13, 20, 0.5, 0, 7); x.fill(); x.shadowBlur = 0;
+  x.strokeStyle = '#ff5a4a'; x.lineWidth = 6; x.beginPath(); x.arc(w / 2 - 128, 214, 40, 0, 7); x.stroke(); }, 512, 512);
+const T_SIGN = tex((x, w, h) => { x.fillStyle = '#1c2a4e'; x.fillRect(0, 0, w, h); x.strokeStyle = '#e8c060'; x.lineWidth = 8; x.strokeRect(8, 8, w - 16, h - 16); x.fillStyle = '#ffe9a8'; x.font = 'bold 64px Georgia'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('GILPATRICK HOTEL', w / 2, h / 2 + 4); }, 768, 128);
+const T_BANNER = tex((x, w, h) => { x.fillStyle = '#f6efe0'; x.fillRect(0, 0, w, h); x.fillStyle = '#c8202e'; x.fillRect(0, 0, w, 16); x.fillRect(0, h - 16, w, 16); x.fillStyle = '#20306e'; x.font = 'bold 84px Georgia'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('ROOSEVELT  1912', w / 2, h / 2 + 4); }, 1024, 160);
+const T_WIN = tex((x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#ffe2a0'); g.addColorStop(1, '#ffb45a'); x.fillStyle = g; x.fillRect(0, 0, w, h); x.fillStyle = 'rgba(120,60,30,.35)'; x.fillRect(0, 0, w * 0.18, h); x.fillRect(w * 0.82, 0, w * 0.18, h); }, 64, 96);
+const T_CURTAIN = tex((x, w, h) => { const g = x.createLinearGradient(0, 0, w, 0); for (let i = 0; i <= 8; i++) g.addColorStop(i / 8, i % 2 ? '#a3162a' : '#d22a3c'); x.fillStyle = g; x.fillRect(0, 0, w, h); }, 256, 64, 3, 1);
+const M = { brick: std('#ffffff', { map: T_BRICK }), cobble: std('#ffffff', { map: T_COBBLE, roughness: 0.7 }), pave: std('#ffffff', { map: T_PAVE }), wool: std('#ffffff', { map: T_WOOL, roughness: 1 }),
+  stone: std('#e9dcc6'), trim: std('#f4ead8'), dark: std('#2a2220'), iron: std('#2c2e36', { roughness: 0.5, metalness: 0.4 }), brass: std('#d8a640', { roughness: 0.3, metalness: 0.7 }),
+  win: new THREE.MeshStandardMaterial({ map: T_WIN, emissive: '#ffc070', emissiveMap: T_WIN, emissiveIntensity: 1.1 }), lamp: new THREE.MeshBasicMaterial({ color: '#ffe0a0' }),
+  floor: std('#ffffff', { map: woodTex('#b5794a', '#7a4a2a', 8, 6, 6) }), stage: std('#ffffff', { map: woodTex('#c48a52', '#8a5a32', 8, 4, 4) }), gold: std('#e8b84a', { roughness: 0.35, metalness: 0.6 }),
+  red: std('#c8202e'), navy: std('#20306e'), white: std('#f6f2ea'), cream: std('#f2e4c8'), mint: std('#bfe6d6'), tile: std('#ffffff', { map: T_TILE, roughness: 0.4 }), cushion: std('#b8243a', { roughness: 0.9 }) };
+const lamps = [];
+function lamp(x, y, z, color = '#ffb85a', I = 6, dist = 9, p = scene, set = 'street', bulb = true) { const l = new THREE.PointLight(color, I, dist, 1.6); l.position.set(x, y, z); l.userData.set = set; p.add(l); lamps.push(l);
+  if (bulb) { const g = add(new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 10), M.lamp), x, y, z, p); g.castShadow = false; g.userData.noCheck = true; } return l; }
+// a bunting fan (half disc in red, white and blue rings) facing +z
+function fan(r, p, x, y, z, ry = 0) { const g = new THREE.Group(); g.position.set(x, y, z); g.rotation.y = ry; p.add(g);
+  [[r, M.navy], [r * 0.72, M.white], [r * 0.46, M.red]].forEach(([rr, m], i) => { const d = add(new THREE.Mesh(new THREE.CircleGeometry(rr, 28, Math.PI, Math.PI), m), 0, 0, 0.01 + i * 0.012, g); d.castShadow = false; });
+  for (let k = 1; k < 8; k++) { const a = Math.PI + k * Math.PI / 8, rb = add(new THREE.Mesh(new THREE.BoxGeometry(0.02, r, 0.01), M.white), Math.cos(a) * r / 2, Math.sin(a) * r / 2, 0.05, g); rb.rotation.z = a - Math.PI / 2; rb.castShadow = false; }
+  return g; }
+// a building front (facing +z in its group): windows, pilasters, cornice, optional awning shop front
+function facade(p, x, z, ry, w, h, col, o = {}) { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; p.add(g);
+  const wm = o.brick ? M.brick : std(col); plane(w, h, wm, 0, h / 2, 0, g);
+  box(w + 0.3, 0.35, 0.4, M.trim, 0, h - 0.1, 0.15, g, 0.03); box(w + 0.1, 0.18, 0.25, M.trim, 0, h - 0.5, 0.1, g, 0.02);
+  const nx = Math.max(2, Math.round(w / 1.6)), floors = Math.max(1, Math.floor((h - 2.6) / 2));
+  for (let f = 0; f < floors; f++) for (let i = 0; i < nx; i++) { const wx = -w / 2 + (i + 0.5) * w / nx, wy = 3.4 + f * 2;
+    const lit = (i * 7 + f * 3 + Math.round(x)) % 4 !== 0;
+    plane(0.62, 1.05, lit ? M.win : std('#2a3a66', { roughness: 0.3 }), wx, wy, 0.02, g).userData.noCheck = true;
+    box(0.78, 0.1, 0.16, M.trim, wx, wy - 0.58, 0.08, g, 0.01); box(0.8, 0.14, 0.12, M.trim, wx, wy + 0.6, 0.06, g, 0.01); box(0.06, 1.05, 0.06, M.trim, wx, wy, 0.04, g, 0); }
+  for (let i = 0; i <= nx; i++) box(0.22, h - 0.6, 0.14, M.trim, -w / 2 + i * w / nx, (h - 0.6) / 2, 0.07, g, 0.01);
+  if (o.shop) { box(w - 0.4, 2.2, 0.08, std(o.shop), 0, 1.1, 0.04, g, 0.02); plane(w - 1.2, 1.4, M.win, 0, 1.2, 0.09, g).userData.noCheck = true;
+    const aw = add(new THREE.Mesh(new THREE.CylinderGeometry(0.7, 0.7, w - 0.4, 24, 1, true, 0, Math.PI / 2), std('#ffffff', { map: tex((x2, ww, hh) => { for (let k = 0; k < 8; k++) { x2.fillStyle = k % 2 ? '#f6f2ea' : o.awning || '#2a8a6a'; x2.fillRect(0, k * hh / 8, ww, hh / 8); } }, 64, 128), side: THREE.DoubleSide })), 0, 2.4, 0.2, g); aw.rotation.set(0, 0, Math.PI / 2); aw.rotation.order = 'ZYX'; aw.rotateX(Math.PI); }
+  return g; }
+
+// ---------- extra textures ----------
+const T_GRASS = tex((x, w, h) => { x.fillStyle = '#6cc24a'; x.fillRect(0, 0, w, h); const r = rng(21); for (let i = 0; i < 900; i++) { x.fillStyle = ['#5ab23c', '#7ad254', '#4ea436', '#88dc62'][Math.floor(r() * 4)]; const X = r() * w, Y = r() * h; x.fillRect(X, Y, 2, 6 + r() * 6); } }, 256, 256, 18, 18);
+const T_HONEY = tex((x, w, h) => { x.fillStyle = '#f7d36a'; x.fillRect(0, 0, w, h); const s = 22; x.strokeStyle = '#e2a830'; x.lineWidth = 4;
+  for (let row = -1; row < h / (s * 1.5) + 1; row++) for (let c = -1; c < w / (s * 1.732) + 1; c++) { const cx = c * s * 1.732 + (row % 2 ? s * 0.866 : 0), cy = row * s * 1.5; x.beginPath(); for (let k = 0; k < 6; k++) { const a = Math.PI / 6 + k * Math.PI / 3; x.lineTo(cx + Math.cos(a) * s, cy + Math.sin(a) * s); } x.closePath(); x.stroke(); } }, 256, 256, 5, 2);
+const T_LABFLOOR = woodTex('#c8904e', '#8e5a2e', 8, 5, 5);
+const T_BEE = tex((x, w, h) => { x.fillStyle = '#ffc61a'; x.fillRect(0, 0, w, h); x.fillStyle = '#1d1416'; for (const [a, b] of [[0.30, 0.42], [0.52, 0.64], [0.74, 0.84]]) x.fillRect(0, a * h, w, (b - a) * h); x.fillRect(0, 0.92 * h, w, 0.08 * h); }, 64, 256);
+const MB = {
+  grass: std('#ffffff', { map: T_GRASS, roughness: 1 }), honeyWall: std('#ffffff', { map: T_HONEY, roughness: 0.8 }), labFloor: std('#ffffff', { map: T_LABFLOOR, roughness: 0.6 }),
+  hive: ['#ffffff', '#7ac8f0', '#ffd23a', '#f08aa8', '#9ad86a', '#ffffff'].map(c => toon(THREE, c)), hiveRoof: toon(THREE, '#d8dce4'), wood: toon(THREE, '#b07a48'), woodD: toon(THREE, '#7a4e2a'),
+  leaf: toon(THREE, '#3aa858'), leafL: toon(THREE, '#5ac86a'), trunk: toon(THREE, '#8a5a32'), petal: ['#ff5a8a', '#ffffff', '#ffd23a', '#b07aff', '#ff8a3a'].map(c => toon(THREE, c)),
+  bee: toon(THREE, '#ffffff', { map: T_BEE }), beeD: toon(THREE, '#1d1416'), wing: new THREE.MeshStandardMaterial({ color: '#eaf6ff', transparent: true, opacity: 0.55, roughness: 0.1, side: THREE.DoubleSide, depthWrite: false }),
+  eyeW: toon(THREE, '#ffffff'), glass: std('#e8f4f0', { transparent: true, opacity: 0.35, roughness: 0.05 }), honey: new THREE.MeshStandardMaterial({ color: '#ffaa10', emissive: '#c87a00', emissiveIntensity: 0.25, roughness: 0.15 }),
+  steel: std('#c8ccd4', { metalness: 0.7, roughness: 0.3 }), bench: toon(THREE, '#f2f4f6'), benchTop: toon(THREE, '#2a4a6a'), swell: toon(THREE, '#ff6a7a'), nose: toon(THREE, '#ff3a4a') };
+
+// a cartoon honeybee: striped body, big eyes, wings that flap, a stinger. Built along +z (head) / -z (stinger).
+function makeBee(s = 1) { const g = new THREE.Group(), b = new THREE.Group(); g.add(b); b.scale.setScalar(s);
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.05, 20, 14).rotateX(Math.PI / 2).scale(1, 1, 1.45), MB.bee); b.add(body);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.036, 16, 12), MB.beeD); head.position.set(0, 0.008, 0.075); b.add(head);
+  for (const d of [-1, 1]) { const e = new THREE.Mesh(new THREE.SphereGeometry(0.017, 12, 10), MB.eyeW); e.position.set(d * 0.02, 0.018, 0.098); b.add(e);
+    const p = new THREE.Mesh(new THREE.SphereGeometry(0.008, 8, 6), MB.beeD); p.position.set(d * 0.021, 0.019, 0.113); b.add(p);
+    const an = new THREE.Mesh(new THREE.CylinderGeometry(0.003, 0.003, 0.06, 5), MB.beeD); an.position.set(d * 0.016, 0.055, 0.1); an.rotation.set(0.5, 0, -d * 0.4); b.add(an);
+    const w = new THREE.Mesh(new THREE.CircleGeometry(0.05, 18).scale(0.55, 1, 1), MB.wing); w.position.set(d * 0.03, 0.05, 0.0); w.rotation.set(-Math.PI / 2, 0, 0); w.userData.side = d; w.userData.noCheck = true; b.add(w); (b.userData.wings ||= []).push(w); }
+  const st = new THREE.Mesh(new THREE.ConeGeometry(0.008, 0.035, 8).rotateX(-Math.PI / 2), MB.beeD); st.position.set(0, -0.005, -0.085); b.add(st);
+  addInk(THREE, b, 0.0035); g.traverse(o => { o.userData.noCheck = true; o.castShadow = false; });
+  g.userData.flap = (t) => { const a = Math.sin(t * 60) * 0.7; b.userData.wings.forEach(w => { w.rotation.set(-Math.PI / 2, w.userData.side * (0.4 + a), 0); w.position.x = w.userData.side * 0.03; }); };
+  return g; }
+// put a bee on skin: tail into the skin at world point p, sitting along the surface normal n
+function beeOn(bee, p, n, t, sting = true) { bee.visible = true; bee.position.copy(p).addScaledVector(n, 0.05 * bee.children[0].scale.x);
+  const up = V(0, 1, 0), z = n.clone().multiplyScalar(-1).lerp(up, 0.35).normalize().multiplyScalar(-1); bee.lookAt(bee.position.clone().add(z)); bee.rotateX(-0.9);
+  if (sting) bee.children[0].position.z = Math.sin(t * 22) * 0.004; bee.userData.flap(t); }
+
+// ================= SET A: the bee yard in the sun (origin) =================
+const YA = new THREE.Group(); scene.add(YA);
+const HIVES = [];
+{ add(new THREE.Mesh(new THREE.PlaneGeometry(80, 80).rotateX(-Math.PI / 2), MB.grass), 0, 0, 0, YA);
+  // the lab building behind: brick with white windows
+  facade(YA, 0, -9, 0, 16, 7.5, '#c86a4a', { brick: true });
+  // hives in an arc: stacked boxes on stands, a lid, a landing board
+  [[-3.0, -3.2], [-1.5, -3.6], [0.0, -3.8], [1.5, -3.6], [3.0, -3.2], [4.4, -2.6]].forEach(([x, z], i) => { const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = -x * 0.08; YA.add(g); HIVES.push(g);
+    box(0.62, 0.3, 0.5, MB.woodD, 0, 0.15, 0, g, 0.02); const m = MB.hive[i % MB.hive.length];
+    for (let k = 0; k < 2 + (i % 2); k++) { box(0.56, 0.26, 0.46, m, 0, 0.43 + k * 0.27, 0, g, 0.02); box(0.58, 0.02, 0.48, MB.woodD, 0, 0.56 + k * 0.27, 0, g, 0); }
+    const top = 0.3 + (2 + (i % 2)) * 0.27; box(0.66, 0.07, 0.56, MB.hiveRoof, 0, top + 0.05, 0, g, 0.02);
+    box(0.3, 0.04, 0.02, MB.beeD, 0, 0.33, 0.235, g, 0); box(0.4, 0.02, 0.14, MB.wood, 0, 0.31, 0.29, g, 0); });
+  // trees, a fence, flower beds
+  const tree = (x, z, s) => { cyl(0.12 * s, 0.16 * s, 1.6 * s, MB.trunk, x, 0.8 * s, z, YA, 10); for (const [dy, r] of [[1.9, 0.9], [2.5, 0.75], [3.0, 0.5]]) { const c = add(new THREE.Mesh(new THREE.IcosahedronGeometry(r * s, 0), r > 0.6 ? MB.leaf : MB.leafL), x, dy * s, z, YA); c.rotation.set(x, z, 0); } };
+  [[-7, -5, 1.3], [-5.5, -7, 1.0], [7, -5.5, 1.2], [6, -7.5, 1.4], [-8.5, -1, 1.1], [8.8, -1.5, 1.0]].forEach(a => tree(...a));
+  for (let i = -12; i <= 12; i++) { box(0.08, 0.8, 0.06, MB.wood, i * 0.8, 0.4, -6.2, YA, 0.01); } box(19.6, 0.06, 0.04, MB.wood, 0, 0.62, -6.18, YA, 0); box(19.6, 0.06, 0.04, MB.wood, 0, 0.3, -6.18, YA, 0);
+  const r = rng(77); for (let i = 0; i < 140; i++) { const x = (r() - 0.5) * 14, z = -5.4 + r() * 1.4 + (Math.abs(x) > 5.5 ? r() * 5 : 0); if (Math.abs(x) < 5 && z > -4.4) continue;
+    cyl(0.008, 0.008, 0.3, MB.leafL, x, 0.15, z, YA, 4).userData.noCheck = true; const f = add(new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 6), MB.petal[i % 5]), x, 0.32, z, YA); f.userData.noCheck = true; f.castShadow = false; }
+  for (let i = 0; i < 60; i++) { const x = (r() - 0.5) * 10, z = 1 + r() * 4; const f = add(new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 6), MB.petal[i % 5]), x, 0.05, z, YA); f.userData.noCheck = true; f.castShadow = false; }
+  // a bench by the hives with a smoker and a frame of comb
+  box(1.2, 0.06, 0.4, MB.wood, -4.6, 0.45, -1.6, YA, 0.01); for (const d of [-0.5, 0.5]) box(0.06, 0.45, 0.36, MB.woodD, -4.6 + d, 0.22, -1.6, YA, 0.01);
+  cyl(0.08, 0.08, 0.24, MB.steel, -4.9, 0.6, -1.6, YA, 14); add(new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.1, 14), MB.steel), -4.9, 0.77, -1.6, YA);
+  box(0.42, 0.26, 0.03, MB.honeyWall, -4.4, 0.62, -1.62, YA, 0.005); }
+// bees flying round the hives
+const FLY = []; for (let i = 0; i < 16; i++) { const b = makeBee(1.3); scene.add(b); FLY.push(b); }
+
+// ================= SET B: the bee lab (z = 80) =================
+const P0 = V(0, 0, 80), LB = new THREE.Group(); LB.position.copy(P0); scene.add(LB);
+const CHART = new THREE.Group(), CAL = new THREE.Group(), JAR = new THREE.Group(), WATCH = new THREE.Group();
+let chartStage = -1, chartCtx, chartTex, calCtx, calTex, calDay = -1;
+// the 25 test spots on the chart's body outline (front view, chart px 512 x 720)
+const SPOTS = [['skull', 256, 70, 2.3], ['nostril', 262, 128, 9.0], ['lip', 256, 146, 8.7], ['cheek', 226, 128, 7.3], ['neck', 256, 190, 6.0], ['armpit', 186, 250, 3.7], ['chest', 256, 260, 4.0],
+  ['upper arm', 160, 290, 2.3], ['forearm', 140, 370, 5.0], ['palm', 122, 440, 7.0], ['finger', 112, 480, 4.3], ['belly', 256, 340, 6.7], ['hip', 210, 410, 4.0], ['back', 300, 300, 4.0],
+  ['buttock', 300, 420, 3.7], ['thigh', 220, 480, 3.7], ['knee', 222, 540, 4.0], ['back of knee', 290, 540, 5.3], ['shin', 224, 600, 4.0], ['calf', 290, 600, 4.0], ['ankle', 224, 650, 4.3],
+  ['foot', 226, 680, 4.3], ['toe', 236, 704, 2.3], ['wrist', 128, 410, 4.3], ['ear', 206, 110, 6.7]];
+{ add(new THREE.Mesh(new THREE.PlaneGeometry(10, 10).rotateX(-Math.PI / 2), MB.labFloor), 0, 0, 0, LB);
+  const wl = plane(10, 4, std('#d8f2e4'), 0, 2, -3, LB); wl.castShadow = false; plane(10, 4, std('#d8f2e4'), -4, 2, 0, LB, Math.PI / 2).castShadow = false; plane(10, 4, std('#d8f2e4'), 4, 2, 0, LB, -Math.PI / 2).castShadow = false;
+  plane(10, 1.1, MB.honeyWall, 0, 0.55, -2.985, LB).castShadow = false; box(10, 0.08, 0.05, std('#e8a838'), 0, 1.12, -2.97, LB, 0);
+  plane(10, 10, std('#fff8e6'), 0, 4, 0, LB, 0, Math.PI / 2).castShadow = false;
+  
+  // window to the bee yard (bright sky, green hedge, little hives painted on)
+  const wt = tex((x, w, h) => { const g = x.createLinearGradient(0, 0, 0, h); g.addColorStop(0, '#8fd4ff'); g.addColorStop(0.65, '#d8f2ff'); g.addColorStop(0.66, '#6cc24a'); g.addColorStop(1, '#4ea436'); x.fillStyle = g; x.fillRect(0, 0, w, h);
+    ['#ffffff', '#7ac8f0', '#ffd23a', '#f08aa8'].forEach((c, i) => { x.fillStyle = c; x.fillRect(30 + i * 56, h * 0.56, 36, 40); x.fillStyle = '#d8dce4'; x.fillRect(26 + i * 56, h * 0.54, 44, 8); }); }, 256, 256);
+  const wv = plane(1.8, 1.4, new THREE.MeshBasicMaterial({ map: wt }), -3.97, 1.9, -0.4, LB, Math.PI / 2); wv.userData.noCheck = true;
+  for (const dz of [-0.9, 0, 0.9]) box(0.08, 1.5, 0.08, M.white, -3.92, 1.9, -0.4 + dz, LB, 0); for (const dy of [-0.72, 0, 0.72]) box(0.08, 0.08, 1.9, M.white, -3.92, 1.9 + dy, -0.4, LB, 0);
+  const sun = new THREE.SpotLight('#fff0d0', 16, 12, 0.55, 0.6, 1.2); sun.position.set(-5, 3.0, -0.4); sun.target.position.set(0, 0, -0.6); LB.add(sun, sun.target); sun.userData.set = 'lab'; lamps.push(sun);
+  // the bench along the right wall: jars of honey, a microscope, books, a beaker
+  box(2.6, 0.08, 0.7, MB.benchTop, 2.4, 0.9, -2.55, LB, 0.02); box(2.5, 0.86, 0.62, MB.bench, 2.4, 0.43, -2.55, LB, 0.03);
+  for (let i = 0; i < 5; i++) { cyl(0.07, 0.07, 0.18, MB.honey, 1.4 + i * 0.2, 1.03, -2.7, LB, 14); cyl(0.075, 0.075, 0.04, std(['#e8382e', '#2a7ae8', '#f2f4f6', '#3aa858', '#ffd23a'][i]), 1.4 + i * 0.2, 1.14, -2.7, LB, 14); }
+  { const mx = 2.9, mz = -2.5; box(0.2, 0.04, 0.24, M.iron, mx, 0.96, mz, LB, 0.01); cyl(0.025, 0.025, 0.3, M.iron, mx, 1.12, mz - 0.07, LB, 8); const tb = cyl(0.03, 0.035, 0.22, std('#f2f4f6'), mx, 1.26, mz, LB, 12); tb.rotation.x = 0.5; box(0.14, 0.02, 0.14, M.iron, mx, 1.06, mz + 0.02, LB, 0.005); }
+  ['#c8202e', '#20306e', '#3aa858', '#e8a838'].forEach((c, i) => box(0.06, 0.28, 0.2, std(c), 3.3 + i * 0.07, 1.08, -2.7, LB, 0.005));
+  // shelves on the back wall with jars and a plant
+  for (const y of [2.2, 2.7]) { box(1.6, 0.05, 0.28, MB.wood, -2.4, y, -2.85, LB, 0.01); for (let i = 0; i < 6; i++) cyl(0.06, 0.06, 0.16, i % 2 ? MB.honey : MB.glass, -3.0 + i * 0.24, y + 0.1, -2.85, LB, 12); }
+  // the desk by the stool: the jar of bees, the stopwatch, a notebook
+  box(1.3, 0.06, 0.6, MB.wood, -1.15, 0.78, -1.05, LB, 0.02); for (const [dx, dz] of [[-0.58, -0.25], [0.58, -0.25], [-0.58, 0.25], [0.58, 0.25]]) box(0.05, 0.78, 0.05, MB.woodD, -1.15 + dx, 0.39, -1.05 + dz, LB, 0.01);
+  JAR.position.set(-1.45, 0.81, -1.1); LB.add(JAR); cyl(0.13, 0.13, 0.3, MB.glass, 0, 0.15, 0, JAR, 20).userData.noCheck = true; cyl(0.135, 0.135, 0.04, MB.steel, 0, 0.31, 0, JAR, 20);
+  JAR.userData.bees = []; for (let i = 0; i < 6; i++) { const b = makeBee(0.75); JAR.add(b); JAR.userData.bees.push(b); }
+  WATCH.position.set(-0.9, 0.84, -0.95); LB.add(WATCH); { cyl(0.08, 0.08, 0.03, MB.steel, 0, 0.0, 0, WATCH, 24); const face = cyl(0.068, 0.068, 0.034, toon(THREE, '#ffffff'), 0, 0.002, 0, WATCH, 24); face.userData.noCheck = true;
+    cyl(0.015, 0.015, 0.03, MB.steel, 0, 0.0, -0.095, WATCH, 8).rotation.x = Math.PI / 2; const hand = new THREE.Group(); hand.position.y = 0.022; WATCH.add(hand); box(0.006, 0.004, 0.06, toon(THREE, '#e8282e'), 0, 0, -0.03, hand, 0); WATCH.userData.hand = hand; WATCH.rotation.x = 0.7; }
+  box(0.3, 0.02, 0.22, std('#fbf5e6'), -0.7, 0.82, -1.2, LB, 0.005); box(0.04, 0.012, 0.18, std('#20306e'), -0.55, 0.832, -1.2, LB, 0);
+  // the stool he sits on
+  cyl(0.2, 0.2, 0.06, toon(THREE, '#e8382e'), 0, 0.5, -1.0, LB, 20); for (let k = 0; k < 4; k++) { const l = cyl(0.02, 0.02, 0.5, MB.steel, Math.cos(k * 1.57 + 0.78) * 0.13, 0.24, -1.0 + Math.sin(k * 1.57 + 0.78) * 0.13, LB, 6); l.rotation.set(Math.sin(k * 1.57 + 0.78) * 0.2, 0, -Math.cos(k * 1.57 + 0.78) * 0.2); }
+  // the pain chart on the back wall (redrawn when its stage changes)
+  CHART.position.set(1.25, 1.85, -2.93); LB.add(CHART); { const c = document.createElement('canvas'); c.width = 512; c.height = 760; chartCtx = c.getContext('2d'); chartTex = new THREE.CanvasTexture(c); chartTex.colorSpace = THREE.SRGBColorSpace; chartTex.anisotropy = 8;
+    box(1.26, 1.8, 0.05, MB.woodD, 0, 0, 0.0, CHART, 0.01); const p = plane(1.14, 1.68, new THREE.MeshStandardMaterial({ map: chartTex, roughness: 0.9, emissive: '#ffffff', emissiveMap: chartTex, emissiveIntensity: 0.25 }), 0, 0, 0.03, CHART); p.userData.noCheck = true; }
+  // the day calendar and a clock (left of the chart)
+  CAL.position.set(-0.55, 2.1, -2.93); LB.add(CAL); { const c = document.createElement('canvas'); c.width = 256; c.height = 300; calCtx = c.getContext('2d'); calTex = new THREE.CanvasTexture(c); calTex.colorSpace = THREE.SRGBColorSpace;
+    const p = plane(0.6, 0.7, new THREE.MeshStandardMaterial({ map: calTex, roughness: 0.9, emissive: '#ffffff', emissiveMap: calTex, emissiveIntensity: 0.2 }), 0, 0, 0.02, CAL); p.userData.noCheck = true; }
+  lamp(0, 3.0, -0.5, '#fff6ea', 5, 9, LB, 'lab'); cyl(0.05, 0.35, 0.25, toon(THREE, '#e8a838'), 0, 3.15, -0.5, LB, 20); cyl(0.01, 0.01, 0.8, M.iron, 0, 3.6, -0.5, LB, 4);
+}
+LB.children.forEach(m => { if (m.geometry && m.geometry.type === 'PlaneGeometry' && m.geometry.parameters.width === 10) m.castShadow = false; });
+function drawChart(stage) { if (stage === chartStage) return; chartStage = stage; const x = chartCtx, w = 512, h = 760; x.fillStyle = '#fbf5e6'; x.fillRect(0, 0, w, h);
+  x.fillStyle = '#17121c'; x.font = 'bold 46px Arial'; x.textAlign = 'center'; x.fillText('STING PAIN MAP', w / 2, 42);
+  // body outline
+  x.strokeStyle = '#17121c'; x.lineWidth = 7; x.fillStyle = '#fff1d6'; x.lineJoin = 'round';
+  x.beginPath(); x.arc(256, 115, 58, 0, 7); x.fill(); x.stroke();
+  x.beginPath(); x.moveTo(206, 180); x.lineTo(306, 180); x.lineTo(360, 210); x.lineTo(392, 400); x.lineTo(366, 470); x.lineTo(346, 400); x.lineTo(330, 300); x.lineTo(316, 440); x.lineTo(306, 715); x.lineTo(266, 715); x.lineTo(256, 470); x.lineTo(246, 715); x.lineTo(206, 715); x.lineTo(196, 440); x.lineTo(182, 300); x.lineTo(166, 400); x.lineTo(146, 470); x.lineTo(108, 470); x.lineTo(118, 400); x.lineTo(152, 210); x.closePath(); x.fill(); x.stroke();
+  const col = (s) => s >= 8 ? '#e8282e' : s >= 6 ? '#ff8a1a' : s >= 4 ? '#ffd23a' : '#3ac05a';
+  SPOTS.forEach(([name, px, py, sc], i) => { const shown = stage >= 4 || (stage >= 1 && ['skull', 'upper arm', 'toe', 'forearm'].includes(name)) || (stage >= 2 && name === 'lip') || (stage >= 3 && name === 'nostril') || stage === 0.5 + 0 && false;
+    const pop = stage === 0 ? 1 : 1; x.fillStyle = shown ? col(sc) : '#c8c0b0'; x.strokeStyle = '#17121c'; x.lineWidth = 3; x.beginPath(); x.arc(px, py, shown ? 13 : 9, 0, 7); x.fill(); x.stroke(); });
+  const tag = (name, txt, dx, big) => { const s = SPOTS.find(z => z[0] === name); x.font = `bold ${big ? 40 : 30}px Arial`; x.textAlign = dx < 0 ? 'right' : 'left'; x.lineWidth = 7; x.strokeStyle = '#fbf5e6'; x.strokeText(txt, s[1] + dx, s[2] + 11); x.fillStyle = col(s[3]) === '#ffd23a' ? '#c88a00' : col(s[3]); x.fillText(txt, s[1] + dx, s[2] + 11); };
+  if (stage >= 1) { tag('skull', '2.3', 34); tag('upper arm', '2.3', -24); tag('toe', '2.3', 24); }
+  if (stage >= 2) tag('lip', '8.7', -36, true);
+  if (stage >= 3) { tag('nostril', '9.0', 36, true); x.strokeStyle = '#e8282e'; x.lineWidth = 6; x.beginPath(); x.arc(262, 128, 34, 0, 7); x.stroke(); }
+  if (stage >= 4) { x.fillStyle = '#17121c'; x.font = 'bold 30px Arial'; x.textAlign = 'center'; x.fillText('25 SPOTS  ·  38 DAYS', w / 2, h - 12); }
+  chartTex.needsUpdate = true; }
+function drawCal(d) { if (d === calDay) return; calDay = d; const x = calCtx, w = 256, h = 300; x.fillStyle = '#ffffff'; x.fillRect(0, 0, w, h); x.fillStyle = '#e8282e'; x.fillRect(0, 0, w, 78);
+  x.fillStyle = '#ffffff'; x.font = 'bold 50px Arial'; x.textAlign = 'center'; x.fillText('DAY', w / 2, 58); x.fillStyle = '#17121c'; x.font = 'bold 150px Arial'; x.fillText(String(d), w / 2, 240);
+  x.strokeStyle = '#17121c'; x.lineWidth = 8; x.strokeRect(4, 4, w - 8, h - 8); calTex.needsUpdate = true; }
+drawChart(0); drawCal(1);
+
+// ---------- characters ----------
+const SMITH = makeBighead(THREE, { cloth: '#6ab0e8', collar: '#ffffff', sleeve: '#f5efe4', trousers: '#3a4a6a', hair: '#6a4028', brows: 'thick', stubble: true });
+const STUDENT = makeBighead(THREE, { cloth: '#f2c23a', collar: '#ffffff', sleeve: '#f2c23a', trousers: '#4a3a5a', hair: '#2a1e1c', brows: 'thin' });
+const CAST = [SMITH, STUDENT]; CAST.forEach(c => scene.add(c.root));
+const NAMES = ['smith', 'student'];
+const BEE = makeBee(1.6); scene.add(BEE);                         // the bee doing the stinging
+const FORC = new THREE.Group(); scene.add(FORC); { for (const d of [-1, 1]) { const a = box(0.008, 0.006, 0.2, MB.steel, d * 0.006, 0, 0.1, FORC, 0); a.rotation.y = d * 0.03; a.userData.noCheck = true; } }
+const SWELL = add(new THREE.Mesh(new THREE.SphereGeometry(0.05, 16, 12), MB.swell)); SWELL.userData.noCheck = true; SWELL.castShadow = false;
+const RNOSE = add(new THREE.Mesh(new THREE.SphereGeometry(0.04, 16, 12), MB.nose)); RNOSE.userData.noCheck = true; RNOSE.castShadow = false;
+const TEARS = [0, 1].map(() => { const m = add(new THREE.Mesh(new THREE.SphereGeometry(0.018, 10, 8).scale(1, 1.4, 1), std('#7ad0ff', { roughness: 0.1, emissive: '#3a8acf', emissiveIntensity: 0.3 }))); m.userData.noCheck = true; m.castShadow = false; return m; });
+
+// ---------- shots ----------
+const at = (b, x, y, z) => b.clone().add(V(x, y, z));
+const D2R = Math.PI / 180;
+function frame(tg, width, yaw, elev = 8, fov = 38) { const hf = 2 * Math.atan(Math.tan(fov * D2R / 2) * W / H), d = width / 2 / Math.tan(hf / 2);
+  const dir = V(Math.sin(yaw * D2R) * Math.cos(elev * D2R), Math.sin(elev * D2R), Math.cos(yaw * D2R) * Math.cos(elev * D2R)); return { p: tg.clone().addScaledVector(dir, d), l: tg.clone(), fov }; }
+const mix = (A, B, k, dof) => ({ p: A.p.clone().lerp(B.p, k), l: A.l.clone().lerp(B.l, k), fov: lerp(A.fov, B.fov, k), dof });
+const move = (A, B, dof = 0) => (u) => mix(A, B, ease(0, 1, u), dof);
+const SM_WORDS = WORDS.filter(w => w.speaker === 'smith');
+const smTalk = (t) => SM_WORDS.some(w => t >= w.s - 0.03 && t < w.e + 0.03) ? talkFlap(t) : 0;
+const RIGHT = Math.PI / 2;
+function place(c, p, ry = 0, pose = 'idle', expr = 'neutral', t = 0, o) { c.root.visible = true; c.root.position.copy(p); c.root.rotation.set(0, ry, 0); c.pose(pose, t, o); c.face(expr, t, c === SMITH ? smTalk(t) : 0); }
+const face = (from, to) => Math.atan2(to.x - from.x, to.z - from.z);
+const S = [];
+const shot = (t, env, camf, act, o = {}) => S.push({ t, env, camf, act, ...o });
+// positions
+const SEAT = at(P0, 0, 0.5, -1.0);              // stool top
+const SMP = at(P0, 0, 0.52, -1.0);
+const YARD = V(0.3, 0, -1.4);
+// skin points on Smith's head (head-local) and their outward normals
+const HPT = { nose: V(0, -0.035, 0.33), lip: V(0, -0.135, 0.29), skull: V(0, 0.31, 0.04), cheek: V(-0.18, -0.06, 0.26) };
+function headPt(k) { SMITH.root.updateMatrixWorld(true); const p = SMITH.head.localToWorld(HPT[k].clone()), c = SMITH.head.getWorldPosition(V(0, 0, 0)); return { p, n: p.clone().sub(c).normalize() }; }
+// sit Smith on his stool; pose 'pour' puts his right hand (with forceps) at a world point
+function sitSmith(expr, t, handAt = null, o = {}) { place(SMITH, SMP, 0, 'idle', expr, t); if (handAt) { SMITH.root.updateMatrixWorld(true); const h = SMITH.root.worldToLocal(handAt.clone()); SMITH.pose('pour', t, { hand: [h.x, h.y, h.z], elbow: o.elbow }); }
+  else SMITH.pose(o.pose || 'idle', t); SMITH.hips.position.y = -0.12; SMITH.legs.forEach(l => l.rotation.x = -1.45); SMITH.face(expr, t, smTalk(t)); }
+// a sting on a head spot: bee on the skin, forceps from his hand to the bee
+function stingHead(k, expr, t, hold = true) { sitSmith(expr, t); const { p, n } = headPt(k); beeOn(BEE, p, n, t);
+  if (hold) { const hand = p.clone().addScaledVector(n, 0.13).add(V(0.12, -0.1, 0.02)); sitSmith(expr, t, hand); const q = headPt(k); beeOn(BEE, q.p, q.n, t); forceps(hand, BEE.position); } return { p, n }; }
+function forceps(a, b) { FORC.visible = true; FORC.position.copy(a); FORC.lookAt(b); FORC.scale.set(1, 1, a.distanceTo(b) / 0.2); }
+function stingArm(t, expr) { sitSmith(expr, t, null, { pose: 'idle' }); SMITH.root.updateMatrixWorld(true); const up = SMITH.arms.l.up.getWorldPosition(V(0, 0, 0)), n = V(-0.6, 0.1, 0.8).normalize(); beeOn(BEE, up.addScaledVector(n, 0.05), n, t); }
+function stingForearm(t, expr) { sitSmith(expr, t); SMITH.root.updateMatrixWorld(true); const lo = SMITH.arms.l.lo.getWorldPosition(V(0, 0, 0)), n = V(0, 0.4, 1).normalize(); beeOn(BEE, lo.addScaledVector(n, 0.045), n, t);
+  const hand = lo.clone().add(V(0.16, 0.1, 0.1)); sitSmith(expr, t, hand); const lo2 = SMITH.arms.l.lo.getWorldPosition(V(0, 0, 0)); beeOn(BEE, lo2.addScaledVector(n, 0.045), n, t); forceps(hand, BEE.position); }
+const STANDP = at(P0, 0.7, 0, -0.7);
+function stingToe(t, expr) { place(SMITH, STANDP, -0.3, 'hands_hips', expr, t); SMITH.root.updateMatrixWorld(true); const toe = SMITH.legs[1].localToWorld(V(0, -0.21, 0.1)).add(V(0, 0.04, 0)), n = V(0, 1, 0.2).normalize(); beeOn(BEE, toe, n, t); }
+function tears(on, t) { TEARS.forEach((m, i) => { m.visible = on; if (!on) return; SMITH.root.updateMatrixWorld(true); const ph = (t * 1.4 + i * 0.5) % 1; m.position.copy(SMITH.head.localToWorld(V((i ? 1 : -1) * 0.11, 0.0 - ph * 0.16, 0.3 - ph * 0.02))); m.scale.setScalar(0.7 + ph * 0.4); }); }
+// where the arm, forearm and toe sit when he's on the stool (for framing)
+sitSmith('neutral', 0); SMITH.root.updateMatrixWorld(true);
+const ARMP = SMITH.arms.l.up.getWorldPosition(V(0, 0, 0)), FOREP = SMITH.arms.l.lo.getWorldPosition(V(0, 0, 0)), TOEP = STANDP.clone().add(V(0.0, 0.18, 0.1));
+function student(p, ry, pose, expr, t) { place(STUDENT, p, ry, pose, expr, t); }
+
+// ---- HOOK (cold open): the worst sting, right up the nose, then the reveal that he's doing it to himself
+shot(WT(0, 'He'), 'lab', move(frame(at(SMP, 0, 0.78, 0), 1.05, 18, 2, 34), frame(at(SMP, 0, 0.78, 0), 0.85, 12, 0, 34), 0.5),
+  (u, t) => { drawCal(30); stingHead('nose', 'pain', t); tears(true, t); RNOSE.visible = true; }, { noFit: 1, noCal: 1 });
+shot(WT(0, 'on'), 'lab', move(frame(at(SMP, 0.2, 0.6, 0.1), 2.0, -24, 6, 42), frame(at(SMP, 0.2, 0.6, 0.1), 1.7, -16, 5, 42), 0.3),
+  (u, t) => { drawCal(30); stingHead('nose', 'pain', t); tears(true, t); RNOSE.visible = true; drawChart(3); }, { keep: [SMITH], noCal: 1 });
+// ---- DAY 1: the bee yard; the question; the 25 spots; himself
+shot(WT(1, 'Bee'), 'yard', move(frame(V(-0.4, 1.0, -2.2), 4.6, 14, 12, 50), frame(V(-0.4, 1.0, -2.2), 4.0, 6, 10, 50), 0.1),
+  (u, t) => { const k = ease(0, 1, u), p = V(-2.2 + k * 2.0, 0, -1.6 + k * 0.2); place(SMITH, p, RIGHT * 0.8, 'walk', 'happy', t); SMITH.legs[0].rotation.x = Math.sin(t * 7) * 0.45; SMITH.legs[1].rotation.x = -Math.sin(t * 7) * 0.45; hold(SMITH, 'l', JAR2, 0, -0.02, 0.06); }, { fly: 1 });
+shot(WT(1, 'wanted'), 'yard', move(frame(V(0.0, 1.05, -1.4), 1.6, -20, 4, 40), frame(V(0.0, 1.05, -1.4), 1.35, -12, 4, 40), 0.6),
+  (u, t) => { place(SMITH, V(0, 0, -1.4), 0, 'hold', 'focus', t); SMITH.root.updateMatrixWorld(true); const hnd = SMITH.arms.r.hand.getWorldPosition(V(0, 0, 0)); beeOn(BEE, hnd.add(V(0, 0.05, 0)), V(0, 1, 0), t, false); }, { fly: 1 });
+shot(WT(1, 'So'), 'lab', move(frame(at(P0, 0.7, 1.5, -2.3), 2.6, -18, 4, 44), frame(at(P0, 0.7, 1.5, -2.3), 2.2, -10, 4, 44), 0.3),
+  (u, t) => { drawCal(1); drawChart(0); place(SMITH, at(P0, 0.1, 0, -2.25), 0.5, 'point', 'focus', t); }, { keep: [SMITH], chartDots: 1 });
+shot(WT(1, 'twenty'), 'lab', move(frame(at(CHART.position.clone().add(P0), 0, -0.05, 0), 1.6, 0, 0, 40), frame(at(CHART.position.clone().add(P0), 0, -0.05, 0), 1.3, 0, 0, 40), 0.2),
+  (u, t) => { drawChart(0); }, { noFit: 1 });
+shot(WT(1, 'on'), 'lab', move(frame(at(SMP, 0, 0.55, 0), 1.7, 18, 4, 40), frame(at(SMP, 0, 0.55, 0), 1.4, 10, 4, 40), 0.5),
+  (u, t) => { drawCal(1); sitSmith('grin', t, null, { pose: 'palm' }); BEE.visible = false; });
+// ---- WEEK 1: five stings every morning, a full minute each
+shot(WT(2, 'Five'), 'lab', move(frame(at(P0, -0.6, 1.0, -1.05), 2.6, 26, 10, 44), frame(at(P0, -0.6, 1.0, -1.05), 2.2, 18, 10, 44), 0.3),
+  (u, t) => { drawCal(Math.min(7, 1 + Math.floor(u * 7))); stingForearm(t, 'worried'); }, { keep: [SMITH], jar: 1 });
+shot(WT(2, 'each'), 'lab', move(frame(FOREP, 0.75, 20, 24, 34), frame(FOREP, 0.6, 12, 20, 34), 0.6),
+  (u, t) => { stingForearm(t, 'focus'); }, { noFit: 1 });
+shot(WT(2, 'full'), 'lab', move(frame(at(P0, -0.9, 0.9, -0.95), 0.6, 10, 40, 34), frame(at(P0, -0.9, 0.9, -0.95), 0.5, 4, 36, 34), 0.5),
+  (u, t) => { stingForearm(t, 'focus'); }, { noFit: 1, watch: 1 });
+// ---- WEEK 3: skull, toe, upper arm: barely two
+shot(WT(3, 'Skull'), 'lab', move(frame(at(SMP, 0, 0.95, 0), 1.0, 12, 26, 38), frame(at(SMP, 0, 0.95, 0), 0.85, 6, 22, 38), 0.5),
+  (u, t) => { drawCal(17); stingHead('skull', 'smug', t, false); SMITH.pose('thumb', t); SMITH.hips.position.y = -0.12; SMITH.legs.forEach(l => l.rotation.x = -1.45); const q = headPt('skull'); beeOn(BEE, q.p, q.n, t); });
+shot(WT(3, 'toe'), 'lab', move(frame(TOEP, 1.0, 24, 14, 38), frame(TOEP, 0.85, 14, 10, 38), 0.5),
+  (u, t) => { stingToe(t, 'smug'); }, { noFit: 1, barefoot: 1 });
+shot(WT(3, 'upper'), 'lab', move(frame(at(ARMP, 0.05, 0.12, 0), 1.2, -30, 6, 38), frame(at(ARMP, 0.05, 0.12, 0), 1.0, -22, 6, 38), 0.5),
+  (u, t) => { drawCal(17); stingArm(t, 'smug'); SMITH.pose('shrug', t); SMITH.hips.position.y = -0.12; SMITH.legs.forEach(l => l.rotation.x = -1.45); SMITH.root.updateMatrixWorld(true); const up = SMITH.arms.l.up.getWorldPosition(V(0, 0, 0)), n = V(-0.6, 0.1, 0.8).normalize(); beeOn(BEE, up.addScaledVector(n, 0.05), n, t); });
+shot(WT(3, 'Barely'), 'lab', move(frame(at(P0, 0.7, 1.55, -2.4), 2.6, -14, 2, 44), frame(at(P0, 0.7, 1.55, -2.4), 2.3, -8, 2, 44), 0.3),
+  (u, t) => { drawCal(17); drawChart(1); place(SMITH, at(P0, 0.05, 0, -2.2), 0.4, 'thumb', 'smug', t); }, { keep: [SMITH] });
+// ---- WEEK 5: then the face. The lip (his own line), then the nose
+shot(WT(4, 'Then'), 'lab', move(frame(at(SMP, 0, 0.65, 0), 1.9, -8, 4, 40), frame(at(SMP, 0, 0.78, 0), 1.0, -2, 2, 36), 0.5),
+  (u, t) => { drawCal(29); drawChart(1); const { p, n } = headPt('lip'); const k = ease(0.1, 1, u); sitSmith('worried', t); const hand = p.clone().addScaledVector(n, 0.15 + (1 - k) * 0.12).add(V(0.12, -0.1 - (1 - k) * 0.12, 0.02)); sitSmith('worried', t, hand);
+    const tip = p.clone().addScaledVector(n, 0.03 + (1 - k) * 0.08); beeOn(BEE, tip, n, t, false); forceps(hand, BEE.position); });
+shot(WT(4, 'Ow'), 'lab', move(frame(at(SMP, 0, 0.76, 0), 1.0, 14, 0, 34), frame(at(SMP, 0, 0.76, 0), 0.85, 8, 0, 34), 0.5),
+  (u, t) => { drawCal(29); stingHead('lip', 'pain', t); tears(true, t); swell('lip', 0.4 + u * 0.6); }, { noFit: 1 });
+shot(WT(4, 'almost'), 'lab', move(frame(at(CHART.position.clone().add(P0), 0, 0.45, 0), 0.9, 6, 0, 38), frame(at(CHART.position.clone().add(P0), 0, 0.45, 0), 0.75, 2, 0, 38), 0.2),
+  (u, t) => { drawChart(2); }, { noFit: 1 });
+shot(WT(4, 'And'), 'lab', move(frame(at(SMP, 0, 0.8, 0), 1.1, -16, 2, 34), frame(at(SMP, 0, 0.8, 0), 0.9, -6, 0, 34), 0.5),
+  (u, t) => { const { p, n } = headPt('nose'); const k = ease(0, 1, u); sitSmith('shock', t); const hand = p.clone().addScaledVector(n, 0.15 + (1 - k) * 0.1).add(V(0.12, -0.1, 0.02)); sitSmith('shock', t, hand);
+    const tip = p.clone().addScaledVector(n, 0.03 + (1 - k) * 0.06); beeOn(BEE, tip, n, t, false); forceps(hand, BEE.position); swell('lip', 1); }, { noFit: 1 });
+shot(WT(4, 'Right'), 'lab', move(frame(at(SMP, 0, 0.8, 0), 0.95, 4, 0, 34), frame(at(SMP, 0, 0.8, 0), 0.8, 0, 0, 34), 0.5),
+  (u, t) => { stingHead('nose', 'pain', t); tears(true, t); swell('lip', 1); RNOSE.visible = u > 0.3; }, { noFit: 1, shake: 1 });
+// ---- DAY 38: the finished map; and he was fine
+shot(WT(5, 'Thirty'), 'lab', move(frame(at(P0, -0.8, 1.45, -2.4), 2.3, 16, 4, 44), frame(at(P0, -0.8, 1.45, -2.4), 2.0, 8, 4, 44), 0.3),
+  (u, t) => { drawCal(Math.min(38, 30 + Math.floor(u * 12))); drawChart(3); place(SMITH, at(P0, -1.35, 0, -2.25), 0.5, 'point', 'grin', t); RNOSE.visible = true; }, { keep: [SMITH] });
+shot(WT(5, 'mapped'), 'lab', move(frame(at(CHART.position.clone().add(P0), 0, 0, 0), 1.9, 0, 0, 40), frame(at(CHART.position.clone().add(P0), 0, 0, 0), 1.6, 0, 0, 40), 0.2),
+  (u, t) => { drawChart(4); }, { noFit: 1 });
+shot(WT(5, 'And'), 'yard', move(frame(V(0.2, 1.05, -1.2), 1.7, 16, 4, 40), frame(V(0.2, 1.05, -1.2), 1.45, 8, 4, 40), 0.5),
+  (u, t) => { place(SMITH, V(0.2, 0, -1.2), 0, 'thumb', 'grin', t); RNOSE.visible = true; }, { fly: 1 });
+// ---- the CTA: waving in the bee yard
+shot(WT(6, 'Follow'), 'yard', move(frame(V(0.3, 1.1, -2.0), 4.2, -12, 10, 50), frame(V(0.3, 1.2, -2.0), 5.0, -6, 12, 50), 0.1),
+  (u, t) => { place(SMITH, V(0.2, 0, -1.2), 0, 'wave', 'grin', t); RNOSE.visible = true; student(V(-1.3, 0, -2.2), 0.4, 'clap', 'happy', t); }, { fly: 1 });
+
+function swell(k, s) { const { p, n } = headPt(k); SWELL.visible = true; SWELL.position.copy(p).addScaledVector(n, -0.01).add(V(0, -0.01, 0)); SWELL.scale.set(1.3 * s, 0.7 * s, 0.8 * s); SWELL.quaternion.setFromUnitVectors(V(0, 0, 1), n); }
+
+const JAR2 = new THREE.Group(); { const g = cyl(0.07, 0.07, 0.16, MB.glass, 0, 0.0, 0, JAR2, 16); g.userData.noCheck = true; cyl(0.072, 0.072, 0.025, MB.steel, 0, 0.085, 0, JAR2, 16); for (let i = 0; i < 3; i++) { const b = makeBee(0.5); b.position.set(Math.sin(i * 2) * 0.03, -0.03 + i * 0.03, Math.cos(i * 2) * 0.03); JAR2.add(b); } }
+const hold = (c, side, g, x = 0, y = 0, z = 0, rx = 0, ry = 0, rz = 0) => { c.hand(side).add(g); g.position.set(x, y, z); g.rotation.set(rx, ry, rz); };
+
+const ray = new THREE.Raycaster(), fitCache = new Map();
+const OCC = []; scene.traverse(o => { if (o.isMesh && !o.userData.ink && !o.userData.noCheck && !(o.material && o.material.transparent)) OCC.push(o); });
+function fitShot(si) { if (fitCache.has(si)) return fitCache.get(si); const s = S[si]; let k = 1; const sides = [];
+  scene.updateMatrixWorld(true); const seen = new Set(); scene.traverse(o => { if (o.isMesh && o.material && !Array.isArray(o.material) && !seen.has(o.material)) { seen.add(o.material); sides.push([o.material, o.material.side]); o.material.side = THREE.DoubleSide; } });
+  const vis = (o) => { for (; o; o = o.parent) if (!o.visible) return false; return true; };
+  for (const u of [0, 0.25, 0.5, 0.75, 1]) { const c = s.camf(u), dir = c.p.clone().sub(c.l), d = dir.length(); ray.set(c.l, dir.normalize()); ray.far = d;
+    ray.camera = cam; const hits = ray.intersectObjects(OCC, false).filter(h => h.object.isMesh && vis(h.object) && !CAST.some(ch => { for (let o = h.object; o; o = o.parent) if (o === ch.root) return true; return false; }) && h.distance > 0.35);
+    if (hits.length) k = Math.min(k, (hits[0].distance - 0.12) / d); }
+  sides.forEach(([m, sd]) => (m.side = sd)); k = Math.max(k, 0.25); fitCache.set(si, k); return k; }
+const shotAt = (t) => { let i = 0; for (let k = 0; k < S.length; k++) if (t >= S[k].t) i = k; return i; };
+S.forEach((s, i) => { s.whip = i > 0 && i % 3 !== 2 && !s.noWhip; s.dir = i % 2 ? 1 : -1; });
+
+// ---------- captions: one word at a time; the hook label and the time chips ----------
+const capEl = document.querySelector('#cap span'), labEl = document.getElementById('lab'), chipEl = document.querySelector('#chip span');
+function capText(i) { const w = WORDS[i], lk = clean(w.w).toLowerCase(), prev = i > 0 ? clean(WORDS[i - 1].w).toLowerCase() : '';
+  if (lk === 'twenty') return '25'; if (lk === 'five' && prev === 'twenty') return ''; if (lk === 'thirty') return '38'; if (lk === 'eight' && prev === 'thirty') return '';
+  if (lk === 'two') return '2'; if (lk === 'ten') return '10'; if (lk === 'nine') return '9!'; return clean(w.w); }
+function caption(t) { let ci = -1; WORDS.forEach((w, i) => { if (t >= w.s - 0.06 && t < w.e + 0.12) ci = i; }); if (ci < 0) { capEl.textContent = ''; return; }
+  const cur = WORDS[ci]; capEl.textContent = capText(ci); capEl.style.color = cur.speaker === 'smith' ? '#ffd23a' : '#ffffff';
+  const k = clamp((t - cur.s + 0.06) / 0.09); capEl.style.transform = `scale(${0.82 + 0.18 * k})`; capEl.style.opacity = capEl.textContent ? k : 0; }
+const HOOKL = (SCRIPT.beats[0].label || '').replace(/\*(.+?)\*/g, '<b>$1</b>').replace('. ', '.<br>');
+function labels(t) { const b1 = TL.beats[1];
+  if (t < b1.start - 0.1) { if (labEl.innerHTML !== HOOKL) labEl.innerHTML = HOOKL; const k = clamp(t / 0.18); labEl.style.opacity = 1; labEl.style.transform = `scale(${0.7 + 0.3 * k})`; } else labEl.style.opacity = 0;
+  let txt = '', k = 0; TL.beats.forEach((b, i) => { const lb = SCRIPT.beats[i] && SCRIPT.beats[i].label; if (i > 0 && lb && t >= b.start - 0.05 && t < b.start + 1.9) { txt = lb; k = clamp((t - b.start + 0.05) / 0.15) * clamp((b.start + 1.9 - t) / 0.2); } });
+  chipEl.textContent = txt; chipEl.style.opacity = txt ? k : 0; chipEl.style.transform = `scale(${0.6 + 0.4 * k})`; }
+
+// characters between the camera and its target, or right at the lens, step out of the shot
+const hideCache = new Map();
+function autoHide(si, t) { if (!hideCache.has(si)) { const s = S[si], c = s.camf(0.5), fk = s.noFit ? 1 : fitShot(si); const p = c.p.clone().sub(c.l).multiplyScalar(fk).add(c.l), seg = new THREE.Line3(p, c.l), q = V(0, 0, 0), out = [];
+    CAST.forEach((ch, i) => { if (!ch.root.visible || ch === SMITH || (s.keep || []).includes(ch)) return; ch.root.updateMatrixWorld(true); const h = ch.head.getWorldPosition(V(0, 0, 0)); seg.closestPointToPoint(h, true, q); const along = q.distanceTo(p) / Math.max(1e-3, seg.distance());
+      if (h.distanceTo(p) < 1.1 || (q.distanceTo(h) < 0.42 && along < 0.75)) out.push(i); }); hideCache.set(si, out); }
+  for (const i of hideCache.get(si)) CAST[i].root.visible = false; }
+
+// ---------- per frame ----------
+let curEnv = '';
+const SHOE = SMITH.legs[0].children[1].material;
+window.renderFrame = (t) => {
+  const si = shotAt(t), s = S[si], nxt = S[si + 1], u = t - s.t, len = (nxt ? nxt.t : DUR) - s.t, un = clamp(u / len);
+  window.SHOT = si;
+  CAST.forEach(c => c.root.visible = false);
+  for (const g of [JAR2]) if (g.parent) g.parent.remove(g);
+  BEE.visible = false; FORC.visible = false; SWELL.visible = false; RNOSE.visible = false; TEARS.forEach(m => m.visible = false);
+  SHOE.color.set(s.barefoot ? '#f5efe4' : '#2c2422'); CAL.visible = !s.noCal;
+  SMITH.head.traverse(o => { if (o.isMesh && o.material && o.material.emissiveIntensity !== undefined && o.material.vertexColors) o.material.emissiveIntensity = s.env === 'yard' ? 0.72 : 0.52; });
+  // the flying bees and the bees in the jar
+  FLY.forEach((b, i) => { b.visible = !!s.fly; if (!b.visible) return; const h = HIVES[i % HIVES.length], a = t * (0.9 + (i % 5) * 0.17) + i * 1.7, r = 0.5 + (i % 4) * 0.25;
+    const p = h.position.clone().add(V(Math.cos(a) * r, 0.9 + Math.sin(a * 1.7) * 0.35 + (i % 3) * 0.25, 0.4 + Math.sin(a) * r)); b.position.copy(p); b.lookAt(p.clone().add(V(-Math.sin(a), 0, Math.cos(a)))); b.userData.flap(t); });
+  JAR.userData.bees.forEach((b, i) => { const a = t * 2 + i * 1.1; b.position.set(Math.cos(a) * 0.06, 0.07 + (i % 3) * 0.06 + Math.sin(a * 3) * 0.01, Math.sin(a) * 0.06); b.rotation.y = -a; b.userData.flap(t); });
+  WATCH.userData.hand.rotation.y = -(s.watch ? un : 0.3) * Math.PI * 2;
+  s.act(un, t);
+  autoHide(si, t);
+  // environment
+  if (s.env !== curEnv) { curEnv = s.env; const E = ENV[s.env]; scene.background = new THREE.Color(E.bg); scene.fog.color.set(E.fog[0]); scene.fog.near = E.fog[1]; scene.fog.far = E.fog[2];
+    hemi.color.set(E.hemi[0]); hemi.groundColor.set(E.hemi[1]); hemi.intensity = E.hemi[2]; key.color.set(E.key[0]); key.intensity = E.key[1]; renderer.toneMappingExposure = E.exp;
+    lamps.forEach(l => l.visible = l.userData.set === E.set); }
+  // camera + whip pans (+ a small shake on the worst sting)
+  const c = s.camf(un), fk = s.noFit ? 1 : fitShot(si);
+  if (fk < 0.999) { c.p.sub(c.l).multiplyScalar(fk).add(c.l); c.fov = Math.min(84, 2 * Math.atan(Math.tan(c.fov * D2R / 2) / fk) / D2R); }
+  if (s.shake) { const a = 0.006 * (1 - un); c.p.add(V(Math.sin(t * 53) * a, Math.sin(t * 61) * a, 0)); }
+  cam.position.copy(c.p); cam.fov = c.fov; cam.updateProjectionMatrix(); cam.lookAt(c.l);
+  let whip = 0, wdir = 0; const WD = 0.13;
+  if (nxt && nxt.whip && nxt.t - t < WD) { whip = 1 - (nxt.t - t) / WD; wdir = nxt.dir; }
+  if (s.whip && u < WD) { whip = 1 - u / WD; wdir = -s.dir; }
+  if (whip > 0) cam.rotateY(wdir * whip * whip * 0.45);
+  L.whip(wdir * whip * whip * 0.05, 0);
+  // focus spans every face in frame (faces must never be blurred)
+  cam.updateMatrixWorld(); let fd = cam.position.distanceTo(c.l), zone = 0.6; { const fwd = cam.getWorldDirection(V(0, 0, 0)), hp = V(0, 0, 0); let lo = 1e9, hi = -1;
+    CAST.forEach(ch => { if (!ch.root.visible) return; ch.head.getWorldPosition(hp); const d = hp.clone().sub(cam.position), z = d.dot(fwd); if (z < 0.2) return; const off = d.clone().addScaledVector(fwd, -z).length() / z; if (off < 0.75) { lo = Math.min(lo, z); hi = Math.max(hi, z); } });
+    if (hi > 0) { fd = (lo + hi) / 2; zone = (hi - lo) / 2 + 0.6; } }
+  L.dof(fd, (c.dof || 0) * 0.4, zone);
+  CAST.forEach(ch => { if (ch.root.visible && !(ch === SMITH && BEE.visible && !s.fly)) ch.look(cam, 0.9); });
+  if (RNOSE.visible && SMITH.root.visible) { const q = headPt('nose'); RNOSE.position.copy(q.p).addScaledVector(q.n, -0.012); }
+  // shadow focus
+  const half = s.env === 'yard' ? 12 : 7; const sc = key.shadow.camera; if (sc.right !== half) { sc.left = sc.bottom = -half; sc.right = sc.top = half; sc.updateProjectionMatrix(); }
+  const f = snapFocus(c.l.clone().setY(0), KEY_DIR[s.env], half); key.target.position.copy(f); key.position.copy(f).add(KEY_DIR[s.env].clone().normalize().multiplyScalar(40));
+  caption(t); labels(t);
+  scene.updateMatrixWorld(true);
+  if (window.NODRAW) return;
+  L.render();
+};
+// overlap check hook (tools/check_overlap.cjs): Smith may touch his stool
+const STOOLSET = new THREE.Group();
+window.QA = { scene, camera: cam, THREE, actors: () => CAST.map((c, i) => ({ name: NAMES[i], root: c.root, head: c.head, seat: c === SMITH && c.root.position.distanceTo(SMP) < 0.05 ? LB : null })).filter(a => a.root.visible) };
+window.DURATION = DUR; window.SHOTS = S.map(s => s.t);
+renderFrame(0); window.READY = true; window.DONE = true;
+</script></body></html>
