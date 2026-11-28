@@ -1,0 +1,55 @@
+name: Voice with Chatterbox michael
+
+# Voices an episode with Chatterbox cloning a Kokoro am_michael clip (tools/chatterbox_voice.py) and
+# publishes voice.wav + timeline.json to the pre-release cbvoice-<slug>-<run id>.
+# Start it by writing the episode folder into chatterbox-request.txt and pushing.
+on:
+  push:
+    paths: [chatterbox-request.txt]
+
+permissions:
+  contents: write
+
+jobs:
+  voice:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        run: |
+          EP="$(head -n1 chatterbox-request.txt | tr -d '[:space:]')"
+          case "$EP" in episodes/*|prototypes/*) ;; *) echo "bad episode path: $EP"; exit 1 ;; esac
+          case "$EP" in *..*) echo "bad episode path: $EP"; exit 1 ;; esac
+          test -f "$EP/script.json"; echo "ep=$EP" >> "$GITHUB_OUTPUT"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Cache models
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/huggingface
+            models
+          key: hf-chatterbox-kokoro-v1
+      - name: Install
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+          pip install -q numpy setuptools wheel
+          pip install -q chatterbox-tts soundfile
+          pip install -q kokoro-onnx==0.6.1
+          mkdir -p models; base=https://github.com/thewh1teagle/kokoro-onnx/releases/download/model-files-v1.0
+          [ -f models/kokoro-v1.0.onnx ] || curl -sL -o models/kokoro-v1.0.onnx $base/kokoro-v1.0.onnx
+          [ -f models/voices-v1.0.bin ] || curl -sL -o models/voices-v1.0.bin $base/voices-v1.0.bin
+      - name: Lint narration
+        run: python3 tools/lint_voice.py "${{ steps.p.outputs.ep }}"
+      - name: Voice
+        run: python3 tools/chatterbox_voice.py "${{ steps.p.outputs.ep }}"
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EP: ${{ steps.p.outputs.ep }}
+        run: |
+          NAME="$(basename "$EP")"; TAG="cbvoice-$NAME-${{ github.run_id }}"
+          gh release create "$TAG" "$EP/voice.wav" "$EP/timeline.json" --prerelease \
+            --title "Chatterbox voice: $NAME" --notes "Chatterbox michael, run ${{ github.run_id }}" --target "${{ github.event.repository.default_branch }}"

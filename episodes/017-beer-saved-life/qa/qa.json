@@ -1,0 +1,65 @@
+{
+ "video": "episodes/017-beer-saved-life/final.mp4",
+ "duration": 30.67,
+ "result": "PASS",
+ "checks": [
+  {
+   "check": "black",
+   "status": "PASS",
+   "detail": "no dark patches or black tiles"
+  },
+  {
+   "check": "freeze",
+   "status": "PASS",
+   "detail": "picture keeps moving"
+  },
+  {
+   "check": "loudness",
+   "status": "PASS",
+   "detail": "-14.7 LUFS, true peak -4.2 dBTP (want -14 +/- 1.5, <= -1)"
+  },
+  {
+   "check": "clipping",
+   "status": "PASS",
+   "detail": "AUDIO OK"
+  },
+  {
+   "check": "hiss",
+   "status": "PASS",
+   "detail": "no broadband static"
+  },
+  {
+   "check": "silence",
+   "status": "PASS",
+   "detail": "no dead air"
+  },
+  {
+   "check": "balance",
+   "status": "PASS",
+   "detail": "narration -18.1 LUFS, music+SFX -27.7 LUFS: voice 9.6 LU on top (want >= 8)"
+  },
+  {
+   "check": "flicker",
+   "status": "WARN",
+   "detail": "15 one-frame pop(s), worst at 16.23s, 15.97s, 25.13s, 21.30s, 16.50s, 24.23s, 2.17s, 4.13s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
+  },
+  {
+   "check": "vanish",
+   "status": "PASS",
+   "detail": "nothing blinks out for a frame"
+  },
+  {
+   "check": "length",
+   "status": "PASS",
+   "detail": "30.7 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
+  },
+  {
+   "check": "overlap",
+   "status": "PASS",
+   "detail": "0 on-screen overlap(s)"
+  }
+ ],
+ "contact_sheet": "episodes/017-beer-saved-life/qa/contact.jpg",
+ "review": null,
+ "review_mtime": 1795846425.6886802
+}

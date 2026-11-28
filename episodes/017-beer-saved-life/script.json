@@ -1,0 +1,142 @@
+{
+ "title": "Doctors saved his life with beer",
+ "style": "set3d",
+ "look": "smol",
+ "noGary": true,
+ "voices": {
+  "narrator": "af_bella",
+  "doctor": "bm_lewis"
+ },
+ "speed": 1.28,
+ "tail": 0.8,
+ "music": {
+  "mood": "suspense"
+ },
+ "pronounce": {
+  "methanol": "meth-uh-nol",
+  "dialysis": "die-al-uh-sis"
+ },
+ "label": "SAVED BY *BEER.*",
+ "beats": [
+  {
+   "id": "hook",
+   "hook": true,
+   "label": "SAVED BY *BEER.*",
+   "lines": [
+    {
+     "text": "Doctors saved his life by pouring in beer."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "party",
+   "label": "DAY 1",
+   "lines": [
+    {
+     "text": "Vietnam, twenty eighteen. At a party, he drinks homemade rice wine, laced with methanol."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "poison",
+   "label": "DAY 3",
+   "lines": [
+    {
+     "text": "In hospital, his liver turns the methanol into formic acid, which can blind you, then kill you."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "turn",
+   "label": "HOUR 1",
+   "lines": [
+    {
+     "text": "But livers prefer normal alcohol. Keep the liver busy with that, and the methanol just waits."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "beer",
+   "label": "HOUR 15",
+   "lines": [
+    {
+     "speaker": "doctor",
+     "text": "Get me beer. Lots of it."
+    },
+    {
+     "text": "Down a tube, one can every hour. Fifteen cans."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "out",
+   "label": "WEEK 2",
+   "lines": [
+    {
+     "text": "Meanwhile, dialysis washes the methanol out. He walks out of hospital, fully recovered."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "cta",
+   "lines": [
+    {
+     "text": "Comment what you want to know next."
+    }
+   ],
+   "hold": 0.3
+  }
+ ],
+ "experiment": {
+  "vars": {
+   "music": "suspense",
+   "ending_cta": "comment_next",
+   "narrator": "af_bella",
+   "voices.narrator": "af_bella",
+   "speed": 1.28,
+   "hook_form": "statement",
+   "format": "no_gary",
+   "premise": "true_history",
+   "ending": "survives",
+   "look": "smol",
+   "style": "set3d",
+   "character": "bighead",
+   "length": "mid_32s",
+   "character_voice": "kokoro_bm_lewis"
+  },
+  "hypothesis": "A true medical rescue told straight with a short plain hook (george's rule from 27 Nov) over the most striking image: a doctor feeding a can of beer down a tube into a hospital patient. First Short with a character speaking in his own voice with a moving mouth (george, 27 Nov). Tests af_bella at 1.28 against the suspense score.",
+  "fish": "#280 (doctors in Vietnam saved a man's life by pumping 15 cans of beer into his body)",
+  "facts": [
+   {
+    "claim": "In December 2018 Nguyen Van Nhat, 48, of Quang Tri province, Vietnam, was poisoned by homemade rice wine with methanol far above legal limits after a party; he was treated at Quang Tri General Hospital.",
+    "sources": [
+     "https://saigoneer.com/saigon-health/15470-quang-tri-hospital-saves-man-from-methanol-poisoning-by-feeding-him-15-cans-of-beer",
+     "https://vietnamnews.vn/society/483637/beer-used-to-save-patient-from-alcohol-poisoning-doctors-advise-caution.html",
+     "https://news.tuoitre.vn/three-vietnamese-poisoned-from-wine-with-methanol-content-1000x-over-legal-limit-10348486.htm"
+    ]
+   },
+   {
+    "claim": "Doctors gave him beer through a tube, about one can an hour, fifteen cans in all, alongside dialysis; he recovered and was discharged.",
+    "sources": [
+     "https://vietnamnet.vn/en/doctors-use-five-liters-of-beer-to-save-toxic-alcohol-poisoned-patient-E215818.html",
+     "https://www.vice.com/en/article/15-cans-of-beer-saved-this-guy-from-alcohol-poisoning",
+     "https://au.news.yahoo.com/doctors-save-man-pumping-15-cans-beer-body-034206464.html"
+    ]
+   },
+   {
+    "claim": "The liver's alcohol dehydrogenase turns methanol into formaldehyde and then formic acid, which damages the optic nerve and causes acidosis; ethanol competes for the same enzyme, so the methanol is left unconverted until dialysis removes it (fomepizole is the preferred antidote where available).",
+    "sources": [
+     "https://www.ncbi.nlm.nih.gov/books/NBK482121/",
+     "https://pubmed.ncbi.nlm.nih.gov/12216995/",
+     "https://en.wikipedia.org/wiki/Methanol_toxicity"
+    ]
+   }
+  ]
+ }
+}

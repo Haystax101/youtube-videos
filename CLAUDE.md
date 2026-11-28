@@ -97,8 +97,14 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
      use pluck, lofi, musicbox or none for Shorts.
      Narrator arms include female and softer voices (george, 2026-11-25): af_heart, af_bella,
      af_nicole (soft) and bf_emma alongside the male ones.
-     **Narration stays on Kokoro (george, 2026-11-26 12:00):** the Qwen narrator test is dropped (he
-     wasn't impressed); keep A/B testing Kokoro voices. Qwen may still voice short character lines. Likewise `voices.narrator`, `speed`, and the hook wording for `hook_form` (the hook still
+     **Narration is Chatterbox "michael" (george, 2026-11-28):** Chatterbox cloning a Kokoro am_michael clip
+     at calm settings (his favourite from voice-tests), run on GitHub: put the episode folder in
+     `chatterbox-request.txt` and push; `.github/workflows/chatterbox.yml` runs `tools/chatterbox_voice.py` and
+     publishes voice.wav + timeline.json to the pre-release `cbvoice-<slug>-<run id>`. Download both into the
+     episode, write that tag into `EP/voice-release.txt` (the template `audio.sh` fetches the voice from it on
+     the render runners) and commit timeline.json. Character lines ("speaker") clone their own Kokoro voice from
+     `voices` and get a moving mouth. Pacing: `cb_speed` (default 1.12). Kokoro (`pipeline/tts.py`) is only a
+     quick local draft voice for building shots. Spell everything out as spoken (lint runs first). Likewise `voices.narrator`, `speed`, and the hook wording for `hook_form` (the hook still
      speaks to the viewer in the first 2 seconds).
    - Record `experiment.vars`: every assigned arm plus `ending` (dies / survives / better),
      `premise` (life_change / beneficial / absurd_event / true_history) and `style`, and fill
@@ -153,7 +159,7 @@ across the day (e.g. 12:00, 17:00, 20:00 London).
 6. Narration must spell out exactly what is spoken (george, 2026-11-26: "Mt. Gox" was read as a
    sentence end): no abbreviations with periods, digits, symbols or bare acronyms, and phonetic
    `pronounce` entries for names. `tts.py` runs `tools/lint_voice.py` first and stops on errors.
-   Voice and soundtrack with the template's `audio.sh EP` (Kokoro via `pipeline/tts.py`, score,
+   Voice and soundtrack with the template's `audio.sh EP` (Chatterbox voice from `voice-release.txt`, score,
    recorded sfx, loudness), then render stills across the whole Short and look at them. Fix anything broken (overlaps, missing props, text off screen) before the
    full render. **Quality bar** (george, 2026-11-26): the successful channels look high
    fidelity and vibrant and NEVER show an asset that looks unrealistic, only stylised. Check

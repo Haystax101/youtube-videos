@@ -129,7 +129,7 @@ export function makeBighead(THREE, spec = {}) {
   const root = new THREE.Group(), hips = new THREE.Group(); root.add(hips);
   const R = 0.32, add = (m, x, y, z, p = hips) => { m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true; p.add(m); return m; };
   const clothM = toon(THREE, '#ffffff', { map: clothTex(THREE, spec) });
-  const legM = toon(THREE, spec.trousers || spec.cloth), shoeM = toon(THREE, spec.shoe), skinM = toon(THREE, new THREE.Color(spec.limb).multiplyScalar(0.25), { emissive: spec.limb, emissiveIntensity: 0.8 }), armM = toon(THREE, spec.sleeve || spec.cloth);
+  const legM = toon(THREE, spec.trousers || spec.cloth), shoeM = toon(THREE, spec.shoe), skinM = toon(THREE, new THREE.Color(spec.limb).multiplyScalar(0.3), { emissive: spec.limb, emissiveIntensity: 0.52 }), armM = toon(THREE, spec.sleeve || spec.cloth);
   // body: a peg / bell lathe
   const prof = []; for (let i = 0; i <= 12; i++) { const v = i / 12; prof.push(new THREE.Vector2(0.115 + 0.065 * Math.sin(v * Math.PI * 0.85) + (1 - v) * 0.045, 0.2 + v * 0.46)); } prof.push(new THREE.Vector2(0.001, 0.66)); prof.unshift(new THREE.Vector2(0.001, 0.2));
   const body = add(new THREE.Mesh(new THREE.LatheGeometry(prof, 28), clothM), 0, 0, 0); body.rotation.y = Math.PI;   // texture seam at the back
@@ -140,9 +140,9 @@ export function makeBighead(THREE, spec = {}) {
   const hg = new THREE.SphereGeometry(R, 48, 32), col = []; const cs = new THREE.Color(spec.skin), cp = new THREE.Color(spec.scalp);
   for (let i = 0; i < hg.attributes.position.count; i++) { const y = hg.attributes.position.getY(i) / R; const k = THREE.MathUtils.smoothstep(y, 0.35, 0.62); const c = cs.clone().lerp(cp, k * (spec.hair || spec.hat !== 'none' ? 0 : 1)); col.push(c.r, c.g, c.b); }
   hg.setAttribute('color', new THREE.Float32BufferAttribute(col, 3));
-  const headMesh = add(new THREE.Mesh(hg, toon(THREE, new THREE.Color(spec.skin).multiplyScalar(0.2), { vertexColors: true, emissive: spec.skin, emissiveIntensity: spec.glow ?? 0.8 })), 0, 0, 0, head);
+  const headMesh = add(new THREE.Mesh(hg, toon(THREE, new THREE.Color(spec.skin).multiplyScalar(0.3), { vertexColors: true, emissive: spec.skin, emissiveIntensity: spec.glow ?? 0.52 })), 0, 0, 0, head);
   if (spec.hair) add(new THREE.Mesh(new THREE.SphereGeometry(R * 1.045, 40, 20, 0, Math.PI * 2, 0, Math.PI * 0.36), toon(THREE, spec.hair)), 0, 0, -0.03, head).rotation.x = -0.42;
-  if (spec.ears !== false) for (const s of [-1, 1]) add(new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 8).scale(0.5, 1, 0.8), toon(THREE, new THREE.Color(spec.skin).multiplyScalar(0.2), { emissive: spec.skin, emissiveIntensity: spec.glow ?? 0.8 })), s * R * 0.98, -0.02, 0, head);
+  if (spec.ears !== false) for (const s of [-1, 1]) add(new THREE.Mesh(new THREE.SphereGeometry(0.06, 12, 8).scale(0.5, 1, 0.8), toon(THREE, new THREE.Color(spec.skin).multiplyScalar(0.3), { emissive: spec.skin, emissiveIntensity: spec.glow ?? 0.52 })), s * R * 0.98, -0.02, 0, head);
   const FS = 1024, fc = document.createElement('canvas'); fc.width = fc.height = FS; const fx = fc.getContext('2d');
   const ftex = new THREE.CanvasTexture(fc); ftex.colorSpace = THREE.SRGBColorSpace; ftex.anisotropy = 8;
   const decal = add(new THREE.Mesh(new THREE.SphereGeometry(R * 1.004, 40, 30, Math.PI / 2 - 1.05, 2.1, 0.02, Math.PI * 0.78),
@@ -226,6 +226,11 @@ export function makeBighead(THREE, spec = {}) {
       if (name === 'crouch') { hips.position.y = -0.1; legs.forEach((l) => { l.rotation.x = -0.5; }); arm('l', [-0.26, 0.4, 0.06], [-0.3, 0.24, -0.1]); arm('r', [0.26, 0.4, 0.06], [0.3, 0.24, -0.1]); hips.rotation.x = 0.25; }
       if (name === 'float') { const a = Math.sin(t * 1.6); legs[0].rotation.x = 0.3 + a * 0.15; legs[1].rotation.x = -0.2 - a * 0.15; arm('l', [-0.3, 0.6, 0.04], [-0.44, 0.72 + a * 0.05, 0.06]); arm('r', [0.3, 0.6, 0.04], [0.44, 0.72 - a * 0.05, 0.06]); }
       if (name === 'thumb') arm('r', [0.28, 0.5, 0.12], [0.26, 0.64, 0.24]);
+      // drinking and toasting (beer Short, 28 Nov): put the cup in hand('r')
+      if (name === 'drink') { arm('r', [0.2, 0.5, 0.2], [0.05, 0.8, 0.32]); head.rotation.x = -0.12; }
+      // pouring from a raised hand (beer Short, 28 Nov): o.hand / o.elbow in root space put the right hand on the prop
+      if (name === 'pour') { arm('r', o.elbow || [0.3, 0.74, 0.14], o.hand || [0.2, 1.02, 0.32]); arm('l', [-0.26, 0.46, 0.08], [-0.22, 0.32, 0.14]); }
+      if (name === 'toast') { const a = Math.sin(t * 5 + (o.ph || 0)) * 0.03; arm('r', [0.26, 0.62, 0.18], [0.2, 0.84 + a, 0.38]); }
     },
   };
   api.face('neutral'); api.pose('idle');

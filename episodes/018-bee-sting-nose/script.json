@@ -1,0 +1,134 @@
+{
+ "title": "He let bees sting his nose on purpose",
+ "style": "set3d",
+ "look": "smol",
+ "noGary": true,
+ "narrator_engine": "chatterbox",
+ "voices": {
+  "narrator": "am_michael",
+  "smith": "am_puck"
+ },
+ "speed": 1.2,
+ "cb_speed": 1.12,
+ "tail": 0.8,
+ "music": {
+  "mood": "chiptune"
+ },
+ "pronounce": {},
+ "label": "STUNG. *ON PURPOSE.*",
+ "beats": [
+  {
+   "id": "hook",
+   "hook": true,
+   "label": "STUNG. *ON PURPOSE.*",
+   "lines": [
+    {
+     "text": "He let bees sting his face, on purpose."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "question",
+   "label": "DAY 1",
+   "lines": [
+    {
+     "text": "Bee scientist Michael Smith wanted to know where stings hurt most. So he tested twenty five spots, on himself."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "method",
+   "label": "WEEK 1",
+   "lines": [
+    {
+     "text": "Five stings every morning, each stinger left in for a full minute."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "easy",
+   "label": "WEEK 3",
+   "lines": [
+    {
+     "text": "Skull, toe and upper arm? Barely two out of ten."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "turn",
+   "label": "WEEK 5",
+   "lines": [
+    {
+     "text": "Then the face.",
+     "speaker": "narrator"
+    },
+    {
+     "text": "Ow! My lip! That's almost a nine!",
+     "speaker": "smith"
+    },
+    {
+     "text": "And the worst spot of all? Right up the nose."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "payoff",
+   "label": "DAY 38",
+   "lines": [
+    {
+     "text": "Thirty eight days later, he had mapped where stings hurt most. And he was fine."
+    }
+   ],
+   "hold": 0.1
+  },
+  {
+   "id": "cta",
+   "cta": true,
+   "lines": [
+    {
+     "text": "Follow for more interesting cartoons."
+    }
+   ],
+   "hold": 0.1
+  }
+ ],
+ "experiment": {
+  "fish": "#20 (a Cornell scientist stung himself in 25 places to rank the pain)",
+  "hypothesis": "First Short narrated by Chatterbox michael (george's pick, 28 Nov) instead of Kokoro; plain he_statement hook; a character line in its own voice with a moving mouth; calmer face brightness.",
+  "vars": {
+   "music": "chiptune",
+   "ending_cta": "follow",
+   "narrator": "chatterbox_michael",
+   "speed": "cb_1.12",
+   "hook_form": "he_statement",
+   "format": "no_gary",
+   "premise": "true_history",
+   "ending": "better",
+   "look": "smol",
+   "style": "set3d",
+   "character": "bighead",
+   "character_voice": "chatterbox_am_puck"
+  },
+  "facts": [
+   {
+    "claim": "Cornell graduate student Michael L. Smith stung himself at 25 body locations, five stings a day between 20 August and 26 September 2012 (38 days), each bee held to the spot with forceps, and rated the pain from 1 to 10 against his forearm.",
+    "sources": [
+     "https://peerj.com/articles/338/",
+     "https://pmc.ncbi.nlm.nih.gov/articles/PMC3994616"
+    ]
+   },
+   {
+    "claim": "Most painful: nostril 9.0, upper lip 8.7. Least painful: skull, middle toe tip and upper arm, each 2.3.",
+    "sources": [
+     "https://peerj.com/articles/338/",
+     "https://www.nationalgeographic.com/science/article/the-worst-places-to-get-stung-by-a-bee-nostril-lip-penis"
+    ]
+   }
+  ]
+ }
+}
