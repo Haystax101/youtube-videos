@@ -16,7 +16,6 @@ for i, (b, mood, key) in enumerate(chapters):
 ding = lambda t, g=0.45: tr.chord(t, 11, [72, 76, 79], 90, 1.2, g)   # glockenspiel-ish ding
 timp = lambda t: tr.note(t, 47, 38, 100, 0.6, 0.6)                   # timpani hit
 # cold open
-tr.amb('hospital', st(0) + 3.0, st(3) - 0.2, 0.06)
 tr.sting(c(0, 'red'), key=48, g=0.6); tr.tick(st(1), st(2), bpm=110, g=0.6); timp(c(1, 'lose'))
 for w in ('car', 'railways', 'phone'): timp(c(2, w))
 tr.amb('sea', c(3, 'twenty'), st(4) - 0.1, 0.05)
@@ -30,7 +29,6 @@ if nb > 40:
     timp(c(48, 'no')); timp(c(50, 'gone')); timp(c(53, 'more', 2))
     tr.tick(st(50), c(50, 'tens'), bpm=120, g=0.6)
     for i in range(5): tr.sfx('camera', c(29, 'reporters') + 0.2 + i * 0.45, 0.25)
-    tr.amb('crowd', c(31, 'everyone') - 0.1, st(32) - 0.1, 0.07)
     tr.sfx('cash', c(39, 'collected'), 0.3)
     tr.amb('sea', st(21), c(21, 'worked') + 3.0, 0.05)
-tr.write(music_db=-24)
+tr.write(music_db=-15, duck=0.6)   # george 28 Nov: couldn't hear the music at -24
