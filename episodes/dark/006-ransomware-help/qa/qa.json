@@ -1,0 +1,74 @@
+{
+ "video": "episodes/dark/006-ransomware-help/video.mp4",
+ "duration": 133.83,
+ "result": "PASS",
+ "checks": [
+  {
+   "check": "dark",
+   "status": "WARN",
+   "detail": "dark stretch at 60.43-60.60s (66% dark), 68.53-70.50s (79% dark), 84.60-86.73s (65% dark), 108.67-108.90s (61% dark), 109.00-109.23s (63% dark), 109.50-109.73s (63% dark), 110.00-110.23s (63% dark), 110.50-110.73s (63% dark), 111.00-111.23s (62% dark), 111.50-112.33s (66% dark), 112.47-113.37s (62% dark), 113.50-113.73s (60% dark): fine if the shot is meant to be dark, a bug if the camera is inside a wall or prop"
+  },
+  {
+   "check": "guard",
+   "status": "WARN",
+   "detail": "48 frame(s) still flagged after retries at 0.70s, 3.90s, 7.47s, 9.20s, 11.97s, 13.60s, 15.20s, 17.23s, 18.47s, 20.03s (genuine dark shot, or a glitch: check them)"
+  },
+  {
+   "check": "freeze",
+   "status": "PASS",
+   "detail": "picture keeps moving"
+  },
+  {
+   "check": "loudness",
+   "status": "PASS",
+   "detail": "-14.8 LUFS, true peak -4.9 dBTP (want -14 +/- 1.5, <= -1)"
+  },
+  {
+   "check": "clipping",
+   "status": "PASS",
+   "detail": "AUDIO OK"
+  },
+  {
+   "check": "hiss",
+   "status": "PASS",
+   "detail": "no broadband static"
+  },
+  {
+   "check": "silence",
+   "status": "PASS",
+   "detail": "no dead air"
+  },
+  {
+   "check": "balance",
+   "status": "WARN",
+   "detail": "voice.wav does not line up with the final mix (corr 0.01); skipped"
+  },
+  {
+   "check": "flicker",
+   "status": "WARN",
+   "detail": "7 one-frame pop(s), worst at 126.47s, 123.30s, 98.33s, 98.17s, 56.77s, 3.97s, 4.13s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
+  },
+  {
+   "check": "vanish",
+   "status": "PASS",
+   "detail": "nothing blinks out for a frame"
+  },
+  {
+   "check": "length",
+   "status": "PASS",
+   "detail": "133.8 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
+  },
+  {
+   "check": "continuity",
+   "status": "PASS",
+   "detail": "0 on-screen problem(s), 0 off screen"
+  }
+ ],
+ "contact_sheet": "episodes/dark/006-ransomware-help/qa/contact.jpg",
+ "review": {
+  "status": "PASS",
+  "by": "Claude",
+  "notes": "Contact sheet and full stills reviewed: faces framed after close-up pull-backs, sign/ransom screen fully in frame, guard frames are genuine dark hair/blazers, flicker pops are stamp/card animations, dark stretches are the night Vegas street and FBI room by design. Loudness -14.7 LUFS, hiss clean."
+ },
+ "review_mtime": 1795821043.5256832
+}
