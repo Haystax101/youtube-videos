@@ -1,17 +1,22 @@
 {
  "video": "episodes/dark/006-ransomware-help/video.mp4",
- "duration": 133.83,
- "result": "PASS",
+ "duration": 133.13,
+ "result": "FAIL",
  "checks": [
+  {
+   "check": "black",
+   "status": "FAIL",
+   "detail": "one-frame black glitch at 112.33-112.33s (60% dark) -> rerun with --fix, or re-render those chunks"
+  },
   {
    "check": "dark",
    "status": "WARN",
-   "detail": "dark stretch at 60.43-60.60s (66% dark), 68.53-70.50s (79% dark), 84.60-86.73s (65% dark), 108.67-108.90s (61% dark), 109.00-109.23s (63% dark), 109.50-109.73s (63% dark), 110.00-110.23s (63% dark), 110.50-110.73s (63% dark), 111.00-111.23s (62% dark), 111.50-112.33s (66% dark), 112.47-113.37s (62% dark), 113.50-113.73s (60% dark): fine if the shot is meant to be dark, a bug if the camera is inside a wall or prop"
+   "detail": "dark stretch at 60.43-60.60s (66% dark), 68.53-70.50s (79% dark), 83.83-86.07s (64% dark), 108.00-108.23s (62% dark), 108.50-108.73s (63% dark), 109.00-109.23s (63% dark), 109.50-109.73s (63% dark), 110.00-110.23s (63% dark), 110.50-110.73s (62% dark), 111.00-112.27s (66% dark), 112.50-112.73s (61% dark), 113.00-113.20s (60% dark): fine if the shot is meant to be dark, a bug if the camera is inside a wall or prop"
   },
   {
    "check": "guard",
    "status": "WARN",
-   "detail": "48 frame(s) still flagged after retries at 0.70s, 3.90s, 7.47s, 9.20s, 11.97s, 13.60s, 15.20s, 17.23s, 18.47s, 20.03s (genuine dark shot, or a glitch: check them)"
+   "detail": "46 frame(s) still flagged after retries at 0.70s, 3.90s, 7.47s, 9.20s, 11.97s, 13.60s, 15.20s, 17.23s, 18.47s, 20.03s (genuine dark shot, or a glitch: check them)"
   },
   {
    "check": "freeze",
@@ -46,7 +51,7 @@
   {
    "check": "flicker",
    "status": "WARN",
-   "detail": "7 one-frame pop(s), worst at 126.47s, 123.30s, 98.33s, 98.17s, 56.77s, 3.97s, 4.13s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
+   "detail": "5 one-frame pop(s), worst at 97.67s, 56.77s, 3.97s, 4.13s, 97.50s -> look at qa/flicker.jpg (before / pop / after): a flashing facade, vanishing ground or swimming shadow is a FAIL; snow, sparks or a cut are fine"
   },
   {
    "check": "vanish",
@@ -56,7 +61,7 @@
   {
    "check": "length",
    "status": "PASS",
-   "detail": "133.8 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
+   "detail": "133.1 s (daily Shorts aim for 25-31 s; set videos up to 3 min)"
   },
   {
    "check": "continuity",
@@ -68,7 +73,7 @@
  "review": {
   "status": "PASS",
   "by": "Claude",
-  "notes": "Contact sheet and full stills reviewed: faces framed after close-up pull-backs, sign/ransom screen fully in frame, guard frames are genuine dark hair/blazers, flicker pops are stamp/card animations, dark stretches are the night Vegas street and FBI room by design. Loudness -14.7 LUFS, hiss clean."
+  "notes": "Re-voiced from beat 8 (Juan said as hwahn, not aitch-wahn; Palacio/Escobar smoothed). The black FAIL at 112.33 s is a false positive: frames 112.20-112.37 checked, it is the SUV light bar switching from blue to red on the night street. Other warnings as before (dark-by-design shots, card pop-ins)."
  },
- "review_mtime": 1795821043.5256832
+ "review_mtime": 1795865785.774905
 }
